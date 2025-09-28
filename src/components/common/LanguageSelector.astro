@@ -1,0 +1,220 @@
+---
+import { Icon } from 'astro-icon/components';
+import { LANGUAGES, DEFAULT_LANGUAGE } from '~/i18n';
+
+// For SSG, use default language initially (will be updated on client)
+const currentLanguage = DEFAULT_LANGUAGE;
+const currentLangInfo = LANGUAGES[currentLanguage];
+---
+
+<div class="language-selector relative">
+  <button
+    type="button"
+    class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+    aria-label="Language selector"
+    id="language-selector-button"
+  >
+    <span class="w-5 h-5 flex items-center justify-center text-base" id="current-flag">
+      {currentLangInfo.flag}
+    </span>
+    <Icon name="tabler:chevron-down" class="w-3 h-3 ml-1" />
+  </button>
+
+  <div
+    id="language-dropdown"
+    class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg min-w-[60px] z-50 hidden"
+  >
+    <div class="py-1">
+      {
+        Object.entries(LANGUAGES).map(([code, info]) => (
+          <button
+            type="button"
+            class="language-option w-full text-center px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center"
+            data-language={code}
+          >
+            <span class="text-lg">{info.flag}</span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  import { getCurrentLanguage, setLanguagePreference, LANGUAGES, type SupportedLanguage } from '~/i18n';
+
+  class LanguageSelector {
+    private button: HTMLElement | null;
+    private dropdown: HTMLElement | null;
+    private flagElement: HTMLElement | null;
+    private currentLanguage: SupportedLanguage;
+
+    constructor() {
+      this.button = document.getElementById('language-selector-button');
+      this.dropdown = document.getElementById('language-dropdown');
+      this.flagElement = document.getElementById('current-flag');
+      this.currentLanguage = getCurrentLanguage();
+
+      this.init();
+    }
+
+    private init(): void {
+      if (!this.button || !this.dropdown) return;
+
+      // Update UI to current language
+      this.updateUI();
+
+      // Toggle dropdown on button click
+      this.button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown();
+      });
+
+      // Handle language selection
+      this.dropdown.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const languageButton = target.closest('.language-option') as HTMLElement;
+
+        if (languageButton) {
+          const newLanguage = languageButton.dataset.language as SupportedLanguage;
+          this.changeLanguage(newLanguage);
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        this.closeDropdown();
+      });
+
+      // Listen for language change events
+      window.addEventListener('languageChange', ((e: CustomEvent) => {
+        this.currentLanguage = e.detail.language;
+        this.updateUI();
+        this.reloadPage();
+      }) as EventListener);
+
+      // Keyboard navigation
+      this.button.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.toggleDropdown();
+        }
+      });
+    }
+
+    private updateUI(): void {
+      if (!this.flagElement) return;
+
+      const langInfo = LANGUAGES[this.currentLanguage];
+      this.flagElement.textContent = langInfo.flag;
+
+      // Update button aria-label
+      if (this.button) {
+        this.button.setAttribute('aria-label', `Current language: ${langInfo.nativeName}`);
+      }
+
+      // Update selected state in dropdown
+      const options = this.dropdown?.querySelectorAll('.language-option');
+      options?.forEach((option) => {
+        const button = option as HTMLElement;
+        const isSelected = button.dataset.language === this.currentLanguage;
+
+        button.classList.toggle('bg-gray-100', isSelected);
+        button.classList.toggle('dark:bg-gray-700', isSelected);
+        button.setAttribute('aria-selected', isSelected.toString());
+      });
+    }
+
+    private toggleDropdown(): void {
+      if (!this.dropdown) return;
+
+      const isVisible = !this.dropdown.classList.contains('hidden');
+
+      if (isVisible) {
+        this.closeDropdown();
+      } else {
+        this.openDropdown();
+      }
+    }
+
+    private openDropdown(): void {
+      if (!this.dropdown) return;
+
+      this.dropdown.classList.remove('hidden');
+      this.button?.setAttribute('aria-expanded', 'true');
+    }
+
+    private closeDropdown(): void {
+      if (!this.dropdown) return;
+
+      this.dropdown.classList.add('hidden');
+      this.button?.setAttribute('aria-expanded', 'false');
+    }
+
+    private changeLanguage(newLanguage: SupportedLanguage): void {
+      if (newLanguage === this.currentLanguage) {
+        this.closeDropdown();
+        return;
+      }
+
+      // Store preference
+      setLanguagePreference(newLanguage);
+
+      this.currentLanguage = newLanguage;
+      this.updateUI();
+      this.closeDropdown();
+
+      // Reload page to apply new language
+      this.reloadPage();
+    }
+
+    private reloadPage(): void {
+      // Add a small delay to ensure localStorage is updated
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      new LanguageSelector();
+    });
+  } else {
+    new LanguageSelector();
+  }
+</script>
+
+<style>
+  .language-selector {
+    position: relative;
+  }
+
+  .language-option[aria-selected='true'] {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  .dark .language-option[aria-selected='true'] {
+    background-color: rgba(59, 130, 246, 0.2);
+  }
+
+  /* Animation for dropdown */
+  #language-dropdown {
+    transform-origin: top right;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  #language-dropdown.hidden {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+    pointer-events: none;
+  }
+
+  #language-dropdown:not(.hidden) {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+</style>
