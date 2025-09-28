@@ -51,8 +51,6 @@ If we have customized command line toll `postsurfing` can take several paramters
 - Based on current situation, we'd better to use ts/mjs implemeent this tool into @script, then we can use some bash tools makee it's convinent to use everywhere for eevery body.
 - The code must be stable and robust with well design error/exception handling, and necessary error/log information. Time goes by, nobody will remember the details of this project. we'd better to leet them what happen and how to deal with their situation.
 
----
-
 ### Fix current issues
 
 We are building a website with GitHub Actions to publish to Cloudflare Pages. The website's URL is https://surfing.salty.vip/. Please use MCP Playwright to access it and help to identify the following issues:
@@ -62,11 +60,26 @@ We are building a website with GitHub Actions to publish to Cloudflare Pages. Th
 - In page 'https://surfing.salty.vip/browse/', we do have a block for 'Example Full HTML Document', but we you click on the hyperlink, you will be navigate to 'Example Full HTML Document'. Either remove the block or restore the link.(I prefer to remove it.)
 - So far, we have nothing to show in page 'https://surfing.salty.vip/showcase/'. 'Surfing Platform' itself is not worthing to show as a idependent project here. Cleanup it.
 
+### Add i18n support
+
+#### Background
+
+As we can see the config item 'i18n' in @src/config.yaml. We want to turn this web site to support i18n with Chinese, English and Japanese.
+
+#### Requirement
+
+- add necessary support materials for Chinese, English and Japanese.
+- Proority to choise i18n language: User preference(stored in cookcie all localStroage) > web browser's preefer language > default language 'en'
+- Add a icon at the top left corner between 'Style' toggle and 'RSS' icon. Once this icon has been click, popup a dropdown list to select language, menu items including:🇨🇳, 🇺🇸, 🇯🇵. Once user selected particular one, change the i18n dynamicly and store user preferrence into cookcie all localStroage
+- Forget the language of the contents and the folder of @scripts, we will have separated task on them to support i18n.
+
+---
+
 ## TODO List
 
-- [ ] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.
+- [x] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.
 - [ ] Add support of i18n for the website itself, so far support Chinese, English and Japanese only.
 - [ ] Add support of i18n for the new contents -- including how to translate the contents automatically.
-- [ ] Move scripts/postsurfing/README.md into docs/, it will be treated as a part of the documentation.
+- [x] Move scripts/postsurfing/README.md into docs and rename it, it will be treated as a part of the documentation. → Moved to docs/postsurfing-cli.md
 - [ ] Define the SOP of generating and publishing new contents.
 - [ ] Add new category 'cheatsheet'
