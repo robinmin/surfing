@@ -1,0 +1,117 @@
+# Showcase Template for PostSurfing CLI
+# This template defines the schema and defaults for showcase content
+
+name: showcase
+description: Project portfolios with live demos and source links
+
+# Required fields that must be provided
+required:
+  - title
+  - description
+  - publishDate
+  - image
+
+# Field definitions
+fields:
+  title:
+    type: string
+    description: Project title
+    required: true
+    
+  description:
+    type: string
+    description: Project description
+    required: true
+    
+  slug:
+    type: string
+    description: URL slug for the project
+    optional: true
+    autoGenerate: true
+    suggestion: "Auto-generated from title"
+    
+  publishDate:
+    type: date
+    description: Publication date
+    required: true
+    
+  projectUrl:
+    type: string
+    description: Live demo URL
+    optional: true
+    validation: url
+    
+  githubUrl:
+    type: string
+    description: Source code URL
+    optional: true
+    validation: url
+    
+  image:
+    type: string
+    description: Project screenshot or logo path
+    required: true
+    suggestion: "Place in /public/images/showcase/"
+    
+  technologies:
+    type: array
+    description: Technologies used in the project
+    optional: true
+    default: []
+    autoDetect: true
+    suggestions:
+      - "Astro"
+      - "React"
+      - "Vue"
+      - "TypeScript"
+      - "JavaScript"
+      - "Tailwind CSS"
+      - "Node.js"
+      - "Python"
+      - "Docker"
+      - "Cloudflare"
+      - "Vercel"
+      - "Netlify"
+    
+  featured:
+    type: boolean
+    description: Whether to feature this project
+    optional: true
+    default: false
+    
+  category:
+    type: string
+    description: Project category
+    optional: true
+    suggestions:
+      - "web-development"
+      - "mobile-app"
+      - "desktop-app"
+      - "ai-tool"
+      - "library"
+      - "api"
+      - "game"
+      - "design"
+      - "data-science"
+    
+  tags:
+    type: array
+    description: Project tags
+    optional: true
+    default: []
+    autoSuggest: true
+
+# Default frontmatter template
+template: |
+  ---
+  title: "{{ title }}"
+  description: "{{ description }}"
+  publishDate: {{ publishDate }}
+  projectUrl: "{{ projectUrl }}"
+  githubUrl: "{{ githubUrl }}"
+  image: "{{ image }}"
+  technologies: {{ technologies }}
+  featured: {{ featured }}
+  category: "{{ category }}"
+  tags: {{ tags }}
+  ---
