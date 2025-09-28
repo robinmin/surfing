@@ -53,6 +53,15 @@ If we have customized command line toll `postsurfing` can take several paramters
 
 ---
 
+### Fix current issues
+
+We are building a website with GitHub Actions to publish to Cloudflare Pages. The website's URL is https://surfing.salty.vip/. Please use MCP Playwright to access it and help to identify the following issues:
+
+- In home page's 'Latest Content' section, we did not show content block, but just three grey block without anything.
+- In page 'https://surfing.salty.vip/articles/astro_tutorial/', we lost the content itself.
+- In page 'https://surfing.salty.vip/browse/', we do have a block for 'Example Full HTML Document', but we you click on the hyperlink, you will be navigate to 'Example Full HTML Document'. Either remove the block or restore the link.(I prefer to remove it.)
+- So far, we have nothing to show in page 'https://surfing.salty.vip/showcase/'. 'Surfing Platform' itself is not worthing to show as a idependent project here. Cleanup it.
+
 ## TODO List
 
 - [ ] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.

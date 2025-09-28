@@ -4,7 +4,7 @@ import { APP_BLOG } from 'astrowind:config';
 import Grid from '~/components/blog/Grid.astro';
 
 import { getBlogPermalink } from '~/utils/permalinks';
-import { getAllContent, filterContent, sortContent } from '~/utils/content';
+import { findLatestPosts } from '~/utils/blog';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import type { Widget } from '~/types';
 import Button from '~/components/ui/Button.astro';
@@ -30,15 +30,9 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-// Get latest content when blog is enabled, fallback to articles/showcase
-const posts = APP_BLOG.isEnabled
-  ? (async () => {
-      // Use articles as blog posts since we don't have a separate post collection
-      const allContent = await getAllContent();
-      return sortContent(filterContent(allContent, { draft: false }), 'date', 'desc').slice(0, count);
-    })()
-  : [];
-const resolvedPosts = await posts;
+// Get latest posts when blog is enabled
+const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
+const resolvedPosts = posts;
 ---
 
 {
