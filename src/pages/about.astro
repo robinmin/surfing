@@ -2,11 +2,14 @@
 import Features3 from '~/components/widgets/Features3.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Layout from '~/layouts/PageLayout.astro';
+import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+
+// Use default language for SSG, will be updated on client
+const t = getServerTranslation(DEFAULT_LANGUAGE);
 
 const metadata = {
-  title: 'About Surfing Platform',
-  description:
-    'Learn about Surfing, the AI-powered content showcase platform designed for creators, researchers, and writers.',
+  title: t('pages.about.title'),
+  description: t('pages.about.description'),
 };
 ---
 
@@ -15,22 +18,24 @@ const metadata = {
 
   <Hero>
     <Fragment slot="title">
-      About <span class="text-accent dark:text-white">Surfing</span>
+      <span data-i18n="pages.about.title">{t('pages.about.title')}</span> <span class="text-accent dark:text-white" data-i18n="site.name">{t('site.name')}</span>
     </Fragment>
 
-    <Fragment slot="subtitle"> A place to share content I collect and generate while working with AI. </Fragment>
+    <Fragment slot="subtitle"> 
+      <span data-i18n="pages.about.description">{t('pages.about.description')}</span>
+    </Fragment>
   </Hero>
 
   <Features3
     title="What's Here"
     items={[
       {
-        title: 'Articles',
+        title: t('nav.articles'),
         description: 'Technical notes and insights.',
         icon: 'tabler:notes',
       },
       {
-        title: 'Showcases',
+        title: t('nav.showcase'),
         description: 'Projects and experiments.',
         icon: 'tabler:apps',
       },
