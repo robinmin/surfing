@@ -21,7 +21,7 @@ interface Props {
 }
 
 const { article } = Astro.props;
-const { Content } = await article.render();
+const { Content } = await (article as any).render();
 
 const metadata = {
   title: article.data.title,
@@ -35,6 +35,6 @@ const metadata = {
 };
 ---
 
-<MarkdownLayout metadata={metadata}>
+<MarkdownLayout frontmatter={{ title: article.data.title }}>
   <Content />
 </MarkdownLayout>

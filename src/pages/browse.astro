@@ -223,7 +223,7 @@ const metadata = {
           if (selectedType && cardType !== selectedType) return false;
 
           // Search filter
-          if (searchTerm && !cardTitle.includes(searchTerm) && !cardDescription.includes(searchTerm)) {
+          if (searchTerm && !cardTitle?.includes(searchTerm) && !cardDescription?.includes(searchTerm)) {
             return false;
           }
 

@@ -21,7 +21,7 @@ interface Props {
 }
 
 const { showcase } = Astro.props;
-const { Content } = await showcase.render();
+const { Content } = await (showcase as any).render();
 
 const metadata = {
   title: showcase.data.title,
@@ -35,7 +35,7 @@ const metadata = {
 };
 ---
 
-<MarkdownLayout metadata={metadata}>
+<MarkdownLayout frontmatter={{ title: showcase.data.title }}>
   <!-- Project Links -->
   {(showcase.data.projectUrl || showcase.data.githubUrl) && (
     <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-8">
