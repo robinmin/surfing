@@ -68,5 +68,8 @@ analytics:
     googleAnalytics:
       id: 'G-S3D3Q82DSX'
 
+cookieConsent:
+  enabled: true
+
 ui:
   theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"

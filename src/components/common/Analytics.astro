@@ -1,13 +1,90 @@
 ---
-import { GoogleAnalytics } from '@astrolib/analytics';
 import { ANALYTICS } from 'astrowind:config';
+import loadConfig from '../../../vendor/integration/utils/loadConfig';
+
+// Load configuration to check if cookie consent is enabled
+const config = (await loadConfig('./src/config.yaml')) as any;
+const isCookieConsentEnabled = config?.cookieConsent?.enabled ?? true;
+
+// Prepare Google Analytics scripts as strings to avoid Prettier parsing issues
+const gtagScript = `
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'denied',
+    personalization_storage: 'denied',
+    security_storage: 'granted',
+    wait_for_update: 500,
+  });
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gtag_id;
+  document.head.appendChild(script);
+
+  script.onload = function() {
+    gtag('js', new Date());
+    gtag('config', gtag_id, {
+      anonymize_ip: true,
+      allow_google_signals: false,
+      allow_ad_personalization_signals: false
+    });
+  };
+`;
+
+const consentScript = `
+  // Wait for CookieConsent to be available
+  window.addEventListener('cc:onFirstConsent', function () {
+    const acceptedCategories = (window.CC?.getCookieData?.()?.categories) || [];
+    updateGoogleConsent(acceptedCategories);
+  });
+
+  window.addEventListener('cc:onConsent', function (event) {
+    const acceptedCategories = (event.detail?.cookie?.categories) || [];
+    updateGoogleConsent(acceptedCategories);
+  });
+
+  function updateGoogleConsent(categories) {
+    if (!window.gtag) return;
+
+    const consentUpdate = {
+      functionality_storage: 'granted',
+      security_storage: 'granted',
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied'
+    };
+
+    // Analytics consent
+    if (categories.includes('analytics')) {
+      consentUpdate.analytics_storage = 'granted';
+    }
+
+    // Marketing consent
+    if (categories.includes('marketing')) {
+      consentUpdate.ad_storage = 'granted';
+      consentUpdate.ad_user_data = 'granted';
+      consentUpdate.ad_personalization = 'granted';
+    }
+
+    window.gtag('consent', 'update', consentUpdate);
+  }
+`;
 ---
 
 {
-  ANALYTICS?.vendors?.googleAnalytics?.id ? (
-    <GoogleAnalytics
-      id={String(ANALYTICS.vendors.googleAnalytics.id)}
-      partytown={ANALYTICS?.vendors?.googleAnalytics?.partytown}
-    />
-  ) : null
+  ANALYTICS?.vendors?.googleAnalytics?.id && isCookieConsentEnabled && (
+    <Fragment>
+      <script is:inline define:vars={{ gtag_id: ANALYTICS.vendors.googleAnalytics.id }} set:html={gtagScript} />
+      <script is:inline set:html={consentScript} />
+    </Fragment>
+  )
 }
