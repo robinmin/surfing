@@ -33,6 +33,14 @@ const whenCookieConsentEnabled = (items: (() => AstroIntegration) | (() => Astro
 export default defineConfig({
   output: 'static',
 
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'zh', 'ja'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
+
   integrations: [
     tailwind({
       applyBaseStyles: false,
