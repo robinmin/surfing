@@ -26,6 +26,9 @@ export default [
         extraFileExtensions: ['.astro'],
       },
     },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off', // Allow 'any' types in Astro files
+    },
   },
   {
     files: ['**/*.{js,jsx,astro}'],
@@ -51,6 +54,7 @@ export default [
         },
       ],
       '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-explicit-any': 'off', // Allow 'any' types for mixed content collections
     },
   },
   {
