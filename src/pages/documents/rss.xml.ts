@@ -1,9 +1,9 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
-import { SITE, METADATA } from 'astrowind:config';
+import { SITE } from 'astrowind:config';
 import { getPermalink } from '~/utils/permalinks';
 
-export async function GET(context) {
+export async function GET() {
   const documents = await getCollection('documents', ({ data }) => !data.draft);
   
   return rss({

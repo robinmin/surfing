@@ -2,24 +2,11 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 import Hero from '~/components/widgets/Hero.astro';
-import Note from '~/components/widgets/Note.astro';
-import Features from '~/components/widgets/Features.astro';
-import Content from '~/components/widgets/Content.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
-import Stats from '~/components/widgets/Stats.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
 
-// Import content utilities
-import { getAllContent, filterContent, sortContent } from '~/utils/content';
 
-// Get featured content
-const allContent = await getAllContent();
-const featuredPosts = filterContent(allContent, { featured: true, draft: false });
-const latestContent = sortContent(filterContent(allContent, { draft: false }), 'date', 'desc').slice(0, 6);
 
-// Get content statistics
-const totalArticles = (await getAllContent('articles')).length;
-const totalShowcases = (await getAllContent('showcase')).length;
+// Content is loaded by BlogLatestPosts component
 
 const metadata = {
   title: 'Surfing — AI-Powered Content Showcase Platform',

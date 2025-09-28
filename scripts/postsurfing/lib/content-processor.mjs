@@ -129,7 +129,7 @@ export class ContentProcessor {
         // Simple YAML parsing for basic frontmatter
         const frontmatterText = frontmatterMatch[1];
         analysis.existingFrontmatter = this.parseSimpleYaml(frontmatterText);
-      } catch (error) {
+      } catch {
         this.logger.warn('Failed to parse existing frontmatter');
       }
     }

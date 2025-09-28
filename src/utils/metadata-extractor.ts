@@ -92,7 +92,7 @@ export async function extractHtmlMetadata(filePath: string): Promise<ExtractedMe
     hasImages,
     hasCodeBlocks,
     linkCount: links.length,
-    headingStructure: headings.map((text, index) => ({ level: 1, text })), // Simplified
+    headingStructure: headings.map((text) => ({ level: 1, text })), // Simplified
   };
 }
 

@@ -199,10 +199,8 @@ const metadata = {
       const tagButtons = document.querySelectorAll('.tag-filter');
       const categoryButtons = document.querySelectorAll('.category-filter');
 
-      const noResults = document.getElementById('noResults');
-
-      let selectedTags = new Set();
-      let selectedCategories = new Set();
+      const selectedTags = new Set();
+      const selectedCategories = new Set();
 
       function filterAndSortContent() {
         const searchTerm = searchInput.value.toLowerCase();

@@ -99,7 +99,7 @@ export class FrontmatterManager {
       try {
         const frontmatter = this.parseYaml(frontmatterText);
         return { frontmatter, body };
-      } catch (error) {
+      } catch {
         this.logger.warn('Failed to parse existing frontmatter, treating as body content');
       }
     }
@@ -387,7 +387,7 @@ export class FrontmatterManager {
   /**
    * Parse template file
    */
-  parseTemplate(_templateContent) {
+  parseTemplate() {
     // This would parse a more complex template format
     // For now, return a basic schema
     return this.getDefaultArticlesSchema();

@@ -1,11 +1,9 @@
 ---
-import type { GetStaticPathsOptions } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-import Layout from '~/layouts/PageLayout.astro';
 import DocumentLayout from '~/layouts/DocumentLayout.astro';
 
-export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+export async function getStaticPaths() {
   const documents = await getCollection('documents', ({ data }) => !data.draft);
 
   return documents.map((document) => ({
