@@ -1,6 +1,6 @@
 /**
  * Git Manager for PostSurfing CLI
- * 
+ *
  * Handles git operations including commit and push
  */
 
@@ -46,7 +46,6 @@ export class GitManager {
       // Push changes
       const pushResult = await this.push();
       return pushResult;
-
     } catch (error) {
       this.logger.error(`Git operation failed: ${error.message}`);
       return { success: false, error: error.message };
@@ -65,13 +64,16 @@ export class GitManager {
    */
   async getGitStatus() {
     const result = await this.runGitCommand(['status', '--porcelain']);
-    
+
     if (!result.success) {
       throw new Error(`Failed to get git status: ${result.error}`);
     }
 
     const hasChanges = result.output.trim().length > 0;
-    const changes = result.output.trim().split('\n').filter(line => line.length > 0);
+    const changes = result.output
+      .trim()
+      .split('\n')
+      .filter((line) => line.length > 0);
 
     return { hasChanges, changes };
   }
@@ -81,9 +83,9 @@ export class GitManager {
    */
   async addFile(filePath) {
     this.logger.debug(`Adding file to git: ${filePath}`);
-    
+
     const result = await this.runGitCommand(['add', filePath]);
-    
+
     if (!result.success) {
       throw new Error(`Failed to add file: ${result.error}`);
     }
@@ -102,9 +104,11 @@ export class GitManager {
 
     if (!result.success) {
       // Check if it's because there's nothing to commit
-      if (result.output.includes('nothing to commit') ||
-          result.output.includes('no changes added to commit') ||
-          result.error.includes('nothing to commit')) {
+      if (
+        result.output.includes('nothing to commit') ||
+        result.output.includes('no changes added to commit') ||
+        result.error.includes('nothing to commit')
+      ) {
         this.logger.infoVerbose('Nothing to commit - no changes detected');
         return { success: true, noChanges: true };
       }
@@ -123,7 +127,7 @@ export class GitManager {
    */
   async push() {
     this.logger.debug('Pushing to remote repository');
-    
+
     // First, check if we have a remote
     const remoteResult = await this.runGitCommand(['remote']);
     if (!remoteResult.success || !remoteResult.output.trim()) {
@@ -142,7 +146,7 @@ export class GitManager {
 
     // Push to remote
     const result = await this.runGitCommand(['push', 'origin', currentBranch]);
-    
+
     if (!result.success) {
       // Check for common push issues
       if (result.output.includes('rejected')) {
@@ -170,7 +174,7 @@ export class GitManager {
       const gitProcess = spawn('git', args, {
         cwd: this.projectRoot,
         stdio: 'pipe',
-        shell: false  // Changed from true to false to prevent shell interpretation
+        shell: false, // Changed from true to false to prevent shell interpretation
       });
 
       let stdout = '';
@@ -186,14 +190,14 @@ export class GitManager {
 
       gitProcess.on('close', (code) => {
         const output = stdout + stderr;
-        
+
         if (code === 0) {
           resolve({ success: true, output: stdout, error: stderr });
         } else {
-          resolve({ 
-            success: false, 
+          resolve({
+            success: false,
             output,
-            error: stderr || `Git command failed with exit code ${code}`
+            error: stderr || `Git command failed with exit code ${code}`,
           });
         }
       });
@@ -202,7 +206,7 @@ export class GitManager {
         resolve({
           success: false,
           output: '',
-          error: `Failed to run git command: ${error.message}`
+          error: `Failed to run git command: ${error.message}`,
         });
       });
     });
@@ -244,7 +248,7 @@ export class GitManager {
       currentBranch: null,
       hasRemote: false,
       hasUncommittedChanges: false,
-      remotes: []
+      remotes: [],
     };
 
     if (!info.isRepository) {
@@ -259,9 +263,11 @@ export class GitManager {
       const remoteResult = await this.runGitCommand(['remote', '-v']);
       if (remoteResult.success) {
         info.hasRemote = remoteResult.output.trim().length > 0;
-        info.remotes = remoteResult.output.trim().split('\n')
-          .filter(line => line.length > 0)
-          .map(line => {
+        info.remotes = remoteResult.output
+          .trim()
+          .split('\n')
+          .filter((line) => line.length > 0)
+          .map((line) => {
             const parts = line.split('\t');
             return { name: parts[0], url: parts[1] };
           });
@@ -269,7 +275,6 @@ export class GitManager {
 
       // Check for uncommitted changes
       info.hasUncommittedChanges = await this.hasUncommittedChanges();
-
     } catch (error) {
       this.logger.debug(`Error getting repository info: ${error.message}`);
     }
@@ -282,18 +287,18 @@ export class GitManager {
    */
   async displayRepositoryInfo() {
     const info = await this.getRepositoryInfo();
-    
+
     this.logger.info('Git Repository Information:');
     this.logger.table({
       'Is Git Repository': info.isRepository ? 'Yes' : 'No',
       'Current Branch': info.currentBranch || 'N/A',
       'Has Remote': info.hasRemote ? 'Yes' : 'No',
-      'Uncommitted Changes': info.hasUncommittedChanges ? 'Yes' : 'No'
+      'Uncommitted Changes': info.hasUncommittedChanges ? 'Yes' : 'No',
     });
 
     if (info.remotes.length > 0) {
       this.logger.list(
-        info.remotes.map(remote => `${remote.name}: ${remote.url}`),
+        info.remotes.map((remote) => `${remote.name}: ${remote.url}`),
         'Remotes'
       );
     }
@@ -341,7 +346,7 @@ export class GitManager {
     return {
       valid: issues.length === 0,
       issues,
-      warnings
+      warnings,
     };
   }
 }

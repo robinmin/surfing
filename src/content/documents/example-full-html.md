@@ -1,12 +1,12 @@
 ---
-title: "Example Full HTML Document"
-description: "A demonstration of how to include full HTML content with custom CSS and JavaScript in Surfing"
-slug: "example-full-html"
+title: 'Example Full HTML Document'
+description: 'A demonstration of how to include full HTML content with custom CSS and JavaScript in Surfing'
+slug: 'example-full-html'
 publishDate: 2024-01-15
-tags: ["example", "html", "css", "javascript", "demo"]
-category: "documentation"
-author: "Surfing Team"
-contentType: "page"
+tags: ['example', 'html', 'css', 'javascript', 'demo']
+category: 'documentation'
+author: 'Surfing Team'
+contentType: 'page'
 featured: true
 preserveStyles: true
 customCSS: |
@@ -19,14 +19,14 @@ customCSS: |
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   }
-  
+
   .feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin: 2rem 0;
   }
-  
+
   .feature-card {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
@@ -34,12 +34,12 @@ customCSS: |
     padding: 1.5rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  
+
   .feature-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
-  
+
   .code-snippet {
     background: #2d3748;
     color: #e2e8f0;
@@ -49,14 +49,14 @@ customCSS: |
     overflow-x: auto;
     margin: 1rem 0;
   }
-  
+
   .highlight {
     background: #fef3cd;
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
     border-left: 4px solid #ffc107;
   }
-  
+
   @media (prefers-color-scheme: dark) {
     .feature-card {
       background: #374151;
@@ -163,8 +163,9 @@ customJS: |
 ---
 
 &lt;div class="custom-banner"&gt;
-  &lt;h2&gt;Your HTML content here&lt;/h2&gt;
+&lt;h2&gt;Your HTML content here&lt;/h2&gt;
 &lt;/div&gt;</div>
+
 </div>
 
 <div class="content-section">

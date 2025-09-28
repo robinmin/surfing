@@ -5,7 +5,7 @@ import { getPermalink } from '~/utils/permalinks';
 
 export async function GET(context: any) {
   const documents = await getCollection('documents', ({ data }) => !data.draft);
-  
+
   return rss({
     title: `${SITE?.name} - Documents`,
     description: `HTML documents and rich-formatted content from ${SITE?.name}`,

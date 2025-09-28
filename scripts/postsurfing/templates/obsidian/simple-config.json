@@ -9,7 +9,7 @@
     },
     {
       "name": "🚀 Showcase",
-      "templatePath": "scripts/postsurfing/templates/obsidian/showcase.tpl.md", 
+      "templatePath": "scripts/postsurfing/templates/obsidian/showcase.tpl.md",
       "folder": "Showcase"
     },
     {

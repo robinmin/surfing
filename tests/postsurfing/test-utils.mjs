@@ -49,10 +49,10 @@ export class TestUtils {
   copyFixture(filename, newName = null) {
     const sourcePath = this.getFixture(filename);
     const targetPath = join(this.tempDir, newName || filename);
-    
+
     const content = readFileSync(sourcePath, 'utf8');
     writeFileSync(targetPath, content, 'utf8');
-    
+
     return targetPath;
   }
 
@@ -64,7 +64,7 @@ export class TestUtils {
       const cliProcess = spawn('node', [this.cliPath, ...args], {
         stdio: 'pipe',
         cwd: options.cwd || process.cwd(),
-        env: { ...process.env, ...options.env }
+        env: { ...process.env, ...options.env },
       });
 
       let stdout = '';
@@ -84,7 +84,7 @@ export class TestUtils {
           code,
           stdout,
           stderr,
-          output: stdout + stderr
+          output: stdout + stderr,
         });
       });
 
@@ -95,7 +95,7 @@ export class TestUtils {
           stdout,
           stderr,
           output: stderr,
-          error: error.message
+          error: error.message,
         });
       });
     });
@@ -169,14 +169,14 @@ export class TestUtils {
    */
   parseFrontmatter(content) {
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-    
+
     if (!frontmatterMatch) {
       return { frontmatter: {}, body: content };
     }
 
     const frontmatterText = frontmatterMatch[1];
     const body = frontmatterMatch[2];
-    
+
     // Simple YAML parsing
     const frontmatter = {};
     const lines = frontmatterText.split('\n');
@@ -192,14 +192,16 @@ export class TestUtils {
       let value = trimmed.substring(colonIndex + 1).trim();
 
       // Handle quoted strings
-      if ((value.startsWith('"') && value.endsWith('"')) || 
-          (value.startsWith("'") && value.endsWith("'"))) {
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
         value = value.slice(1, -1);
       }
 
       // Handle arrays
       if (value.startsWith('[') && value.endsWith(']')) {
-        value = value.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+        value = value
+          .slice(1, -1)
+          .split(',')
+          .map((item) => item.trim().replace(/['"]/g, ''));
       }
 
       // Handle booleans

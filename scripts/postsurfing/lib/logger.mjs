@@ -1,6 +1,6 @@
 /**
  * Logger utility for PostSurfing CLI
- * 
+ *
  * Provides structured logging with different levels and formatting
  */
 
@@ -138,8 +138,7 @@ export class Logger {
   table(data, title = 'Data') {
     console.log(`\n📊 ${title}:`);
     Object.entries(data).forEach(([key, value]) => {
-      const displayValue = typeof value === 'object' ? 
-        JSON.stringify(value) : String(value);
+      const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
       console.log(`   ${key}: ${displayValue}`);
     });
   }
@@ -156,8 +155,8 @@ export class Logger {
    */
   buildOutput(output, isError = false) {
     const lines = output.split('\n');
-    
-    lines.forEach(line => {
+
+    lines.forEach((line) => {
       if (line.includes('error') || line.includes('Error') || line.includes('ERROR')) {
         console.log(`🔴 ${line}`);
       } else if (line.includes('warn') || line.includes('Warning') || line.includes('WARN')) {
@@ -175,11 +174,10 @@ export class Logger {
    */
   progress(current, total, operation = 'Processing') {
     const percentage = Math.round((current / total) * 100);
-    const progressBar = '█'.repeat(Math.floor(percentage / 5)) + 
-                       '░'.repeat(20 - Math.floor(percentage / 5));
-    
+    const progressBar = '█'.repeat(Math.floor(percentage / 5)) + '░'.repeat(20 - Math.floor(percentage / 5));
+
     process.stdout.write(`\r⏳ ${operation}: [${progressBar}] ${percentage}% (${current}/${total})`);
-    
+
     if (current === total) {
       console.log(); // New line when complete
     }
@@ -214,21 +212,21 @@ export class Logger {
       }
     } else {
       console.log('❌ Missing required fields:');
-      results.missing.forEach(field => {
+      results.missing.forEach((field) => {
         console.log(`   • ${field}`);
       });
     }
 
     if (this.verbose && results.warnings && results.warnings.length > 0) {
       console.log('\n⚠️  Warnings:');
-      results.warnings.forEach(warning => {
+      results.warnings.forEach((warning) => {
         console.log(`   • ${warning}`);
       });
     }
 
     if (this.verbose && results.suggestions && results.suggestions.length > 0) {
       console.log('\n💡 Suggestions:');
-      results.suggestions.forEach(suggestion => {
+      results.suggestions.forEach((suggestion) => {
         console.log(`   • ${suggestion}`);
       });
     }

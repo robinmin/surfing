@@ -10,27 +10,26 @@ const utils = new TestUtils();
 
 async function testContentProcessing() {
   console.log('Testing content processing workflow...');
-  
+
   utils.setup();
-  
+
   try {
     // Test 1: Article processing
     await testArticleProcessing();
-    
+
     // Test 2: HTML document processing
     await testHtmlDocumentProcessing();
-    
+
     // Test 3: Showcase project processing
     await testShowcaseProcessing();
-    
+
     // Test 4: Content with existing frontmatter
     await testExistingFrontmatter();
-    
+
     // Test 5: HTML fragment processing
     await testHtmlFragmentProcessing();
 
     utils.success('All content processing tests passed');
-    
   } catch (error) {
     utils.error(`Content processing test failed: ${error.message}`);
     throw error;
@@ -45,11 +44,12 @@ async function testArticleProcessing() {
   const fixturePath = utils.copyFixture('simple-article.md');
   const result = await utils.runCLI([
     fixturePath,
-    '--type', 'articles',
+    '--type',
+    'articles',
     '--dry-run',
     '--no-build',
     '--no-commit',
-    '--verbose'
+    '--verbose',
   ]);
 
   utils.assert(result.success, 'Article processing should succeed');
@@ -67,12 +67,13 @@ async function testHtmlDocumentProcessing() {
   const fixturePath = utils.copyFixture('simple-html.html');
   const result = await utils.runCLI([
     fixturePath,
-    '--type', 'documents',
+    '--type',
+    'documents',
     '--auto-convert',
     '--dry-run',
     '--no-build',
     '--no-commit',
-    '--verbose'
+    '--verbose',
   ]);
 
   utils.assert(result.success, 'HTML processing should succeed');
@@ -87,21 +88,15 @@ async function testHtmlDocumentProcessing() {
 
 async function testShowcaseProcessing() {
   utils.log('Testing showcase project processing...');
-  
+
   const fixturePath = utils.copyFixture('showcase-project.md');
-  const result = await utils.runCLI([
-    fixturePath, 
-    '--type', 'showcase', 
-    '--dry-run', 
-    '--no-build', 
-    '--no-commit'
-  ]);
-  
+  const result = await utils.runCLI([fixturePath, '--type', 'showcase', '--dry-run', '--no-build', '--no-commit']);
+
   // Showcase requires more fields, so this might fail validation
   // but should still process the content
   utils.assertContains(result.output, 'Processing content file', 'Should process content');
   utils.assertContains(result.output, 'Processing frontmatter', 'Should process frontmatter');
-  
+
   utils.success('Showcase processing test passed');
 }
 
@@ -111,11 +106,12 @@ async function testExistingFrontmatter() {
   const fixturePath = utils.copyFixture('article-with-frontmatter.md');
   const result = await utils.runCLI([
     fixturePath,
-    '--type', 'articles',
+    '--type',
+    'articles',
     '--dry-run',
     '--no-build',
     '--no-commit',
-    '--verbose'
+    '--verbose',
   ]);
 
   utils.assert(result.success, 'Should succeed with existing frontmatter');
@@ -136,12 +132,13 @@ async function testHtmlFragmentProcessing() {
 
   const result = await utils.runCLI([
     tempPath,
-    '--type', 'documents',
+    '--type',
+    'documents',
     '--auto-convert',
     '--dry-run',
     '--no-build',
     '--no-commit',
-    '--verbose'
+    '--verbose',
   ]);
 
   utils.assert(result.success, 'HTML fragment processing should succeed');
@@ -152,7 +149,7 @@ async function testHtmlFragmentProcessing() {
 }
 
 // Run tests
-testContentProcessing().catch(error => {
+testContentProcessing().catch((error) => {
   console.error('Test failed:', error);
   process.exit(1);
 });

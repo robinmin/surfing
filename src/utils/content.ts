@@ -16,7 +16,7 @@ export function parseObsidianFrontmatter(content: string): { frontmatter: Record
   const frontmatter: Record<string, any> = {};
 
   // Parse YAML-like frontmatter with Obsidian extensions
-  frontmatterContent.split('\n').forEach(line => {
+  frontmatterContent.split('\n').forEach((line) => {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) return;
 
@@ -33,7 +33,7 @@ export function parseObsidianFrontmatter(content: string): { frontmatter: Record
       frontmatter[key] = value
         .slice(1, -1)
         .split(',')
-        .map(item => item.trim().replace(/^["']|["']$/g, ''))
+        .map((item) => item.trim().replace(/^["']|["']$/g, ''))
         .filter(Boolean);
     } else if (value === 'true' || value === 'false') {
       // Boolean values
@@ -62,7 +62,10 @@ export function extractContentMetadata(content: string): {
   excerpt?: string;
 } {
   // Calculate word count
-  const words = content.trim().split(/\s+/).filter(word => word.length > 0);
+  const words = content
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 0);
   const wordCount = words.length;
 
   // Calculate reading time (average 200 words per minute)
@@ -71,7 +74,7 @@ export function extractContentMetadata(content: string): {
   // Extract headings
   const headingRegex = /^#{1,6}\s+(.+)$/gm;
   const headings: string[] = [];
-  let headingMatch;
+  let headingMatch: RegExpExecArray | null;
   while ((headingMatch = headingRegex.exec(content)) !== null) {
     headings.push(headingMatch[1].trim());
   }
@@ -79,13 +82,13 @@ export function extractContentMetadata(content: string): {
   // Extract links
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   const links: string[] = [];
-  let linkMatch;
+  let linkMatch: RegExpExecArray | null;
   while ((linkMatch = linkRegex.exec(content)) !== null) {
     links.push(linkMatch[2]);
   }
 
   // Generate excerpt from first paragraph
-  const paragraphs = content.split('\n\n').filter(p => p.trim() && !p.trim().startsWith('#'));
+  const paragraphs = content.split('\n\n').filter((p) => p.trim() && !p.trim().startsWith('#'));
   const excerpt = paragraphs[0]?.slice(0, 160) + (paragraphs[0]?.length > 160 ? '...' : '');
 
   return {
@@ -111,9 +114,9 @@ export async function getAllContent(type?: ContentType) {
 
   // Return all content with type information
   return [
-    ...collections.articles.map(item => ({ ...item, contentType: 'articles' as const })),
-    ...collections.showcase.map(item => ({ ...item, contentType: 'showcase' as const })),
-    ...collections.documents.map(item => ({ ...item, contentType: 'documents' as const })),
+    ...collections.articles.map((item) => ({ ...item, contentType: 'articles' as const })),
+    ...collections.showcase.map((item) => ({ ...item, contentType: 'showcase' as const })),
+    ...collections.documents.map((item) => ({ ...item, contentType: 'documents' as const })),
   ];
 }
 
@@ -128,16 +131,14 @@ export function filterContent(
     search?: string;
   }
 ): any[] {
-  return content.filter(item => {
+  return content.filter((item) => {
     const data = item.data;
 
     // Filter by tags
     if (filters.tags?.length) {
       const itemTags = data.tags || [];
-      const hasMatchingTag = filters.tags.some(tag =>
-        itemTags.some((itemTag: string) =>
-          itemTag.toLowerCase().includes(tag.toLowerCase())
-        )
+      const hasMatchingTag = filters.tags.some((tag) =>
+        itemTags.some((itemTag: string) => itemTag.toLowerCase().includes(tag.toLowerCase()))
       );
       if (!hasMatchingTag) return false;
     }
@@ -164,9 +165,7 @@ export function filterContent(
       const description = data.description?.toLowerCase() || '';
       const excerpt = data.excerpt?.toLowerCase() || '';
 
-      if (!title.includes(searchTerm) &&
-          !description.includes(searchTerm) &&
-          !excerpt.includes(searchTerm)) {
+      if (!title.includes(searchTerm) && !description.includes(searchTerm) && !excerpt.includes(searchTerm)) {
         return false;
       }
     }
@@ -229,27 +228,21 @@ export function getContentUrl(entry: any, collection: string): string {
 }
 
 // Get related content based on tags and category
-export async function getRelatedContent(
-  currentEntry: any,
-  collection: string,
-  limit: number = 3
-): Promise<any[]> {
-  const allContent = await getAllContent(collection as ContentType) as any[];
+export async function getRelatedContent(currentEntry: any, collection: string, limit: number = 3): Promise<any[]> {
+  const allContent = (await getAllContent(collection as ContentType)) as any[];
   const currentTags = (currentEntry.data as any).tags || [];
   const currentCategory = (currentEntry.data as any).category;
 
   // Score content by relevance
   const scoredContent = allContent
-    .filter(item => (item.data.slug || item.id) !== (currentEntry.data.slug || currentEntry.id))
-    .map(item => {
+    .filter((item) => (item.data.slug || item.id) !== (currentEntry.data.slug || currentEntry.id))
+    .map((item) => {
       let score = 0;
       const itemTags = (item.data as any).tags || [];
 
       // Score by matching tags
-      const matchingTags = currentTags.filter(tag =>
-        itemTags.some((itemTag: string) =>
-          itemTag.toLowerCase() === tag.toLowerCase()
-        )
+      const matchingTags = currentTags.filter((tag: string) =>
+        itemTags.some((itemTag: string) => itemTag.toLowerCase() === tag.toLowerCase())
       );
       score += matchingTags.length * 2;
 

@@ -16,10 +16,7 @@ export async function GET(context: APIContext) {
       description: article.data.description || article.data.excerpt || '',
       link: `/articles/${article.data.slug || article.id}`,
       pubDate: article.data.publishDate || article.data.updateDate || new Date(),
-      categories: [
-        ...(article.data.category ? [article.data.category] : []),
-        ...(article.data.tags || []),
-      ],
+      categories: [...(article.data.category ? [article.data.category] : []), ...(article.data.tags || [])],
       author: article.data.author || 'Surfing Platform',
       customData: `
         <content:encoded><![CDATA[

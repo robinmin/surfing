@@ -17,42 +17,42 @@ fields:
     type: string
     description: Project title
     required: true
-    
+
   description:
     type: string
     description: Project description
     required: true
-    
+
   slug:
     type: string
     description: URL slug for the project
     optional: true
     autoGenerate: true
-    suggestion: "Auto-generated from title"
-    
+    suggestion: 'Auto-generated from title'
+
   publishDate:
     type: date
     description: Publication date
     required: true
-    
+
   projectUrl:
     type: string
     description: Live demo URL
     optional: true
     validation: url
-    
+
   githubUrl:
     type: string
     description: Source code URL
     optional: true
     validation: url
-    
+
   image:
     type: string
     description: Project screenshot or logo path
     required: true
-    suggestion: "Place in /public/images/showcase/"
-    
+    suggestion: 'Place in /public/images/showcase/'
+
   technologies:
     type: array
     description: Technologies used in the project
@@ -60,40 +60,40 @@ fields:
     default: []
     autoDetect: true
     suggestions:
-      - "Astro"
-      - "React"
-      - "Vue"
-      - "TypeScript"
-      - "JavaScript"
-      - "Tailwind CSS"
-      - "Node.js"
-      - "Python"
-      - "Docker"
-      - "Cloudflare"
-      - "Vercel"
-      - "Netlify"
-    
+      - 'Astro'
+      - 'React'
+      - 'Vue'
+      - 'TypeScript'
+      - 'JavaScript'
+      - 'Tailwind CSS'
+      - 'Node.js'
+      - 'Python'
+      - 'Docker'
+      - 'Cloudflare'
+      - 'Vercel'
+      - 'Netlify'
+
   featured:
     type: boolean
     description: Whether to feature this project
     optional: true
     default: false
-    
+
   category:
     type: string
     description: Project category
     optional: true
     suggestions:
-      - "web-development"
-      - "mobile-app"
-      - "desktop-app"
-      - "ai-tool"
-      - "library"
-      - "api"
-      - "game"
-      - "design"
-      - "data-science"
-    
+      - 'web-development'
+      - 'mobile-app'
+      - 'desktop-app'
+      - 'ai-tool'
+      - 'library'
+      - 'api'
+      - 'game'
+      - 'design'
+      - 'data-science'
+
   tags:
     type: array
     description: Project tags

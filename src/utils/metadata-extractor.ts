@@ -114,7 +114,7 @@ function extractTitleFromContent(content: string): string | undefined {
 
   // Extract from first paragraph
   const paragraphs = content.split('\n\n');
-  const firstParagraph = paragraphs.find(p => p.trim() && !p.startsWith('#'));
+  const firstParagraph = paragraphs.find((p) => p.trim() && !p.startsWith('#'));
   if (firstParagraph) {
     const words = firstParagraph.trim().split(/\s+/).slice(0, 8);
     return words.join(' ') + (words.length >= 8 ? '...' : '');
@@ -130,7 +130,7 @@ function extractHeadingStructure(content: string): { level: number; text: string
   const headingRegex = /^(#{1,6})\s+(.+)$/gm;
   const headings: { level: number; text: string }[] = [];
 
-  let match;
+  let match: RegExpExecArray | null;
   while ((match = headingRegex.exec(content)) !== null) {
     const level = match[1].length;
     const text = match[2].trim();
@@ -228,7 +228,7 @@ function extractHtmlHeadings(html: string): string[] {
   const headingRegex = /<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi;
   const headings: string[] = [];
 
-  let match;
+  let match: RegExpExecArray | null;
   while ((match = headingRegex.exec(html)) !== null) {
     const text = stripHtml(match[1]).trim();
     if (text) {
@@ -246,7 +246,7 @@ function extractHtmlLinks(html: string): string[] {
   const linkRegex = /<a[^>]+href=['"]([^'"]*)['"]/gi;
   const links: string[] = [];
 
-  let match;
+  let match: RegExpExecArray | null;
   while ((match = linkRegex.exec(html)) !== null) {
     const href = match[1];
     if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {

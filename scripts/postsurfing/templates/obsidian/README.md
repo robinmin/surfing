@@ -5,16 +5,19 @@ Clean, minimal templates that automatically add the required frontmatter for Pos
 ## Templates Overview
 
 ### 📝 Articles Template (`articles.tpl.md`)
+
 - **Purpose**: AI insights, research, and technical content
 - **What it does**: Adds frontmatter, you write the content
 - **Publishing**: `postsurfing filename.md --type articles`
 
 ### 🚀 Showcase Template (`showcase.tpl.md`)
+
 - **Purpose**: Project portfolios with live demos and source links
 - **What it does**: Adds frontmatter with project fields, you write the content
 - **Publishing**: `postsurfing filename.md --type showcase`
 
 ### 📚 Documents Template (`documents.tpl.md`)
+
 - **Purpose**: Documentation, legacy content, guides, and references
 - **What it does**: Adds frontmatter, you write the content
 - **Publishing**: `postsurfing filename.md --type documents`
@@ -22,15 +25,18 @@ Clean, minimal templates that automatically add the required frontmatter for Pos
 ## Quick Setup
 
 ### 1. Install Quick-add Plugin
+
 1. Open Obsidian Settings → Community Plugins
 2. Search for "Quick-add" and install it
 
 ### 2. Add Templates
+
 1. Quick-add settings → "Add Choice" → "Template"
 2. Set template paths to these files
 3. Choose your content folders
 
 ### 3. Use Templates
+
 - Create new content with Quick-add
 - Fill in the basic info (title, tags, etc.)
 - Write your content
@@ -39,6 +45,7 @@ Clean, minimal templates that automatically add the required frontmatter for Pos
 ## What You Get
 
 Each template provides:
+
 - ✅ **Required frontmatter** - No manual YAML writing
 - ✅ **Smart prompts** - Quick-add asks for the essentials
 - ✅ **Clean structure** - Just title + content area
@@ -62,55 +69,55 @@ That's it! No complex setup, no metadata management.
 ## Example Templates
 
 ### Articles Template
+
 ```yaml
 ---
-title: "My Article Title"
-description: "Brief description"
+title: 'My Article Title'
+description: 'Brief description'
 publishDate: 2024-01-15
 tags: [ai, research, technical]
-category: "technical"
-author: "Your Name"
+category: 'technical'
+author: 'Your Name'
 draft: true
 ---
-
 # My Article Title
 
 Write your article content here...
 ```
 
 ### Showcase Template
+
 ```yaml
 ---
-title: "My Project"
-description: "Brief project description"
+title: 'My Project'
+description: 'Brief project description'
 publishDate: 2024-01-15
-projectUrl: "https://my-demo.com"
-githubUrl: "https://github.com/me/project"
-image: "/images/showcase/screenshot.png"
+projectUrl: 'https://my-demo.com'
+githubUrl: 'https://github.com/me/project'
+image: '/images/showcase/screenshot.png'
 technologies: [React, TypeScript, Tailwind CSS]
-category: "web-development"
+category: 'web-development'
 tags: [react, typescript]
 featured: false
 ---
-
 # My Project
 
 Write about your project here...
 ```
 
 ### Documents Template
+
 ```yaml
 ---
-title: "My Document"
-description: "Brief description"
+title: 'My Document'
+description: 'Brief description'
 publishDate: 2024-01-15
 tags: [documentation, guide]
-category: "documentation"
-contentType: "page"
-author: "Your Name"
+category: 'documentation'
+contentType: 'page'
+author: 'Your Name'
 draft: true
 ---
-
 # My Document
 
 Write your document content here...

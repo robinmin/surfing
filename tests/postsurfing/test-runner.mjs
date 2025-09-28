@@ -2,7 +2,7 @@
 
 /**
  * Test Runner for PostSurfing CLI
- * 
+ *
  * A simple test runner that executes all test files and reports results
  */
 
@@ -21,7 +21,7 @@ class TestRunner {
       total: 0,
       passed: 0,
       failed: 0,
-      skipped: 0
+      skipped: 0,
     };
   }
 
@@ -30,11 +30,11 @@ class TestRunner {
    */
   async findTestFiles(dir = __dirname) {
     const entries = await readdir(dir);
-    
+
     for (const entry of entries) {
       const fullPath = join(dir, entry);
       const stats = await stat(fullPath);
-      
+
       if (stats.isDirectory() && !entry.startsWith('.')) {
         await this.findTestFiles(fullPath);
       } else if (entry.endsWith('.test.mjs')) {
@@ -49,10 +49,10 @@ class TestRunner {
   async runTestFile(testFile) {
     return new Promise((resolve) => {
       console.log(`\n🧪 Running ${testFile.replace(__dirname, '.')}`);
-      
+
       const testProcess = spawn('node', [testFile], {
         stdio: 'pipe',
-        cwd: process.cwd()
+        cwd: process.cwd(),
       });
 
       let stdout = '';
@@ -68,7 +68,7 @@ class TestRunner {
 
       testProcess.on('close', (code) => {
         const output = stdout + stderr;
-        
+
         if (code === 0) {
           console.log('✅ PASSED');
           this.results.passed++;
@@ -77,7 +77,7 @@ class TestRunner {
           console.log(output);
           this.results.failed++;
         }
-        
+
         this.results.total++;
         resolve({ success: code === 0, output });
       });
@@ -100,7 +100,7 @@ class TestRunner {
     console.log('═'.repeat(50));
 
     await this.findTestFiles();
-    
+
     if (this.testFiles.length === 0) {
       console.log('⚠️  No test files found');
       return;
@@ -122,18 +122,16 @@ class TestRunner {
     console.log('\n' + '═'.repeat(50));
     console.log('📊 Test Summary');
     console.log('═'.repeat(50));
-    
+
     console.log(`Total Tests: ${this.results.total}`);
     console.log(`✅ Passed: ${this.results.passed}`);
     console.log(`❌ Failed: ${this.results.failed}`);
     console.log(`⏭️  Skipped: ${this.results.skipped}`);
-    
-    const successRate = this.results.total > 0 
-      ? Math.round((this.results.passed / this.results.total) * 100)
-      : 0;
-    
+
+    const successRate = this.results.total > 0 ? Math.round((this.results.passed / this.results.total) * 100) : 0;
+
     console.log(`📈 Success Rate: ${successRate}%`);
-    
+
     if (this.results.failed === 0) {
       console.log('\n🎉 All tests passed!');
     } else {
@@ -146,7 +144,7 @@ class TestRunner {
 // Run tests if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const runner = new TestRunner();
-  runner.runAll().catch(error => {
+  runner.runAll().catch((error) => {
     console.error('Test runner error:', error);
     process.exit(1);
   });

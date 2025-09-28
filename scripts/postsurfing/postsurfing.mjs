@@ -2,10 +2,10 @@
 
 /**
  * PostSurfing CLI Tool
- * 
+ *
  * A comprehensive tool for publishing content to the Surfing platform.
  * Handles markdown files, HTML documents, and automated publishing workflow.
- * 
+ *
  * Usage: postsurfing <file-path> --type <articles|showcase|documents> [options]
  */
 
@@ -38,9 +38,9 @@ const { values: options, positionals: args } = parseArgs({
     'commit-message': { type: 'string' },
     force: { type: 'boolean' },
     verbose: { type: 'boolean', short: 'v' },
-    help: { type: 'boolean', short: 'h' }
+    help: { type: 'boolean', short: 'h' },
   },
-  allowPositionals: true
+  allowPositionals: true,
 });
 
 // Initialize logger
@@ -51,7 +51,7 @@ const logger = new Logger(options.verbose);
  */
 function showHelp() {
   const packageJson = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf8'));
-  
+
   console.log(`
 PostSurfing CLI Tool v${packageJson.version}
 Automated content publishing for the Surfing platform
@@ -203,9 +203,9 @@ async function main() {
     // Step 6: Git operations
     if (!options['no-commit'] && !options['dry-run']) {
       logger.step('Committing changes...');
-      const commitMessage = options['commit-message'] || 
-        `Add ${contentType.slice(0, -1)}: ${finalContent.frontmatter.title}`;
-      
+      const commitMessage =
+        options['commit-message'] || `Add ${contentType.slice(0, -1)}: ${finalContent.frontmatter.title}`;
+
       await gitManager.commitAndPush(commitMessage, processedContent.outputPath);
     }
 
@@ -215,7 +215,6 @@ async function main() {
       logger.infoVerbose(`📄 File: ${processedContent.outputPath}`);
       logger.infoVerbose(`🌐 Content will be available after deployment`);
     }
-
   } catch (error) {
     logger.error('❌ Publishing failed:');
     logger.error(error.message);
@@ -227,7 +226,7 @@ async function main() {
 }
 
 // Run the CLI
-main().catch(error => {
+main().catch((error) => {
   console.error('Unexpected error:', error);
   process.exit(1);
 });

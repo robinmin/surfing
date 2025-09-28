@@ -38,7 +38,7 @@ postsurfing <file-path> --type <content-type> [options]
 ### Content Types
 
 - `articles` - AI insights, research, and technical content
-- `showcase` - Project portfolios with live demos and source links  
+- `showcase` - Project portfolios with live demos and source links
 - `documents` - HTML content for legacy or rich-formatted pieces
 
 ### Examples
@@ -91,45 +91,48 @@ For complete HTML files with `<html>`, `<head>`, and `<body>` tags:
 For HTML snippets without full document structure:
 
 1. **Extracts inline styles** and scripts
-2. **Preserves HTML structure** 
+2. **Preserves HTML structure**
 3. **Minimal processing** to maintain content integrity
 
 ### Example Conversion
 
 **Input HTML:**
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>My Document</title>
-    <meta name="description" content="A test document">
+    <meta name="description" content="A test document" />
     <style>
-        .highlight { background: yellow; }
+      .highlight {
+        background: yellow;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>My Document</h1>
     <p class="highlight">Content here</p>
     <script>
-        console.log('Loaded');
+      console.log('Loaded');
     </script>
-</body>
+  </body>
 </html>
 ```
 
 **Output Markdown:**
+
 ```yaml
 ---
-title: "My Document"
-description: "A test document"
-contentType: "page"
+title: 'My Document'
+description: 'A test document'
+contentType: 'page'
 preserveStyles: true
 customCSS: |
   .highlight { background: yellow; }
 customJS: |
   console.log('Loaded');
 ---
-
 <h1>My Document</h1>
 <p class="highlight">Content here</p>
 ```
@@ -198,7 +201,7 @@ Auto-generates commit messages based on content:
 
 ```
 Add article: "My Article Title"
-Add showcase: "My Project Name"  
+Add showcase: "My Project Name"
 Add document: "Legacy Documentation"
 ```
 

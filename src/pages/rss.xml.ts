@@ -14,20 +14,21 @@ export async function GET(context: APIContext) {
     items: sortedContent.map((entry) => {
       const contentType = entry.data.contentType || entry.collection;
       const slug = entry.data.slug || entry.id;
-      const url = contentType === 'articles' ? `/articles/${slug}` :
-                 contentType === 'showcase' ? `/showcase/${slug}` :
-                 contentType === 'documents' ? `/documents/${slug}` :
-                 `/articles/${slug}`;
+      const url =
+        contentType === 'articles'
+          ? `/articles/${slug}`
+          : contentType === 'showcase'
+            ? `/showcase/${slug}`
+            : contentType === 'documents'
+              ? `/documents/${slug}`
+              : `/articles/${slug}`;
 
       return {
         title: entry.data.title,
         description: entry.data.description || entry.data.excerpt || '',
         link: url,
         pubDate: entry.data.publishDate || entry.data.updateDate || new Date(),
-        categories: [
-          ...(entry.data.category ? [entry.data.category] : []),
-          ...(entry.data.tags || []),
-        ],
+        categories: [...(entry.data.category ? [entry.data.category] : []), ...(entry.data.tags || [])],
         author: entry.data.author || 'Surfing Platform',
         customData: `
           <content:encoded><![CDATA[

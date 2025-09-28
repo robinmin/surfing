@@ -7,28 +7,33 @@ A modern content management and publishing platform built with Astro, designed s
 ## 🚀 Features
 
 ### 🤖 AI-First Design
+
 - Optimized for AI-generated content workflows
 - Automatic metadata extraction and content processing
 - Smart categorization and discovery systems
 
 ### 📝 Obsidian Integration
+
 - **Native Obsidian Support**: Drop your Obsidian markdown files directly
 - **Full Frontmatter Compatibility**: Supports `aliases`, `cssclass`, `tags`, `category`
 - **Preserve Your Workflow**: Keep using Obsidian exactly as you do now
 
 ### 📚 Multi-Format Content
+
 - **Articles**: AI insights, research, and technical content
 - **Showcase**: Project portfolios with live demos and source links
 - **Blog Posts**: Traditional blog content with MDX support
 - **HTML Documents**: Full HTML content with custom CSS/JS for legacy migration and rich applications
 
 ### 🔍 Smart Discovery
+
 - **Advanced Search**: Real-time filtering across all content
 - **Tag-Based Organization**: Automatic tag extraction and filtering
 - **Category Browsing**: Organize content by topics
 - **Related Content**: AI-powered content suggestions
 
 ### 📡 Content Syndication
+
 - **Multiple RSS Feeds**: Site-wide, articles, showcase, and documents feeds
 - **Rich Metadata**: Reading time, technologies, categories, and content types in feeds
 - **SEO Optimized**: Structured data and meta tags for discoverability
@@ -36,11 +41,13 @@ A modern content management and publishing platform built with Astro, designed s
 ## ⚡ Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 - Git
 
 ### Setup
+
 ```bash
 # Install dependencies
 npm install
@@ -64,18 +71,17 @@ Visit `http://localhost:4321` to see your site!
 
 ```yaml
 ---
-title: "Your Article Title"
-description: "Brief description of your content"
+title: 'Your Article Title'
+description: 'Brief description of your content'
 publishDate: 2024-01-15
 tags: [AI, research, insights]
-category: "technology"
+category: 'technology'
 featured: true
-author: "Your Name"
+author: 'Your Name'
 # Obsidian-specific (optional)
-aliases: ["article-alias"]
-cssclass: "custom-style"
+aliases: ['article-alias']
+cssclass: 'custom-style'
 ---
-
 # Your Content Here
 
 Your markdown content goes here. Use standard markdown syntax.
@@ -95,19 +101,18 @@ Surfing supports full HTML content with custom CSS and JavaScript, perfect for m
 
 ```yaml
 ---
-title: "Legacy Documentation"
-description: "Imported documentation from previous system"
+title: 'Legacy Documentation'
+description: 'Imported documentation from previous system'
 publishDate: 2024-01-15
 tags: [documentation, legacy]
-category: "docs"
-author: "Your Name"
-contentType: "legacy"  # Options: page, legacy, template, snippet
+category: 'docs'
+author: 'Your Name'
+contentType: 'legacy' # Options: page, legacy, template, snippet
 ---
-
 <h1>Your HTML Content</h1>
 <p>Any existing HTML content works here.</p>
 <div class="custom-styling">
-  <!-- Rich HTML formatting -->
+<!-- Rich HTML formatting -->
 </div>
 ```
 
@@ -223,22 +228,20 @@ customJS: |
 **Converting Full HTML Files:**
 
 1. **Extract CSS and JavaScript**:
+
    ```html
    <!-- From this: -->
    <style>
-     .my-class { color: red; }
+     .my-class {
+       color: red;
+     }
    </style>
    <script>
      console.log('Hello');
    </script>
 
    <!-- To frontmatter: -->
-   ---
-   customCSS: |
-     .my-class { color: red; }
-   customJS: |
-     console.log('Hello');
-   ---
+   --- customCSS: | .my-class { color: red; } customJS: | console.log('Hello'); ---
    ```
 
 2. **Handle Complex HTML Structure**:
@@ -254,6 +257,7 @@ customJS: |
    - `snippet` - Code examples or partial content
 
 4. **Styling Preservation**:
+
    ```yaml
    preserveStyles: true   # Maintains original appearance
    preserveStyles: false  # Applies site's design system
@@ -269,43 +273,45 @@ customJS: |
 <!-- Original HTML file -->
 <!DOCTYPE html>
 <html>
-<head>
-  <title>My App</title>
-  <style>
-    .container { padding: 20px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Hello World</h1>
-  </div>
-  <script>
-    alert('Loaded!');
-  </script>
-</body>
+  <head>
+    <title>My App</title>
+    <style>
+      .container {
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Hello World</h1>
+    </div>
+    <script>
+      alert('Loaded!');
+    </script>
+  </body>
 </html>
 ```
 
 ```yaml
 <!-- Migrated to documents/my-app.md -->
 ---
-title: "My App"
-contentType: "legacy"
+title: 'My App'
+contentType: 'legacy'
 preserveStyles: true
 customCSS: |
   .container { padding: 20px; }
 customJS: |
   alert('Loaded!');
 ---
-
 <div class="container">
-  <h1>Hello World</h1>
+<h1>Hello World</h1>
 </div>
 ```
 
 #### Document Discovery
 
 Your HTML documents automatically appear in:
+
 - **Documents page**: `/documents`
 - **Browse page**: `/browse` (with "Document" badge)
 - **RSS feeds**: `/documents/rss.xml` and `/rss.xml`
@@ -316,17 +322,19 @@ Your HTML documents automatically appear in:
 **File Location**: `src/content/documents/your-file.md`
 
 **Minimal Example**:
+
 ```yaml
 ---
-title: "My HTML Document"
+title: 'My HTML Document'
 ---
 <h1>Hello World</h1>
 ```
 
 **With Custom CSS/JS**:
+
 ```yaml
 ---
-title: "Interactive Document"
+title: 'Interactive Document'
 customCSS: |
   .highlight { background: yellow; }
 customJS: |
@@ -336,6 +344,7 @@ customJS: |
 ```
 
 **Content Types**:
+
 - `page` - Standard documents
 - `legacy` - Migrated content
 - `template` - Reusable templates
@@ -344,10 +353,11 @@ customJS: |
 ### How to Unpublish Content
 
 **Method 1: Draft Mode**
+
 ```yaml
 ---
-title: "Your Article"
-draft: true  # This hides the content from public view
+title: 'Your Article'
+draft: true # This hides the content from public view
 ---
 ```
 
@@ -362,6 +372,7 @@ Move the file outside of `src/content/` directories (e.g., to a `_drafts/` folde
 ### Supported Markdown Features
 
 **Standard Markdown:**
+
 - Headers (`# ## ### #### ##### ######`)
 - Bold (`**text**`) and italic (`*text*`)
 - Lists (ordered and unordered)
@@ -372,11 +383,13 @@ Move the file outside of `src/content/` directories (e.g., to a `_drafts/` folde
 - Horizontal rules (`---`)
 
 **Extended Features (MDX):**
+
 - **Astro Components**: Use custom components in markdown
 - **JSX-like syntax**: `<Component prop="value" />`
 - **Import statements**: `import MyComponent from '../components/MyComponent.astro'`
 
 **Obsidian-Compatible Features:**
+
 - **Internal links**: `[[Link to other note]]`
 - **Tags**: `#tag` in content body
 - **Aliases**: Use in frontmatter for alternative titles
@@ -385,6 +398,7 @@ Move the file outside of `src/content/` directories (e.g., to a `_drafts/` folde
 ### Frontmatter Schema
 
 **Articles/Posts:**
+
 ```yaml
 ---
 title: string (required)
@@ -406,6 +420,7 @@ cssclass: string (optional)
 ```
 
 **Showcase Projects:**
+
 ```yaml
 ---
 title: string (required)
@@ -423,6 +438,7 @@ author: string (optional)
 ```
 
 **HTML Documents:**
+
 ```yaml
 ---
 title: string (required)
@@ -441,14 +457,16 @@ featured: boolean (optional, defaults to false)
 
 # Document-specific fields
 source: string (optional, original source URL/system)
-contentType: enum (optional, defaults to "page")
+contentType:
+  enum (optional, defaults to "page")
   # Options: "page", "snippet", "template", "legacy"
 author: string (optional)
 
 # Custom styling support
 customCSS: string (optional, CSS code to inject)
 customJS: string (optional, JavaScript code to inject)
-preserveStyles: boolean (optional, defaults to true)
+preserveStyles:
+  boolean (optional, defaults to true)
   # true: maintains original styling
   # false: applies site's design system
 
@@ -492,14 +510,14 @@ module.exports = {
           50: '#eff6ff',
           500: '#3b82f6',
           900: '#1e3a8a',
-        }
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 ```
 
 ### Method 3: Component-Level Styling
@@ -519,7 +537,7 @@ Edit individual `.astro` files in `src/components/` and `src/pages/`:
   .custom-component {
     /* Scoped CSS that only applies to this component */
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
 </style>
 ```
@@ -530,8 +548,8 @@ Use Obsidian's `cssclass` frontmatter:
 
 ```yaml
 ---
-title: "Special Article"
-cssclass: "special-layout"
+title: 'Special Article'
+cssclass: 'special-layout'
 ---
 ```
 
@@ -592,16 +610,19 @@ git commit -m "Add new articles from Obsidian"
 ### Content Organization Best Practices
 
 **File Naming:**
+
 - Use descriptive names: `ai-breakthrough-2024.md`
 - Include dates for time-sensitive content: `2024-01-15-market-analysis.md`
 - Use hyphens instead of spaces
 
 **Tag Strategy:**
+
 - **Categories**: Broad topics (`technology`, `ai`, `research`)
 - **Tags**: Specific concepts (`machine-learning`, `gpt`, `automation`)
 - **Keep consistent**: Create a tag taxonomy document
 
 **Featured Content:**
+
 - Mark your best content as `featured: true`
 - Featured items appear prominently on homepage and category pages
 
@@ -633,11 +654,13 @@ npm run astro check  # Astro-specific checks
 ## 📊 Content Analytics & SEO
 
 ### RSS Feeds
+
 - **All Content**: `https://yoursite.com/rss.xml`
 - **Articles Only**: `https://yoursite.com/articles/rss.xml`
 - **Showcase Only**: `https://yoursite.com/showcase/rss.xml`
 
 ### SEO Features (Automatic)
+
 - Meta tags and Open Graph
 - Structured data for articles
 - Automatic sitemap generation
@@ -646,6 +669,7 @@ npm run astro check  # Astro-specific checks
 - Content excerpts
 
 ### Performance Optimizations
+
 - Static site generation (SSG)
 - Automatic image optimization
 - Code splitting
@@ -695,27 +719,32 @@ npm run build
 ### Deployment Platforms
 
 **Cloudflare Pages:**
+
 - Build command: `npm run build`
 - Publish directory: `dist`
 - Framework preset: Astro
 
 **Netlify:**
+
 - Build command: `npm run build`
 - Publish directory: `dist`
 - Framework preset: Astro
 
 **Vercel:**
+
 - Import your repository
 - Framework preset: Astro
 - No additional configuration needed
 
 **GitHub Pages:**
+
 - Use the official Astro GitHub Pages action
 - Configure in `.github/workflows/deploy.yml`
 
 ### Environment Variables (if needed)
 
 Create `.env` file for local development:
+
 ```env
 PUBLIC_SITE_URL=http://localhost:4321
 # Add other environment variables as needed
@@ -726,6 +755,7 @@ PUBLIC_SITE_URL=http://localhost:4321
 ### Adding New Content Types
 
 1. **Define schema** in `src/content/config.ts`:
+
 ```typescript
 const tutorials = defineCollection({
   loader: glob({ pattern: ['*.md'], base: 'src/content/tutorials' }),
@@ -766,18 +796,25 @@ const { type, title } = Astro.props;
     border-radius: 8px;
     margin: 1rem 0;
   }
-  .callout-info { @apply bg-blue-50 border-blue-200; }
-  .callout-warning { @apply bg-yellow-50 border-yellow-200; }
-  .callout-error { @apply bg-red-50 border-red-200; }
+  .callout-info {
+    @apply bg-blue-50 border-blue-200;
+  }
+  .callout-warning {
+    @apply bg-yellow-50 border-yellow-200;
+  }
+  .callout-error {
+    @apply bg-red-50 border-red-200;
+  }
 </style>
 ```
 
 Use in your markdown with MDX:
+
 ```mdx
 import CustomCallout from '../../components/CustomCallout.astro';
 
 <CustomCallout type="info" title="Pro Tip">
-This is a custom callout component!
+  This is a custom callout component!
 </CustomCallout>
 ```
 
@@ -786,16 +823,19 @@ This is a custom callout component!
 ### Common Issues
 
 **Build failures:**
+
 - Check Node.js version (18+ required)
 - Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
 - Verify all frontmatter syntax is valid YAML
 
 **Content not appearing:**
+
 - Check file is in correct `src/content/` subdirectory
 - Verify frontmatter is properly formatted
 - Ensure `draft: true` is not set
 
 **Images not loading:**
+
 - Place images in `public/images/`
 - Reference with absolute path: `/images/filename.jpg`
 - Check file extensions match exactly
@@ -811,4 +851,4 @@ This is a custom callout component!
 
 **Built with ❤️ using Astro, Tailwind CSS, and modern web technologies.**
 
-*Perfect for AI researchers, content creators, and anyone who wants to showcase their insights beautifully.*
+_Perfect for AI researchers, content creators, and anyone who wants to showcase their insights beautifully._

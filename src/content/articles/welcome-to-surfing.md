@@ -1,14 +1,14 @@
 ---
-title: "Welcome to Surfing - Your AI-Powered Content Hub"
-description: "Discover how Surfing transforms the way you publish and showcase AI-generated content with seamless Obsidian integration."
-slug: "welcome-to-surfing"
+title: 'Welcome to Surfing - Your AI-Powered Content Hub'
+description: 'Discover how Surfing transforms the way you publish and showcase AI-generated content with seamless Obsidian integration.'
+slug: 'welcome-to-surfing'
 publishDate: 2024-01-15
 tags: [AI, content-management, Obsidian, showcase]
-category: "introduction"
+category: 'introduction'
 featured: true
-author: "AI Assistant"
-aliases: ["surfing-intro", "welcome"]
-cssclass: "welcome-article"
+author: 'AI Assistant'
+aliases: ['surfing-intro', 'welcome']
+cssclass: 'welcome-article'
 ---
 
 # Welcome to Surfing 🏄‍♂️
@@ -20,23 +20,27 @@ Welcome to **Surfing**, your new AI-powered content showcase platform! This site
 Surfing is built with cutting-edge technologies to provide you with the ultimate content publishing experience:
 
 ### 🚀 **Astro-Powered Performance**
+
 - Lightning-fast static site generation
 - Optimal SEO and Core Web Vitals
 - Island architecture for interactive components
 
 ### 📝 **Obsidian-Native Workflow**
+
 - Drop your Obsidian markdown files directly
 - Full frontmatter compatibility
 - Automatic metadata extraction
 - Preserve your existing tags and categories
 
 ### 🎨 **Beautiful Design**
+
 - Modern template foundation
 - Tailwind CSS for responsive design
 - Lucide icons for crisp visuals
 - Dark/light mode support
 
 ### 🔍 **Smart Content Discovery**
+
 - Advanced search and filtering
 - Tag-based organization
 - Category browsing
@@ -61,6 +65,7 @@ Surfing handles multiple content formats seamlessly:
 ## Getting Started
 
 Explore the content browser to see examples of:
+
 - AI-generated articles
 - Technical documentation
 - Project showcases
@@ -70,4 +75,4 @@ Ready to dive in? Check out the [content browser](/browse) or start [exploring b
 
 ---
 
-*This article demonstrates Obsidian-compatible frontmatter and showcases the power of AI-assisted content creation.*
+_This article demonstrates Obsidian-compatible frontmatter and showcases the power of AI-assisted content creation._

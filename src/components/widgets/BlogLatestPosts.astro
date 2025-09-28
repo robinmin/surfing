@@ -32,12 +32,10 @@ const {
 
 // Get latest content when blog is enabled, fallback to articles/showcase
 const posts = APP_BLOG.isEnabled
-  ? (() => {
+  ? (async () => {
       // Use articles as blog posts since we don't have a separate post collection
-      const allContent = getAllContent();
-      return allContent.then(content =>
-        sortContent(filterContent(content, { draft: false }), 'date', 'desc').slice(0, count)
-      );
+      const allContent = await getAllContent();
+      return sortContent(filterContent(allContent, { draft: false }), 'date', 'desc').slice(0, count);
     })()
   : [];
 const resolvedPosts = await posts;

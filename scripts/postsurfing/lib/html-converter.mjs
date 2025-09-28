@@ -1,6 +1,6 @@
 /**
  * HTML Converter for PostSurfing CLI
- * 
+ *
  * Converts HTML files to Surfing-compatible format following the migration guide
  */
 
@@ -17,14 +17,14 @@ export class HtmlConverter {
 
     // Check if this is a full HTML document
     const isFullHtml = this.isFullHtmlDocument(content);
-    
+
     if (!isFullHtml) {
       this.logger.infoVerbose('Content appears to be HTML fragment, minimal processing needed');
       return this.processHtmlFragment(content, metadata);
     }
 
     this.logger.infoVerbose('Full HTML document detected, performing complete conversion');
-    
+
     if (!autoConvert) {
       const shouldConvert = await this.promptForConversion();
       if (!shouldConvert) {
@@ -58,22 +58,22 @@ export class HtmlConverter {
       bodyContent: content,
       cssLines: 0,
       jsLines: 0,
-      bodyLines: content.split('\n').length
+      bodyLines: content.split('\n').length,
     };
 
     // Extract inline styles and scripts
     const { css, js, cleanContent } = this.extractInlineAssets(content);
-    
+
     if (css) {
       results.customCSS = css;
       results.cssLines = css.split('\n').length;
     }
-    
+
     if (js) {
       results.customJS = js;
       results.jsLines = js.split('\n').length;
     }
-    
+
     results.bodyContent = cleanContent;
     results.bodyLines = cleanContent.split('\n').length;
 
@@ -93,14 +93,14 @@ export class HtmlConverter {
       cssLines: 0,
       jsLines: 0,
       bodyLines: 0,
-      metaExtracted: []
+      metaExtracted: [],
     };
 
     // Extract head content
     const headMatch = content.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
     if (headMatch) {
       const headContent = headMatch[1];
-      
+
       // Extract title
       const titleMatch = headContent.match(/<title[^>]*>(.*?)<\/title>/i);
       if (titleMatch) {
@@ -137,10 +137,10 @@ export class HtmlConverter {
 
       // Extract inline CSS and JS from body
       const { css: bodyCSS, js: bodyJS, cleanContent } = this.extractInlineAssets(bodyContent);
-      
+
       // Combine CSS from head and body
       if (bodyCSS) {
-        results.customCSS = results.customCSS 
+        results.customCSS = results.customCSS
           ? `${results.customCSS}\n\n/* Inline styles from body */\n${bodyCSS}`
           : bodyCSS;
         results.cssLines += bodyCSS.split('\n').length;
@@ -149,9 +149,7 @@ export class HtmlConverter {
 
       // Combine JS from head and body
       if (bodyJS) {
-        results.customJS = results.customJS
-          ? `${results.customJS}\n\n// Inline scripts from body\n${bodyJS}`
-          : bodyJS;
+        results.customJS = results.customJS ? `${results.customJS}\n\n// Inline scripts from body\n${bodyJS}` : bodyJS;
         results.jsLines += bodyJS.split('\n').length;
         results.jsExtracted = true;
       }
@@ -164,7 +162,7 @@ export class HtmlConverter {
       if (headMatch) {
         bodyContent = content.replace(/<head[^>]*>[\s\S]*?<\/head>/i, '');
       }
-      
+
       // Remove html, doctype, and body tags
       bodyContent = bodyContent
         .replace(/<!DOCTYPE[^>]*>/i, '')
@@ -173,19 +171,19 @@ export class HtmlConverter {
         .trim();
 
       const { css, js, cleanContent } = this.extractInlineAssets(bodyContent);
-      
+
       if (css) {
         results.customCSS = results.customCSS ? `${results.customCSS}\n${css}` : css;
         results.cssLines += css.split('\n').length;
         results.cssExtracted = true;
       }
-      
+
       if (js) {
         results.customJS = results.customJS ? `${results.customJS}\n${js}` : js;
         results.jsLines += js.split('\n').length;
         results.jsExtracted = true;
       }
-      
+
       results.bodyContent = cleanContent.trim();
       results.bodyLines = results.bodyContent.split('\n').length;
     }
@@ -199,7 +197,7 @@ export class HtmlConverter {
    */
   extractMetaTags(headContent) {
     const metadata = {};
-    
+
     // Extract description
     const descMatch = headContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
     if (descMatch) {
@@ -209,7 +207,7 @@ export class HtmlConverter {
     // Extract keywords
     const keywordsMatch = headContent.match(/<meta[^>]*name=["']keywords["'][^>]*content=["']([^"']+)["']/i);
     if (keywordsMatch) {
-      metadata.keywords = keywordsMatch[1].split(',').map(k => k.trim());
+      metadata.keywords = keywordsMatch[1].split(',').map((k) => k.trim());
     }
 
     // Extract author
@@ -232,7 +230,7 @@ export class HtmlConverter {
    */
   extractCSSFromHead(headContent) {
     const cssBlocks = [];
-    
+
     // Extract style tags
     const styleMatches = headContent.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi);
     for (const match of styleMatches) {
@@ -247,7 +245,7 @@ export class HtmlConverter {
    */
   extractJSFromHead(headContent) {
     const jsBlocks = [];
-    
+
     // Extract script tags with content (not external scripts)
     const scriptMatches = headContent.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi);
     for (const match of scriptMatches) {
@@ -291,7 +289,7 @@ export class HtmlConverter {
     return {
       css: cssBlocks.length > 0 ? cssBlocks.join('\n\n') : null,
       js: jsBlocks.length > 0 ? jsBlocks.join('\n\n') : null,
-      cleanContent
+      cleanContent,
     };
   }
 
@@ -301,13 +299,16 @@ export class HtmlConverter {
   async promptForConversion() {
     this.logger.prompt('This appears to be a full HTML document.');
     this.logger.infoVerbose('The conversion will:');
-    this.logger.list([
-      'Extract CSS from <style> tags to customCSS frontmatter',
-      'Extract JavaScript from <script> tags to customJS frontmatter',
-      'Remove <html>, <head>, and <body> tags',
-      'Extract metadata from <meta> tags',
-      'Preserve only the body content'
-    ], 'Conversion Steps');
+    this.logger.list(
+      [
+        'Extract CSS from <style> tags to customCSS frontmatter',
+        'Extract JavaScript from <script> tags to customJS frontmatter',
+        'Remove <html>, <head>, and <body> tags',
+        'Extract metadata from <meta> tags',
+        'Preserve only the body content',
+      ],
+      'Conversion Steps'
+    );
 
     // In a real implementation, you'd use a proper prompt library
     // For now, we'll assume auto-conversion

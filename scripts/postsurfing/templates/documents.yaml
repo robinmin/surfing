@@ -14,123 +14,123 @@ fields:
     type: string
     description: Document title
     required: true
-    
+
   description:
     type: string
     description: Document description
     optional: true
     autoGenerate: true
-    suggestion: "Auto-extracted from content or meta tags"
-    
+    suggestion: 'Auto-extracted from content or meta tags'
+
   slug:
     type: string
     description: URL slug for the document
     optional: true
     autoGenerate: true
-    suggestion: "Auto-generated from title"
-    
+    suggestion: 'Auto-generated from title'
+
   publishDate:
     type: date
     description: Publication date
     optional: true
     autoGenerate: true
-    default: "current_date"
-    
+    default: 'current_date'
+
   updateDate:
     type: date
     description: Last update date
     optional: true
-    
+
   tags:
     type: array
     description: Document tags
     optional: true
     default: []
     autoSuggest: true
-    
+
   category:
     type: string
     description: Document category
     optional: true
     suggestions:
-      - "documentation"
-      - "legacy"
-      - "templates"
-      - "examples"
-      - "guides"
-      - "references"
-    
+      - 'documentation'
+      - 'legacy'
+      - 'templates'
+      - 'examples'
+      - 'guides'
+      - 'references'
+
   draft:
     type: boolean
     description: Whether the document is a draft
     optional: true
     default: false
-    
+
   featured:
     type: boolean
     description: Whether to feature this document
     optional: true
     default: false
-    
+
   source:
     type: string
     description: Original source URL or system
     optional: true
-    
+
   contentType:
     type: string
     description: Type of document content
     optional: true
-    default: "page"
+    default: 'page'
     enum:
-      - "page"
-      - "snippet"
-      - "template"
-      - "legacy"
-    
+      - 'page'
+      - 'snippet'
+      - 'template'
+      - 'legacy'
+
   author:
     type: string
     description: Document author
     optional: true
-    
+
   customCSS:
     type: string
     description: Custom CSS styles (extracted from HTML)
     optional: true
     multiline: true
     autoExtract: true
-    
+
   customJS:
     type: string
     description: Custom JavaScript code (extracted from HTML)
     optional: true
     multiline: true
     autoExtract: true
-    
+
   preserveStyles:
     type: boolean
     description: Whether to preserve original styling
     optional: true
     default: true
-    
+
   headings:
     type: array
     description: Extracted headings from content
     optional: true
     autoGenerate: true
-    
+
   links:
     type: array
     description: Extracted links from content
     optional: true
     autoGenerate: true
-    
+
   wordCount:
     type: number
     description: Word count
     optional: true
     autoGenerate: true
-    
+
   readingTime:
     type: number
     description: Estimated reading time in minutes

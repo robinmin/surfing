@@ -1,6 +1,6 @@
 /**
  * Frontmatter Manager for PostSurfing CLI
- * 
+ *
  * Handles frontmatter validation, completion, and user interaction
  */
 
@@ -22,7 +22,7 @@ export class FrontmatterManager {
     const schemas = {};
     const contentTypes = ['articles', 'showcase', 'documents'];
 
-    contentTypes.forEach(type => {
+    contentTypes.forEach((type) => {
       const templatePath = join(this.scriptDir, 'templates', `${type}.yaml`);
       if (existsSync(templatePath)) {
         try {
@@ -82,7 +82,7 @@ export class FrontmatterManager {
 
     return {
       frontmatter: finalFrontmatter,
-      body: body
+      body: body,
     };
   }
 
@@ -91,11 +91,11 @@ export class FrontmatterManager {
    */
   extractFrontmatter(content) {
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-    
+
     if (frontmatterMatch) {
       const frontmatterText = frontmatterMatch[1];
       const body = frontmatterMatch[2];
-      
+
       try {
         const frontmatter = this.parseYaml(frontmatterText);
         return { frontmatter, body };
@@ -134,7 +134,7 @@ export class FrontmatterManager {
     // Merge suggested tags
     if (metadata.suggestedTags && metadata.suggestedTags.length > 0) {
       merged.tags = merged.tags || [];
-      metadata.suggestedTags.forEach(tag => {
+      metadata.suggestedTags.forEach((tag) => {
         if (!merged.tags.includes(tag)) {
           merged.tags.push(tag);
         }
@@ -144,7 +144,7 @@ export class FrontmatterManager {
     // Merge detected technologies (for showcase)
     if (schema.name === 'showcase' && metadata.detectedTechnologies) {
       merged.technologies = merged.technologies || [];
-      metadata.detectedTechnologies.forEach(tech => {
+      metadata.detectedTechnologies.forEach((tech) => {
         if (!merged.technologies.includes(tech)) {
           merged.technologies.push(tech);
         }
@@ -172,9 +172,8 @@ export class FrontmatterManager {
     const suggestions = [];
 
     // Check required fields
-    schema.required.forEach(field => {
-      if (!frontmatter[field] || 
-          (Array.isArray(frontmatter[field]) && frontmatter[field].length === 0)) {
+    schema.required.forEach((field) => {
+      if (!frontmatter[field] || (Array.isArray(frontmatter[field]) && frontmatter[field].length === 0)) {
         missing.push(field);
       }
     });
@@ -182,7 +181,7 @@ export class FrontmatterManager {
     // Check field types and provide suggestions
     Object.entries(schema.fields).forEach(([field, config]) => {
       const value = frontmatter[field];
-      
+
       if (value !== undefined && value !== null) {
         // Type checking
         if (config.type === 'array' && !Array.isArray(value)) {
@@ -209,7 +208,7 @@ export class FrontmatterManager {
       valid: missing.length === 0,
       missing,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -221,7 +220,7 @@ export class FrontmatterManager {
 
     for (const field of validation.missing) {
       const fieldConfig = schema.fields[field];
-      
+
       if (fieldConfig.autoGenerate) {
         // Try to auto-generate the field
         const generated = this.autoGenerateField(field, fieldConfig, updated);
@@ -253,7 +252,7 @@ export class FrontmatterManager {
     switch (field) {
       case 'publishDate':
         return new Date();
-      
+
       case 'slug':
         if (frontmatter.title) {
           return frontmatter.title
@@ -262,19 +261,19 @@ export class FrontmatterManager {
             .replace(/^-|-$/g, '');
         }
         return null;
-      
+
       case 'tags':
         return [];
-      
+
       case 'technologies':
         return [];
-      
+
       case 'featured':
         return false;
-      
+
       case 'draft':
         return false;
-      
+
       default:
         return null;
     }
@@ -307,7 +306,7 @@ export class FrontmatterManager {
     return new Promise((resolve) => {
       const rl = createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: process.stdout,
       });
 
       let prompt = `Enter ${field}`;
@@ -321,7 +320,7 @@ export class FrontmatterManager {
 
       rl.question(prompt, (answer) => {
         rl.close();
-        
+
         if (!answer.trim()) {
           resolve(null);
           return;
@@ -329,7 +328,7 @@ export class FrontmatterManager {
 
         // Type conversion
         if (config.type === 'array') {
-          resolve(answer.split(',').map(item => item.trim()));
+          resolve(answer.split(',').map((item) => item.trim()));
         } else if (config.type === 'boolean') {
           resolve(['true', 'yes', 'y', '1'].includes(answer.toLowerCase()));
         } else if (config.type === 'date') {
@@ -359,14 +358,16 @@ export class FrontmatterManager {
       let value = trimmed.substring(colonIndex + 1).trim();
 
       // Handle quoted strings
-      if ((value.startsWith('"') && value.endsWith('"')) || 
-          (value.startsWith("'") && value.endsWith("'"))) {
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
         value = value.slice(1, -1);
       }
 
       // Handle arrays
       if (value.startsWith('[') && value.endsWith(']')) {
-        value = value.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+        value = value
+          .slice(1, -1)
+          .split(',')
+          .map((item) => item.trim().replace(/['"]/g, ''));
       }
 
       // Handle booleans
@@ -416,8 +417,8 @@ export class FrontmatterManager {
         image: { type: 'string', optional: true },
         excerpt: { type: 'string', optional: true },
         readingTime: { type: 'number', optional: true },
-        wordCount: { type: 'number', optional: true }
-      }
+        wordCount: { type: 'number', optional: true },
+      },
     };
   }
 
@@ -436,8 +437,8 @@ export class FrontmatterManager {
         technologies: { type: 'array', optional: true, default: [] },
         featured: { type: 'boolean', optional: true, default: false },
         category: { type: 'string', optional: true },
-        tags: { type: 'array', optional: true, default: [] }
-      }
+        tags: { type: 'array', optional: true, default: [] },
+      },
     };
   }
 
@@ -456,11 +457,11 @@ export class FrontmatterManager {
         draft: { type: 'boolean', optional: true, default: false },
         featured: { type: 'boolean', optional: true, default: false },
         source: { type: 'string', optional: true },
-        contentType: { 
-          type: 'string', 
-          optional: true, 
+        contentType: {
+          type: 'string',
+          optional: true,
           default: 'page',
-          enum: ['page', 'snippet', 'template', 'legacy']
+          enum: ['page', 'snippet', 'template', 'legacy'],
         },
         author: { type: 'string', optional: true },
         customCSS: { type: 'string', optional: true },
@@ -469,8 +470,8 @@ export class FrontmatterManager {
         headings: { type: 'array', optional: true },
         links: { type: 'array', optional: true },
         wordCount: { type: 'number', optional: true },
-        readingTime: { type: 'number', optional: true }
-      }
+        readingTime: { type: 'number', optional: true },
+      },
     };
   }
 }

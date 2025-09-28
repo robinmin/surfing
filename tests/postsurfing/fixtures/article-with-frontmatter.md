@@ -1,10 +1,10 @@
 ---
-title: "Article with Existing Frontmatter"
-description: "This article already has frontmatter"
+title: 'Article with Existing Frontmatter'
+description: 'This article already has frontmatter'
 publishDate: 2024-01-15
 tags: [test, existing]
-category: "testing"
-author: "Test Author"
+category: 'testing'
+author: 'Test Author'
 ---
 
 # Article with Existing Frontmatter

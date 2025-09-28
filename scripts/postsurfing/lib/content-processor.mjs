@@ -1,6 +1,6 @@
 /**
  * Content Processor for PostSurfing CLI
- * 
+ *
  * Handles file reading, content analysis, and output path determination
  */
 
@@ -41,7 +41,7 @@ export class ContentProcessor {
    */
   async processSingleFile(filePath, contentType, options) {
     const extension = extname(filePath).toLowerCase();
-    
+
     if (!this.supportedExtensions.includes(extension)) {
       throw new Error(`Unsupported file type: ${extension}. Supported: ${this.supportedExtensions.join(', ')}`);
     }
@@ -51,7 +51,7 @@ export class ContentProcessor {
 
     // Analyze content
     const analysis = this.analyzeContent(content, extension);
-    
+
     // Determine output path
     const outputPath = this.determineOutputPath(filePath, contentType, analysis);
 
@@ -66,7 +66,7 @@ export class ContentProcessor {
       metadata: analysis,
       outputPath,
       needsHtmlConversion: this.needsHtmlConversion(content, extension),
-      originalPath: filePath
+      originalPath: filePath,
     };
   }
 
@@ -77,8 +77,8 @@ export class ContentProcessor {
     this.logger.debug(`Processing directory: ${dirPath}`);
 
     const files = readdirSync(dirPath)
-      .filter(file => this.supportedExtensions.includes(extname(file).toLowerCase()))
-      .map(file => join(dirPath, file));
+      .filter((file) => this.supportedExtensions.includes(extname(file).toLowerCase()))
+      .map((file) => join(dirPath, file));
 
     if (files.length === 0) {
       throw new Error(`No supported files found in directory: ${dirPath}`);
@@ -89,7 +89,7 @@ export class ContentProcessor {
     const results = [];
     for (let i = 0; i < files.length; i++) {
       this.logger.progress(i + 1, files.length, 'Processing files');
-      
+
       try {
         const result = await this.processSingleFile(files[i], contentType, options);
         results.push(result);
@@ -118,7 +118,7 @@ export class ContentProcessor {
       extractedTitle: null,
       extractedDescription: null,
       suggestedTags: [],
-      detectedTechnologies: []
+      detectedTechnologies: [],
     };
 
     // Check for existing frontmatter
@@ -135,7 +135,7 @@ export class ContentProcessor {
     }
 
     // Extract content without frontmatter
-    const contentWithoutFrontmatter = analysis.hasExistingFrontmatter 
+    const contentWithoutFrontmatter = analysis.hasExistingFrontmatter
       ? content.replace(/^---\n[\s\S]*?\n---\n/, '')
       : content;
 
@@ -148,12 +148,10 @@ export class ContentProcessor {
         .replace(/<[^>]*>/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
-      
-      analysis.wordCount = textContent.split(' ').filter(word => word.length > 0).length;
+
+      analysis.wordCount = textContent.split(' ').filter((word) => word.length > 0).length;
     } else {
-      analysis.wordCount = contentWithoutFrontmatter
-        .split(/\s+/)
-        .filter(word => word.length > 0).length;
+      analysis.wordCount = contentWithoutFrontmatter.split(/\s+/).filter((word) => word.length > 0).length;
     }
 
     analysis.readingTime = Math.ceil(analysis.wordCount / 200); // 200 words per minute
@@ -193,14 +191,16 @@ export class ContentProcessor {
       let value = trimmed.substring(colonIndex + 1).trim();
 
       // Handle quoted strings
-      if ((value.startsWith('"') && value.endsWith('"')) || 
-          (value.startsWith("'") && value.endsWith("'"))) {
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
         value = value.slice(1, -1);
       }
 
       // Handle arrays
       if (value.startsWith('[') && value.endsWith(']')) {
-        value = value.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+        value = value
+          .slice(1, -1)
+          .split(',')
+          .map((item) => item.trim().replace(/['"]/g, ''));
       }
 
       // Handle booleans
@@ -259,7 +259,10 @@ export class ContentProcessor {
       // Try to extract from first paragraph
       const pMatch = content.match(/<p[^>]*>(.*?)<\/p>/i);
       if (pMatch) {
-        return pMatch[1].replace(/<[^>]*>/g, '').trim().substring(0, 160);
+        return pMatch[1]
+          .replace(/<[^>]*>/g, '')
+          .trim()
+          .substring(0, 160);
       }
     } else {
       // Extract first paragraph from markdown
@@ -284,21 +287,21 @@ export class ContentProcessor {
 
     // Technology keywords
     const techKeywords = {
-      'javascript': ['javascript', 'js', 'node.js', 'npm'],
-      'typescript': ['typescript', 'ts'],
-      'react': ['react', 'jsx', 'react.js'],
-      'vue': ['vue', 'vue.js', 'vuejs'],
-      'angular': ['angular', 'ng'],
-      'css': ['css', 'stylesheet', 'styling'],
-      'html': ['html', 'markup'],
-      'python': ['python', 'py', 'django', 'flask'],
-      'ai': ['ai', 'artificial intelligence', 'machine learning', 'ml'],
-      'api': ['api', 'rest', 'graphql', 'endpoint'],
-      'database': ['database', 'sql', 'mongodb', 'postgres']
+      javascript: ['javascript', 'js', 'node.js', 'npm'],
+      typescript: ['typescript', 'ts'],
+      react: ['react', 'jsx', 'react.js'],
+      vue: ['vue', 'vue.js', 'vuejs'],
+      angular: ['angular', 'ng'],
+      css: ['css', 'stylesheet', 'styling'],
+      html: ['html', 'markup'],
+      python: ['python', 'py', 'django', 'flask'],
+      ai: ['ai', 'artificial intelligence', 'machine learning', 'ml'],
+      api: ['api', 'rest', 'graphql', 'endpoint'],
+      database: ['database', 'sql', 'mongodb', 'postgres'],
     };
 
     Object.entries(techKeywords).forEach(([tag, keywords]) => {
-      if (keywords.some(keyword => lowerContent.includes(keyword))) {
+      if (keywords.some((keyword) => lowerContent.includes(keyword))) {
         tags.add(tag);
       }
     });
@@ -322,11 +325,11 @@ export class ContentProcessor {
       { name: 'Tailwind CSS', patterns: ['tailwind', 'tailwindcss'] },
       { name: 'Node.js', patterns: ['node.js', 'nodejs', 'npm'] },
       { name: 'Python', patterns: ['python', 'py'] },
-      { name: 'Docker', patterns: ['docker', 'dockerfile'] }
+      { name: 'Docker', patterns: ['docker', 'dockerfile'] },
     ];
 
     techPatterns.forEach(({ name, patterns }) => {
-      if (patterns.some(pattern => lowerContent.includes(pattern))) {
+      if (patterns.some((pattern) => lowerContent.includes(pattern))) {
         technologies.add(name);
       }
     });
@@ -350,7 +353,7 @@ export class ContentProcessor {
     const hasBodyTag = content.includes('<body');
 
     // Require at least DOCTYPE + html tag OR html + head + body for full conversion
-    return hasDoctype && hasHtmlTag || (hasHtmlTag && hasHeadTag && hasBodyTag);
+    return (hasDoctype && hasHtmlTag) || (hasHtmlTag && hasHeadTag && hasBodyTag);
   }
 
   /**
@@ -359,10 +362,10 @@ export class ContentProcessor {
   determineOutputPath(inputPath, contentType) {
     const baseName = basename(inputPath, extname(inputPath));
     const outputDir = join(process.cwd(), 'src', 'content', contentType);
-    
+
     // Always use .md extension for output
     const outputFileName = `${baseName}.md`;
-    
+
     return join(outputDir, outputFileName);
   }
 
@@ -371,7 +374,7 @@ export class ContentProcessor {
    */
   async writeContent(processedContent, outputPath) {
     this.logger.file('Writing', outputPath);
-    
+
     // Ensure directory exists
     const dir = dirname(outputPath);
     if (!existsSync(dir)) {
@@ -391,14 +394,17 @@ export class ContentProcessor {
    */
   stringifyYaml(obj) {
     let yaml = '';
-    
+
     Object.entries(obj).forEach(([key, value]) => {
       if (value === null || value === undefined) return;
-      
+
       if (Array.isArray(value)) {
-        yaml += `${key}: [${value.map(v => `"${v}"`).join(', ')}]\n`;
+        yaml += `${key}: [${value.map((v) => `"${v}"`).join(', ')}]\n`;
       } else if (typeof value === 'string' && value.includes('\n')) {
-        yaml += `${key}: |\n${value.split('\n').map(line => `  ${line}`).join('\n')}\n`;
+        yaml += `${key}: |\n${value
+          .split('\n')
+          .map((line) => `  ${line}`)
+          .join('\n')}\n`;
       } else if (typeof value === 'string') {
         yaml += `${key}: "${value}"\n`;
       } else if (value instanceof Date) {
@@ -407,7 +413,7 @@ export class ContentProcessor {
         yaml += `${key}: ${value}\n`;
       }
     });
-    
+
     return yaml;
   }
 }

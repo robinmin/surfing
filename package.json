@@ -1,7 +1,7 @@
 {
   "name": "surfing",
   "version": "1.0.0-beta.52",
-  "description": "Surfing: AI-powered content showcase platform for publishing and discovering AI-generated content with seamless Obsidian integration.",
+  "description": "Surfing: A simple, clear space to publish collected knowledge and AI-driven creationss.",
   "type": "module",
   "engines": {
     "node": "^18.17.1 || ^20.3.0 || >= 21.0.0"
