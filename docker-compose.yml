@@ -1,6 +1,6 @@
 services:
-  astrowind:
+  surfing:
     build: .
-    container_name: astrowind
+    container_name: surfing
     ports:
       - 8080:8080
