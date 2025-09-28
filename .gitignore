@@ -22,3 +22,4 @@ pnpm-debug.log*
 pnpm-lock.yaml
 
 .astro
+scripts/create-cf-pages-site.sh

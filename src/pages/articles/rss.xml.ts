@@ -1,0 +1,45 @@
+import rss from '@astrojs/rss';
+import type { APIContext } from 'astro';
+import { getAllContent, filterContent, sortContent } from '~/utils/content';
+
+export async function GET(context: APIContext) {
+  const articles = await getAllContent('articles');
+  const publishedArticles = filterContent(articles, { draft: false });
+  const sortedArticles = sortContent(publishedArticles, 'date', 'desc');
+
+  return rss({
+    title: 'Surfing Articles - AI Insights & Technical Content',
+    description: 'Latest articles on AI, technology, and innovation from the Surfing platform.',
+    site: context.site!,
+    items: sortedArticles.map((article) => ({
+      title: article.data.title,
+      description: article.data.description || article.data.excerpt || '',
+      link: `/articles/${article.slug}`,
+      pubDate: article.data.publishDate || article.data.updateDate || new Date(),
+      categories: [
+        ...(article.data.category ? [article.data.category] : []),
+        ...(article.data.tags || []),
+      ],
+      author: article.data.author || 'Surfing Platform',
+      customData: `
+        <content:encoded><![CDATA[
+          ${article.data.description || article.data.excerpt || ''}
+        ]]></content:encoded>
+        <dc:creator>${article.data.author || 'Surfing Platform'}</dc:creator>
+        ${article.data.readingTime ? `<readingTime>${article.data.readingTime} minutes</readingTime>` : ''}
+        <wordCount>${article.data.wordCount || 0}</wordCount>
+      `,
+    })),
+    customData: `
+      <language>en-us</language>
+      <managingEditor>noreply@surfing.salty.vip</managingEditor>
+      <webMaster>noreply@surfing.salty.vip</webMaster>
+      <generator>Astro + Surfing Platform</generator>
+      <category>Articles</category>
+    `,
+    xmlns: {
+      content: 'http://purl.org/rss/1.0/modules/content/',
+      dc: 'http://purl.org/dc/elements/1.1/',
+    },
+  });
+}

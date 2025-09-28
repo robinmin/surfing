@@ -46,6 +46,7 @@ const metadataDefinition = () =>
     })
     .optional();
 
+// Enhanced post collection with Obsidian compatibility
 const postCollection = defineCollection({
   loader: glob({ pattern: ['*.md', '*.mdx'], base: 'src/data/post' }),
   schema: z.object({
@@ -61,10 +62,100 @@ const postCollection = defineCollection({
     tags: z.array(z.string()).optional(),
     author: z.string().optional(),
 
+    // Obsidian-specific fields
+    aliases: z.array(z.string()).optional(),
+    cssclass: z.string().optional(),
+
+    // Content metadata
+    readingTime: z.number().optional(),
+    wordCount: z.number().optional(),
+    featured: z.boolean().optional(),
+
+    // SEO and social
+    metadata: metadataDefinition(),
+  }),
+});
+
+// Articles collection for Obsidian markdown content
+const articlesCollection = defineCollection({
+  loader: glob({ pattern: ['*.md', '*.mdx'], base: 'src/content/articles' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    publishDate: z.date().optional(),
+    updateDate: z.date().optional(),
+
+    // Obsidian frontmatter support
+    tags: z.array(z.string()).default([]),
+    category: z.string().optional(),
+    aliases: z.array(z.string()).optional(),
+    cssclass: z.string().optional(),
+
+    // Status tracking
+    draft: z.boolean().default(false),
+    featured: z.boolean().default(false),
+
+    // Content metadata
+    author: z.string().optional(),
+    image: z.string().optional(),
+    excerpt: z.string().optional(),
+
+    // Auto-generated fields
+    readingTime: z.number().optional(),
+    wordCount: z.number().optional(),
+
+    metadata: metadataDefinition(),
+  }),
+});
+
+// HTML documents collection
+const documentsCollection = defineCollection({
+  loader: glob({ pattern: ['*.html'], base: 'src/content/documents' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    publishDate: z.date().optional(),
+
+    tags: z.array(z.string()).default([]),
+    category: z.string().optional(),
+
+    // HTML-specific metadata
+    source: z.string().optional(), // Original source URL or file
+    contentType: z.enum(['page', 'snippet', 'template']).default('page'),
+
+    // Auto-extracted metadata
+    headings: z.array(z.string()).optional(),
+    links: z.array(z.string()).optional(),
+
+    metadata: metadataDefinition(),
+  }),
+});
+
+// Showcase collection for featured content
+const showcaseCollection = defineCollection({
+  loader: glob({ pattern: ['*.md', '*.mdx'], base: 'src/content/showcase' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    publishDate: z.date(),
+
+    // Showcase-specific fields
+    projectUrl: z.string().url().optional(),
+    githubUrl: z.string().url().optional(),
+    image: z.string(),
+    technologies: z.array(z.string()).default([]),
+
+    featured: z.boolean().default(false),
+    category: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+
     metadata: metadataDefinition(),
   }),
 });
 
 export const collections = {
   post: postCollection,
+  articles: articlesCollection,
+  documents: documentsCollection,
+  showcase: showcaseCollection,
 };

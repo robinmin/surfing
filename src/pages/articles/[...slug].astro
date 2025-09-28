@@ -1,0 +1,40 @@
+---
+import type { GetStaticPathsOptions } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+import Layout from '~/layouts/PageLayout.astro';
+import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+
+  return articles.map((article) => ({
+    params: {
+      slug: article.slug,
+    },
+    props: { article },
+  }));
+}
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+}
+
+const { article } = Astro.props;
+const { Content } = await article.render();
+
+const metadata = {
+  title: article.data.title,
+  description: article.data.description || article.data.excerpt,
+  image: article.data.image,
+  canonical: `${Astro.site}articles/${article.slug}`,
+  openGraph: {
+    type: 'article',
+    ...(article.data.image && { images: [{ url: article.data.image }] }),
+  },
+};
+---
+
+<MarkdownLayout metadata={metadata}>
+  <Content />
+</MarkdownLayout>
