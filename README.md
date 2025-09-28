@@ -174,3 +174,7 @@ All platforms support Astro with zero configuration needed.
 **Built with ❤️ on Astro + AstroWind foundation**
 
 _Designed for AI researchers, content creators, and anyone who wants to showcase their insights beautifully._
+
+## Reference
+
+- [Add i18n features for Astro](https://docs.astro.build/en/recipes/i18n/)
