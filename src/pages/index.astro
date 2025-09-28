@@ -1,15 +1,15 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-
 import Hero from '~/components/widgets/Hero.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
 
-// Content is loaded by BlogLatestPosts component
+// Use default language for SSG, will be updated on client
+const t = getServerTranslation(DEFAULT_LANGUAGE);
 
 const metadata = {
-  title: 'Surfing — AI-Powered Content Showcase Platform',
-  description:
-    'Discover and publish AI-generated content with seamless Obsidian integration, modern design, and powerful content management.',
+  title: `Surfing — ${t('site.description')}`,
+  description: t('site.description'),
   ignoreTitleTemplate: true,
 };
 ---
@@ -21,18 +21,20 @@ const metadata = {
     actions={[
       {
         variant: 'primary',
-        text: 'Browse',
+        text: t('common.browse'),
         href: '/browse',
         icon: 'tabler:compass',
       },
     ]}
   >
     <Fragment slot="title">
-      Share Your <span class="text-accent dark:text-white">AI Work</span>
+      <span data-i18n="pages.home.title">{t('pages.home.title')}</span> <span class="text-accent dark:text-white" data-i18n="site.name">{t('site.name')}</span>
     </Fragment>
 
-    <Fragment slot="subtitle"> A simple, clear space to publish collected knowledge and AI-driven creations. </Fragment>
+    <Fragment slot="subtitle"> 
+      <span data-i18n="pages.home.subtitle">{t('pages.home.subtitle')}</span>
+    </Fragment>
   </Hero>
 
-  <BlogLatestPosts title="Latest Content" linkUrl="/browse" linkText="Browse All" />
+  <BlogLatestPosts title={t('pages.home.latestContent')} linkUrl="/browse" linkText={t('common.browse')} />
 </Layout>
