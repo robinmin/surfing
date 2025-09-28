@@ -12,11 +12,12 @@ export async function GET(context: APIContext) {
     description: 'Discover AI insights, technical articles, project showcases, and creative content.',
     site: context.site!,
     items: sortedContent.map((entry) => {
-      const contentType = entry.contentType || 'articles';
-      const url = contentType === 'articles' ? `/articles/${entry.slug || entry.id}` :
-                 contentType === 'showcase' ? `/showcase/${entry.slug || entry.id}` :
-                 contentType === 'documents' ? `/documents/${entry.slug || entry.id}` :
-                 `/articles/${entry.slug || entry.id}`;
+      const contentType = entry.data.contentType || entry.collection;
+      const slug = entry.data.slug || entry.id;
+      const url = contentType === 'articles' ? `/articles/${slug}` :
+                 contentType === 'showcase' ? `/showcase/${slug}` :
+                 contentType === 'documents' ? `/documents/${slug}` :
+                 `/articles/${slug}`;
 
       return {
         title: entry.data.title,

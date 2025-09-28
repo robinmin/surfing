@@ -6,7 +6,6 @@
 
 import { readFileSync, writeFileSync, existsSync, statSync, readdirSync } from 'fs';
 import { join, extname, basename, dirname } from 'path';
-import { createHash } from 'crypto';
 
 export class ContentProcessor {
   constructor(logger) {
@@ -357,7 +356,7 @@ export class ContentProcessor {
   /**
    * Determine output path for processed content
    */
-  determineOutputPath(inputPath, contentType, analysis) {
+  determineOutputPath(inputPath, contentType) {
     const baseName = basename(inputPath, extname(inputPath));
     const outputDir = join(process.cwd(), 'src', 'content', contentType);
     

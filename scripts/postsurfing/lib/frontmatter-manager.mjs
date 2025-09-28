@@ -249,7 +249,7 @@ export class FrontmatterManager {
   /**
    * Auto-generate field values
    */
-  autoGenerateField(field, config, frontmatter) {
+  autoGenerateField(field, _config, frontmatter) {
     switch (field) {
       case 'publishDate':
         return new Date();
@@ -283,7 +283,7 @@ export class FrontmatterManager {
   /**
    * Auto-complete optional fields with defaults
    */
-  autoCompleteOptionalFields(frontmatter, schema, metadata) {
+  autoCompleteOptionalFields(frontmatter, schema) {
     const completed = { ...frontmatter };
 
     Object.entries(schema.fields).forEach(([field, config]) => {
@@ -387,7 +387,7 @@ export class FrontmatterManager {
   /**
    * Parse template file
    */
-  parseTemplate(templateContent) {
+  parseTemplate(_templateContent) {
     // This would parse a more complex template format
     // For now, return a basic schema
     return this.getDefaultArticlesSchema();

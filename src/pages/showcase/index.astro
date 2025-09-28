@@ -3,7 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { getCollection } from 'astro:content';
 
-const showcases = await getCollection('showcase', ({ data }) => !data.draft);
+const showcases = await getCollection('showcase', ({ data }) => data.featured !== false);
 const featuredShowcases = showcases.filter(item => item.data.featured);
 const sortedShowcases = showcases.sort((a, b) =>
   new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime()
@@ -61,7 +61,7 @@ const metadata = {
 
               <h3 class="text-2xl font-bold mb-4 dark:text-white">
                 <a
-                  href={`/showcase/${showcase.slug}`}
+                  href={`/showcase/${showcase.data.slug || showcase.id}`}
                   class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   {showcase.data.title}
@@ -93,7 +93,7 @@ const metadata = {
               <!-- Links -->
               <div class="flex flex-wrap gap-3">
                 <a
-                  href={`/showcase/${showcase.slug}`}
+                  href={`/showcase/${showcase.data.slug || showcase.id}`}
                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
                 >
                   Learn More
@@ -159,7 +159,7 @@ const metadata = {
 
             <h3 class="text-xl font-bold mb-3 dark:text-white">
               <a
-                href={`/showcase/${showcase.slug}`}
+                href={`/showcase/${showcase.data.slug || showcase.id}`}
                 class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 {showcase.data.title}
@@ -191,7 +191,7 @@ const metadata = {
             <!-- Links -->
             <div class="flex flex-wrap gap-2 text-sm">
               <a
-                href={`/showcase/${showcase.slug}`}
+                href={`/showcase/${showcase.data.slug || showcase.id}`}
                 class="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
               >
                 Details

@@ -50,7 +50,7 @@ export class HtmlConverter {
   /**
    * Process HTML fragment (minimal processing)
    */
-  processHtmlFragment(content, metadata) {
+  processHtmlFragment(content, _metadata) {
     const results = {
       extractedMetadata: {},
       customCSS: null,
@@ -84,7 +84,7 @@ export class HtmlConverter {
   /**
    * Process full HTML document
    */
-  processFullHtmlDocument(content, metadata) {
+  processFullHtmlDocument(content, _metadata) {
     const results = {
       extractedMetadata: {},
       customCSS: null,

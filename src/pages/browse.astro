@@ -96,8 +96,8 @@ const metadata = {
     <!-- Content Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="contentGrid">
       {sortedContent.map(entry => {
-        const contentType = entry.contentType || 'articles';
-        const slug = entry.slug || entry.id;
+        const contentType = entry.data.contentType || entry.collection;
+        const slug = entry.data.slug || entry.id;
         const url = contentType === 'articles' ? `/articles/${slug}` :
                    contentType === 'showcase' ? `/showcase/${slug}` :
                    contentType === 'documents' ? `/documents/${slug}` :
@@ -193,12 +193,12 @@ const metadata = {
   <!-- JavaScript for Interactive Filtering -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const searchInput = document.getElementById('searchInput');
-      const typeFilter = document.getElementById('typeFilter');
-      const sortFilter = document.getElementById('sortFilter');
+      const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+      const typeFilter = document.getElementById('typeFilter') as HTMLSelectElement;
+      const sortFilter = document.getElementById('sortFilter') as HTMLSelectElement;
       const tagButtons = document.querySelectorAll('.tag-filter');
       const categoryButtons = document.querySelectorAll('.category-filter');
-      const contentGrid = document.getElementById('contentGrid');
+
       const noResults = document.getElementById('noResults');
 
       let selectedTags = new Set();
@@ -212,11 +212,12 @@ const metadata = {
 
         // Filter cards
         const filteredCards = cards.filter(card => {
-          const cardType = card.dataset.type;
-          const cardTags = JSON.parse(card.dataset.tags || '[]');
-          const cardCategory = card.dataset.category;
-          const cardTitle = card.dataset.title;
-          const cardDescription = card.dataset.description;
+          const htmlCard = card as HTMLElement;
+          const cardType = htmlCard.dataset.type;
+          const cardTags = JSON.parse(htmlCard.dataset.tags || '[]');
+          const cardCategory = htmlCard.dataset.category;
+          const cardTitle = htmlCard.dataset.title;
+          const cardDescription = htmlCard.dataset.description;
 
           // Type filter
           if (selectedType && cardType !== selectedType) return false;
@@ -245,14 +246,16 @@ const metadata = {
         // Sort cards
         filteredCards.sort((a, b) => {
           const [sortBy, order] = sortOption.split('-');
-          let aValue, bValue;
+          const aElement = a as HTMLElement;
+          const bElement = b as HTMLElement;
+          let aValue: any, bValue: any;
 
           if (sortBy === 'date') {
-            aValue = new Date(a.dataset.date);
-            bValue = new Date(b.dataset.date);
+            aValue = new Date(aElement.dataset.date || '');
+            bValue = new Date(bElement.dataset.date || '');
           } else if (sortBy === 'title') {
-            aValue = a.dataset.title;
-            bValue = b.dataset.title;
+            aValue = aElement.dataset.title || '';
+            bValue = bElement.dataset.title || '';
           }
 
           if (order === 'asc') {
@@ -263,21 +266,22 @@ const metadata = {
         });
 
         // Update display
-        cards.forEach(card => card.style.display = 'none');
-        filteredCards.forEach(card => card.style.display = 'block');
+        cards.forEach(card => (card as HTMLElement).style.display = 'none');
+        filteredCards.forEach(card => (card as HTMLElement).style.display = 'block');
 
         // Show/hide no results message
+        const noResults = document.getElementById('noResults');
         if (filteredCards.length === 0) {
-          noResults.classList.remove('hidden');
+          noResults?.classList.remove('hidden');
         } else {
-          noResults.classList.add('hidden');
+          noResults?.classList.add('hidden');
         }
       }
 
       // Event listeners
-      searchInput.addEventListener('input', filterAndSortContent);
-      typeFilter.addEventListener('change', filterAndSortContent);
-      sortFilter.addEventListener('change', filterAndSortContent);
+      searchInput?.addEventListener('input', filterAndSortContent);
+      typeFilter?.addEventListener('change', filterAndSortContent);
+      sortFilter?.addEventListener('change', filterAndSortContent);
 
       tagButtons.forEach(button => {
         button.addEventListener('click', function() {

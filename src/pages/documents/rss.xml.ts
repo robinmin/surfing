@@ -14,7 +14,7 @@ export async function GET(context) {
       title: document.data.title,
       description: document.data.description || '',
       pubDate: document.data.publishDate || document.data.updateDate,
-      link: getPermalink(document.slug, 'document'),
+      link: getPermalink(document.data.slug || document.id, 'document'),
       categories: document.data.tags || [],
       author: document.data.author,
       customData: `

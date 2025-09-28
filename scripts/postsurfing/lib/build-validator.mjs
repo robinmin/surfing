@@ -5,7 +5,6 @@
  */
 
 import { spawn } from 'child_process';
-import { join } from 'path';
 
 export class BuildValidator {
   constructor(logger) {

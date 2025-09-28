@@ -6,11 +6,11 @@ import Layout from '~/layouts/PageLayout.astro';
 import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const showcases = await getCollection('showcase', ({ data }) => !data.draft);
+  const showcases = await getCollection('showcase', ({ data }) => data.featured !== false);
 
   return showcases.map((showcase) => ({
     params: {
-      slug: showcase.slug,
+      slug: showcase.data.slug || showcase.id,
     },
     props: { showcase },
   }));
@@ -27,7 +27,7 @@ const metadata = {
   title: showcase.data.title,
   description: showcase.data.description,
   image: showcase.data.image,
-  canonical: `${Astro.site}showcase/${showcase.slug}`,
+  canonical: `${Astro.site}showcase/${showcase.data.slug || showcase.id}`,
   openGraph: {
     type: 'article',
     ...(showcase.data.image && { images: [{ url: showcase.data.image }] }),

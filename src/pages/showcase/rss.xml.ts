@@ -14,7 +14,7 @@ export async function GET(context: APIContext) {
     items: sortedShowcases.map((showcase) => ({
       title: showcase.data.title,
       description: showcase.data.description,
-      link: `/showcase/${showcase.slug}`,
+      link: `/showcase/${showcase.data.slug || showcase.id}`,
       pubDate: showcase.data.publishDate || new Date(),
       categories: [
         'showcase',

@@ -118,8 +118,8 @@ export async function getAllContent(type?: ContentType) {
 }
 
 // Filter content by various criteria
-export function filterContent<T extends CollectionEntry<any>>(
-  content: T[],
+export function filterContent(
+  content: any[],
   filters: {
     tags?: string[];
     category?: string;
@@ -127,7 +127,7 @@ export function filterContent<T extends CollectionEntry<any>>(
     draft?: boolean;
     search?: string;
   }
-): T[] {
+): any[] {
   return content.filter(item => {
     const data = item.data;
 
@@ -143,17 +143,17 @@ export function filterContent<T extends CollectionEntry<any>>(
     }
 
     // Filter by category
-    if (filters.category && data.category !== filters.category) {
+    if (filters.category && (data as any).category !== filters.category) {
       return false;
     }
 
     // Filter by featured status
-    if (filters.featured !== undefined && data.featured !== filters.featured) {
+    if (filters.featured !== undefined && (data as any).featured !== filters.featured) {
       return false;
     }
 
     // Filter by draft status
-    if (filters.draft !== undefined && data.draft !== filters.draft) {
+    if (filters.draft !== undefined && (data as any).draft !== filters.draft) {
       return false;
     }
 
@@ -176,30 +176,30 @@ export function filterContent<T extends CollectionEntry<any>>(
 }
 
 // Sort content by various criteria
-export function sortContent<T extends CollectionEntry<any>>(
-  content: T[],
+export function sortContent(
+  content: any[],
   sortBy: 'date' | 'title' | 'readingTime' | 'featured' = 'date',
   order: 'asc' | 'desc' = 'desc'
-): T[] {
+): any[] {
   return [...content].sort((a, b) => {
     let aValue: any, bValue: any;
 
     switch (sortBy) {
       case 'date':
-        aValue = a.data.publishDate || a.data.updateDate || new Date(0);
-        bValue = b.data.publishDate || b.data.updateDate || new Date(0);
+        aValue = (a.data as any).publishDate || (a.data as any).updateDate || new Date(0);
+        bValue = (b.data as any).publishDate || (b.data as any).updateDate || new Date(0);
         break;
       case 'title':
-        aValue = a.data.title?.toLowerCase() || '';
-        bValue = b.data.title?.toLowerCase() || '';
+        aValue = (a.data as any).title?.toLowerCase() || '';
+        bValue = (b.data as any).title?.toLowerCase() || '';
         break;
       case 'readingTime':
-        aValue = a.data.readingTime || 0;
-        bValue = b.data.readingTime || 0;
+        aValue = (a.data as any).readingTime || 0;
+        bValue = (b.data as any).readingTime || 0;
         break;
       case 'featured':
-        aValue = a.data.featured ? 1 : 0;
-        bValue = b.data.featured ? 1 : 0;
+        aValue = (a.data as any).featured ? 1 : 0;
+        bValue = (b.data as any).featured ? 1 : 0;
         break;
       default:
         return 0;
@@ -212,37 +212,38 @@ export function sortContent<T extends CollectionEntry<any>>(
 }
 
 // Generate content URL
-export function getContentUrl(entry: CollectionEntry<any>, collection: string): string {
+export function getContentUrl(entry: any, collection: string): string {
+  const slug = (entry.data?.slug || entry.id) as string;
   switch (collection) {
     case 'post':
-      return getPermalink(entry.slug, 'post');
+      return getPermalink(slug, 'post');
     case 'articles':
-      return getPermalink(entry.slug, 'article');
+      return getPermalink(slug, 'article');
     case 'documents':
-      return getPermalink(entry.slug, 'document');
+      return getPermalink(slug, 'document');
     case 'showcase':
-      return getPermalink(entry.slug, 'showcase');
+      return getPermalink(slug, 'showcase');
     default:
-      return `/${entry.slug}`;
+      return `/${slug}`;
   }
 }
 
 // Get related content based on tags and category
-export async function getRelatedContent<T extends CollectionEntry<any>>(
-  currentEntry: T,
+export async function getRelatedContent(
+  currentEntry: any,
   collection: string,
   limit: number = 3
-): Promise<T[]> {
-  const allContent = await getAllContent(collection as ContentType) as T[];
-  const currentTags = currentEntry.data.tags || [];
-  const currentCategory = currentEntry.data.category;
+): Promise<any[]> {
+  const allContent = await getAllContent(collection as ContentType) as any[];
+  const currentTags = (currentEntry.data as any).tags || [];
+  const currentCategory = (currentEntry.data as any).category;
 
   // Score content by relevance
   const scoredContent = allContent
-    .filter(item => item.slug !== currentEntry.slug)
+    .filter(item => (item.data.slug || item.id) !== (currentEntry.data.slug || currentEntry.id))
     .map(item => {
       let score = 0;
-      const itemTags = item.data.tags || [];
+      const itemTags = (item.data as any).tags || [];
 
       // Score by matching tags
       const matchingTags = currentTags.filter(tag =>
@@ -253,7 +254,7 @@ export async function getRelatedContent<T extends CollectionEntry<any>>(
       score += matchingTags.length * 2;
 
       // Score by matching category
-      if (currentCategory && item.data.category === currentCategory) {
+      if (currentCategory && (item.data as any).category === currentCategory) {
         score += 3;
       }
 
@@ -271,7 +272,7 @@ export async function getRelatedContent<T extends CollectionEntry<any>>(
 export function extractTags(content: CollectionEntry<any>[]): string[] {
   const tagSet = new Set<string>();
 
-  content.forEach(item => {
+  content.forEach((item: any) => {
     const tags = item.data.tags || [];
     tags.forEach((tag: string) => {
       tagSet.add(tag.toLowerCase().trim());
@@ -285,7 +286,7 @@ export function extractTags(content: CollectionEntry<any>[]): string[] {
 export function extractCategories(content: CollectionEntry<any>[]): string[] {
   const categorySet = new Set<string>();
 
-  content.forEach(item => {
+  content.forEach((item: any) => {
     if (item.data.category) {
       categorySet.add(item.data.category.toLowerCase().trim());
     }

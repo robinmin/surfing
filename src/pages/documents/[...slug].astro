@@ -10,7 +10,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 
   return documents.map((document) => ({
     params: {
-      slug: document.slug || document.id,
+      slug: document.data.slug || document.id,
     },
     props: { document },
   }));
@@ -28,7 +28,7 @@ const renderedContent = documentEntry.rendered?.html || documentEntry.body;
 const metadata = {
   title: documentEntry.data.title,
   description: documentEntry.data.description,
-  canonical: `${Astro.site}documents/${documentEntry.slug}`,
+  canonical: `${Astro.site}documents/${documentEntry.data.slug || documentEntry.id}`,
   openGraph: {
     type: 'article',
   },

@@ -14,7 +14,7 @@ export async function GET(context: APIContext) {
     items: sortedArticles.map((article) => ({
       title: article.data.title,
       description: article.data.description || article.data.excerpt || '',
-      link: `/articles/${article.slug}`,
+      link: `/articles/${article.data.slug || article.id}`,
       pubDate: article.data.publishDate || article.data.updateDate || new Date(),
       categories: [
         ...(article.data.category ? [article.data.category] : []),

@@ -4,7 +4,6 @@
  * Unit tests for ContentProcessor
  */
 
-import { join } from 'path';
 import { TestUtils } from '../test-utils.mjs';
 import { ContentProcessor } from '../../../scripts/postsurfing/lib/content-processor.mjs';
 import { Logger } from '../../../scripts/postsurfing/lib/logger.mjs';

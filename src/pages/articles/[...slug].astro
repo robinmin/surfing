@@ -10,7 +10,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 
   return articles.map((article) => ({
     params: {
-      slug: article.slug,
+      slug: article.data.slug || article.id,
     },
     props: { article },
   }));
@@ -27,7 +27,7 @@ const metadata = {
   title: article.data.title,
   description: article.data.description || article.data.excerpt,
   image: article.data.image,
-  canonical: `${Astro.site}articles/${article.slug}`,
+  canonical: `${Astro.site}articles/${article.data.slug || article.id}`,
   openGraph: {
     type: 'article',
     ...(article.data.image && { images: [{ url: article.data.image }] }),
