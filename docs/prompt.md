@@ -60,9 +60,13 @@ We are building a website with GitHub Actions to publish to Cloudflare Pages. Th
 - In page 'https://surfing.salty.vip/browse/', we do have a block for 'Example Full HTML Document', but we you click on the hyperlink, you will be navigate to 'Example Full HTML Document'. Either remove the block or restore the link.(I prefer to remove it.)
 - So far, we have nothing to show in page 'https://surfing.salty.vip/showcase/'. 'Surfing Platform' itself is not worthing to show as a idependent project here. Cleanup it.
 
-### Add i18n support
+### Add i18n support for web site
 
 #### Background
+
+We are working on a project based on Astro and AstroWind. Current folder is the source code's root folder. We use github Actrion to deploy the web site to cloudflare pages. You can always use MCP playwright to access the web site via https://surfing.salty.vip/ or access local server first via 'http://localhost:4321' (need to run 'npm run dev' first).
+
+Right now we are working on supporting i18n for the web site. Here comes current requests:
 
 As we can see the config item 'i18n' in @src/config.yaml. We want to turn this web site to support i18n with Chinese, English and Japanese.
 
@@ -72,6 +76,21 @@ As we can see the config item 'i18n' in @src/config.yaml. We want to turn this w
 - Proority to choise i18n language: User preference(stored in cookcie all localStroage) > web browser's preefer language > default language 'en'
 - Add a icon at the top left corner between 'Style' toggle and 'RSS' icon. Once this icon has been click, popup a dropdown list to select language, menu items including:🇨🇳, 🇺🇸, 🇯🇵. Once user selected particular one, change the i18n dynamicly and store user preferrence into cookcie all localStroage
 - Forget the language of the contents and the folder of @scripts, we will have separated task on them to support i18n.
+
+#### Current issue
+
+A few things need to be enhnaced:
+
+- 1, For the i18n switcher's menu item, flag only should be better as it's so clean and neat. Remove both of the name in original language and English.
+- 2, we do have a language switcher now. But after we selected the language, nothing happend. I guess you forgot the prepare the string resources for i18n or missed the mechanism to switch it, For Astro i18n, you can refer to this web page on official web site for the details. Or you can use MCP Content7 to get the most latest document for Astro or AstroWind. Fix them all
+
+### Fix missing Google Analytics code on the following pages:
+
+- surfing.salty.vip/articles/astro_tutorial/
+- surfing.salty.vip/articles/welcome-to-surfing/
+- surfing.salty.vip/documents/
+
+It looks like for the generated content we forgot the add google analytics code if the option in @src/config.yaml is turned on.s
 
 ---
 

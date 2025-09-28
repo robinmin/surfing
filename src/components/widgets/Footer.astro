@@ -38,40 +38,94 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         </div>
         <div class="text-sm text-muted flex gap-1">
           {
-            secondaryLinks.map(({ text, href }, index) => (
-              <>
-                {index !== 0 ? ' · ' : ''}
-                <a
-                  class="text-muted hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out"
-                  href={href}
-                  set:html={text}
-                />
-              </>
-            ))
+            secondaryLinks.map(({ text, href }, index) => {
+              // Map based on href for secondary links
+              let dataI18n = '';
+              if (href?.includes('/terms')) dataI18n = 'common.terms';
+              else if (href?.includes('/privacy')) dataI18n = 'common.privacyPolicy';
+
+              return (
+                <>
+                  {index !== 0 ? ' · ' : ''}
+                  <a
+                    class="text-muted hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out"
+                    href={href}
+                    set:html={text}
+                    data-i18n={dataI18n}
+                  />
+                </>
+              );
+            })
           }
         </div>
       </div>
       {
-        links.map(({ title, links }) => (
-          <div class="col-span-6 md:col-span-3 lg:col-span-2">
-            <div class="dark:text-gray-300 font-medium mb-2">{title}</div>
-            {links && Array.isArray(links) && links.length > 0 && (
-              <ul class="text-sm">
-                {links.map(({ text, href, ariaLabel }) => (
-                  <li class="mb-2">
-                    <a
-                      class="text-muted hover:text-gray-700 hover:underline dark:text-gray-400 transition duration-150 ease-in-out"
-                      href={href}
-                      aria-label={ariaLabel}
-                    >
-                      <Fragment set:html={text} />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))
+        links.map(({ title, links }) => {
+          // Map section titles to i18n keys
+          let titleI18n = '';
+          if (title?.includes('Content') || title?.includes('内容') || title?.includes('コンテンツ'))
+            titleI18n = 'footer.sections.content';
+          else if (title?.includes('Platform') || title?.includes('平台') || title?.includes('プラットフォーム'))
+            titleI18n = 'footer.sections.platform';
+          else if (title?.includes('Resources') || title?.includes('资源') || title?.includes('リソース'))
+            titleI18n = 'footer.sections.resources';
+          else if (title?.includes('Community') || title?.includes('社区') || title?.includes('コミュニティ'))
+            titleI18n = 'footer.sections.community';
+
+          return (
+            <div class="col-span-6 md:col-span-3 lg:col-span-2">
+              <div class="dark:text-gray-300 font-medium mb-2" data-i18n={titleI18n}>
+                {title}
+              </div>
+              {links && Array.isArray(links) && links.length > 0 && (
+                <ul class="text-sm">
+                  {links.map(({ text, href, ariaLabel }) => {
+                    // Map footer links to i18n keys based on text content or href
+                    let linkI18n = '';
+                    if (href?.includes('/browse')) linkI18n = 'nav.browse';
+                    else if (href?.includes('/articles')) linkI18n = 'nav.articles';
+                    else if (href?.includes('/showcase')) linkI18n = 'nav.showcase';
+                    else if (href?.includes('/documents')) linkI18n = 'nav.documents';
+                    else if (href?.includes('/about')) linkI18n = 'nav.about';
+                    else if (text?.includes('AI Integration') || text?.includes('AI 集成') || text?.includes('AI統合'))
+                      linkI18n = 'footer.links.aiIntegration';
+                    else if (text?.includes('Obsidian')) linkI18n = 'footer.links.obsidianSupport';
+                    else if (text?.includes('RSS')) linkI18n = 'footer.links.rssFeeds';
+                    else if (
+                      text?.includes('Documentation') ||
+                      text?.includes('文档') ||
+                      text?.includes('ドキュメント')
+                    )
+                      linkI18n = 'footer.links.documentation';
+                    else if (text?.includes('Guidelines') || text?.includes('指南') || text?.includes('ガイドライン'))
+                      linkI18n = 'footer.links.contentGuidelines';
+                    else if (text?.includes('API')) linkI18n = 'footer.links.apiReference';
+                    else if (text?.includes('Status') || text?.includes('状态') || text?.includes('ステータス'))
+                      linkI18n = 'footer.links.status';
+                    else if (text?.includes('Contributors') || text?.includes('贡献') || text?.includes('貢献'))
+                      linkI18n = 'footer.links.contributors';
+                    else if (text?.includes('GitHub')) linkI18n = 'footer.links.github';
+                    else if (text?.includes('Support') || text?.includes('支持') || text?.includes('サポート'))
+                      linkI18n = 'footer.links.support';
+
+                    return (
+                      <li class="mb-2">
+                        <a
+                          class="text-muted hover:text-gray-700 hover:underline dark:text-gray-400 transition duration-150 ease-in-out"
+                          href={href}
+                          aria-label={ariaLabel}
+                          data-i18n={linkI18n}
+                        >
+                          <Fragment set:html={text} />
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          );
+        })
       }
     </div>
     <div class="md:flex md:items-center md:justify-between py-6 md:py-8">
@@ -96,7 +150,7 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         )
       }
 
-      <div class="text-sm mr-4 dark:text-muted">
+      <div class="text-sm mr-4 dark:text-muted" data-i18n="footer.tagline">
         <Fragment set:html={footNote} />
       </div>
     </div>

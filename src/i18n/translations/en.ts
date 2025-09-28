@@ -8,8 +8,10 @@ export const en = {
     articles: 'Articles',
     showcase: 'Showcase',
     documents: 'Documents',
-    browse: 'Browse',
+    browse: 'Browse All',
     about: 'About',
+    content: 'Content',
+    explore: 'Explore',
   },
   common: {
     readMore: 'Read more',
@@ -26,6 +28,8 @@ export const en = {
     sourceCode: 'Source Code',
     liveDemo: 'Live Demo',
     browse: 'Browse All',
+    terms: 'Terms',
+    privacyPolicy: 'Privacy Policy',
   },
   pages: {
     home: {
@@ -58,6 +62,30 @@ export const en = {
       description: 'Learn more about Surfing',
     },
   },
+  footer: {
+    sections: {
+      content: 'Content',
+      platform: 'Platform',
+      resources: 'Resources',
+      community: 'Community',
+    },
+    links: {
+      aiIntegration: 'AI Integration',
+      obsidianSupport: 'Obsidian Support',
+      rssFeeds: 'RSS Feeds',
+      documentation: 'Documentation',
+      contentGuidelines: 'Content Guidelines',
+      apiReference: 'API Reference',
+      status: 'Status',
+      contributors: 'Contributors',
+      github: 'GitHub',
+      support: 'Support',
+    },
+    copyright: 'All rights reserved.',
+    poweredBy: 'Powered by',
+    builtWith: 'Built with',
+    tagline: 'AI-Powered Content Platform · Built for Creators',
+  },
   rss: {
     title: 'RSS Feed',
     description: 'Subscribe to our RSS feed for the latest updates',
@@ -66,11 +94,6 @@ export const en = {
     placeholder: 'Search content...',
     noResults: 'No results found.',
     resultsFor: 'Results for',
-  },
-  footer: {
-    copyright: 'All rights reserved.',
-    poweredBy: 'Powered by',
-    builtWith: 'Built with',
   },
   language: {
     selector: 'Language',
@@ -90,6 +113,8 @@ export type Translation = {
     documents: string;
     browse: string;
     about: string;
+    content: string;
+    explore: string;
   };
   common: {
     readMore: string;
@@ -106,6 +131,8 @@ export type Translation = {
     sourceCode: string;
     liveDemo: string;
     browse: string;
+    terms: string;
+    privacyPolicy: string;
   };
   pages: {
     home: {
@@ -138,6 +165,30 @@ export type Translation = {
       description: string;
     };
   };
+  footer: {
+    sections: {
+      content: string;
+      platform: string;
+      resources: string;
+      community: string;
+    };
+    links: {
+      aiIntegration: string;
+      obsidianSupport: string;
+      rssFeeds: string;
+      documentation: string;
+      contentGuidelines: string;
+      apiReference: string;
+      status: string;
+      contributors: string;
+      github: string;
+      support: string;
+    };
+    copyright: string;
+    poweredBy: string;
+    builtWith: string;
+    tagline: string;
+  };
   rss: {
     title: string;
     description: string;
@@ -146,11 +197,6 @@ export type Translation = {
     placeholder: string;
     noResults: string;
     resultsFor: string;
-  };
-  footer: {
-    copyright: string;
-    poweredBy: string;
-    builtWith: string;
   };
   language: {
     selector: string;

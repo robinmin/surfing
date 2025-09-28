@@ -3,19 +3,16 @@
 ---
 
 <script>
-  import { getCurrentLanguage, t, LANGUAGES } from '~/i18n';
+  import { t } from '~/i18n';
 
   class TranslationUpdater {
-    private currentLanguage = getCurrentLanguage();
-
     constructor() {
       this.updateContent();
       this.setupLanguageListener();
     }
 
     private setupLanguageListener(): void {
-      window.addEventListener('languageChange', ((e: CustomEvent) => {
-        this.currentLanguage = e.detail.language;
+      window.addEventListener('languageChange', (() => {
         this.updateContent();
       }) as EventListener);
     }
@@ -29,50 +26,29 @@
         document.title = `${siteName} — ${siteDesc}`;
       }
 
-      // Update navigation items
-      this.updateNavigation();
-      
-      // Update main content
-      this.updateMainContent();
+      // Update all translatable elements with data-i18n
+      this.updateTranslatableElements();
     }
 
-    private updateNavigation(): void {
-      // Update dropdown menu items with specific nav keys
-      const dropdownLinks = document.querySelectorAll('[data-nav-key]');
-      dropdownLinks.forEach((link) => {
-        const navKey = (link as HTMLElement).dataset.navKey;
-        if (navKey) {
-          link.textContent = t(navKey);
-        }
-      });
-
-      // Update main navigation links
-      const mainNavLinks = document.querySelectorAll('.main-nav-item[data-nav-key]');
-      mainNavLinks.forEach((link) => {
-        const navKey = (link as HTMLElement).dataset.navKey;
-        if (navKey) {
-          // For main nav items, we need to preserve the dropdown arrow
-          const chevronIcon = link.querySelector('svg');
-          if (chevronIcon) {
-            link.innerHTML = `${t(navKey)} ${chevronIcon.outerHTML}`;
-          } else {
-            link.textContent = t(navKey);
-          }
-        }
-      });
-    }
-
-    private updateMainContent(): void {
-      // Update translatable elements
+    private updateTranslatableElements(): void {
       const translatableElements = document.querySelectorAll('[data-i18n]');
       translatableElements.forEach((element) => {
         const key = (element as HTMLElement).dataset.i18n;
         if (key) {
-          element.textContent = t(key);
+          // Check if element has SVG icons that need to be preserved
+          const icon = element.querySelector('svg');
+
+          if (icon && (key.startsWith('nav.') || key.includes('explore'))) {
+            // Preserve icon for navigation and button elements
+            element.innerHTML = `${t(key)} ${icon.outerHTML}`;
+          } else {
+            // Simple text replacement for most elements
+            element.textContent = t(key);
+          }
         }
       });
 
-      // Update translatable elements with HTML content
+      // Update translatable elements with HTML content (deprecated)
       const translatableHtmlElements = document.querySelectorAll('[data-i18n-html]');
       translatableHtmlElements.forEach((element) => {
         const key = (element as HTMLElement).dataset.i18nHtml;
@@ -84,11 +60,16 @@
   }
 
   // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      new TranslationUpdater();
-    });
-  } else {
+  function initTranslationUpdater() {
     new TranslationUpdater();
   }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTranslationUpdater);
+  } else {
+    initTranslationUpdater();
+  }
+
+  // Re-initialize after Astro page navigation (View Transitions)
+  document.addEventListener('astro:page-load', initTranslationUpdater);
 </script>

@@ -177,13 +177,18 @@ const currentLangInfo = LANGUAGES[currentLanguage];
   }
 
   // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      new LanguageSelector();
-    });
-  } else {
+  function initLanguageSelector() {
     new LanguageSelector();
   }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLanguageSelector);
+  } else {
+    initLanguageSelector();
+  }
+
+  // Re-initialize after Astro page navigation (View Transitions)
+  document.addEventListener('astro:page-load', initLanguageSelector);
 </script>
 
 <style>

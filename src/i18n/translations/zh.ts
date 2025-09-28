@@ -10,8 +10,10 @@ export const zh: Translation = {
     articles: '文章',
     showcase: '项目展示',
     documents: '文档',
-    browse: '浏览',
+    browse: '浏览所有',
     about: '关于',
+    content: '内容',
+    explore: '探索',
   },
   common: {
     readMore: '阅读更多',
@@ -28,6 +30,8 @@ export const zh: Translation = {
     sourceCode: '源代码',
     liveDemo: '在线演示',
     browse: '浏览所有',
+    terms: '条款',
+    privacyPolicy: '隐私政策',
   },
   pages: {
     home: {
@@ -60,6 +64,30 @@ export const zh: Translation = {
       description: '了解更多关于 Surfing 的信息',
     },
   },
+  footer: {
+    sections: {
+      content: '内容',
+      platform: '平台',
+      resources: '资源',
+      community: '社区',
+    },
+    links: {
+      aiIntegration: 'AI 集成',
+      obsidianSupport: 'Obsidian 支持',
+      rssFeeds: 'RSS 订阅',
+      documentation: '文档',
+      contentGuidelines: '内容指南',
+      apiReference: 'API 参考',
+      status: '状态',
+      contributors: '贡献者',
+      github: 'GitHub',
+      support: '支持',
+    },
+    copyright: '版权所有。',
+    poweredBy: '技术支持',
+    builtWith: '构建于',
+    tagline: 'AI驱动的内容平台 · 为创作者而生',
+  },
   rss: {
     title: 'RSS 订阅',
     description: '订阅我们的 RSS 源获取最新更新',
@@ -68,11 +96,6 @@ export const zh: Translation = {
     placeholder: '搜索内容...',
     noResults: '未找到结果。',
     resultsFor: '搜索结果',
-  },
-  footer: {
-    copyright: '版权所有。',
-    poweredBy: '技术支持',
-    builtWith: '构建于',
   },
   language: {
     selector: '语言',

@@ -10,8 +10,10 @@ export const ja: Translation = {
     articles: '記事',
     showcase: 'ショーケース',
     documents: 'ドキュメント',
-    browse: 'ブラウズ',
+    browse: 'すべて閲覧',
     about: 'について',
+    content: 'コンテンツ',
+    explore: '探索',
   },
   common: {
     readMore: '続きを読む',
@@ -28,6 +30,8 @@ export const ja: Translation = {
     sourceCode: 'ソースコード',
     liveDemo: 'ライブデモ',
     browse: 'すべて閲覧',
+    terms: '利用規約',
+    privacyPolicy: 'プライバシーポリシー',
   },
   pages: {
     home: {
@@ -60,6 +64,30 @@ export const ja: Translation = {
       description: 'Surfingについて詳しく学ぶ',
     },
   },
+  footer: {
+    sections: {
+      content: 'コンテンツ',
+      platform: 'プラットフォーム',
+      resources: 'リソース',
+      community: 'コミュニティ',
+    },
+    links: {
+      aiIntegration: 'AI統合',
+      obsidianSupport: 'Obsidianサポート',
+      rssFeeds: 'RSSフィード',
+      documentation: 'ドキュメント',
+      contentGuidelines: 'コンテンツガイドライン',
+      apiReference: 'APIリファレンス',
+      status: 'ステータス',
+      contributors: '貢献者',
+      github: 'GitHub',
+      support: 'サポート',
+    },
+    copyright: 'すべての権利を保有しています。',
+    poweredBy: '提供',
+    builtWith: 'で構築',
+    tagline: 'AI搭載のコンテンツプラットフォーム · クリエイター向け',
+  },
   rss: {
     title: 'RSSフィード',
     description: '最新の更新情報を受け取るためにRSSフィードを購読してください',
@@ -68,11 +96,6 @@ export const ja: Translation = {
     placeholder: 'コンテンツを検索...',
     noResults: '結果が見つかりません。',
     resultsFor: '検索結果',
-  },
-  footer: {
-    copyright: 'すべての権利を保有しています。',
-    poweredBy: '提供',
-    builtWith: 'で構築',
   },
   language: {
     selector: '言語',
