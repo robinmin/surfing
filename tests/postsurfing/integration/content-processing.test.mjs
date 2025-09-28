@@ -41,45 +41,47 @@ async function testContentProcessing() {
 
 async function testArticleProcessing() {
   utils.log('Testing article processing...');
-  
+
   const fixturePath = utils.copyFixture('simple-article.md');
   const result = await utils.runCLI([
-    fixturePath, 
-    '--type', 'articles', 
-    '--dry-run', 
-    '--no-build', 
-    '--no-commit'
+    fixturePath,
+    '--type', 'articles',
+    '--dry-run',
+    '--no-build',
+    '--no-commit',
+    '--verbose'
   ]);
-  
+
   utils.assert(result.success, 'Article processing should succeed');
   utils.assertContains(result.output, 'Processing content file', 'Should process content');
   utils.assertContains(result.output, 'Processing frontmatter', 'Should process frontmatter');
   utils.assertContains(result.output, 'All required fields are present', 'Should validate frontmatter');
   utils.assertContains(result.output, 'Content published successfully', 'Should complete successfully');
-  
+
   utils.success('Article processing test passed');
 }
 
 async function testHtmlDocumentProcessing() {
   utils.log('Testing HTML document processing...');
-  
+
   const fixturePath = utils.copyFixture('simple-html.html');
   const result = await utils.runCLI([
-    fixturePath, 
-    '--type', 'documents', 
+    fixturePath,
+    '--type', 'documents',
     '--auto-convert',
-    '--dry-run', 
-    '--no-build', 
-    '--no-commit'
+    '--dry-run',
+    '--no-build',
+    '--no-commit',
+    '--verbose'
   ]);
-  
+
   utils.assert(result.success, 'HTML processing should succeed');
   utils.assertContains(result.output, 'Converting HTML to Surfing format', 'Should convert HTML');
   utils.assertContains(result.output, 'Title extracted', 'Should extract title');
   utils.assertContains(result.output, 'CSS extracted', 'Should extract CSS');
   utils.assertContains(result.output, 'JavaScript extracted', 'Should extract JavaScript');
   utils.assertContains(result.output, 'Content published successfully', 'Should complete successfully');
-  
+
   utils.success('HTML document processing test passed');
 }
 
@@ -105,20 +107,21 @@ async function testShowcaseProcessing() {
 
 async function testExistingFrontmatter() {
   utils.log('Testing content with existing frontmatter...');
-  
+
   const fixturePath = utils.copyFixture('article-with-frontmatter.md');
   const result = await utils.runCLI([
-    fixturePath, 
-    '--type', 'articles', 
-    '--dry-run', 
-    '--no-build', 
-    '--no-commit'
+    fixturePath,
+    '--type', 'articles',
+    '--dry-run',
+    '--no-build',
+    '--no-commit',
+    '--verbose'
   ]);
-  
+
   utils.assert(result.success, 'Should succeed with existing frontmatter');
   utils.assertContains(result.output, 'Processing frontmatter', 'Should process frontmatter');
   utils.assertContains(result.output, 'Content published successfully', 'Should complete successfully');
-  
+
   utils.success('Existing frontmatter test passed');
 }
 
@@ -137,7 +140,8 @@ async function testHtmlFragmentProcessing() {
     '--auto-convert',
     '--dry-run',
     '--no-build',
-    '--no-commit'
+    '--no-commit',
+    '--verbose'
   ]);
 
   utils.assert(result.success, 'HTML fragment processing should succeed');

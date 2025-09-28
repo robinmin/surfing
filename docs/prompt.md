@@ -24,3 +24,22 @@ If We can define some ways to automatically extract metadata from markdown files
   - Tailwind CSS (Already done)
   - Lucide Icons (Already done)
 - For the implementation of the website, you need to do it with three steps: Step 1, Analyze the requirements and design the architecture of the website. Step 2, clarify with me the details of the website. Step 3, start to implement the website with above technical tools.
+
+### publish tool
+#### Background
+As @README.md mentioned, it's difficult to use current system to publish markdown files or HTML files easily to a website. So I need to find a better way to build a website.
+
+If we have customized command line toll `postsurfing` can take several paramters to help:
+  - decide which category we need to go with (Articles/Posts/Showcase/ and etc)
+  - For normal markdown file, check whether the necessary meta data in enough or not, whether we can padding them automatcly. According to the section of 'Frontmatter Schema', different category with different requirments on metada.
+  - For the HTML file(including Basic HTML Document and Migration Tips for Existing HTML, automaticly read the original data and convert them into the format surfing need)
+  - After the content been proceessed properly, run 'npm run build' to check everything is working properly or not. if yes, commit and push to github (use `gcm -m "[commit mssage here]" .` and `gpush`). Other wise, told user what happend
+  
+#### Goal
+- Your works we split into 4 steps: 
+  - step 1, Understanding the requirment and have a roughly design on solution; 
+  - step 2, confirm with me the solution iteself and other unclear things, until erverything is read to implement it.
+  - step 3, implemeent it and make sure everything is working well as expected.
+  - step 4, add a set of comprehensive test cases for this tool in @tests, and fix all potential isssues untill all pass.
+- Based on current situation, we'd better to use ts/mjs implemeent this tool into @script, then we can use some bash tools makee it's convinent to use everywhere for eevery body.
+- The code must be stable and robust with well design error/exception handling, and necessary error/log information. Time goes by, nobody will remember the details of this project. we'd better to leet them what happen and how to deal with their situation.

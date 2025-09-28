@@ -15,11 +15,7 @@ import { getAllContent, filterContent, sortContent } from '~/utils/content';
 // Get featured content
 const allContent = await getAllContent();
 const featuredPosts = filterContent(allContent, { featured: true, draft: false });
-const latestContent = sortContent(
-  filterContent(allContent, { draft: false }),
-  'date',
-  'desc'
-).slice(0, 6);
+const latestContent = sortContent(filterContent(allContent, { draft: false }), 'date', 'desc').slice(0, 6);
 
 // Get content statistics
 const totalArticles = (await getAllContent('articles')).length;
@@ -27,7 +23,8 @@ const totalShowcases = (await getAllContent('showcase')).length;
 
 const metadata = {
   title: 'Surfing — AI-Powered Content Showcase Platform',
-  description: 'Discover and publish AI-generated content with seamless Obsidian integration, modern design, and powerful content management.',
+  description:
+    'Discover and publish AI-generated content with seamless Obsidian integration, modern design, and powerful content management.',
   ignoreTitleTemplate: true,
 };
 ---
@@ -49,19 +46,8 @@ const metadata = {
       Share Your <span class="text-accent dark:text-white">AI Work</span>
     </Fragment>
 
-    <Fragment slot="subtitle">
-      A simple platform to publish content you collect and generate while working with AI.
-    </Fragment>
+    <Fragment slot="subtitle"> A simple, clear space to publish collected knowledge and AI-driven creations. </Fragment>
   </Hero>
 
-
-
-
-
-  <BlogLatestPosts
-    title="Latest Content"
-    linkUrl="/browse"
-    linkText="Browse All"
-  />
-
+  <BlogLatestPosts title="Latest Content" linkUrl="/browse" linkText="Browse All" />
 </Layout>

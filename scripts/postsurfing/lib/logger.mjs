@@ -20,6 +20,15 @@ export class Logger {
   }
 
   /**
+   * Log an informational message (verbose mode only)
+   */
+  infoVerbose(message) {
+    if (this.verbose) {
+      console.log(`ℹ️  ${message}`);
+    }
+  }
+
+  /**
    * Log a success message
    */
   success(message) {
@@ -27,10 +36,28 @@ export class Logger {
   }
 
   /**
+   * Log a success message (verbose mode only)
+   */
+  successVerbose(message) {
+    if (this.verbose) {
+      console.log(`✅ ${message}`);
+    }
+  }
+
+  /**
    * Log a warning message
    */
   warn(message) {
     console.log(`⚠️  ${message}`);
+  }
+
+  /**
+   * Log a warning message (verbose mode only)
+   */
+  warnVerbose(message) {
+    if (this.verbose) {
+      console.log(`⚠️  ${message}`);
+    }
   }
 
   /**
@@ -87,6 +114,18 @@ export class Logger {
    * Log a list of items
    */
   list(items, title = 'Items') {
+    if (this.verbose) {
+      console.log(`\n📋 ${title}:`);
+      items.forEach((item, index) => {
+        console.log(`   ${index + 1}. ${item}`);
+      });
+    }
+  }
+
+  /**
+   * Log a list of items (always visible)
+   */
+  listAlways(items, title = 'Items') {
     console.log(`\n📋 ${title}:`);
     items.forEach((item, index) => {
       console.log(`   ${index + 1}. ${item}`);
@@ -165,10 +204,14 @@ export class Logger {
    * Log frontmatter validation results
    */
   frontmatterValidation(results) {
-    console.log('\n📝 Frontmatter Validation:');
-    
+    if (this.verbose) {
+      console.log('\n📝 Frontmatter Validation:');
+    }
+
     if (results.valid) {
-      console.log('✅ All required fields are present');
+      if (this.verbose) {
+        console.log('✅ All required fields are present');
+      }
     } else {
       console.log('❌ Missing required fields:');
       results.missing.forEach(field => {
@@ -176,14 +219,14 @@ export class Logger {
       });
     }
 
-    if (results.warnings && results.warnings.length > 0) {
+    if (this.verbose && results.warnings && results.warnings.length > 0) {
       console.log('\n⚠️  Warnings:');
       results.warnings.forEach(warning => {
         console.log(`   • ${warning}`);
       });
     }
 
-    if (results.suggestions && results.suggestions.length > 0) {
+    if (this.verbose && results.suggestions && results.suggestions.length > 0) {
       console.log('\n💡 Suggestions:');
       results.suggestions.forEach(suggestion => {
         console.log(`   • ${suggestion}`);
@@ -210,24 +253,26 @@ export class Logger {
    * Log HTML conversion results
    */
   htmlConversion(results) {
-    console.log('\n🔄 HTML Conversion Results:');
-    
-    if (results.title) {
-      console.log(`   📝 Title extracted: ${results.title}`);
+    if (this.verbose) {
+      console.log('\n🔄 HTML Conversion Results:');
+
+      if (results.title) {
+        console.log(`   📝 Title extracted: ${results.title}`);
+      }
+
+      if (results.cssExtracted) {
+        console.log(`   🎨 CSS extracted: ${results.cssLines} lines`);
+      }
+
+      if (results.jsExtracted) {
+        console.log(`   ⚡ JavaScript extracted: ${results.jsLines} lines`);
+      }
+
+      if (results.metaExtracted && results.metaExtracted.length > 0) {
+        console.log(`   📋 Meta tags extracted: ${results.metaExtracted.length}`);
+      }
+
+      console.log(`   📄 Content body: ${results.bodyLines} lines`);
     }
-    
-    if (results.cssExtracted) {
-      console.log(`   🎨 CSS extracted: ${results.cssLines} lines`);
-    }
-    
-    if (results.jsExtracted) {
-      console.log(`   ⚡ JavaScript extracted: ${results.jsLines} lines`);
-    }
-    
-    if (results.metaExtracted && results.metaExtracted.length > 0) {
-      console.log(`   📋 Meta tags extracted: ${results.metaExtracted.length}`);
-    }
-    
-    console.log(`   📄 Content body: ${results.bodyLines} lines`);
   }
 }

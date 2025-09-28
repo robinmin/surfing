@@ -36,6 +36,7 @@ const { values: options, positionals: args } = parseArgs({
     'no-build': { type: 'boolean' },
     'no-commit': { type: 'boolean' },
     'commit-message': { type: 'string' },
+    force: { type: 'boolean' },
     verbose: { type: 'boolean', short: 'v' },
     help: { type: 'boolean', short: 'h' }
   },
@@ -72,6 +73,7 @@ OPTIONS:
       --no-build               Skip build validation step
       --no-commit              Skip git commit and push
       --commit-message <msg>   Custom commit message
+      --force                  Overwrite existing files without warning
   -v, --verbose                Enable detailed logging
   -h, --help                   Show this help message
 
@@ -139,12 +141,12 @@ async function main() {
     const filePath = args[0];
     const contentType = options.type;
 
-    logger.info(`🏄 PostSurfing CLI Tool`);
-    logger.info(`📁 Processing: ${filePath}`);
-    logger.info(`📝 Content Type: ${contentType}`);
-    
+    logger.infoVerbose(`🏄 PostSurfing CLI Tool`);
+    logger.infoVerbose(`📁 Processing: ${filePath}`);
+    logger.infoVerbose(`📝 Content Type: ${contentType}`);
+
     if (options['dry-run']) {
-      logger.info('🔍 Dry run mode - no changes will be applied');
+      logger.infoVerbose('🔍 Dry run mode - no changes will be applied');
     }
 
     // Initialize processors
@@ -210,8 +212,8 @@ async function main() {
     // Success!
     logger.success('✅ Content published successfully!');
     if (!options['dry-run']) {
-      logger.info(`📄 File: ${processedContent.outputPath}`);
-      logger.info(`🌐 Content will be available after deployment`);
+      logger.infoVerbose(`📄 File: ${processedContent.outputPath}`);
+      logger.infoVerbose(`🌐 Content will be available after deployment`);
     }
 
   } catch (error) {

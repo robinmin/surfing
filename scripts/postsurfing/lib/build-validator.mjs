@@ -48,7 +48,7 @@ export class BuildValidator {
    */
   async runBuild() {
     return new Promise((resolve) => {
-      this.logger.info('Running npm run build...');
+      this.logger.infoVerbose('Running npm run build...');
       
       const buildProcess = spawn('npm', ['run', 'build'], {
         cwd: this.projectRoot,

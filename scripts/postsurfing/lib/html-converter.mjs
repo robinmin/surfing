@@ -19,11 +19,11 @@ export class HtmlConverter {
     const isFullHtml = this.isFullHtmlDocument(content);
     
     if (!isFullHtml) {
-      this.logger.info('Content appears to be HTML fragment, minimal processing needed');
+      this.logger.infoVerbose('Content appears to be HTML fragment, minimal processing needed');
       return this.processHtmlFragment(content, metadata);
     }
 
-    this.logger.info('Full HTML document detected, performing complete conversion');
+    this.logger.infoVerbose('Full HTML document detected, performing complete conversion');
     
     if (!autoConvert) {
       const shouldConvert = await this.promptForConversion();
@@ -300,7 +300,7 @@ export class HtmlConverter {
    */
   async promptForConversion() {
     this.logger.prompt('This appears to be a full HTML document.');
-    this.logger.info('The conversion will:');
+    this.logger.infoVerbose('The conversion will:');
     this.logger.list([
       'Extract CSS from <style> tags to customCSS frontmatter',
       'Extract JavaScript from <script> tags to customJS frontmatter',
@@ -311,7 +311,7 @@ export class HtmlConverter {
 
     // In a real implementation, you'd use a proper prompt library
     // For now, we'll assume auto-conversion
-    this.logger.info('Auto-converting (use --auto-convert to skip this prompt)');
+    this.logger.infoVerbose('Auto-converting (use --auto-convert to skip this prompt)');
     return true;
   }
 }

@@ -96,14 +96,14 @@ async function testInvalidContentType() {
 
 async function testDryRunMode() {
   utils.log('Testing dry run mode...');
-  
+
   const fixturePath = utils.copyFixture('simple-article.md');
-  const result = await utils.runCLI([fixturePath, '--type', 'articles', '--dry-run', '--no-build', '--no-commit']);
-  
+  const result = await utils.runCLI([fixturePath, '--type', 'articles', '--dry-run', '--no-build', '--no-commit', '--verbose']);
+
   utils.assert(result.success, 'Dry run should succeed');
   utils.assertContains(result.output, 'Dry run mode', 'Should indicate dry run mode');
   utils.assertContains(result.output, 'Content published successfully', 'Should show success message');
-  
+
   utils.success('Dry run mode test passed');
 }
 

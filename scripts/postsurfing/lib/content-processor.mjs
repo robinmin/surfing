@@ -343,10 +343,15 @@ export class ContentProcessor {
       return true;
     }
 
-    // Check if markdown file contains full HTML structure
-    return content.includes('<!DOCTYPE html>') || 
-           content.includes('<html>') || 
-           content.includes('<head>');
+    // Check if markdown file contains full HTML document structure
+    // Only trigger conversion for complete HTML documents, not just HTML tags
+    const hasDoctype = content.includes('<!DOCTYPE html>');
+    const hasHtmlTag = content.includes('<html');
+    const hasHeadTag = content.includes('<head');
+    const hasBodyTag = content.includes('<body');
+
+    // Require at least DOCTYPE + html tag OR html + head + body for full conversion
+    return hasDoctype && hasHtmlTag || (hasHtmlTag && hasHeadTag && hasBodyTag);
   }
 
   /**

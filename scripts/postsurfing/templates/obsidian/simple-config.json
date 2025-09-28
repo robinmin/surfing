@@ -1,0 +1,25 @@
+{
+  "name": "Simple PostSurfing Templates",
+  "description": "Clean templates that just handle frontmatter",
+  "templates": [
+    {
+      "name": "📝 Article",
+      "templatePath": "scripts/postsurfing/templates/obsidian/articles.tpl.md",
+      "folder": "Articles"
+    },
+    {
+      "name": "🚀 Showcase",
+      "templatePath": "scripts/postsurfing/templates/obsidian/showcase.tpl.md", 
+      "folder": "Showcase"
+    },
+    {
+      "name": "📚 Document",
+      "templatePath": "scripts/postsurfing/templates/obsidian/documents.tpl.md",
+      "folder": "Documents"
+    }
+  ],
+  "usage": {
+    "setup": "Add these as Quick-add templates in Obsidian",
+    "publish": "postsurfing filename.md --type [articles|showcase|documents]"
+  }
+}

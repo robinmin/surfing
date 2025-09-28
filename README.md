@@ -20,7 +20,7 @@ A modern content management and publishing platform built with Astro, designed s
 - **Articles**: AI insights, research, and technical content
 - **Showcase**: Project portfolios with live demos and source links
 - **Blog Posts**: Traditional blog content with MDX support
-- **Documents**: HTML content for legacy or rich-formatted pieces
+- **HTML Documents**: Full HTML content with custom CSS/JS for legacy migration and rich applications
 
 ### 🔍 Smart Discovery
 - **Advanced Search**: Real-time filtering across all content
@@ -29,8 +29,8 @@ A modern content management and publishing platform built with Astro, designed s
 - **Related Content**: AI-powered content suggestions
 
 ### 📡 Content Syndication
-- **Multiple RSS Feeds**: Site-wide, articles-only, and showcase-only feeds
-- **Rich Metadata**: Reading time, technologies, categories in feeds
+- **Multiple RSS Feeds**: Site-wide, articles, showcase, and documents feeds
+- **Rich Metadata**: Reading time, technologies, categories, and content types in feeds
 - **SEO Optimized**: Structured data and meta tags for discoverability
 
 ## ⚡ Quick Start
@@ -83,13 +83,17 @@ Your markdown content goes here. Use standard markdown syntax.
 
 3. **Save the file** - Your content appears automatically on the site!
 
-### How to Publish an HTML File
+### How to Publish HTML Documents
 
-1. **Create your HTML file** in `src/content/documents/your-document.html`
+Surfing supports full HTML content with custom CSS and JavaScript, perfect for migrating existing HTML files, legacy content, or rich interactive documents.
+
+#### Basic HTML Document
+
+1. **Create your HTML file** in `src/content/documents/your-document.md`
 
 2. **Add frontmatter** at the top:
 
-```html
+```yaml
 ---
 title: "Legacy Documentation"
 description: "Imported documentation from previous system"
@@ -97,6 +101,7 @@ publishDate: 2024-01-15
 tags: [documentation, legacy]
 category: "docs"
 author: "Your Name"
+contentType: "legacy"  # Options: page, legacy, template, snippet
 ---
 
 <h1>Your HTML Content</h1>
@@ -107,6 +112,234 @@ author: "Your Name"
 ```
 
 3. **Save and refresh** - Your HTML content is now live!
+
+#### Full HTML with Custom CSS and JavaScript
+
+For complete HTML applications with custom styling and interactivity:
+
+1. **Create your document** in `src/content/documents/your-app.md`
+
+2. **Add comprehensive frontmatter**:
+
+```yaml
+---
+title: "Interactive HTML Application"
+description: "Full HTML content with custom CSS and JavaScript"
+publishDate: 2024-01-15
+tags: [html, css, javascript, interactive]
+category: "applications"
+author: "Your Name"
+contentType: "page"
+featured: true
+preserveStyles: true  # Maintains your original styling
+
+# Custom CSS - moved from <style> tags
+customCSS: |
+  .app-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+
+  .interactive-button {
+    background: #3b82f6;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .interactive-button:hover {
+    background: #2563eb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .app-container {
+      border: 1px solid #374151;
+    }
+  }
+
+# Custom JavaScript - moved from <script> tags
+customJS: |
+  document.addEventListener('DOMContentLoaded', function() {
+    // Interactive functionality
+    const buttons = document.querySelectorAll('.interactive-button');
+    buttons.forEach(button => {
+      button.addEventListener('click', function() {
+        this.textContent = this.textContent === 'Clicked!' ? 'Click me!' : 'Clicked!';
+      });
+    });
+
+    // Dynamic content
+    const timestampEl = document.getElementById('current-time');
+    if (timestampEl) {
+      timestampEl.textContent = new Date().toLocaleString();
+    }
+
+    // Custom animations
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.style.opacity = '0';
+      container.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        container.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+      }, 100);
+    }
+  });
+---
+
+<div class="app-container">
+  <h2>🚀 Interactive HTML Application</h2>
+  <p>This demonstrates full HTML content with custom CSS and JavaScript preserved exactly as written.</p>
+
+  <button class="interactive-button">Click me!</button>
+
+  <p>Current time: <strong id="current-time">Loading...</strong></p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>✨ Custom Styling</h4>
+      <p>Your existing CSS is preserved and scoped properly.</p>
+    </div>
+    <div class="feature-card">
+      <h4>⚡ JavaScript Support</h4>
+      <p>Interactive elements work perfectly within Astro.</p>
+    </div>
+  </div>
+</div>
+```
+
+3. **Your content is now live** with full interactivity and custom styling!
+
+#### Migration Tips for Existing HTML
+
+**Converting Full HTML Files:**
+
+1. **Extract CSS and JavaScript**:
+   ```html
+   <!-- From this: -->
+   <style>
+     .my-class { color: red; }
+   </style>
+   <script>
+     console.log('Hello');
+   </script>
+
+   <!-- To frontmatter: -->
+   ---
+   customCSS: |
+     .my-class { color: red; }
+   customJS: |
+     console.log('Hello');
+   ---
+   ```
+
+2. **Handle Complex HTML Structure**:
+   - Remove `<html>`, `<head>`, and `<body>` tags
+   - Keep only the content inside `<body>`
+   - Move `<meta>` tags to frontmatter fields
+   - Extract `<title>` to frontmatter `title` field
+
+3. **Content Type Guidelines**:
+   - `page` - Standard HTML documents
+   - `legacy` - Migrated content from other systems
+   - `template` - Reusable HTML templates
+   - `snippet` - Code examples or partial content
+
+4. **Styling Preservation**:
+   ```yaml
+   preserveStyles: true   # Maintains original appearance
+   preserveStyles: false  # Applies site's design system
+   ```
+
+5. **File Extension**:
+   - Use `.md` extension for better Astro compatibility
+   - HTML content works perfectly in `.md` files
+
+**Example Migration:**
+
+```html
+<!-- Original HTML file -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My App</title>
+  <style>
+    .container { padding: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hello World</h1>
+  </div>
+  <script>
+    alert('Loaded!');
+  </script>
+</body>
+</html>
+```
+
+```yaml
+<!-- Migrated to documents/my-app.md -->
+---
+title: "My App"
+contentType: "legacy"
+preserveStyles: true
+customCSS: |
+  .container { padding: 20px; }
+customJS: |
+  alert('Loaded!');
+---
+
+<div class="container">
+  <h1>Hello World</h1>
+</div>
+```
+
+#### Document Discovery
+
+Your HTML documents automatically appear in:
+- **Documents page**: `/documents`
+- **Browse page**: `/browse` (with "Document" badge)
+- **RSS feeds**: `/documents/rss.xml` and `/rss.xml`
+- **Site navigation**: Header and footer menus
+
+#### Quick Reference
+
+**File Location**: `src/content/documents/your-file.md`
+
+**Minimal Example**:
+```yaml
+---
+title: "My HTML Document"
+---
+<h1>Hello World</h1>
+```
+
+**With Custom CSS/JS**:
+```yaml
+---
+title: "Interactive Document"
+customCSS: |
+  .highlight { background: yellow; }
+customJS: |
+  console.log('Document loaded!');
+---
+<div class="highlight">Styled content</div>
+```
+
+**Content Types**:
+- `page` - Standard documents
+- `legacy` - Migrated content
+- `template` - Reusable templates
+- `snippet` - Code examples
 
 ### How to Unpublish Content
 
@@ -186,6 +419,44 @@ featured: boolean (optional)
 category: string (optional)
 tags: array of strings (optional)
 author: string (optional)
+---
+```
+
+**HTML Documents:**
+```yaml
+---
+title: string (required)
+description: string (optional)
+slug: string (optional, auto-generated from filename)
+publishDate: date (optional)
+updateDate: date (optional)
+
+# Content organization
+tags: array of strings (optional)
+category: string (optional)
+
+# Status tracking
+draft: boolean (optional, defaults to false)
+featured: boolean (optional, defaults to false)
+
+# Document-specific fields
+source: string (optional, original source URL/system)
+contentType: enum (optional, defaults to "page")
+  # Options: "page", "snippet", "template", "legacy"
+author: string (optional)
+
+# Custom styling support
+customCSS: string (optional, CSS code to inject)
+customJS: string (optional, JavaScript code to inject)
+preserveStyles: boolean (optional, defaults to true)
+  # true: maintains original styling
+  # false: applies site's design system
+
+# Auto-extracted metadata (optional)
+headings: array of strings (auto-generated)
+links: array of strings (auto-generated)
+wordCount: number (auto-calculated)
+readingTime: number (auto-calculated)
 ---
 ```
 

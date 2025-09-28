@@ -97,16 +97,20 @@ export class GitManager {
    */
   async commit(message) {
     this.logger.debug(`Committing with message: ${message}`);
-    
+
     const result = await this.runGitCommand(['commit', '-m', message]);
-    
+
     if (!result.success) {
       // Check if it's because there's nothing to commit
-      if (result.output.includes('nothing to commit')) {
-        this.logger.info('Nothing to commit');
+      if (result.output.includes('nothing to commit') ||
+          result.output.includes('no changes added to commit') ||
+          result.error.includes('nothing to commit')) {
+        this.logger.infoVerbose('Nothing to commit - no changes detected');
         return { success: true, noChanges: true };
       }
-      
+
+      this.logger.debug(`Commit failed with output: ${result.output}`);
+      this.logger.debug(`Commit failed with error: ${result.error}`);
       throw new Error(`Failed to commit: ${result.error}`);
     }
 
@@ -162,11 +166,11 @@ export class GitManager {
   async runGitCommand(args) {
     return new Promise((resolve) => {
       this.logger.debug(`Running git command: git ${args.join(' ')}`);
-      
+
       const gitProcess = spawn('git', args, {
         cwd: this.projectRoot,
         stdio: 'pipe',
-        shell: true
+        shell: false  // Changed from true to false to prevent shell interpretation
       });
 
       let stdout = '';
