@@ -1,6 +1,7 @@
 ---
 title: "Welcome to Surfing - Your AI-Powered Content Hub"
 description: "Discover how Surfing transforms the way you publish and showcase AI-generated content with seamless Obsidian integration."
+slug: "welcome-to-surfing"
 publishDate: 2024-01-15
 tags: [AI, content-management, Obsidian, showcase]
 category: "introduction"
@@ -30,7 +31,7 @@ Surfing is built with cutting-edge technologies to provide you with the ultimate
 - Preserve your existing tags and categories
 
 ### 🎨 **Beautiful Design**
-- AstroWind template foundation
+- Modern template foundation
 - Tailwind CSS for responsive design
 - Lucide icons for crisp visuals
 - Dark/light mode support

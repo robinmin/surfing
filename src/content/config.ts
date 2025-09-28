@@ -46,35 +46,7 @@ const metadataDefinition = () =>
     })
     .optional();
 
-// Enhanced post collection with Obsidian compatibility
-const postCollection = defineCollection({
-  loader: glob({ pattern: ['*.md', '*.mdx'], base: 'src/data/post' }),
-  schema: z.object({
-    publishDate: z.date().optional(),
-    updateDate: z.date().optional(),
-    draft: z.boolean().optional(),
-
-    title: z.string(),
-    excerpt: z.string().optional(),
-    image: z.string().optional(),
-
-    category: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    author: z.string().optional(),
-
-    // Obsidian-specific fields
-    aliases: z.array(z.string()).optional(),
-    cssclass: z.string().optional(),
-
-    // Content metadata
-    readingTime: z.number().optional(),
-    wordCount: z.number().optional(),
-    featured: z.boolean().optional(),
-
-    // SEO and social
-    metadata: metadataDefinition(),
-  }),
-});
+// Note: post collection removed - using articles and showcase instead
 
 // Articles collection for Obsidian markdown content
 const articlesCollection = defineCollection({
@@ -82,6 +54,7 @@ const articlesCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
+    slug: z.string().optional(),
     publishDate: z.date().optional(),
     updateDate: z.date().optional(),
 
@@ -137,6 +110,7 @@ const showcaseCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    slug: z.string().optional(),
     publishDate: z.date(),
 
     // Showcase-specific fields
@@ -154,7 +128,6 @@ const showcaseCollection = defineCollection({
 });
 
 export const collections = {
-  post: postCollection,
   articles: articlesCollection,
   documents: documentsCollection,
   showcase: showcaseCollection,

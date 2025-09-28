@@ -17,15 +17,7 @@ export const headerData = {
           text: 'Showcase',
           href: getPermalink('/showcase'),
         },
-        {
-          text: 'Blog Posts',
-          href: getBlogPermalink(),
-        },
       ],
-    },
-    {
-      text: 'Features',
-      href: getPermalink('/#features'),
     },
     {
       text: 'About',
@@ -43,13 +35,11 @@ export const footerData = {
         { text: 'Browse All', href: '/browse' },
         { text: 'Articles', href: '/articles' },
         { text: 'Showcase', href: '/showcase' },
-        { text: 'Blog Posts', href: getBlogPermalink() },
       ],
     },
     {
       title: 'Platform',
       links: [
-        { text: 'Features', href: '/#features' },
         { text: 'AI Integration', href: '#' },
         { text: 'Obsidian Support', href: '#' },
         { text: 'RSS Feeds', href: '/rss.xml' },
@@ -69,7 +59,7 @@ export const footerData = {
       links: [
         { text: 'About', href: '/about' },
         { text: 'Contributors', href: '#' },
-        { text: 'GitHub', href: 'https://github.com/yourusername/surfing' },
+        { text: 'GitHub', href: 'https://github.com/robin/surfing' },
         { text: 'Support', href: '#' },
       ],
     },
@@ -82,9 +72,9 @@ export const footerData = {
     { ariaLabel: 'RSS All Content', icon: 'tabler:rss', href: getAsset('/rss.xml') },
     { ariaLabel: 'RSS Articles', icon: 'tabler:rss', href: getAsset('/articles/rss.xml') },
     { ariaLabel: 'RSS Showcase', icon: 'tabler:rss', href: getAsset('/showcase/rss.xml') },
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/yourusername/surfing' },
+    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robin/surfing' },
   ],
   footNote: `
-    Built with <a class="text-blue-600 underline dark:text-muted" href="https://astro.build"> Astro</a> · AI-Powered Content Platform
+    AI-Powered Content Platform · Built for Creators
   `,
 };

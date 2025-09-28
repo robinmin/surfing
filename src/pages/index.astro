@@ -24,7 +24,6 @@ const latestContent = sortContent(
 // Get content statistics
 const totalArticles = (await getAllContent('articles')).length;
 const totalShowcases = (await getAllContent('showcase')).length;
-const totalPosts = (await getAllContent('post')).length;
 
 const metadata = {
   title: 'Surfing — AI-Powered Content Showcase Platform',
@@ -40,159 +39,29 @@ const metadata = {
     actions={[
       {
         variant: 'primary',
-        text: 'Explore Content',
+        text: 'Browse',
         href: '/browse',
         icon: 'tabler:compass',
       },
-      { text: 'Learn More', href: '#features' },
     ]}
-    image={{ src: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80', alt: 'AI and Technology' }}
   >
     <Fragment slot="title">
-      Showcase Your <span class="hidden xl:inline">AI-Generated</span>
-      <span class="text-accent dark:text-white"> Content</span> Beautifully
+      Share Your <span class="text-accent dark:text-white">AI Work</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      <span class="hidden sm:inline">
-        <span class="font-semibold">Surfing</span> is the ultimate platform for publishing and discovering AI-generated content with seamless Obsidian integration.</span
-      >
-      <span class="block mb-1 sm:hidden font-bold text-blue-600">Surfing: AI-Powered Publishing.</span>
-      Transform your Obsidian notes, AI insights, and creative content into a beautiful, discoverable website.
+      A simple platform to publish content you collect and generate while working with AI.
     </Fragment>
   </Hero>
 
-  <!-- Note Widget ******************* -->
 
-  <Note title="🤖 AI-First:" description="Designed for the age of AI content creation and collaboration" />
 
-  <!-- Features Widget *************** -->
 
-  <Features
-    id="features"
-    tagline="Capabilities"
-    title="What Makes Surfing Special"
-    subtitle="A modern content platform built for AI creators, researchers, and writers who want to share their insights with the world."
-    items={[
-      {
-        title: 'Obsidian Integration',
-        description:
-          'Drop your Obsidian markdown files directly. Full frontmatter compatibility, aliases, tags, and custom CSS classes preserved.',
-        icon: 'tabler:notes',
-      },
-      {
-        title: 'AI Content Optimized',
-        description:
-          'Automatic metadata extraction, reading time calculation, and smart content categorization for AI-generated content.',
-        icon: 'tabler:brain',
-      },
-      {
-        title: 'Multi-Format Support',
-        description:
-          'Markdown articles, HTML documents, project showcases, and blog posts - all in one unified platform.',
-        icon: 'tabler:file-type-html',
-      },
-      {
-        title: 'Lightning Fast',
-        description:
-          'Built on Astro 5 for optimal performance. Sub-second page loads and 100/100 Lighthouse scores.',
-        icon: 'tabler:rocket',
-      },
-      {
-        title: 'Smart Discovery',
-        description:
-          'Advanced search, tag filtering, category browsing, and related content suggestions powered by intelligent algorithms.',
-        icon: 'tabler:search',
-      },
-      {
-        title: 'Modern Design',
-        description:
-          'Beautiful, responsive design with dark/light mode support, accessible components, and mobile-first approach.',
-        icon: 'tabler:palette',
-      },
-    ]}
-  />
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    tagline="Publishing Workflow"
-    title="From AI Creation to Beautiful Publication"
-    items={[
-      {
-        title: 'Create in Your Favorite Tools',
-        description:
-          'Use Obsidian, Claude, ChatGPT, or any markdown editor. Keep your existing workflow and note-taking habits.',
-      },
-      {
-        title: 'Smart Content Processing',
-        description:
-          'Automatic frontmatter parsing, metadata extraction, and content optimization for web publication.',
-      },
-      {
-        title: 'Instant Deployment',
-        description:
-          'Push to GitHub and deploy automatically via Cloudflare Pages. Your content goes live in seconds.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Content Creation Workflow',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Streamlined for Creators</h3>
-      Focus on creating amazing content while Surfing handles the technical details
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Stats Widget ****************** -->
-
-  <Stats
-    stats={[
-      { title: 'Articles', amount: totalArticles.toString() },
-      { title: 'Showcases', amount: totalShowcases.toString() },
-      { title: 'Blog Posts', amount: totalPosts.toString() },
-      { title: 'Featured Content', amount: featuredPosts.length.toString() },
-    ]}
-  />
-
-  <!-- HighlightedPosts Widget ******* -->
 
   <BlogLatestPosts
-    title="Discover Latest Content"
-    information="Explore AI insights, technical articles, project showcases, and creative content from our growing community of AI creators and researchers."
+    title="Latest Content"
+    linkUrl="/browse"
+    linkText="Browse All"
   />
 
-  <!-- CallToAction Widget *********** -->
-
-  <CallToAction
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Start Exploring',
-        href: '/browse',
-        icon: 'tabler:compass',
-      },
-      {
-        variant: 'secondary',
-        text: 'View Showcase',
-        href: '/showcase',
-        icon: 'tabler:stars',
-      },
-    ]}
-  >
-    <Fragment slot="title">
-      Ready to <span class="text-accent">Surf</span> the Future of Content?
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      Join the AI content revolution. Discover insights, share knowledge, and connect with fellow creators building the future.
-    </Fragment>
-  </CallToAction>
 </Layout>

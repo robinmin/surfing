@@ -3,7 +3,7 @@ title: "Surfing Platform"
 description: "A modern content management platform built with Astro, featuring AI content integration and Obsidian compatibility."
 publishDate: 2024-01-15
 projectUrl: "https://surfing.salty.vip"
-githubUrl: "https://github.com/yourusername/surfing"
+githubUrl: "https://github.com/robin/surfing"
 image: "/images/showcase/surfing-platform.jpg"
 technologies: ["Astro", "TypeScript", "Tailwind CSS", "Cloudflare Pages", "MDX"]
 featured: true

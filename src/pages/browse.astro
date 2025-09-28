@@ -96,11 +96,10 @@ const metadata = {
     <!-- Content Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="contentGrid">
       {sortedContent.map(entry => {
-        const contentType = entry.contentType || 'post';
-        const url = contentType === 'post' ? `/blog/${entry.slug}` :
-                   contentType === 'articles' ? `/articles/${entry.slug}` :
-                   contentType === 'showcase' ? `/showcase/${entry.slug}` :
-                   `/documents/${entry.slug}`;
+        const contentType = entry.contentType || 'articles';
+        const url = contentType === 'articles' ? `/articles/${entry.slug || entry.id}` :
+                   contentType === 'showcase' ? `/showcase/${entry.slug || entry.id}` :
+                   `/documents/${entry.slug || entry.id}`;
 
         return (
           <article

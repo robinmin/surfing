@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { getPermalink } from './permalinks';
 
-export type ContentType = 'post' | 'articles' | 'documents' | 'showcase';
+export type ContentType = 'articles' | 'documents' | 'showcase';
 
 // Obsidian-compatible frontmatter parser
 export function parseObsidianFrontmatter(content: string): { frontmatter: Record<string, any>; body: string } {
@@ -100,7 +100,6 @@ export function extractContentMetadata(content: string): {
 // Get all content with unified interface
 export async function getAllContent(type?: ContentType) {
   const collections = {
-    post: await getCollection('post'),
     articles: await getCollection('articles'),
     documents: await getCollection('documents'),
     showcase: await getCollection('showcase'),
@@ -112,7 +111,6 @@ export async function getAllContent(type?: ContentType) {
 
   // Return all content with type information
   return [
-    ...collections.post.map(item => ({ ...item, contentType: 'post' as const })),
     ...collections.articles.map(item => ({ ...item, contentType: 'articles' as const })),
     ...collections.documents.map(item => ({ ...item, contentType: 'documents' as const })),
     ...collections.showcase.map(item => ({ ...item, contentType: 'showcase' as const })),
