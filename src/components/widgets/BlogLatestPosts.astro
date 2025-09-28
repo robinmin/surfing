@@ -4,7 +4,7 @@ import { APP_BLOG } from 'astrowind:config';
 import Grid from '~/components/blog/Grid.astro';
 
 import { getBlogPermalink } from '~/utils/permalinks';
-import { findLatestPosts } from '~/utils/blog';
+import { getAllContent, filterContent, sortContent } from '~/utils/content';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import type { Widget } from '~/types';
 import Button from '~/components/ui/Button.astro';
@@ -30,11 +30,21 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
+// Get latest content when blog is enabled, fallback to articles/showcase
+const posts = APP_BLOG.isEnabled
+  ? (() => {
+      // Use articles as blog posts since we don't have a separate post collection
+      const allContent = getAllContent();
+      return allContent.then(content =>
+        sortContent(filterContent(content, { draft: false }), 'date', 'desc').slice(0, count)
+      );
+    })()
+  : [];
+const resolvedPosts = await posts;
 ---
 
 {
-  APP_BLOG.isEnabled ? (
+  APP_BLOG.isEnabled && resolvedPosts.length > 0 ? (
     <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container as string} bg={bg}>
       <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
         {title && (
@@ -55,7 +65,7 @@ const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
         {information && <p class="text-muted dark:text-slate-400 lg:text-sm lg:max-w-md" set:html={information} />}
       </div>
 
-      <Grid posts={posts} />
+      <Grid posts={resolvedPosts} />
     </WidgetWrapper>
   ) : (
     <Fragment />

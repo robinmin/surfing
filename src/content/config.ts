@@ -81,28 +81,22 @@ const articlesCollection = defineCollection({
   }),
 });
 
-// HTML documents collection
-const documentsCollection = defineCollection({
-  loader: glob({ pattern: ['*.html'], base: 'src/content/documents' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    publishDate: z.date().optional(),
-
-    tags: z.array(z.string()).default([]),
-    category: z.string().optional(),
-
-    // HTML-specific metadata
-    source: z.string().optional(), // Original source URL or file
-    contentType: z.enum(['page', 'snippet', 'template']).default('page'),
-
-    // Auto-extracted metadata
-    headings: z.array(z.string()).optional(),
-    links: z.array(z.string()).optional(),
-
-    metadata: metadataDefinition(),
-  }),
-});
+// HTML documents collection (disabled - no documents currently)
+// const documentsCollection = defineCollection({
+//   loader: glob({ pattern: ['*.html'], base: 'src/content/documents' }),
+//   schema: z.object({
+//     title: z.string(),
+//     description: z.string().optional(),
+//     publishDate: z.date().optional(),
+//     tags: z.array(z.string()).default([]),
+//     category: z.string().optional(),
+//     source: z.string().optional(),
+//     contentType: z.enum(['page', 'snippet', 'template']).default('page'),
+//     headings: z.array(z.string()).optional(),
+//     links: z.array(z.string()).optional(),
+//     metadata: metadataDefinition(),
+//   }),
+// });
 
 // Showcase collection for featured content
 const showcaseCollection = defineCollection({
@@ -129,6 +123,6 @@ const showcaseCollection = defineCollection({
 
 export const collections = {
   articles: articlesCollection,
-  documents: documentsCollection,
+  // documents: documentsCollection, // Disabled - no documents currently
   showcase: showcaseCollection,
 };

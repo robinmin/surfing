@@ -14,8 +14,7 @@ export async function GET(context: APIContext) {
     items: sortedContent.map((entry) => {
       const contentType = entry.contentType || 'articles';
       const url = contentType === 'articles' ? `/articles/${entry.slug || entry.id}` :
-                 contentType === 'showcase' ? `/showcase/${entry.slug || entry.id}` :
-                 `/documents/${entry.slug || entry.id}`;
+                 `/showcase/${entry.slug || entry.id}`;
 
       return {
         title: entry.data.title,
