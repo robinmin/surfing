@@ -81,22 +81,43 @@ const articlesCollection = defineCollection({
   }),
 });
 
-// HTML documents collection (disabled - no documents currently)
-// const documentsCollection = defineCollection({
-//   loader: glob({ pattern: ['*.html'], base: 'src/content/documents' }),
-//   schema: z.object({
-//     title: z.string(),
-//     description: z.string().optional(),
-//     publishDate: z.date().optional(),
-//     tags: z.array(z.string()).default([]),
-//     category: z.string().optional(),
-//     source: z.string().optional(),
-//     contentType: z.enum(['page', 'snippet', 'template']).default('page'),
-//     headings: z.array(z.string()).optional(),
-//     links: z.array(z.string()).optional(),
-//     metadata: metadataDefinition(),
-//   }),
-// });
+// HTML documents collection for legacy and rich-formatted content
+const documentsCollection = defineCollection({
+  loader: glob({ pattern: ['*.{html,md}'], base: 'src/content/documents' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    slug: z.string().optional(),
+    publishDate: z.date().optional(),
+    updateDate: z.date().optional(),
+
+    // Content organization
+    tags: z.array(z.string()).default([]),
+    category: z.string().optional(),
+
+    // Status tracking
+    draft: z.boolean().default(false),
+    featured: z.boolean().default(false),
+
+    // Document-specific fields
+    source: z.string().optional(),
+    contentType: z.enum(['page', 'snippet', 'template', 'legacy']).default('page'),
+    author: z.string().optional(),
+
+    // Custom styling support
+    customCSS: z.string().optional(),
+    customJS: z.string().optional(),
+    preserveStyles: z.boolean().default(true),
+
+    // Auto-extracted metadata
+    headings: z.array(z.string()).optional(),
+    links: z.array(z.string()).optional(),
+    wordCount: z.number().optional(),
+    readingTime: z.number().optional(),
+
+    metadata: metadataDefinition(),
+  }),
+});
 
 // Showcase collection for featured content
 const showcaseCollection = defineCollection({
@@ -123,6 +144,6 @@ const showcaseCollection = defineCollection({
 
 export const collections = {
   articles: articlesCollection,
-  // documents: documentsCollection, // Disabled - no documents currently
+  documents: documentsCollection,
   showcase: showcaseCollection,
 };

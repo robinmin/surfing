@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { getPermalink } from './permalinks';
 
-export type ContentType = 'articles' | 'showcase';
+export type ContentType = 'articles' | 'showcase' | 'documents';
 
 // Obsidian-compatible frontmatter parser
 export function parseObsidianFrontmatter(content: string): { frontmatter: Record<string, any>; body: string } {
@@ -102,6 +102,7 @@ export async function getAllContent(type?: ContentType) {
   const collections = {
     articles: await getCollection('articles'),
     showcase: await getCollection('showcase'),
+    documents: await getCollection('documents'),
   };
 
   if (type) {
@@ -112,6 +113,7 @@ export async function getAllContent(type?: ContentType) {
   return [
     ...collections.articles.map(item => ({ ...item, contentType: 'articles' as const })),
     ...collections.showcase.map(item => ({ ...item, contentType: 'showcase' as const })),
+    ...collections.documents.map(item => ({ ...item, contentType: 'documents' as const })),
   ];
 }
 

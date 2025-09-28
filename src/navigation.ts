@@ -17,6 +17,10 @@ export const headerData = {
           text: 'Showcase',
           href: getPermalink('/showcase'),
         },
+        {
+          text: 'Documents',
+          href: getPermalink('/documents'),
+        },
       ],
     },
     {
@@ -35,6 +39,7 @@ export const footerData = {
         { text: 'Browse All', href: '/browse' },
         { text: 'Articles', href: '/articles' },
         { text: 'Showcase', href: '/showcase' },
+        { text: 'Documents', href: '/documents' },
       ],
     },
     {
@@ -72,6 +77,7 @@ export const footerData = {
     { ariaLabel: 'RSS All Content', icon: 'tabler:rss', href: getAsset('/rss.xml') },
     { ariaLabel: 'RSS Articles', icon: 'tabler:rss', href: getAsset('/articles/rss.xml') },
     { ariaLabel: 'RSS Showcase', icon: 'tabler:rss', href: getAsset('/showcase/rss.xml') },
+    { ariaLabel: 'RSS Documents', icon: 'tabler:rss', href: getAsset('/documents/rss.xml') },
     { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robin/surfing' },
   ],
   footNote: `

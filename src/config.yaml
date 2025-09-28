@@ -4,14 +4,14 @@ site:
   base: '/'
   trailingSlash: false
 
-  googleSiteVerificationId: orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M
+  googleSiteVerificationId: 7dkatua6POrB7ZU1eRzqCHJn_NFum6sU21AcXHRUoGQ
 
 # Default SEO metadata
 metadata:
   title:
     default: Surfing
     template: '%s — Surfing'
-  description: "🏄‍♂️ AI-Powered Content Showcase Platform - Publish and discover AI-generated content with seamless Obsidian integration, modern design, and powerful content management."
+  description: '🏄‍♂️ AI-Powered Content Showcase Platform.'
   robots:
     index: true
     follow: true
@@ -23,8 +23,8 @@ metadata:
         height: 628
     type: website
   twitter:
-    handle: '@yourusername'
-    site: '@yourusername'
+    handle: '@tangmian'
+    site: '@tangmian'
     cardType: summary_large_image
 
 i18n:
@@ -66,7 +66,7 @@ apps:
 analytics:
   vendors:
     googleAnalytics:
-      id: "G-S3D3Q82DSX"
+      id: 'G-S3D3Q82DSX'
 
 ui:
   theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"

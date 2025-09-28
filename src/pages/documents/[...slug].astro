@@ -1,0 +1,40 @@
+---
+import type { GetStaticPathsOptions } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+import Layout from '~/layouts/PageLayout.astro';
+import DocumentLayout from '~/layouts/DocumentLayout.astro';
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const documents = await getCollection('documents', ({ data }) => !data.draft);
+
+  return documents.map((document) => ({
+    params: {
+      slug: document.slug || document.id,
+    },
+    props: { document },
+  }));
+}
+
+interface Props {
+  document: CollectionEntry<'documents'>;
+}
+
+const { document: documentEntry } = Astro.props;
+
+// Use the already rendered content
+const renderedContent = documentEntry.rendered?.html || documentEntry.body;
+
+const metadata = {
+  title: documentEntry.data.title,
+  description: documentEntry.data.description,
+  canonical: `${Astro.site}documents/${documentEntry.slug}`,
+  openGraph: {
+    type: 'article',
+  },
+};
+---
+
+<DocumentLayout metadata={metadata} document={documentEntry}>
+  <div set:html={renderedContent} />
+</DocumentLayout>

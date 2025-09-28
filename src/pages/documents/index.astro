@@ -1,0 +1,180 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { getCollection } from 'astro:content';
+
+const documents = await getCollection('documents', ({ data }) => !data.draft);
+const featuredDocuments = documents.filter(item => item.data.featured);
+const sortedDocuments = documents.sort((a, b) =>
+  new Date(b.data.publishDate || b.data.updateDate || 0).getTime() -
+  new Date(a.data.publishDate || a.data.updateDate || 0).getTime()
+);
+
+const metadata = {
+  title: 'Documents - Surfing',
+  description: 'Browse HTML documents, legacy content, and rich-formatted pieces.',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+  <Hero>
+    <Fragment slot="title">
+      Documents
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Browse HTML documents, legacy content, and rich-formatted pieces with preserved styling and functionality.
+    </Fragment>
+  </Hero>
+
+  <!-- Documents Grid -->
+  <section class="px-4 py-16 sm:px-6 mx-auto lg:px-8 lg:py-20 max-w-6xl">
+    
+    <!-- Featured Documents -->
+    {featuredDocuments.length > 0 && (
+      <div class="mb-16">
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">Featured Documents</h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {featuredDocuments.map((document) => (
+            <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <div class="p-6">
+                <!-- Content Type Badge -->
+                <span class="inline-block px-2 py-1 text-xs rounded-full mb-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                  {document.data.contentType === 'legacy' ? 'Legacy' :
+                   document.data.contentType === 'template' ? 'Template' :
+                   document.data.contentType === 'snippet' ? 'Snippet' :
+                   'Document'}
+                </span>
+
+                <h3 class="text-xl font-semibold mb-2 dark:text-white">
+                  <a href={`/documents/${document.slug || document.id}`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    {document.data.title}
+                  </a>
+                </h3>
+
+                {document.data.description && (
+                  <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                    {document.data.description}
+                  </p>
+                )}
+
+                <div class="flex flex-wrap gap-2 mb-4">
+                  {document.data.tags.slice(0, 3).map((tag) => (
+                    <span class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <div class="flex items-center space-x-4">
+                    {document.data.author && (
+                      <span>{document.data.author}</span>
+                    )}
+                    {document.data.readingTime && (
+                      <span>{document.data.readingTime} min read</span>
+                    )}
+                  </div>
+                  {document.data.publishDate && (
+                    <time datetime={document.data.publishDate.toISOString()}>
+                      {document.data.publishDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </time>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- All Documents -->
+    <div>
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
+        {featuredDocuments.length > 0 ? 'All Documents' : 'Documents'}
+      </h2>
+      
+      {sortedDocuments.length > 0 ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {sortedDocuments.map((document) => (
+            <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <div class="p-6">
+                <!-- Content Type Badge -->
+                <span class="inline-block px-2 py-1 text-xs rounded-full mb-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                  {document.data.contentType === 'legacy' ? 'Legacy' :
+                   document.data.contentType === 'template' ? 'Template' :
+                   document.data.contentType === 'snippet' ? 'Snippet' :
+                   'Document'}
+                </span>
+
+                <h3 class="text-xl font-semibold mb-2 dark:text-white">
+                  <a href={`/documents/${document.slug || document.id}`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    {document.data.title}
+                  </a>
+                </h3>
+
+                {document.data.description && (
+                  <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                    {document.data.description}
+                  </p>
+                )}
+
+                <div class="flex flex-wrap gap-2 mb-4">
+                  {document.data.tags.slice(0, 3).map((tag) => (
+                    <span class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <div class="flex items-center space-x-4">
+                    {document.data.author && (
+                      <span>{document.data.author}</span>
+                    )}
+                    {document.data.readingTime && (
+                      <span>{document.data.readingTime} min read</span>
+                    )}
+                  </div>
+                  {document.data.publishDate && (
+                    <time datetime={document.data.publishDate.toISOString()}>
+                      {document.data.publishDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </time>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <div class="text-gray-500 dark:text-gray-400">
+            <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 class="text-lg font-medium mb-2">No documents yet</h3>
+            <p class="text-sm">Add HTML documents to the <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">src/content/documents/</code> directory to get started.</p>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
