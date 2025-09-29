@@ -20,7 +20,7 @@ export class FrontmatterManager {
    */
   loadSchemas() {
     const schemas = {};
-    const contentTypes = ['articles', 'showcase', 'documents'];
+    const contentTypes = ['articles', 'showcase', 'documents', 'cheatsheets'];
 
     contentTypes.forEach((type) => {
       const templatePath = join(this.scriptDir, 'templates', `${type}.yaml`);
@@ -39,6 +39,7 @@ export class FrontmatterManager {
       schemas.articles = this.getDefaultArticlesSchema();
       schemas.showcase = this.getDefaultShowcaseSchema();
       schemas.documents = this.getDefaultDocumentsSchema();
+      schemas.cheatsheets = this.getDefaultCheatsheetsSchema();
     }
 
     return schemas;
@@ -469,6 +470,58 @@ export class FrontmatterManager {
         preserveStyles: { type: 'boolean', optional: true, default: true },
         headings: { type: 'array', optional: true },
         links: { type: 'array', optional: true },
+        wordCount: { type: 'number', optional: true },
+        readingTime: { type: 'number', optional: true },
+      },
+    };
+  }
+
+  getDefaultCheatsheetsSchema() {
+    return {
+      name: 'cheatsheets',
+      required: ['title'],
+      fields: {
+        title: { type: 'string', description: 'Cheatsheet title' },
+        description: { type: 'string', optional: true },
+        slug: { type: 'string', optional: true, autoGenerate: true },
+        publishDate: { type: 'date', optional: true, autoGenerate: true },
+        updateDate: { type: 'date', optional: true },
+        tags: { type: 'array', optional: true, default: [] },
+        category: { type: 'string', optional: true },
+        draft: { type: 'boolean', optional: true, default: false },
+        featured: { type: 'boolean', optional: true, default: false },
+
+        // Cheatsheet-specific fields
+        topic: { type: 'string', optional: true, description: 'Main topic or technology' },
+        difficulty: {
+          type: 'string',
+          optional: true,
+          enum: ['beginner', 'intermediate', 'advanced'],
+          description: 'Difficulty level',
+        },
+        format: {
+          type: 'string',
+          optional: true,
+          enum: ['html', 'markdown'],
+          default: 'html',
+          description: 'Content format',
+        },
+
+        // File attachments
+        pdfUrl: { type: 'string', optional: true, description: 'Generated PDF version' },
+        downloadUrl: { type: 'string', optional: true, description: 'Direct download link' },
+
+        // AI generation metadata
+        generatedBy: { type: 'string', optional: true, description: 'AI model used' },
+        prompt: { type: 'string', optional: true, description: 'Original prompt' },
+        version: { type: 'string', optional: true, description: 'Version of the cheatsheet' },
+
+        // Content metadata
+        author: { type: 'string', optional: true },
+        source: { type: 'string', optional: true },
+        customCSS: { type: 'string', optional: true },
+        customJS: { type: 'string', optional: true },
+        preserveStyles: { type: 'boolean', optional: true, default: true },
         wordCount: { type: 'number', optional: true },
         readingTime: { type: 'number', optional: true },
       },
