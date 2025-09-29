@@ -21,7 +21,9 @@ export async function GET(context: APIContext) {
             ? `/showcase/${slug}`
             : contentType === 'documents'
               ? `/documents/${slug}`
-              : `/articles/${slug}`;
+              : contentType === 'cheatsheets'
+                ? `/cheatsheets/${slug}`
+                : `/articles/${slug}`;
 
       return {
         title: entry.data.title,
