@@ -110,6 +110,9 @@ export interface Headline {
   subtitle?: string;
   tagline?: string;
   classes?: Record<string, string>;
+  titleI18n?: string;
+  subtitleI18n?: string;
+  taglineI18n?: string;
 }
 
 interface TeamMember {
@@ -252,6 +255,9 @@ export interface Features extends Omit<Headline, 'classes'>, Widget {
   isReversed?: boolean;
   isBeforeContent?: boolean;
   isAfterContent?: boolean;
+  titleI18n?: string;
+  subtitleI18n?: string;
+  taglineI18n?: string;
 }
 
 export interface Faqs extends Omit<Headline, 'classes'>, Widget {
