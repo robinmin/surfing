@@ -4,7 +4,7 @@ A comprehensive command-line tool for automated content publishing to the Surfin
 
 ## Features
 
-- **Multi-format Support**: Articles (Markdown), Showcase projects, HTML documents
+- **Multi-format Support**: Articles (Markdown), Showcase projects, HTML documents, AI-generated Cheatsheets
 - **Internationalization (i18n)**: Multi-language content support with automatic directory organization
 - **Intelligent Processing**: Auto-detects content type and extracts metadata
 - **HTML Conversion**: Converts full HTML documents to Surfing format
@@ -41,6 +41,7 @@ postsurfing <file-path> --type <content-type> [--lang <language>] [options]
 - `articles` - AI insights, research, and technical content
 - `showcase` - Project portfolios with live demos and source links
 - `documents` - HTML content for legacy or rich-formatted pieces
+- `cheatsheets` - AI-generated reference materials and quick guides
 
 ### Supported Languages
 
@@ -73,6 +74,12 @@ postsurfing ./content.md --type articles --dry-run
 
 # Skip build validation and git operations
 postsurfing ./content.md --type articles --no-build --no-commit
+
+# Publish an AI-generated cheatsheet
+postsurfing ./javascript-cheatsheet.md --type cheatsheets
+
+# Publish interactive HTML cheatsheet
+postsurfing ./css-grid-guide.html --type cheatsheets --auto-convert
 ```
 
 ## Internationalization (i18n)
@@ -93,10 +100,14 @@ src/content/
 │   ├── en/           # English showcase projects
 │   ├── cn/           # Chinese showcase projects
 │   └── jp/           # Japanese showcase projects
-└── documents/
-    ├── en/           # English documents
-    ├── cn/           # Chinese documents
-    └── jp/           # Japanese documents
+├── documents/
+│   ├── en/           # English documents
+│   ├── cn/           # Chinese documents
+│   └── jp/           # Japanese documents
+└── cheatsheets/
+    ├── en/           # English cheatsheets
+    ├── cn/           # Chinese cheatsheets
+    └── jp/           # Japanese cheatsheets
 ```
 
 ### Language Validation
@@ -138,11 +149,19 @@ postsurfing ./project.md --type showcase --lang cn
 # Japanese document
 postsurfing ./doc.html --type documents --lang jp
 # Output: src/content/documents/jp/doc.md
+
+# English cheatsheet
+postsurfing ./guide.md --type cheatsheets --lang en
+# Output: src/content/cheatsheets/en/guide.md
+
+# Chinese cheatsheet
+postsurfing ./reference.html --type cheatsheets --lang cn
+# Output: src/content/cheatsheets/cn/reference.md
 ```
 
 ### Options
 
-- `-t, --type <type>` - Content type (required): articles, showcase, documents
+- `-t, --type <type>` - Content type (required): articles, showcase, documents, cheatsheets
 - `-l, --lang <lang>` - Content language (default: en): en, cn, jp
 - `-i, --interactive` - Prompt for missing required fields
 - `--auto-convert` - Auto-convert HTML files to Surfing format
@@ -237,6 +256,7 @@ Validates frontmatter against content type schemas:
 - **Articles**: Requires `title`
 - **Showcase**: Requires `title`, `description`, `publishDate`, `image`
 - **Documents**: Requires `title`
+- **Cheatsheets**: Requires `title`
 
 ### Interactive Mode
 
@@ -284,6 +304,7 @@ Auto-generates commit messages based on content:
 Add article: "My Article Title"
 Add showcase: "My Project Name"
 Add document: "Legacy Documentation"
+Add cheatsheet: "JavaScript ES6+ Reference"
 ```
 
 ### Error Handling
@@ -330,7 +351,8 @@ scripts/postsurfing/
 └── templates/               # Frontmatter templates
     ├── articles.yaml
     ├── showcase.yaml
-    └── documents.yaml
+    ├── documents.yaml
+    └── cheatsheets.yaml
 
 Content Organization:
 src/content/
@@ -342,10 +364,14 @@ src/content/
 │   ├── en/                   # English showcase
 │   ├── cn/                   # Chinese showcase
 │   └── jp/                   # Japanese showcase
-└── documents/                # HTML documents
-    ├── en/                   # English documents
-    ├── cn/                   # Chinese documents
-    └── jp/                   # Japanese documents
+├── documents/                # HTML documents
+│   ├── en/                   # English documents
+│   ├── cn/                   # Chinese documents
+│   └── jp/                   # Japanese documents
+└── cheatsheets/              # AI-generated cheatsheets
+    ├── en/                   # English cheatsheets
+    ├── cn/                   # Chinese cheatsheets
+    └── jp/                   # Japanese cheatsheets
 ```
 
 ## Error Handling
