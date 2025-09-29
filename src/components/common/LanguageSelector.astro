@@ -71,6 +71,32 @@ const currentLangInfo = LANGUAGES[currentLanguage];
         this.toggleDropdown();
       });
 
+      // Show dropdown on mouse enter
+      this.button.addEventListener('mouseenter', () => {
+        this.openDropdown();
+      });
+
+      // Hide dropdown on mouse leave (with delay to allow moving to dropdown)
+      let hideTimeout: number;
+      this.button.addEventListener('mouseleave', () => {
+        hideTimeout = window.setTimeout(() => {
+          if (!this.dropdown?.matches(':hover')) {
+            this.closeDropdown();
+          }
+        }, 100);
+      });
+
+      // Keep dropdown open when hovering over it
+      this.dropdown?.addEventListener('mouseenter', () => {
+        if (hideTimeout) {
+          clearTimeout(hideTimeout);
+        }
+      });
+
+      this.dropdown?.addEventListener('mouseleave', () => {
+        this.closeDropdown();
+      });
+
       // Handle language selection
       this.dropdown.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
@@ -83,8 +109,10 @@ const currentLangInfo = LANGUAGES[currentLanguage];
       });
 
       // Close dropdown when clicking outside
-      document.addEventListener('click', () => {
-        this.closeDropdown();
+      document.addEventListener('click', (e) => {
+        if (!this.button?.contains(e.target as Node) && !this.dropdown?.contains(e.target as Node)) {
+          this.closeDropdown();
+        }
       });
 
       // Listen for language change events from other components
