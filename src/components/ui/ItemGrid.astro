@@ -44,10 +44,18 @@ const {
               )}
             </div>
             <div class="mt-0.5">
-              {title && <h3 class={twMerge('text-xl font-bold', titleClass, itemClasses?.title)}>{title}</h3>}
+              {title && (
+                <h3
+                  class={twMerge('text-xl font-bold', titleClass, itemClasses?.title)}
+                  data-i18n={itemClasses?.titleI18n}
+                >
+                  {title}
+                </h3>
+              )}
               {description && (
                 <p
                   class={twMerge(`${title ? 'mt-3' : ''} text-muted`, descriptionClass, itemClasses?.description)}
+                  data-i18n={itemClasses?.descriptionI18n}
                   set:html={description}
                 />
               )}
