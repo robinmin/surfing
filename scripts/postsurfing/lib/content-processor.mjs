@@ -345,15 +345,35 @@ export class ContentProcessor {
       return true;
     }
 
-    // Check if markdown file contains full HTML document structure
-    // Only trigger conversion for complete HTML documents, not just HTML tags
-    const hasDoctype = content.includes('<!DOCTYPE html>');
+    // For markdown files, be more careful about HTML detection
+    // Don't convert if HTML tags are likely to be code examples
+
+    // First, check if it's clearly a markdown file with HTML examples
+    const hasMarkdownHeadings = content.match(/^#{1,6}\s+/m);
+    const hasCodeBlocks = content.includes('```');
+
+    // If it has markdown features, it's likely markdown with HTML examples
+    if (hasMarkdownHeadings || hasCodeBlocks) {
+      return false;
+    }
+
+    // Only convert if it's a complete HTML document structure
+    // Check for DOCTYPE and proper HTML document structure at the start
+    const startsWithDoctype = content.trimStart().startsWith('<!DOCTYPE html>');
+    const startsWithHtml = content.trimStart().startsWith('<html');
+
+    // Must start with DOCTYPE or <html> to be considered a real HTML document
+    if (!startsWithDoctype && !startsWithHtml) {
+      return false;
+    }
+
     const hasHtmlTag = content.includes('<html');
     const hasHeadTag = content.includes('<head');
     const hasBodyTag = content.includes('<body');
 
-    // Require at least DOCTYPE + html tag OR html + head + body for full conversion
-    return (hasDoctype && hasHtmlTag) || (hasHtmlTag && hasHeadTag && hasBodyTag);
+    // Require proper document structure for conversion
+    return (startsWithDoctype && hasHtmlTag && hasHeadTag && hasBodyTag) ||
+           (startsWithHtml && hasHeadTag && hasBodyTag);
   }
 
   /**
