@@ -29,21 +29,34 @@ const metadata = {
 
   <Features3
     title={t('pages.about.whatsHere')}
+    titleI18n="pages.about.whatsHere"
     items={[
       {
         title: t('nav.articles'),
         description: t('pages.about.articlesDesc'),
         icon: 'tabler:notes',
+        classes: {
+          titleI18n: 'nav.articles',
+          descriptionI18n: 'pages.about.articlesDesc',
+        },
       },
       {
         title: t('nav.showcase'),
         description: t('pages.about.showcaseDesc'),
         icon: 'tabler:apps',
+        classes: {
+          titleI18n: 'nav.showcase',
+          descriptionI18n: 'pages.about.showcaseDesc',
+        },
       },
       {
         title: t('pages.about.collectedContent'),
         description: t('pages.about.collectedContentDesc'),
         icon: 'tabler:bookmarks',
+        classes: {
+          titleI18n: 'pages.about.collectedContent',
+          descriptionI18n: 'pages.about.collectedContentDesc',
+        },
       },
     ]}
   />
