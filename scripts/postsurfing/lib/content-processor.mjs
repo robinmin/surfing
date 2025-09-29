@@ -16,7 +16,7 @@ export class ContentProcessor {
   /**
    * Process a content file or directory
    */
-  async process(filePath, contentType, options) {
+  async process(filePath, contentType, lang, options) {
     this.logger.debug(`Processing file: ${filePath}`);
 
     // Check if path exists
@@ -30,16 +30,16 @@ export class ContentProcessor {
       if (!options.batch) {
         throw new Error('Directory processing requires --batch flag');
       }
-      return this.processBatch(filePath, contentType, options);
+      return this.processBatch(filePath, contentType, lang, options);
     }
 
-    return this.processSingleFile(filePath, contentType, options);
+    return this.processSingleFile(filePath, contentType, lang, options);
   }
 
   /**
    * Process a single file
    */
-  async processSingleFile(filePath, contentType, options) {
+  async processSingleFile(filePath, contentType, lang, options) {
     const extension = extname(filePath).toLowerCase();
 
     if (!this.supportedExtensions.includes(extension)) {
@@ -53,7 +53,7 @@ export class ContentProcessor {
     const analysis = this.analyzeContent(content, extension);
 
     // Determine output path
-    const outputPath = this.determineOutputPath(filePath, contentType, analysis);
+    const outputPath = this.determineOutputPath(filePath, contentType, lang);
 
     // Check if output file already exists
     if (existsSync(outputPath) && !options.force) {
@@ -73,7 +73,7 @@ export class ContentProcessor {
   /**
    * Process multiple files in a directory
    */
-  async processBatch(dirPath, contentType, options) {
+  async processBatch(dirPath, contentType, lang, options) {
     this.logger.debug(`Processing directory: ${dirPath}`);
 
     const files = readdirSync(dirPath)
@@ -91,7 +91,7 @@ export class ContentProcessor {
       this.logger.progress(i + 1, files.length, 'Processing files');
 
       try {
-        const result = await this.processSingleFile(files[i], contentType, options);
+        const result = await this.processSingleFile(files[i], contentType, lang, options);
         results.push(result);
       } catch (error) {
         this.logger.error(`Failed to process ${files[i]}: ${error.message}`);
@@ -359,9 +359,9 @@ export class ContentProcessor {
   /**
    * Determine output path for processed content
    */
-  determineOutputPath(inputPath, contentType) {
+  determineOutputPath(inputPath, contentType, lang = 'en') {
     const baseName = basename(inputPath, extname(inputPath));
-    const outputDir = join(process.cwd(), 'src', 'content', contentType);
+    const outputDir = join(process.cwd(), 'src', 'content', contentType, lang);
 
     // Always use .md extension for output
     const outputFileName = `${baseName}.md`;
@@ -378,7 +378,9 @@ export class ContentProcessor {
     // Ensure directory exists
     const dir = dirname(outputPath);
     if (!existsSync(dir)) {
-      throw new Error(`Output directory does not exist: ${dir}`);
+      // Create the directory if it doesn't exist
+      const { mkdirSync } = await import('fs');
+      mkdirSync(dir, { recursive: true });
     }
 
     // Combine frontmatter and content

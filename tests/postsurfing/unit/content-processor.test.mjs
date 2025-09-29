@@ -47,7 +47,7 @@ async function testSimpleMarkdown(processor) {
   utils.log('Testing simple markdown processing...');
 
   const fixturePath = utils.copyFixture('simple-article.md');
-  const result = await processor.processSingleFile(fixturePath, 'articles', {});
+  const result = await processor.processSingleFile(fixturePath, 'articles', 'en', {});
 
   utils.assert(result.content, 'Should have content');
   utils.assert(result.metadata, 'Should have metadata');
@@ -64,7 +64,7 @@ async function testMarkdownWithFrontmatter(processor) {
   utils.log('Testing markdown with existing frontmatter...');
 
   const fixturePath = utils.copyFixture('article-with-frontmatter.md');
-  const result = await processor.processSingleFile(fixturePath, 'articles', {});
+  const result = await processor.processSingleFile(fixturePath, 'articles', 'en', {});
 
   utils.assert(result.metadata.hasExistingFrontmatter, 'Should detect existing frontmatter');
   utils.assertEqual(
@@ -81,7 +81,7 @@ async function testHtmlFile(processor) {
   utils.log('Testing HTML file processing...');
 
   const fixturePath = utils.copyFixture('simple-html.html');
-  const result = await processor.processSingleFile(fixturePath, 'documents', {});
+  const result = await processor.processSingleFile(fixturePath, 'documents', 'en', {});
 
   utils.assertEqual(result.metadata.isHtml, true, 'Should detect HTML file');
   utils.assertEqual(result.needsHtmlConversion, true, 'Should need HTML conversion');
@@ -120,9 +120,9 @@ async function testOutputPath(processor) {
   utils.log('Testing output path determination...');
 
   const inputPath = '/test/path/my-article.md';
-  const outputPath = processor.determineOutputPath(inputPath, 'articles', {});
+  const outputPath = processor.determineOutputPath(inputPath, 'articles', 'en');
 
-  utils.assertContains(outputPath, 'src/content/articles', 'Should use correct content directory');
+  utils.assertContains(outputPath, 'src/content/articles/en', 'Should use correct content directory with language');
   utils.assertContains(outputPath, 'my-article.md', 'Should preserve filename with .md extension');
 
   utils.success('Output path determination test passed');

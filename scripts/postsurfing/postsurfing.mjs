@@ -29,6 +29,7 @@ const { values: options, positionals: args } = parseArgs({
   args: process.argv.slice(2),
   options: {
     type: { type: 'string', short: 't' },
+    lang: { type: 'string', short: 'l', default: 'en' },
     interactive: { type: 'boolean', short: 'i' },
     'auto-convert': { type: 'boolean' },
     batch: { type: 'boolean' },
@@ -56,26 +57,30 @@ function showHelp() {
 PostSurfing CLI Tool v${packageJson.version}
 Automated content publishing for the Surfing platform
 
-USAGE:
-  postsurfing <file-path> --type <content-type> [options]
+ USAGE:
+   postsurfing <file-path> --type <content-type> [options]
 
-ARGUMENTS:
-  <file-path>                   Path to the content file to publish
+ ARGUMENTS:
+   <file-path>                   Path to the content file to publish
 
-REQUIRED OPTIONS:
-  -t, --type <type>            Content type: articles, showcase, documents
+ REQUIRED OPTIONS:
+   -t, --type <type>            Content type: articles, showcase, documents
 
-OPTIONS:
-  -i, --interactive            Prompt for missing required fields
-      --auto-convert           Auto-convert HTML files to Surfing format
-      --batch                  Process multiple files in directory
-      --dry-run                Preview changes without applying them
-      --no-build               Skip build validation step
-      --no-commit              Skip git commit and push
-      --commit-message <msg>   Custom commit message
-      --force                  Overwrite existing files without warning
-  -v, --verbose                Enable detailed logging
-  -h, --help                   Show this help message
+ OPTIONS:
+   -l, --lang <lang>            Content language: en, cn, jp (default: en)
+
+ OPTIONS:
+   -l, --lang <lang>            Content language: en, cn, jp (default: en)
+   -i, --interactive            Prompt for missing required fields
+       --auto-convert           Auto-convert HTML files to Surfing format
+       --batch                  Process multiple files in directory
+       --dry-run                Preview changes without applying them
+       --no-build               Skip build validation step
+       --no-commit              Skip git commit and push
+       --commit-message <msg>   Custom commit message
+       --force                  Overwrite existing files without warning
+   -v, --verbose                Enable detailed logging
+   -h, --help                   Show this help message
 
 EXAMPLES:
   # Publish a markdown article
@@ -129,6 +134,12 @@ function validateArgs() {
     logger.info(`Valid types: ${validTypes.join(', ')}`);
     process.exit(1);
   }
+
+  const validLangs = ['en', 'cn', 'jp'];
+  if (!validLangs.includes(options.lang)) {
+    logger.warn(`Warning: Invalid language "${options.lang}", defaulting to "en"`);
+    options.lang = 'en';
+  }
 }
 
 /**
@@ -158,7 +169,7 @@ async function main() {
 
     // Step 1: Process content file
     logger.step('Processing content file...');
-    const processedContent = await contentProcessor.process(filePath, contentType, options);
+    const processedContent = await contentProcessor.process(filePath, contentType, options.lang, options);
 
     // Step 2: Handle HTML conversion if needed
     if (processedContent.needsHtmlConversion) {

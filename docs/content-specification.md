@@ -6,10 +6,15 @@ This document provides comprehensive guidelines for creating and managing conten
 
 ### How to Publish a Markdown File
 
-1. **Choose the content type** and create your file in the appropriate directory:
-   - **Articles**: `src/content/articles/your-article.md`
-   - **Showcase**: `src/content/showcase/your-project.md`
-   - **Blog Posts**: `src/content/post/your-post.md`
+1. **Choose the content type and language** and create your file in the appropriate directory:
+   - **Articles**: `src/content/articles/{lang}/your-article.md`
+   - **Showcase**: `src/content/showcase/{lang}/your-project.md`
+   - **Documents**: `src/content/documents/{lang}/your-document.md`
+
+   **Supported Languages:**
+   - `en` - English
+   - `cn` - Chinese (Simplified)
+   - `jp` - Japanese
 
 2. **Add frontmatter** at the top of your file:
 
@@ -33,13 +38,70 @@ Your markdown content goes here. Use standard markdown syntax.
 
 3. **Save the file** - Your content appears automatically on the site!
 
+## 🌍 Internationalization (i18n)
+
+Surfing supports multi-language content with automatic organization into language-specific directories.
+
+### Content Organization Structure
+
+```
+src/content/
+├── articles/
+│   ├── en/           # English articles
+│   │   ├── ai-research.md
+│   │   └── tutorial.md
+│   ├── cn/           # Chinese articles
+│   │   ├── ai-research.md
+│   │   └── tutorial.md
+│   └── jp/           # Japanese articles
+│       ├── ai-research.md
+│       └── tutorial.md
+├── showcase/
+│   ├── en/           # English showcase projects
+│   ├── cn/           # Chinese showcase projects
+│   └── jp/           # Japanese showcase projects
+└── documents/
+    ├── en/           # English documents
+    ├── cn/           # Chinese documents
+    └── jp/           # Japanese documents
+```
+
+### Language-Specific URLs
+
+Content is accessible via language-specific URLs:
+
+- English: `/articles/en/ai-research`
+- Chinese: `/articles/cn/ai-research`
+- Japanese: `/articles/jp/ai-research`
+
+### Publishing Multi-Language Content
+
+Use the PostSurfing CLI with the `--lang` parameter:
+
+```bash
+# Publish English content
+postsurfing ./article.md --type articles --lang en
+
+# Publish Chinese content
+postsurfing ./article.md --type articles --lang cn
+
+# Publish Japanese content
+postsurfing ./article.md --type articles --lang jp
+```
+
+### Language Detection
+
+- **Default Language**: English (`en`) if not specified
+- **Supported Languages**: `en`, `cn`, `jp`
+- **Invalid Languages**: Automatically defaults to `en`
+
 ### How to Publish HTML Documents
 
 Surfing supports full HTML content with custom CSS and JavaScript, perfect for migrating existing HTML files, legacy content, or rich interactive documents.
 
 #### Basic HTML Document
 
-1. **Create your HTML file** in `src/content/documents/your-document.md`
+1. **Create your HTML file** in `src/content/documents/{lang}/your-document.md`
 
 2. **Add frontmatter** at the top:
 
@@ -66,7 +128,7 @@ contentType: 'legacy' # Options: page, legacy, template, snippet
 
 For complete HTML applications with custom styling and interactivity:
 
-1. **Create your document** in `src/content/documents/your-app.md`
+1. **Create your document** in `src/content/documents/{lang}/your-app.md`
 
 2. **Add comprehensive frontmatter**:
 
@@ -263,7 +325,7 @@ Your HTML documents automatically appear in:
 
 #### Quick Reference
 
-**File Location**: `src/content/documents/your-file.md`
+**File Location**: `src/content/documents/{lang}/your-file.md`
 
 **Minimal Example**:
 

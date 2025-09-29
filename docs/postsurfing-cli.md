@@ -5,6 +5,7 @@ A comprehensive command-line tool for automated content publishing to the Surfin
 ## Features
 
 - **Multi-format Support**: Articles (Markdown), Showcase projects, HTML documents
+- **Internationalization (i18n)**: Multi-language content support with automatic directory organization
 - **Intelligent Processing**: Auto-detects content type and extracts metadata
 - **HTML Conversion**: Converts full HTML documents to Surfing format
 - **Frontmatter Management**: Validates and auto-completes frontmatter fields
@@ -32,7 +33,7 @@ alias postsurfing="/path/to/surfing/scripts/postsurfing/postsurfing.sh"
 ### Basic Syntax
 
 ```bash
-postsurfing <file-path> --type <content-type> [options]
+postsurfing <file-path> --type <content-type> [--lang <language>] [options]
 ```
 
 ### Content Types
@@ -41,11 +42,25 @@ postsurfing <file-path> --type <content-type> [options]
 - `showcase` - Project portfolios with live demos and source links
 - `documents` - HTML content for legacy or rich-formatted pieces
 
+### Supported Languages
+
+- `en` - English (default)
+- `cn` - Chinese (Simplified)
+- `jp` - Japanese
+
+Content is automatically organized into language-specific subdirectories: `src/content/{type}/{lang}/`
+
 ### Examples
 
 ```bash
-# Publish a markdown article
+# Publish a markdown article (English by default)
 postsurfing ./my-article.md --type articles
+
+# Publish content in Chinese
+postsurfing ./my-article.md --type articles --lang cn
+
+# Publish content in Japanese
+postsurfing ./my-article.md --type articles --lang jp
 
 # Convert and publish HTML document
 postsurfing ./legacy-page.html --type documents --auto-convert
@@ -60,9 +75,75 @@ postsurfing ./content.md --type articles --dry-run
 postsurfing ./content.md --type articles --no-build --no-commit
 ```
 
+## Internationalization (i18n)
+
+The PostSurfing CLI supports multi-language content publishing with automatic directory organization.
+
+### Language-Specific Content Organization
+
+Content is automatically placed in language-specific subdirectories:
+
+```
+src/content/
+├── articles/
+│   ├── en/           # English articles
+│   ├── cn/           # Chinese articles
+│   └── jp/           # Japanese articles
+├── showcase/
+│   ├── en/           # English showcase projects
+│   ├── cn/           # Chinese showcase projects
+│   └── jp/           # Japanese showcase projects
+└── documents/
+    ├── en/           # English documents
+    ├── cn/           # Chinese documents
+    └── jp/           # Japanese documents
+```
+
+### Language Validation
+
+- **Default Language**: English (`en`) if no language is specified
+- **Supported Languages**: `en`, `cn`, `jp`
+- **Invalid Languages**: Automatically defaults to `en` with a warning
+
+### Usage Examples
+
+```bash
+# Publish English content (default)
+postsurfing ./article.md --type articles
+
+# Explicitly specify English
+postsurfing ./article.md --type articles --lang en
+
+# Publish Chinese content
+postsurfing ./article.md --type articles --lang cn
+
+# Publish Japanese content
+postsurfing ./article.md --type articles --lang jp
+
+# Invalid language defaults to English
+postsurfing ./article.md --type articles --lang fr  # → Uses 'en' with warning
+```
+
+### File Output Examples
+
+```bash
+# English article
+postsurfing ./my-article.md --type articles --lang en
+# Output: src/content/articles/en/my-article.md
+
+# Chinese showcase
+postsurfing ./project.md --type showcase --lang cn
+# Output: src/content/showcase/cn/project.md
+
+# Japanese document
+postsurfing ./doc.html --type documents --lang jp
+# Output: src/content/documents/jp/doc.md
+```
+
 ### Options
 
 - `-t, --type <type>` - Content type (required): articles, showcase, documents
+- `-l, --lang <lang>` - Content language (default: en): en, cn, jp
 - `-i, --interactive` - Prompt for missing required fields
 - `--auto-convert` - Auto-convert HTML files to Surfing format
 - `--dry-run` - Preview changes without applying them
@@ -250,6 +331,21 @@ scripts/postsurfing/
     ├── articles.yaml
     ├── showcase.yaml
     └── documents.yaml
+
+Content Organization:
+src/content/
+├── articles/                 # Article content
+│   ├── en/                   # English articles
+│   ├── cn/                   # Chinese articles
+│   └── jp/                   # Japanese articles
+├── showcase/                 # Showcase projects
+│   ├── en/                   # English showcase
+│   ├── cn/                   # Chinese showcase
+│   └── jp/                   # Japanese showcase
+└── documents/                # HTML documents
+    ├── en/                   # English documents
+    ├── cn/                   # Chinese documents
+    └── jp/                   # Japanese documents
 ```
 
 ## Error Handling

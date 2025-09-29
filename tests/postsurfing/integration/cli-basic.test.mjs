@@ -26,7 +26,10 @@ async function testBasicCLI() {
     // Test 4: Error handling for invalid content type
     await testInvalidContentType();
 
-    // Test 5: Dry run mode
+    // Test 5: Error handling for invalid language
+    await testInvalidLanguage();
+
+    // Test 6: Dry run mode
     await testDryRunMode();
 
     utils.success('All basic CLI tests passed');
@@ -93,6 +96,18 @@ async function testInvalidContentType() {
   utils.success('Invalid content type test passed');
 }
 
+async function testInvalidLanguage() {
+  utils.log('Testing invalid language error...');
+
+  const result = await utils.runCLI(['test.md', '--type', 'articles', '--lang', 'invalid']);
+
+  utils.assert(!result.success, 'Should fail with invalid language');
+  utils.assertContains(result.output, 'Invalid language', 'Should show invalid language warning');
+  utils.assertContains(result.output, 'defaulting to "en"', 'Should show default fallback');
+
+  utils.success('Invalid language test passed');
+}
+
 async function testDryRunMode() {
   utils.log('Testing dry run mode...');
 
@@ -101,6 +116,8 @@ async function testDryRunMode() {
     fixturePath,
     '--type',
     'articles',
+    '--lang',
+    'en',
     '--dry-run',
     '--no-build',
     '--no-commit',

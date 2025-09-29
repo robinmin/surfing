@@ -56,14 +56,14 @@ If we have customized command line toll `postsurfing` can take several paramters
 We are building a website with GitHub Actions to publish to Cloudflare Pages. The website's URL is https://surfing.salty.vip/. Please use MCP Playwright to access it and help to identify the following issues:
 
 - In home page's 'Latest Content' section, we did not show content block, but just three grey block without anything.
-- In page 'https://surfing.salty.vip/articles/astro_tutorial/', we lost the content itself.
+- In page 'https://surfing.salty.vip/articles/en/astro_tutorial/', we lost the content itself.
 - In page 'https://surfing.salty.vip/browse/', we do have a block for 'Example Full HTML Document', but we you click on the hyperlink, you will be navigate to 'Example Full HTML Document'. Either remove the block or restore the link.(I prefer to remove it.)
 - So far, we have nothing to show in page 'https://surfing.salty.vip/showcase/'. 'Surfing Platform' itself is not worthing to show as a idependent project here. Cleanup it.
 
 ### Fix missing Google Analytics code on the following pages:
 
-- surfing.salty.vip/articles/astro_tutorial/
-- surfing.salty.vip/articles/welcome-to-surfing/
+- surfing.salty.vip/articles/en/astro_tutorial/
+- surfing.salty.vip/articles/en/welcome-to-surfing/
 - surfing.salty.vip/documents/
 
 It looks like for the generated content we forgot the add google analytics code if the option in @src/config.yaml is turned on.s
@@ -106,7 +106,7 @@ We also need the support of i18n for the following pages:
 
 - [x] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.
 - [ ] Add support of i18n for the website itself, so far support Chinese, English and Japanese only.
-- [ ] Add support of i18n for the new contents -- including how to translate the contents automatically.
+- [x] Add support of i18n for the new contents -- including how to translate the contents automatically.
 - [x] Move scripts/postsurfing/README.md into docs and rename it, it will be treated as a part of the documentation. → Moved to docs/postsurfing-cli.md
 - [ ] Define the SOP of generating and publishing new contents.
 - [ ] Add new category 'cheatsheet'

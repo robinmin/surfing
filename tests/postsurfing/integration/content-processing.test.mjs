@@ -29,6 +29,9 @@ async function testContentProcessing() {
     // Test 5: HTML fragment processing
     await testHtmlFragmentProcessing();
 
+    // Test 6: Language-specific processing
+    await testLanguageProcessing();
+
     utils.success('All content processing tests passed');
   } catch (error) {
     utils.error(`Content processing test failed: ${error.message}`);
@@ -46,6 +49,8 @@ async function testArticleProcessing() {
     fixturePath,
     '--type',
     'articles',
+    '--lang',
+    'en',
     '--dry-run',
     '--no-build',
     '--no-commit',
@@ -69,6 +74,8 @@ async function testHtmlDocumentProcessing() {
     fixturePath,
     '--type',
     'documents',
+    '--lang',
+    'en',
     '--auto-convert',
     '--dry-run',
     '--no-build',
@@ -90,7 +97,16 @@ async function testShowcaseProcessing() {
   utils.log('Testing showcase project processing...');
 
   const fixturePath = utils.copyFixture('showcase-project.md');
-  const result = await utils.runCLI([fixturePath, '--type', 'showcase', '--dry-run', '--no-build', '--no-commit']);
+  const result = await utils.runCLI([
+    fixturePath,
+    '--type',
+    'showcase',
+    '--lang',
+    'en',
+    '--dry-run',
+    '--no-build',
+    '--no-commit',
+  ]);
 
   // Showcase requires more fields, so this might fail validation
   // but should still process the content
@@ -108,6 +124,8 @@ async function testExistingFrontmatter() {
     fixturePath,
     '--type',
     'articles',
+    '--lang',
+    'en',
     '--dry-run',
     '--no-build',
     '--no-commit',
@@ -134,6 +152,8 @@ async function testHtmlFragmentProcessing() {
     tempPath,
     '--type',
     'documents',
+    '--lang',
+    'en',
     '--auto-convert',
     '--dry-run',
     '--no-build',
@@ -146,6 +166,96 @@ async function testHtmlFragmentProcessing() {
   utils.assertContains(result.output, 'Content published successfully', 'Should complete successfully');
 
   utils.success('HTML fragment processing test passed');
+}
+
+async function testLanguageProcessing() {
+  utils.log('Testing language-specific processing...');
+
+  const fixturePath = utils.copyFixture('simple-article.md');
+
+  // Test English (default)
+  const resultEn = await utils.runCLI([
+    fixturePath,
+    '--type',
+    'articles',
+    '--lang',
+    'en',
+    '--dry-run',
+    '--no-build',
+    '--no-commit',
+  ]);
+
+  utils.assert(resultEn.success, 'English processing should succeed');
+
+  // Test Chinese
+  const resultCn = await utils.runCLI([
+    fixturePath,
+    '--type',
+    'articles',
+    '--lang',
+    'cn',
+    '--dry-run',
+    '--no-build',
+    '--no-commit',
+  ]);
+
+  utils.assert(resultCn.success, 'Chinese processing should succeed');
+
+  // Test Japanese
+  const resultJp = await utils.runCLI([
+    fixturePath,
+    '--type',
+    'articles',
+    '--lang',
+    'jp',
+    '--dry-run',
+    '--no-build',
+    '--no-commit',
+  ]);
+
+  utils.assert(resultJp.success, 'Japanese processing should succeed');
+
+  // Test actual file creation with different languages
+  const testFilePath = utils.copyFixture('simple-article.md', 'test-lang-article.md');
+
+  // Create file in Chinese directory
+  const resultCnWrite = await utils.runCLI([
+    testFilePath,
+    '--type',
+    'articles',
+    '--lang',
+    'cn',
+    '--no-build',
+    '--no-commit',
+  ]);
+
+  utils.assert(resultCnWrite.success, 'Chinese file creation should succeed');
+  utils.assertContains(
+    resultCnWrite.output,
+    'src/content/articles/cn/test-lang-article.md',
+    'Should create file in Chinese directory'
+  );
+
+  // Create file in Japanese directory
+  const resultJpWrite = await utils.runCLI([
+    testFilePath,
+    '--type',
+    'articles',
+    '--lang',
+    'jp',
+    '--no-build',
+    '--no-commit',
+    '--force', // Overwrite if exists
+  ]);
+
+  utils.assert(resultJpWrite.success, 'Japanese file creation should succeed');
+  utils.assertContains(
+    resultJpWrite.output,
+    'src/content/articles/jp/test-lang-article.md',
+    'Should create file in Japanese directory'
+  );
+
+  utils.success('Language-specific processing test passed');
 }
 
 // Run tests
