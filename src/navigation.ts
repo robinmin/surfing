@@ -28,6 +28,10 @@ export const headerData = {
       ],
     },
     {
+      text: 'Cheatsheets',
+      href: getPermalink('/cheatsheets'),
+    },
+    {
       text: 'About',
       href: getPermalink('/about'),
     },
