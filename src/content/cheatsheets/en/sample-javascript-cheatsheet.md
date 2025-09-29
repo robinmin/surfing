@@ -12,8 +12,6 @@ featured: true
 draft: false
 ---
 
-# JavaScript ES6+ Quick Reference
-
 A comprehensive guide to modern JavaScript features and syntax.
 
 ## Variables and Declarations
