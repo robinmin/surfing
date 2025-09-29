@@ -94,6 +94,7 @@ customJS: |
                   });
               });
           });
+pdfUrl: "/assets/cheatsheets/enhanced-golang-cheatsheet.pdf"
 tags: ["javascript", "typescript", "angular", "css", "html"]
 readingTime: 7
 wordCount: 1267
