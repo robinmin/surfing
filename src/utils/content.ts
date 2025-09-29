@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { getPermalink } from './permalinks';
 
-export type ContentType = 'articles' | 'showcase' | 'documents';
+export type ContentType = 'articles' | 'showcase' | 'documents' | 'cheatsheets';
 
 // Obsidian-compatible frontmatter parser
 export function parseObsidianFrontmatter(content: string): { frontmatter: Record<string, any>; body: string } {
