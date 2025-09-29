@@ -9,8 +9,6 @@ draft: false
 featured: false
 ---
 
-# Astro Quick Tutorial for Vue Developers
-
 ## What is Astro?
 
 Astro is a modern web framework that focuses on **content-driven websites** with **zero JS by default**. Unlike Vue's SPA approach, Astro uses **islands architecture** - you ship HTML/CSS by default and add JavaScript only where needed.
