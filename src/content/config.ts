@@ -142,8 +142,58 @@ const showcaseCollection = defineCollection({
   }),
 });
 
+// Cheatsheets collection for AI-generated reference materials
+const cheatsheetsCollection = defineCollection({
+  loader: glob({ pattern: ['**/*.{html,md}'], base: 'src/content/cheatsheets' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    slug: z.string().optional(),
+    publishDate: z.date().optional(),
+    updateDate: z.date().optional(),
+
+    // Content organization
+    tags: z.array(z.string()).default([]),
+    category: z.string().optional(),
+
+    // Status tracking
+    draft: z.boolean().default(false),
+    featured: z.boolean().default(false),
+
+    // Cheatsheet-specific fields
+    topic: z.string().optional(), // Main topic/technology
+    difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+    format: z.enum(['html', 'markdown']).default('html'),
+
+    // File attachments
+    pdfUrl: z.string().optional(), // Generated PDF version
+    downloadUrl: z.string().optional(), // Direct download link
+
+    // AI generation metadata
+    generatedBy: z.string().optional(), // AI model used
+    prompt: z.string().optional(), // Original prompt (optional)
+    version: z.string().optional(), // Version of the cheatsheet
+
+    // Content metadata
+    author: z.string().optional(),
+    source: z.string().optional(),
+
+    // Auto-extracted metadata
+    wordCount: z.number().optional(),
+    readingTime: z.number().optional(),
+
+    // Custom styling support (for HTML cheatsheets)
+    customCSS: z.string().optional(),
+    customJS: z.string().optional(),
+    preserveStyles: z.boolean().default(true),
+
+    metadata: metadataDefinition(),
+  }),
+});
+
 export const collections = {
   articles: articlesCollection,
   documents: documentsCollection,
   showcase: showcaseCollection,
+  cheatsheets: cheatsheetsCollection,
 };
