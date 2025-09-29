@@ -102,6 +102,7 @@ CONTENT TYPES:
   articles    - AI insights, research, and technical content
   showcase    - Project portfolios with live demos and source links
   documents   - HTML content for legacy or rich-formatted pieces
+  cheatsheets - AI-generated reference materials and quick guides
 
 For more information, visit: https://github.com/robin/surfing
 `);
@@ -124,11 +125,11 @@ function validateArgs() {
 
   if (!options.type) {
     logger.error('Error: Content type is required');
-    logger.info('Use --type with one of: articles, showcase, documents');
+    logger.info('Use --type with one of: articles, showcase, documents, cheatsheets');
     process.exit(1);
   }
 
-  const validTypes = ['articles', 'showcase', 'documents'];
+  const validTypes = ['articles', 'showcase', 'documents', 'cheatsheets'];
   if (!validTypes.includes(options.type)) {
     logger.error(`Error: Invalid content type "${options.type}"`);
     logger.info(`Valid types: ${validTypes.join(', ')}`);
