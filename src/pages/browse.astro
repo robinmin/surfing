@@ -153,6 +153,15 @@ const metadata = {
                           ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                           : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                   }`}
+                  data-i18n={
+                    contentType === 'articles'
+                      ? 'pages.browse.article'
+                      : contentType === 'showcase'
+                        ? 'pages.browse.showcase'
+                        : contentType === 'documents'
+                          ? 'pages.browse.document'
+                          : 'pages.browse.blogPost'
+                  }
                 >
                   {contentType === 'articles'
                     ? t('pages.browse.article')
