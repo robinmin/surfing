@@ -55,12 +55,14 @@
       });
 
       // Update elements with data-i18n-* attributes (like data-i18n-placeholder)
-      const allElements = document.querySelectorAll('[data-i18n-placeholder], [data-i18n-alt], [data-i18n-title], [data-i18n-label]');
+      const allElements = document.querySelectorAll(
+        '[data-i18n-placeholder], [data-i18n-alt], [data-i18n-title], [data-i18n-label]'
+      );
       allElements.forEach((element) => {
         const dataset = (element as HTMLElement).dataset;
-        const i18nAttributes = Object.keys(dataset).filter(key => key.startsWith('i18n'));
+        const i18nAttributes = Object.keys(dataset).filter((key) => key.startsWith('i18n'));
 
-        i18nAttributes.forEach(attr => {
+        i18nAttributes.forEach((attr) => {
           const key = dataset[attr];
           if (key) {
             const htmlAttr = attr.replace('i18n', '').toLowerCase(); // Remove 'i18n' prefix and convert to lowercase
