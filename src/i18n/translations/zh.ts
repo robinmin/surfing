@@ -182,7 +182,8 @@ export const zh: Translation = {
     tagline: '联系我们',
     subtitle: '让我们联系吧！',
     dropMessage: '今天给我们留言吧！',
-    dropMessageSubtitle: '为了更快得到答案，请先查看我们的常见问题部分。您可能在那里找到您要的解决方案！如果没有，我们的支持团队很乐意为您提供帮助。',
+    dropMessageSubtitle:
+      '为了更快得到答案，请先查看我们的常见问题部分。您可能在那里找到您要的解决方案！如果没有，我们的支持团队很乐意为您提供帮助。',
     name: '姓名',
     email: '邮箱',
     message: '消息',
@@ -194,7 +195,8 @@ export const zh: Translation = {
     contactSales: '联系销售',
     contactSalesDesc: '与我们聊天，了解购买、定制选项、商业使用许可、特定模板查询等问题。',
     technicalSupport: '技术支持',
-    technicalSupportDesc: '当您遇到模板安装、编辑困难、软件兼容性问题或下载错误等使用模板相关的技术挑战时，请与我们聊天。',
+    technicalSupportDesc:
+      '当您遇到模板安装、编辑困难、软件兼容性问题或下载错误等使用模板相关的技术挑战时，请与我们聊天。',
     phone: '电话',
     emailContact: '邮箱',
     location: '位置',

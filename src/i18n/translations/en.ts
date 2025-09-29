@@ -182,20 +182,25 @@ export const en = {
     title: 'Contact',
     tagline: 'Contact',
     subtitle: "Let's Connect!",
-    dropMessage: "Drop us a message today!",
-    dropMessageSubtitle: "For quicker answers, explore our FAQs section. You may find the solution you're looking for right there! If not, our support team is delighted to help you.",
+    dropMessage: 'Drop us a message today!',
+    dropMessageSubtitle:
+      "For quicker answers, explore our FAQs section. You may find the solution you're looking for right there! If not, our support team is delighted to help you.",
     name: 'Name',
     email: 'Email',
     message: 'Message',
-    disclaimer: 'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
+    disclaimer:
+      'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
     responseTime: 'Our support team typically responds within 24 business hours.',
-    weAreHere: "We are here to help!",
+    weAreHere: 'We are here to help!',
     generalSupport: 'General support',
-    generalSupportDesc: "Chat with us for inquiries related to account management, website navigation, payment issues, accessing purchased templates or general questions about the website's functionality.",
+    generalSupportDesc:
+      "Chat with us for inquiries related to account management, website navigation, payment issues, accessing purchased templates or general questions about the website's functionality.",
     contactSales: 'Contact sales',
-    contactSalesDesc: 'Chat with us for questions about purchases, customization options, licensing for commercial use, inquiries about specific template, etc.',
+    contactSalesDesc:
+      'Chat with us for questions about purchases, customization options, licensing for commercial use, inquiries about specific template, etc.',
     technicalSupport: 'Technical support',
-    technicalSupportDesc: 'Chat with us when facing issues like template installation, problems editing difficulties, compatibility issues with software or download errors, or other technical challenges related to using the templates.',
+    technicalSupportDesc:
+      'Chat with us when facing issues like template installation, problems editing difficulties, compatibility issues with software or download errors, or other technical challenges related to using the templates.',
     phone: 'Phone',
     emailContact: 'Email',
     location: 'Location',
