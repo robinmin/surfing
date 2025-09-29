@@ -372,8 +372,9 @@ export class ContentProcessor {
     const hasBodyTag = content.includes('<body');
 
     // Require proper document structure for conversion
-    return (startsWithDoctype && hasHtmlTag && hasHeadTag && hasBodyTag) ||
-           (startsWithHtml && hasHeadTag && hasBodyTag);
+    return (
+      (startsWithDoctype && hasHtmlTag && hasHeadTag && hasBodyTag) || (startsWithHtml && hasHeadTag && hasBodyTag)
+    );
   }
 
   /**
