@@ -184,5 +184,7 @@ _Designed for AI researchers, content creators, and anyone who wants to showcase
 ## Reference
 
 - [Astro](https://astro.build/)
-- [AstroWind Template](https://github.com/arthelokyo/astrowinds)
+- [AstroWind Template](https://github.com/arthelokyo/astrowinds)s
 - [Add i18n features for Astro](https://docs.astro.build/en/recipes/i18n/)
+- [Markdown & MDX](https://tanggd.github.io/en/guides/markdown-content/)
+- [mdx](https://mdxjs.com/)
