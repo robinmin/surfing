@@ -10,6 +10,7 @@ export const ja: Translation = {
     articles: '記事',
     showcase: 'ショーケース',
     documents: 'ドキュメント',
+    cheatsheets: 'チートシート',
     browse: 'すべて閲覧',
     about: 'について',
     content: 'コンテンツ',
@@ -86,6 +87,7 @@ export const ja: Translation = {
       article: '記事',
       showcase: 'ショーケース',
       document: 'ドキュメント',
+      cheatsheet: 'チートシート',
       blogPost: 'ブログ記事',
     },
     documents: {
@@ -105,6 +107,32 @@ export const ja: Translation = {
       snippet: 'スニペット',
       document: 'ドキュメント',
       minRead: '分で読める',
+    },
+    cheatsheets: {
+      title: 'チートシート',
+      description: 'AI生成のリファレンス資料',
+      noCheatsheets: 'チートシートが見つかりません。',
+      heroTitle: 'AI生成チートシート',
+      heroSubtitle:
+        '開発者のためのクイックリファレンスガイドと包括的なチートシート。生産性を向上させ、学習を加速するためにAIによって作成されました。',
+      featuredCheatsheets: '注目チートシート',
+      featuredDesc: '重要な技術とフレームワークのための厳選されたリファレンス資料',
+      allCheatsheets: 'すべてのチートシート',
+      allCheatsheetsDesc: 'AI生成リファレンス資料の完全なコレクションを閲覧',
+      noCheatSheetsYet: 'チートシートはまだありません',
+      startCreating: 'postsurfing CLIを使用してAI生成チートシートの作成を開始してください。',
+      generatedBy: '生成者',
+      downloadPdf: 'PDFダウンロード',
+      minRead: '分で読める',
+      difficulty: {
+        beginner: '初級',
+        intermediate: '中級',
+        advanced: '上級',
+      },
+      format: {
+        html: 'HTML',
+        markdown: 'Markdown',
+      },
     },
     showcase: {
       title: 'ショーケース',
