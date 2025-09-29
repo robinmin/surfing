@@ -3,74 +3,74 @@ import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import ContactUs from '~/components/widgets/Contact.astro';
 import Features2 from '~/components/widgets/Features2.astro';
+import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+
+const t = getServerTranslation(DEFAULT_LANGUAGE);
 
 const metadata = {
-  title: 'Contact',
+  title: t('contact.title'),
 };
 ---
 
 <Layout metadata={metadata}>
   <!-- HeroText Widget ******************* -->
 
-  <HeroText tagline="Contact" title="Let's Connect!" />
+  <HeroText tagline={t('contact.tagline')} title={t('contact.subtitle')} />
 
   <ContactUs
     id="form"
-    title="Drop us a message today!"
-    subtitle="For quicker answers, explore our FAQs section. You may find the solution you're looking  for right there! If not, our support team is delighted to help you."
+    title={t('contact.dropMessage')}
+    subtitle={t('contact.dropMessageSubtitle')}
     inputs={[
       {
         type: 'text',
         name: 'name',
-        label: 'Name',
+        label: t('contact.name'),
       },
       {
         type: 'email',
         name: 'email',
-        label: 'Email',
+        label: t('contact.email'),
       },
     ]}
     textarea={{
-      label: 'Message',
+      label: t('contact.message'),
     }}
     disclaimer={{
-      label:
-        'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
+      label: t('contact.disclaimer'),
     }}
-    description="Our support team typically responds within 24 business hours."
+    description={t('contact.responseTime')}
   />
 
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title="We are here to help!"
+    title={t('contact.weAreHere')}
     items={[
       {
-        title: 'General support',
-        description: `Chat with us for inquiries related to account management, website navigation, payment issues, accessing purchased templates or general questions about the website's functionality.`,
+        title: t('contact.generalSupport'),
+        description: t('contact.generalSupportDesc'),
       },
       {
-        title: 'Contact sales',
-        description:
-          'Chat with us for questions about purchases, customization options, licensing for commercial use, inquiries about specific template, etc.',
+        title: t('contact.contactSales'),
+        description: t('contact.contactSalesDesc'),
       },
       {
-        title: 'Technical support',
-        description:
-          'Chat with us when facing issues like template installation, problems editing difficulties, compatibility issues with software or download errors, or other technical challenges related to using the templates.',
+        title: t('contact.technicalSupport'),
+        description: t('contact.technicalSupportDesc'),
       },
       {
-        title: 'Phone',
+        title: t('contact.phone'),
         description: '+1 (234) 567-890',
         icon: 'tabler:headset',
       },
       {
-        title: 'Email',
+        title: t('contact.emailContact'),
         description: 'contact@support.com',
         icon: 'tabler:mail',
       },
       {
-        title: 'Location',
+        title: t('contact.location'),
         description: '1234 Lorem Ipsum St, 12345, Miami, EEUU',
         icon: 'tabler:map-pin',
       },

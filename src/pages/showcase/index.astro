@@ -2,6 +2,10 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { getCollection } from 'astro:content';
+import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+
+// Use default language for SSG, will be updated on client
+const t = getServerTranslation(DEFAULT_LANGUAGE);
 
 const showcases = await getCollection('showcase', ({ data }) => data.featured !== false);
 const featuredShowcases = showcases.filter((item) => item.data.featured);
@@ -10,8 +14,8 @@ const sortedShowcases = showcases.sort(
 );
 
 const metadata = {
-  title: 'Project Showcase - Surfing',
-  description: 'Explore amazing projects, tools, and creations from our community of AI creators and developers.',
+  title: t('pages.showcase.title'),
+  description: t('pages.showcase.description'),
 };
 ---
 
@@ -19,10 +23,10 @@ const metadata = {
   <!-- Hero Section -->
   <Hero>
     <Fragment slot="title">
-      Project <span class="text-accent">Showcase</span>
+      <span data-i18n="pages.showcase.heroTitle">{t('pages.showcase.heroTitle')}</span>
     </Fragment>
     <Fragment slot="subtitle">
-      Explore amazing projects, tools, and creations from our community of AI creators and developers.
+      <span data-i18n="pages.showcase.heroSubtitle">{t('pages.showcase.heroSubtitle')}</span>
     </Fragment>
   </Hero>
 
@@ -31,9 +35,14 @@ const metadata = {
     featuredShowcases.length > 0 && (
       <section class="px-4 py-16 mx-auto max-w-7xl lg:px-8 lg:py-20">
         <div class="mb-12 text-center">
-          <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Featured Projects</h2>
-          <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
-            Highlighted projects that showcase innovation and creativity
+          <h2
+            class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl"
+            data-i18n="pages.showcase.featuredProjects"
+          >
+            {t('pages.showcase.featuredProjects')}
+          </h2>
+          <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n="pages.showcase.featuredDesc">
+            {t('pages.showcase.featuredDesc')}
           </p>
         </div>
 
@@ -46,8 +55,11 @@ const metadata = {
 
               <div class="p-8">
                 <div class="flex items-center justify-between mb-4">
-                  <span class="inline-block px-3 py-1 text-sm bg-purple-100 text-purple-800 rounded-full dark:bg-purple-900 dark:text-purple-200">
-                    Featured
+                  <span
+                    class="inline-block px-3 py-1 text-sm bg-purple-100 text-purple-800 rounded-full dark:bg-purple-900 dark:text-purple-200"
+                    data-i18n="pages.showcase.featured"
+                  >
+                    {t('pages.showcase.featured')}
                   </span>
                   <time class="text-sm text-gray-500 dark:text-gray-400">
                     {new Date(showcase.data.publishDate).toLocaleDateString()}
@@ -89,7 +101,7 @@ const metadata = {
                     href={`/showcase/${showcase.data.slug || showcase.id}`}
                     class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
                   >
-                    Learn More
+                    <span data-i18n="pages.showcase.learnMore">{t('pages.showcase.learnMore')}</span>
                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         stroke-linecap="round"
@@ -107,7 +119,7 @@ const metadata = {
                       rel="noopener noreferrer"
                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
-                      Live Demo
+                      <span data-i18n="pages.showcase.liveDemo">{t('pages.showcase.liveDemo')}</span>
                       <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           stroke-linecap="round"
@@ -130,8 +142,15 @@ const metadata = {
   <!-- All Showcases -->
   <section class="px-4 py-16 mx-auto max-w-7xl lg:px-8 lg:py-20 bg-gray-50 dark:bg-gray-900">
     <div class="mb-12 text-center">
-      <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">All Projects</h2>
-      <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">Discover the full collection of community projects</p>
+      <h2
+        class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl"
+        data-i18n="pages.showcase.allProjects"
+      >
+        {t('pages.showcase.allProjects')}
+      </h2>
+      <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n="pages.showcase.allProjectsDesc">
+        {t('pages.showcase.allProjectsDesc')}
+      </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -145,8 +164,11 @@ const metadata = {
             <div class="p-6">
               <div class="flex items-center justify-between mb-3">
                 {showcase.data.featured && (
-                  <span class="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full dark:bg-purple-900 dark:text-purple-200">
-                    Featured
+                  <span
+                    class="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full dark:bg-purple-900 dark:text-purple-200"
+                    data-i18n="pages.showcase.featured"
+                  >
+                    {t('pages.showcase.featured')}
                   </span>
                 )}
                 <time class="text-sm text-gray-500 dark:text-gray-400">
@@ -189,7 +211,7 @@ const metadata = {
                   href={`/showcase/${showcase.data.slug || showcase.id}`}
                   class="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                 >
-                  Details
+                  <span data-i18n="pages.showcase.details">{t('pages.showcase.details')}</span>
                 </a>
 
                 {showcase.data.projectUrl && (
@@ -199,7 +221,7 @@ const metadata = {
                     rel="noopener noreferrer"
                     class="inline-flex items-center px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                   >
-                    Demo
+                    <span data-i18n="pages.showcase.demo">{t('pages.showcase.demo')}</span>
                   </a>
                 )}
 
@@ -210,7 +232,7 @@ const metadata = {
                     rel="noopener noreferrer"
                     class="inline-flex items-center px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                   >
-                    Code
+                    <span data-i18n="pages.showcase.code">{t('pages.showcase.code')}</span>
                   </a>
                 )}
               </div>
@@ -232,8 +254,12 @@ const metadata = {
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-            <h3 class="text-lg font-medium mb-2">No showcases yet</h3>
-            <p class="text-sm">Check back soon for amazing projects from our community!</p>
+            <h3 class="text-lg font-medium mb-2" data-i18n="pages.showcase.noShowcasesYet">
+              {t('pages.showcase.noShowcasesYet')}
+            </h3>
+            <p class="text-sm" data-i18n="pages.showcase.checkBackSoon">
+              {t('pages.showcase.checkBackSoon')}
+            </p>
           </div>
         </div>
       )

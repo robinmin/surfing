@@ -38,28 +38,91 @@ export const en = {
       latestContent: 'Latest Content',
       featuredContent: 'Featured Content',
     },
+    about: {
+      title: 'About',
+      description: 'Learn more about Surfing',
+      whatsHere: "What's Here",
+      articlesDesc: 'Technical notes and insights.',
+      showcaseDesc: 'Projects and experiments.',
+      collectedContent: 'Collected Content',
+      collectedContentDesc: 'Useful things I found.',
+    },
     articles: {
       title: 'Articles',
       description: 'Insights, research, and technical content',
       noArticles: 'No articles found.',
+      heroTitle: 'AI-Powered Articles',
+      heroSubtitle:
+        'Explore AI insights, technical articles, and in-depth content from our community of creators and researchers.',
+      featuredArticles: 'Featured Articles',
+      featuredDesc: 'Hand-picked articles that showcase the best AI insights and technical content',
+      allArticles: 'All Articles',
+      allArticlesDesc: 'Dive deep into AI research, technical insights, and innovative ideas',
+      noArticlesYet: 'No articles yet',
+      checkBackSoon: 'Check back soon for AI insights and technical content from our community!',
+      featured: 'Featured',
+      anonymous: 'Anonymous',
+      minRead: 'min read',
+      noDate: 'No date',
+      noDescription: 'No description available.',
     },
-    showcase: {
-      title: 'Showcase',
-      description: 'Projects and demos',
-      noProjects: 'No projects found.',
+    browse: {
+      title: 'Browse All Content',
+      description: 'Explore all content types',
+      heroTitle: 'Browse All Content',
+      heroSubtitle:
+        'Discover AI insights, technical articles, project showcases, and creative content from our community.',
+      searchPlaceholder: 'Search content...',
+      allTypes: 'All Types',
+      latestFirst: 'Latest First',
+      oldestFirst: 'Oldest First',
+      titleAZ: 'Title A-Z',
+      titleZA: 'Title Z-A',
+      filterByTags: 'Filter by Tags:',
+      filterByCategory: 'Filter by Category:',
+      noContentFound: 'No content found',
+      adjustFilters: 'Try adjusting your search or filter criteria.',
+      article: 'Article',
+      showcase: 'Showcase',
+      document: 'Document',
+      blogPost: 'Blog Post',
     },
     documents: {
       title: 'Documents',
       description: 'Documentation and guides',
       noDocuments: 'No documents found.',
+      heroTitle: 'Documents',
+      heroSubtitle:
+        'Browse HTML documents, legacy content, and rich-formatted pieces with preserved styling and functionality.',
+      featuredDocuments: 'Featured Documents',
+      allDocuments: 'All Documents',
+      noDocumentsYet: 'No documents yet',
+      addDocuments: 'Add HTML documents to the',
+      directoryToStart: 'directory to get started.',
+      legacy: 'Legacy',
+      template: 'Template',
+      snippet: 'Snippet',
+      document: 'Document',
+      minRead: 'min read',
     },
-    browse: {
-      title: 'Browse All Content',
-      description: 'Explore all content types',
-    },
-    about: {
-      title: 'About',
-      description: 'Learn more about Surfing',
+    showcase: {
+      title: 'Showcase',
+      description: 'Projects and demos',
+      noProjects: 'No projects found.',
+      heroTitle: 'Project Showcase',
+      heroSubtitle: 'Explore amazing projects, tools, and creations from our community of AI creators and developers.',
+      featuredProjects: 'Featured Projects',
+      featuredDesc: 'Highlighted projects that showcase innovation and creativity',
+      allProjects: 'All Projects',
+      allProjectsDesc: 'Discover the full collection of community projects',
+      noShowcasesYet: 'No showcases yet',
+      checkBackSoon: 'Check back soon for amazing projects from our community!',
+      featured: 'Featured',
+      learnMore: 'Learn More',
+      liveDemo: 'Live Demo',
+      details: 'Details',
+      demo: 'Demo',
+      code: 'Code',
     },
   },
   footer: {
@@ -98,6 +161,44 @@ export const en = {
   language: {
     selector: 'Language',
     current: 'Current language',
+  },
+  social: {
+    share: 'Share',
+    twitterShare: 'Twitter Share',
+    facebookShare: 'Facebook Share',
+    linkedinShare: 'LinkedIn Share',
+    whatsappShare: 'WhatsApp Share',
+    emailShare: 'Email Share',
+  },
+  blog: {
+    relatedPosts: 'Related Posts',
+    viewAllPosts: 'View All Posts',
+  },
+  navigation: {
+    mainNavigation: 'Main navigation',
+    rssFeed: 'RSS Feed',
+  },
+  contact: {
+    title: 'Contact',
+    tagline: 'Contact',
+    subtitle: "Let's Connect!",
+    dropMessage: "Drop us a message today!",
+    dropMessageSubtitle: "For quicker answers, explore our FAQs section. You may find the solution you're looking for right there! If not, our support team is delighted to help you.",
+    name: 'Name',
+    email: 'Email',
+    message: 'Message',
+    disclaimer: 'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
+    responseTime: 'Our support team typically responds within 24 business hours.',
+    weAreHere: "We are here to help!",
+    generalSupport: 'General support',
+    generalSupportDesc: "Chat with us for inquiries related to account management, website navigation, payment issues, accessing purchased templates or general questions about the website's functionality.",
+    contactSales: 'Contact sales',
+    contactSalesDesc: 'Chat with us for questions about purchases, customization options, licensing for commercial use, inquiries about specific template, etc.',
+    technicalSupport: 'Technical support',
+    technicalSupportDesc: 'Chat with us when facing issues like template installation, problems editing difficulties, compatibility issues with software or download errors, or other technical challenges related to using the templates.',
+    phone: 'Phone',
+    emailContact: 'Email',
+    location: 'Location',
   },
 };
 
@@ -145,24 +246,84 @@ export type Translation = {
       title: string;
       description: string;
       noArticles: string;
+      heroTitle: string;
+      heroSubtitle: string;
+      featuredArticles: string;
+      featuredDesc: string;
+      allArticles: string;
+      allArticlesDesc: string;
+      noArticlesYet: string;
+      checkBackSoon: string;
+      featured: string;
+      anonymous: string;
+      minRead: string;
+      noDate: string;
+      noDescription: string;
     };
     showcase: {
       title: string;
       description: string;
       noProjects: string;
+      heroTitle: string;
+      heroSubtitle: string;
+      featuredProjects: string;
+      featuredDesc: string;
+      allProjects: string;
+      allProjectsDesc: string;
+      noShowcasesYet: string;
+      checkBackSoon: string;
+      featured: string;
+      learnMore: string;
+      liveDemo: string;
+      details: string;
+      demo: string;
+      code: string;
     };
     documents: {
       title: string;
       description: string;
       noDocuments: string;
+      heroTitle: string;
+      heroSubtitle: string;
+      featuredDocuments: string;
+      allDocuments: string;
+      noDocumentsYet: string;
+      addDocuments: string;
+      directoryToStart: string;
+      legacy: string;
+      template: string;
+      snippet: string;
+      document: string;
+      minRead: string;
     };
     browse: {
       title: string;
       description: string;
+      heroTitle: string;
+      heroSubtitle: string;
+      searchPlaceholder: string;
+      allTypes: string;
+      latestFirst: string;
+      oldestFirst: string;
+      titleAZ: string;
+      titleZA: string;
+      filterByTags: string;
+      filterByCategory: string;
+      noContentFound: string;
+      adjustFilters: string;
+      article: string;
+      showcase: string;
+      document: string;
+      blogPost: string;
     };
     about: {
       title: string;
       description: string;
+      whatsHere: string;
+      articlesDesc: string;
+      showcaseDesc: string;
+      collectedContent: string;
+      collectedContentDesc: string;
     };
   };
   footer: {
@@ -201,5 +362,43 @@ export type Translation = {
   language: {
     selector: string;
     current: string;
+  };
+  social: {
+    share: string;
+    twitterShare: string;
+    facebookShare: string;
+    linkedinShare: string;
+    whatsappShare: string;
+    emailShare: string;
+  };
+  blog: {
+    relatedPosts: string;
+    viewAllPosts: string;
+  };
+  navigation: {
+    mainNavigation: string;
+    rssFeed: string;
+  };
+  contact: {
+    title: string;
+    tagline: string;
+    subtitle: string;
+    dropMessage: string;
+    dropMessageSubtitle: string;
+    name: string;
+    email: string;
+    message: string;
+    disclaimer: string;
+    responseTime: string;
+    weAreHere: string;
+    generalSupport: string;
+    generalSupportDesc: string;
+    contactSales: string;
+    contactSalesDesc: string;
+    technicalSupport: string;
+    technicalSupportDesc: string;
+    phone: string;
+    emailContact: string;
+    location: string;
   };
 };

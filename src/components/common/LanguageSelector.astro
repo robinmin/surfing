@@ -1,4 +1,5 @@
 ---
+import { t } from '~/i18n';
 import { Icon } from 'astro-icon/components';
 import { LANGUAGES, DEFAULT_LANGUAGE } from '~/i18n';
 
@@ -11,7 +12,7 @@ const currentLangInfo = LANGUAGES[currentLanguage];
   <button
     type="button"
     class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
-    aria-label="Language selector"
+    aria-label={t('language.selector')}
     id="language-selector-button"
   >
     <span class="w-5 h-5 flex items-center justify-center text-base" id="current-flag">
@@ -86,11 +87,10 @@ const currentLangInfo = LANGUAGES[currentLanguage];
         this.closeDropdown();
       });
 
-      // Listen for language change events
+      // Listen for language change events from other components
       window.addEventListener('languageChange', ((e: CustomEvent) => {
         this.currentLanguage = e.detail.language;
         this.updateUI();
-        this.reloadPage();
       }) as EventListener);
 
       // Keyboard navigation
@@ -164,15 +164,16 @@ const currentLangInfo = LANGUAGES[currentLanguage];
       this.updateUI();
       this.closeDropdown();
 
-      // Reload page to apply new language
-      this.reloadPage();
+      // Dispatch language change event for other components to react
+      this.dispatchLanguageChange(newLanguage);
     }
 
-    private reloadPage(): void {
-      // Add a small delay to ensure localStorage is updated
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+    private dispatchLanguageChange(newLanguage: SupportedLanguage): void {
+      window.dispatchEvent(
+        new CustomEvent('languageChange', {
+          detail: { language: newLanguage },
+        })
+      );
     }
   }
 

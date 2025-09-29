@@ -2,6 +2,10 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { getCollection } from 'astro:content';
+import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+
+// Use default language for SSG, will be updated on client
+const t = getServerTranslation(DEFAULT_LANGUAGE);
 
 const documents = await getCollection('documents', ({ data }) => !data.draft);
 const featuredDocuments = documents.filter((item) => item.data.featured);
@@ -12,18 +16,20 @@ const sortedDocuments = documents.sort(
 );
 
 const metadata = {
-  title: 'Documents - Surfing',
-  description: 'Browse HTML documents, legacy content, and rich-formatted pieces.',
+  title: t('pages.documents.title'),
+  description: t('pages.documents.description'),
 };
 ---
 
 <Layout metadata={metadata}>
   <!-- Hero Widget ******************* -->
   <Hero>
-    <Fragment slot="title"> Documents </Fragment>
+    <Fragment slot="title">
+      <span data-i18n="pages.documents.heroTitle">{t('pages.documents.heroTitle')}</span>
+    </Fragment>
 
     <Fragment slot="subtitle">
-      Browse HTML documents, legacy content, and rich-formatted pieces with preserved styling and functionality.
+      <span data-i18n="pages.documents.heroSubtitle">{t('pages.documents.heroSubtitle')}</span>
     </Fragment>
   </Hero>
 
@@ -33,7 +39,12 @@ const metadata = {
     {
       featuredDocuments.length > 0 && (
         <div class="mb-16">
-          <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">Featured Documents</h2>
+          <h2
+            class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8"
+            data-i18n="pages.documents.featuredDocuments"
+          >
+            {t('pages.documents.featuredDocuments')}
+          </h2>
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredDocuments.map((document) => (
               <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -41,12 +52,12 @@ const metadata = {
                   {/* Content Type Badge */}
                   <span class="inline-block px-2 py-1 text-xs rounded-full mb-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                     {document.data.contentType === 'legacy'
-                      ? 'Legacy'
+                      ? t('pages.documents.legacy')
                       : document.data.contentType === 'template'
-                        ? 'Template'
+                        ? t('pages.documents.template')
                         : document.data.contentType === 'snippet'
-                          ? 'Snippet'
-                          : 'Document'}
+                          ? t('pages.documents.snippet')
+                          : t('pages.documents.document')}
                   </span>
 
                   <h3 class="text-xl font-semibold mb-2 dark:text-white">
@@ -73,7 +84,11 @@ const metadata = {
                   <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                     <div class="flex items-center space-x-4">
                       {document.data.author && <span>{document.data.author}</span>}
-                      {document.data.readingTime && <span>{document.data.readingTime} min read</span>}
+                      {document.data.readingTime && (
+                        <span>
+                          {document.data.readingTime} {t('pages.documents.minRead')}
+                        </span>
+                      )}
                     </div>
                     {document.data.publishDate && (
                       <time datetime={document.data.publishDate.toISOString()}>
@@ -96,7 +111,7 @@ const metadata = {
     <!-- All Documents -->
     <div>
       <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
-        {featuredDocuments.length > 0 ? 'All Documents' : 'Documents'}
+        {featuredDocuments.length > 0 ? t('pages.documents.allDocuments') : t('pages.documents.title')}
       </h2>
 
       {
@@ -108,12 +123,12 @@ const metadata = {
                   {/* Content Type Badge */}
                   <span class="inline-block px-2 py-1 text-xs rounded-full mb-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                     {document.data.contentType === 'legacy'
-                      ? 'Legacy'
+                      ? t('pages.documents.legacy')
                       : document.data.contentType === 'template'
-                        ? 'Template'
+                        ? t('pages.documents.template')
                         : document.data.contentType === 'snippet'
-                          ? 'Snippet'
-                          : 'Document'}
+                          ? t('pages.documents.snippet')
+                          : t('pages.documents.document')}
                   </span>
 
                   <h3 class="text-xl font-semibold mb-2 dark:text-white">
@@ -140,7 +155,11 @@ const metadata = {
                   <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                     <div class="flex items-center space-x-4">
                       {document.data.author && <span>{document.data.author}</span>}
-                      {document.data.readingTime && <span>{document.data.readingTime} min read</span>}
+                      {document.data.readingTime && (
+                        <span>
+                          {document.data.readingTime} {t('pages.documents.minRead')}
+                        </span>
+                      )}
                     </div>
                     {document.data.publishDate && (
                       <time datetime={document.data.publishDate.toISOString()}>
@@ -167,11 +186,13 @@ const metadata = {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <h3 class="text-lg font-medium mb-2">No documents yet</h3>
+              <h3 class="text-lg font-medium mb-2" data-i18n="pages.documents.noDocumentsYet">
+                {t('pages.documents.noDocumentsYet')}
+              </h3>
               <p class="text-sm">
-                Add HTML documents to the{' '}
-                <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">src/content/documents/</code> directory to
-                get started.
+                <span data-i18n="pages.documents.addDocuments">{t('pages.documents.addDocuments')}</span>{' '}
+                <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">src/content/documents/</code>{' '}
+                <span data-i18n="pages.documents.directoryToStart">{t('pages.documents.directoryToStart')}</span>
               </p>
             </div>
           </div>

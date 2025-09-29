@@ -12,7 +12,8 @@
     }
 
     private setupLanguageListener(): void {
-      window.addEventListener('languageChange', (() => {
+      window.addEventListener('languageChange', ((e: CustomEvent) => {
+        console.log('Language change detected:', e.detail.language);
         this.updateContent();
       }) as EventListener);
     }
