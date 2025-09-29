@@ -28,6 +28,7 @@ What we've built beyond the foundation:
 - **Articles**: AI insights, research, and technical content
 - **Showcase**: Project portfolios with live demos and source links
 - **Documents**: Full HTML content with custom CSS/JS support
+- **Cheatsheets**: AI-generated reference materials with PDF support and difficulty levels
 - **Obsidian Integration**: Native support for Obsidian markdown files
 
 ### 🔧 Enhanced Publishing
@@ -39,7 +40,7 @@ What we've built beyond the foundation:
 
 ### 📡 Content Syndication
 
-- Multiple RSS feeds (site-wide, articles, showcase, documents)
+- Multiple RSS feeds (site-wide, articles, showcase, documents, cheatsheets)
 - SEO optimization with structured data
 - Advanced search and filtering capabilities
 
@@ -80,6 +81,9 @@ postsurfing ./legacy-page.html --type documents --auto-convert
 
 # Interactive mode for showcase projects
 postsurfing ./project.md --type showcase --interactive
+
+# Publish AI-generated cheatsheet
+postsurfing ./javascript-cheatsheet.md --type cheatsheets
 ```
 
 The CLI handles frontmatter validation, build testing, and git operations automatically.
@@ -90,6 +94,7 @@ The CLI handles frontmatter validation, build testing, and git operations automa
    - Articles: `src/content/articles/your-article.md`
    - Showcase: `src/content/showcase/your-project.md`
    - Documents: `src/content/documents/your-document.md`
+   - Cheatsheets: `src/content/cheatsheets/your-cheatsheet.md`
 
 2. Add frontmatter and content
 3. Commit to git
@@ -100,6 +105,7 @@ The CLI handles frontmatter validation, build testing, and git operations automa
 - **HTML**: Full HTML documents with custom CSS/JS
 - **Obsidian**: Native support for Obsidian markdown files
 - **Mixed**: HTML content within markdown files
+- **AI-Enhanced**: Cheatsheets with AI metadata, PDF attachments, and difficulty levels
 
 ### How do I migrate existing HTML content?
 
