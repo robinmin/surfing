@@ -1,0 +1,139 @@
+# Cheatsheets Content Type Template
+# AI-generated reference materials and quick guides
+
+name: cheatsheets
+required:
+  - title
+
+fields:
+  title:
+    type: string
+    description: 'Cheatsheet title'
+
+  description:
+    type: string
+    optional: true
+    description: 'Brief description of the cheatsheet content'
+
+  slug:
+    type: string
+    optional: true
+    autoGenerate: true
+    description: 'URL slug (auto-generated from title if not provided)'
+
+  publishDate:
+    type: date
+    optional: true
+    autoGenerate: true
+    description: 'Publication date'
+
+  updateDate:
+    type: date
+    optional: true
+    description: 'Last updated date'
+
+  tags:
+    type: array
+    optional: true
+    default: []
+    description: 'Content tags for categorization'
+
+  category:
+    type: string
+    optional: true
+    description: 'Main category'
+
+  draft:
+    type: boolean
+    optional: true
+    default: false
+    description: 'Draft status'
+
+  featured:
+    type: boolean
+    optional: true
+    default: false
+    description: 'Featured content'
+
+  # Cheatsheet-specific fields
+  topic:
+    type: string
+    optional: true
+    description: "Main topic or technology (e.g., 'JavaScript', 'Docker', 'Git')"
+
+  difficulty:
+    type: string
+    optional: true
+    enum: [beginner, intermediate, advanced]
+    description: 'Difficulty level'
+
+  format:
+    type: string
+    optional: true
+    enum: [html, markdown]
+    default: html
+    description: 'Content format'
+
+  # File attachments
+  pdfUrl:
+    type: string
+    optional: true
+    description: 'URL to generated PDF version'
+
+  downloadUrl:
+    type: string
+    optional: true
+    description: 'Direct download link'
+
+  # AI generation metadata
+  generatedBy:
+    type: string
+    optional: true
+    description: "AI model used for generation (e.g., 'GPT-4', 'Claude')"
+
+  prompt:
+    type: string
+    optional: true
+    description: 'Original prompt used for generation'
+
+  version:
+    type: string
+    optional: true
+    description: "Version of the cheatsheet (e.g., 'v1.0', '2024.1')"
+
+  # Content metadata
+  author:
+    type: string
+    optional: true
+    description: 'Author name'
+
+  source:
+    type: string
+    optional: true
+    description: 'Original source URL or reference'
+
+  customCSS:
+    type: string
+    optional: true
+    description: 'Custom CSS for styling'
+
+  customJS:
+    type: string
+    optional: true
+    description: 'Custom JavaScript'
+
+  preserveStyles:
+    type: boolean
+    optional: true
+    default: true
+    description: 'Preserve original styling'
+
+  wordCount:
+    type: number
+    optional: true
+    description: 'Auto-calculated word count'
+
+  readingTime:
+    type: number
+    optional: true
+    description: 'Auto-calculated reading time in minutes'

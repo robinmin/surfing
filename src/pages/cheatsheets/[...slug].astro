@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content';
+
+import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
+
+export async function getStaticPaths() {
+  const cheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
+
+  return cheatsheets.map((cheatsheet) => ({
+    params: {
+      slug: cheatsheet.data.slug || cheatsheet.id,
+    },
+    props: { cheatsheet },
+  }));
+}
+
+const { cheatsheet } = Astro.props;
+const { Content } = await render(cheatsheet);
+---
+
+<MarkdownLayout frontmatter={{ title: cheatsheet.data.title }}>
+  <Content />
+</MarkdownLayout>
