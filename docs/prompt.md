@@ -150,6 +150,28 @@ Here comes the issues I found so far:
 
 - Instead of using the website's title part(huge title for the cheatsheet), We need to avoid to add the title part from the website, and relay on the author of the cheatsheets provide the title part. That means you also need to refer to @golang-cheatsheet-restored.html to enhance the title part of @/Users/robin/Downloads/python-cheatsheet.html first, and then we can publish it again.
 
+### Fix issues on the process of publishing cheatsheets(2)
+
+#### Background & Issues
+
+We almost get the process of publishing cheatsheets refined. But we still have the following issues:
+
+- Invalid cache file: After I run the command `scripts/preprocess-cheatsheets.sh python-cheatsheet.html`, the orginal HTML file should be cached in temp folder /tmp, and the output of the step 1 said so. But we I copy these generated sample prompt with the full file name of the cached one with AI assistant. That cause the AI to search the file by name. Ideally, it should not happen. But for unknown reason, it happend.
+- For these external HTML files for documents and cheatsheets, sometime we need to find the original version, but we did not store it. According to the orginal design, it will be removed as a cheched file.
+- After several back and forth, maybe there is something wrong with the responsibility of the each parts of the process:
+  - scripts/preprocess-cheatsheets.sh: Do the preprocessing of the cheatsheets, no care about the contents and their style and layout.
+  - scripts/postprocess-cheatsheets.sh: Do the postprocessing of the cheatsheets, no care about the contents and their style and layout.
+  - docs/prompt_cheatsheets.md: Only care about the contents and their style and layout, no further processings and dependencies.
+
+#### Solutions
+
+We change the original design to store these external HTML files. I already created two folder:
+
+- originals/documents: store the original HTML files for documents
+- originals/cheatsheets: store the original HTML files for cheatsheets
+- Have a comprehensive scan on each part of the whole process of publishing cheatsheets, including the preprocessing, postprocessing, and the prompt. In case of any issues or against their responsibility, we will investigate and fix them.
+  s
+
 ## TODO List
 
 - [x] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.
