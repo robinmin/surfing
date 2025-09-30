@@ -89,6 +89,8 @@ export class HtmlConverter {
       extractedMetadata: {},
       externalCSS: null,
       externalJS: null,
+      externalCSSCount: 0,
+      externalJSCount: 0,
       customCSS: null,
       customJS: null,
       bodyContent: '',
