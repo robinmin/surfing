@@ -114,22 +114,26 @@ For AI-generated HTML cheatsheets that need PDF versions, we have a streamlined 
 **What each step does:**
 
 **Step 1 - Preprocess:**
+
 - ✅ Analyzes HTML structure and content
 - ✅ Generates processing configuration
 - ✅ Copies input file to `/tmp/cheatsheets-working/`
 - ✅ Provides AI assistant instructions with full /tmp path
 
 **Step 2 - AI Refinement:**
+
 - ✅ Refines content quality and accuracy in /tmp
 - ✅ Optimizes layout and column balancing
 - ✅ Removes navigation elements
 - ✅ Previews with Playwright for approval
 
 **Step 3 - User Review:**
+
 - ✅ Review refined HTML in browser
 - ✅ Approve or iterate back to Step 2
 
 **Step 4 - Postprocess:**
+
 - ✅ Validates refined HTML
 - ✅ Auto-generates PDF if not present
 - ✅ Converts HTML to markdown with postsurfing:
@@ -142,6 +146,7 @@ For AI-generated HTML cheatsheets that need PDF versions, we have a streamlined 
 - ✅ Commits and publishes to website
 
 **Key improvements:**
+
 - 🚫 No permission interruptions (AI doesn't call external commands)
 - ✅ User reviews before publishing
 - ✅ Auto PDF generation (only if not already present)
@@ -187,6 +192,7 @@ postsurfing ./existing-page.html --type documents --auto-convert
 ```
 
 The resulting markdown will use `ExternalPageLayout` which:
+
 - ✅ Loads external libraries from CDN
 - ✅ Injects custom styles and scripts
 - ✅ Integrates with site navigation
