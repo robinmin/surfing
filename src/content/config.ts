@@ -105,6 +105,8 @@ const documentsCollection = defineCollection({
     author: z.string().optional(),
 
     // Custom styling support
+    externalCSS: z.array(z.string()).optional(), // External CSS URLs (CDN, etc.)
+    externalJS: z.array(z.string()).optional(), // External JS URLs (CDN, etc.)
     customCSS: z.string().optional(),
     customJS: z.string().optional(),
     preserveStyles: z.boolean().default(true),
@@ -183,6 +185,8 @@ const cheatsheetsCollection = defineCollection({
     readingTime: z.number().optional(),
 
     // Custom styling support (for HTML cheatsheets)
+    externalCSS: z.array(z.string()).optional(), // External CSS URLs (CDN, etc.)
+    externalJS: z.array(z.string()).optional(), // External JS URLs (CDN, etc.)
     customCSS: z.string().optional(),
     customJS: z.string().optional(),
     preserveStyles: z.boolean().default(true),
