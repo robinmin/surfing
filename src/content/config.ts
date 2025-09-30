@@ -166,6 +166,7 @@ const cheatsheetsCollection = defineCollection({
     topic: z.string().optional(), // Main topic/technology
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
     format: z.enum(['html', 'markdown']).default('html'),
+    contentType: z.enum(['page', 'snippet', 'template', 'legacy']).optional(), // For backwards compatibility
 
     // File attachments
     pdfUrl: z.string().optional(), // Generated PDF version
