@@ -258,12 +258,20 @@ export class Logger {
         console.log(`   📝 Title extracted: ${results.title}`);
       }
 
+      if (results.externalCSSCount > 0) {
+        console.log(`   🔗 External CSS: ${results.externalCSSCount} file(s)`);
+      }
+
+      if (results.externalJSCount > 0) {
+        console.log(`   🔗 External JS: ${results.externalJSCount} file(s)`);
+      }
+
       if (results.cssExtracted) {
-        console.log(`   🎨 CSS extracted: ${results.cssLines} lines`);
+        console.log(`   🎨 Custom CSS extracted: ${results.cssLines} lines`);
       }
 
       if (results.jsExtracted) {
-        console.log(`   ⚡ JavaScript extracted: ${results.jsLines} lines`);
+        console.log(`   ⚡ Custom JavaScript extracted: ${results.jsLines} lines`);
       }
 
       if (results.metaExtracted && results.metaExtracted.length > 0) {
