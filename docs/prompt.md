@@ -100,6 +100,28 @@ We also need the support of i18n for the following pages:
 - documents page
 - showcase pages
 
+
+### Refine the process of publishing cheatsheets
+#### Background
+According current process to publish cheatsheets, we have 3 steps to go through:
+- Step 1: Call `./scripts/cheatsheet-processor.sh` to prepare and cache the HTML file
+- Step 2: Use AI assistant with the streamlined prompt `docs/prompt_cheatsheets_streamlined.md`
+- Step 3: Generate PDF and publish (automatic)
+
+To streamline the whole process, we need to simplify the works in the prompt and avoid to call external function/execution external command, otherwise the process will always be interupted due to permission authorization.
+
+#### Requirements
+We also simplify the process in 4 steps, but a little bit different:
+- Step 1: Renaming `./scripts/cheatsheet-processor.sh` as `./scripts/preprocess-cheatsheets.sh` and do some necessary enhance; The core functions of this script is to prepare and cache the HTML file as we are doing right now.
+- Step 2: Use a optimized version of prompt `docs/prompt_cheatsheets.md`(based on current user prompt `docs/prompt_cheatsheets_streamlined.md` but remove the executions to next steps) to work with AI assistant with the refine the content itself and the layout. Trigger a call on MCP playwright to confirm with end user the refined HTML file.
+- Step 3: End user review and approve the refined HTML file. If necessary, the user also need to call html2pdf to generate the PDF file and review it. In case of any issues, the user can revert to step 2 and try again with AI assistant.
+- Step 4: Add a new script named as `./scripts/postprocess-cheatsheets.sh` to postprocess the follow up things to publish the cheatsheet to the website.
+
+A few more things need to be considered:
+- Both `html2pdf` and `postsurfing` will be designed as independent tools for generic purposes instead of being tightly coupled with the cheatsheet generation process.
+- Prompt only focused on the content itself and the layout.
+
+
 ---
 
 ## TODO List
