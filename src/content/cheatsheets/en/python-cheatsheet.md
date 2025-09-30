@@ -1,369 +1,666 @@
 ---
-title: "Python Cheatsheet for Seasoned Developers"
+title: "Python Cheatsheet — Optimized, Responsive, Printable"
 customCSS: |
-  body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              line-height: 1.3;
-              color: #333;
-              margin: 0;
-              padding: 10px;
-              background-color: #f8f9fa;
-              font-size: 11px;
-              max-width: 1500px;
-              margin: 0 auto;
-          }
-          h1 {
-              text-align: center;
-              color: #2c3e50;
-              margin: 5px 0 10px 0;
-              font-size: 18px;
-          }
-          .container {
-              display: grid;
-              grid-template-columns: repeat(4, 1fr);
-              grid-gap: 10px;
-              margin: 0 auto;
-          }
-          .column {
-              background-color: white;
-              border-radius: 3px;
-              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-              padding: 6px;
-              break-inside: avoid;
-          }
-          h3 {
-              color: #3498db;
-              margin-top: 0;
-              margin-bottom: 4px;
-              font-size: 14px;
-              border-bottom: 1px solid #ecf0f1;
-              padding-bottom: 2px;
-          }
-          pre {
-              border-radius: 3px;
-              margin: 3px 0 8px 0;
-              padding: 0;
-          }
-          pre code {
-              font-family: 'Consolas', 'Monaco', monospace;
-              font-size: 11px;
-              border-radius: 3px;
-              padding: 6px !important;
-          }
-          code {
-              font-family: 'Consolas', 'Monaco', monospace;
-          }
-          @media print {
-              body {
-                  padding: 0;
-                  background-color: white;
-              }
-              .container {
-                  grid-gap: 5px;
-              }
-              .column {
-                  box-shadow: none;
-                  border: 1px solid #eee;
-              }
-              /* Force page to landscape */
-              @page {
-                  size: landscape;
-              }
-          }
-          /* Responsive design is less important for this use case since we're optimizing for monitors and A4 landscape */
+  :root{
+        --font-stack: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        --mono-stack: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        --bg: #0f1220;
+        --card: #151a2d;
+        --ink: #eef1f7;
+        --muted: #b8c1d9;
+        --accent: #66d9ef;
+        --accent-2: #a6e22e;
+        --border: #2a3253;
+        --code-bg: #0b0e1a;
+        --link: #7cc1ff;
+        --link-hover: #a7d5ff;
+        --gap: 1.2rem;
+        --radius: 10px;
+        --shadow: 0 6px 20px rgba(0,0,0,.25);
+        --maxw: 1200px;
+        --h1: 1.85rem;
+        --h2: 1.2rem;
+        --h3: 1.05rem;
+        --text: 0.95rem;
+        --code: 0.9rem;
+      }
+  
+      html, body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-stack);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+  
+      a { color: var(--link); text-decoration: none; }
+      a:hover { color: var(--link-hover); text-decoration: underline; }
+  
+      header {
+        max-width: var(--maxw);
+        margin: 1rem auto 0.5rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      header h1 {
+        font-size: --h1;
+        font-size: var(--h1);
+        margin: 0;
+        letter-spacing: 0.2px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.95rem;
+        margin-top: 0.25rem;
+      }
+  
+      .toolbar {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: transform .05s ease-in-out, background .2s ease, border-color .2s ease;
+      }
+      .btn:hover { background: #1a2040; border-color: #3a4475; }
+      .btn:active { transform: translateY(1px); }
+  
+      main {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 1rem 2rem;
+      }
+  
+      /* Responsive multi-column layout with balancing */
+      .columns {
+        column-gap: var(--gap);
+        column-fill: balance;
+        /* default mobile: 1 col via column-count */
+        column-count: 1;
+      }
+      @media (min-width: 640px) { .columns { column-count: 2; } }   /* Tablet */
+      @media (min-width: 1024px) { .columns { column-count: 3; } }  /* Desktop */
+      @media (min-width: 1440px) { .columns { column-count: 4; } }  /* Large */
+  
+      section.card {
+        display: inline-block;  /* important for CSS columns */
+        width: 100%;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 0.9rem 1rem;
+        margin: 0 0 var(--gap);
+        box-shadow: var(--shadow);
+        break-inside: avoid;
+        -webkit-column-break-inside: avoid;
+        -moz-column-break-inside: avoid;
+      }
+  
+      h2 {
+        font-size: var(--h2);
+        margin: 0 0 0.5rem;
+        color: var(--accent);
+      }
+      h3 {
+        font-size: var(--h3);
+        margin: 0.75rem 0 0.25rem;
+        color: var(--accent-2);
+      }
+      p, ul, ol { margin: 0.25rem 0; font-size: var(--text); color: var(--ink); }
+      ul { padding-left: 1.1rem; }
+      li { margin: 0.15rem 0; }
+  
+      code, pre, kbd, samp {
+        font-family: var(--mono-stack);
+        font-size: var(--code);
+      }
+      pre {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.8rem;
+        margin: 0.5rem 0 0.75rem;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+        /* Ensure no horizontal scrolling */
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-width: 100%;
+      }
+      pre code {
+        white-space: pre-wrap;
+        word-break: break-word;
+        display: block;
+        max-width: 100%;
+      }
+      code.inline {
+        background: rgba(255,255,255,0.06);
+        padding: 0.05rem 0.3rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+      }
+  
+      footer {
+        max-width: var(--maxw);
+        margin: 0 auto 2rem;
+        padding: 0 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.9rem;
+        gap: 1rem;
+      }
+      .footer-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+  
+      /* Print optimizations */
+      @page { size: A4 portrait; margin: 12mm; }
+      @media print {
+        :root {
+          --bg: #ffffff;
+          --card: #ffffff;
+          --ink: #000000;
+          --muted: #444;
+          --border: #bbb;
+          --code-bg: #f4f6fa;
+          --shadow: none;
+        }
+        body { background: #fff; color: #000; }
+        header, .toolbar, .footer-actions .btn-print-hint { display: none !important; }
+        .columns { column-count: 4; column-gap: 10mm; }
+        section.card {
+          box-shadow: none;
+          border-color: #ccc;
+          break-inside: avoid-page;
+          page-break-inside: avoid;
+        }
+        pre { break-inside: avoid-page; page-break-inside: avoid; }
+        a { color: #000; text-decoration: none; }
+      }
+  
+  /* Place any user overrides below. This block loads last to ensure highest priority. */
+      /* Example:
+      :root { --accent: #ffd166; --accent-2: #ef476f; }
+      body { font-size: 15px; }
+      */
 customJS: |
-  // Initialize syntax highlighting when the document is loaded
-          document.addEventListener('DOMContentLoaded', (event) => {
-              document.querySelectorAll('pre code').forEach((block) => {
-                  hljs.highlightBlock(block);
-              });
-          });
+  hljs.highlightAll();
+      document.getElementById('year').textContent = new Date().getFullYear();
 tags: ["javascript", "typescript", "angular", "css", "html"]
-readingTime: 5
-wordCount: 912
-publishDate: 2025-09-29
+readingTime: 7
+wordCount: 1233
+publishDate: 2025-09-30
 draft: false
 featured: false
 ---
 
-<h1>Python Cheatsheet for Seasoned Developers</h1>
-    <div class="container">
-        <div class="column">
-            <h3>Variables & References</h3>
-            <pre><code class="python"># Variables are references, not containers
-x = [1, 2, 3]
-y = x  # y references same object as x
-y.append(4)  # modifies x too
-print(x)  # [1, 2, 3, 4]
+<header>
+    <div>
+      <h1>Python Cheatsheet</h1>
+      <div class="subtitle">Concise reference for everyday Python. Responsive, balanced columns. Printable.</div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" type="button" onclick="window.print()">Download PDF</button>
+      <a class="btn" href="#top">Top</a>
+    </div>
+  </header>
 
-# Identity vs equality
-x is y  # True (same object)
-x == [1, 2, 3, 4]  # True (same value)
+  <main id="top">
+    <div class="columns">
 
-# Mutable default trap
-def bad(a, list=[]):  # list created once
-    list.append(a)
-    return list
-    
-# Fix: use None as default
-def good(a, list=None):
-    if list is None:
-        list = []
-    list.append(a)
-    return list</code></pre>
+      <!-- 1. Variables & References -->
+      <section class="card" aria-labelledby="sec-vars">
+        <h2 id="sec-vars">Variables & References</h2>
+        <ul>
+          <li>Everything is an object; names bind to objects (references).</li>
+          <li><span class="inline">==</span> compares value; <span class="inline">is</span> compares identity.</li>
+          <li>Immutable: int, float, bool, str, tuple, frozenset; Mutable: list, dict, set, bytearray.</li>
+        </ul>
+        <pre><code class="language-python">x = 10
+y = x          # y references same int object as x
+x is y         # True (small ints may be interned)
+x == y         # True (values equal)
 
-            <h3>Collections</h3>
-            <pre><code class="python"># List operations
-list = [1, 2, 3]
-list.append(4)  # [1, 2, 3, 4]
-[0, *list]  # [0, 1, 2, 3, 4] (unpacking)
+a = [1, 2]
+b = a
+b.append(3)
+a               # [1, 2, 3] (same list)
 
-# Dict operations
-d = {'a': 1, 'b': 2}
-d.get('c', 0)  # 0 (default if key missing)
-{**d, 'c': 3}  # {'a':1, 'b':2, 'c':3} (merge)
-d | {'c': 3}   # Same merge (Python 3.9+)
+# Multiple assignment, unpacking
+i, j, k = 1, 2, 3
+head, *mid, tail = [0, 1, 2, 3, 4]   # head=0, mid=[1,2,3], tail=4
 
-# Set operations
-s1, s2 = {1, 2, 3}, {3, 4, 5}
-s1 & s2  # {3} (intersection)
-s1 | s2  # {1, 2, 3, 4, 5} (union)
-s1 - s2  # {1, 2} (difference)</code></pre>
+# Scope
+name = "outer"
+def f():
+    global name
+    name = "modified global"
 
-            <h3>File Operations</h3>
-            <pre><code class="python"># Reading files
-with open('file.txt', 'r') as f:
-    content = f.read()  # Read entire file
-    
-# Line by line (memory efficient)
-with open('file.txt', 'r') as f:
+def g():
+    x = "enclosed"
+    def h():
+        nonlocal x
+        x = "changed enclosed"
+    h()
+    return x  # "changed enclosed"</code></pre>
+      </section>
+
+      <!-- 2. Collections -->
+      <section class="card" aria-labelledby="sec-collections">
+        <h2 id="sec-collections">Collections</h2>
+        <ul>
+          <li>Built-ins: list, tuple, dict, set; from collections: Counter, defaultdict, deque, namedtuple.</li>
+          <li>Prefer dict and set literal syntax for performance.</li>
+        </ul>
+        <pre><code class="language-python"># Lists and tuples
+nums = [1, 2, 3]
+nums += [4]
+first, *rest = nums
+
+point = (10, 20)
+
+# Sets and dicts
+s = {1, 2, 3}
+s.add(3)         # no effect
+d = {"a": 1, "b": 2}
+d.get("c", 0)    # 0
+
+# Useful collections
+from collections import Counter, defaultdict, deque, namedtuple
+
+cnt = Counter("banana")        # Counter({'a':3,'n':2,'b':1})
+dd = defaultdict(int)
+dd["x"] += 1                   # default 0 => 1
+
+q = deque([1,2,3]); q.appendleft(0); q.pop()
+
+Point = namedtuple("Point", "x y")
+p = Point(2, 3); p.x  # 2</code></pre>
+        <h3>pathlib and glob</h3>
+        <pre><code class="language-python">from pathlib import Path
+root = Path(".")
+py_files = list(root.glob("**/*.py"))
+for path in py_files:
+    if path.stat().st_size &gt; 0:
+        pass</code></pre>
+      </section>
+
+      <!-- 3. File Operations -->
+      <section class="card" aria-labelledby="sec-files">
+        <h2 id="sec-files">File Operations</h2>
+        <ul>
+          <li>Use context managers to ensure closure.</li>
+          <li>Use <span class="inline">pathlib.Path</span> for paths; specify encoding.</li>
+        </ul>
+        <pre><code class="language-python">from pathlib import Path
+
+# Read text
+p = Path("notes.txt")
+text = p.read_text(encoding="utf-8")
+
+# Write text
+p.write_text("Hello\n", encoding="utf-8")
+
+# Buffered reading
+with p.open("r", encoding="utf-8", newline="") as f:
     for line in f:
-        process(line.strip())
-        
-# Writing files
-with open('file.txt', 'w') as f:
-    f.write('Hello\n')
-    f.writelines(['line1\n', 'line2\n'])
-    
-# JSON handling
-import json
-data = json.loads('{"key": "value"}')
-json_str = json.dumps(data, indent=2)</code></pre>
-        </div>
+        process(line.rstrip("\n"))
 
-        <div class="column">
-            <h3>Iteration Patterns</h3>
-            <pre><code class="python"># Enumerate with index
-for i, val in enumerate(items):
-    print(f"{i}: {val}")
+# Binary
+data = Path("img.bin").read_bytes()
+Path("copy.bin").write_bytes(data)
 
-# Dict iteration
-for k, v in my_dict.items():
-    print(f"{k}: {v}")
+# JSON / CSV
+import json, csv
+cfg = json.loads(Path("config.json").read_text(encoding="utf-8"))
+Path("out.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8")
 
-# Multiple sequences
-for x, y in zip(list1, list2):
-    print(x, y)
+with open("data.csv", newline="", encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    rows = list(reader)</code></pre>
+      </section>
 
-# Flatten nested lists
-from itertools import chain
-list(chain.from_iterable([[1, 2], [3, 4]]))
-
-# Group by property
-from itertools import groupby
-{k: list(g) for k, g in 
- groupby(items, key=lambda x: x.prop)}</code></pre>
-
-            <h3>Comprehensions</h3>
-            <pre><code class="python"># List comprehension
-[x*2 for x in range(10) if x % 2 == 0]
-# [0, 4, 8, 12, 16]
-
-# Nested comprehension (matrix transpose)
-matrix = [[1, 2, 3], [4, 5, 6]]
-[[row[i] for row in matrix] for i in range(3)]
-# [[1, 4], [2, 5], [3, 6]]
-
-# Dict comprehension
-{x: x**2 for x in range(5)}
-# {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
-
-# Set comprehension
-{x % 3 for x in range(10)}  # {0, 1, 2}
-
-# Generator expression (memory efficient)
-sum(x**2 for x in range(1000000))</code></pre>
-
-            <h3>Data Processing</h3>
-            <pre><code class="python"># Sorting
-sorted(items, key=lambda x: x.attr, reverse=True)
-
-# Filtering
-list(filter(lambda x: x > 0, items))
-
-# Mapping/transformation
-list(map(lambda x: x**2, items))
-
-# Reduce
-from functools import reduce
-reduce(lambda acc, x: acc + x, items, 0)
-
-# Counter for frequency analysis
-from collections import Counter
-counts = Counter(['a', 'b', 'a', 'c'])
-most_common = counts.most_common(2)
-
-# Named tuples (lightweight classes)
-from collections import namedtuple
-Point = namedtuple('Point', ['x', 'y'])
-p = Point(1, 2)</code></pre>
-        </div>
-
-        <div class="column">
-            <h3>Functions & Lambdas</h3>
-            <pre><code class="python"># Args & kwargs
-def f(pos, /, pos_or_kw, *, kw_only):
+      <!-- 4. Iteration Patterns -->
+      <section class="card" aria-labelledby="sec-iteration">
+        <h2 id="sec-iteration">Iteration Patterns</h2>
+        <ul>
+          <li>Prefer iterables and generators; avoid indexing when not required.</li>
+        </ul>
+        <pre><code class="language-python"># enumerate, zip
+for i, val in enumerate(["a", "b", "c"], start=1):
     pass
-f(1, 2, kw_only=3)  # valid call
 
-# Type hints
-def greet(name: str) -> str:
-    return f"Hello {name}"
+for a, b in zip([1,2], [3,4]):
+    pass
 
-# Multiple return values (as tuple)
-def minmax(items):
-    return min(items), max(items)
-lo, hi = minmax([1, 2, 3])
+# iter/next
+it = iter([10,20])
+next(it)  # 10
 
-# Lambda functions
-sort_key = lambda obj: obj.name
-squares = list(map(lambda x: x**2, range(5)))
+# itertools
+import itertools as it
+it.islice(range(10), 3)               # 0,1,2
+list(it.chain([1,2], [3,4]))          # [1,2,3,4]
+list(it.product("ab", repeat=2))      # ('a','a'), ...
 
-# Partial application
-from functools import partial
-add5 = partial(add, 5)  # add(5, x)</code></pre>
+# groupby (input must be sorted by key)
+from itertools import groupby
+data = sorted(["aa","ab","ba"], key=lambda s: s[0])
+for key, grp in groupby(data, key=lambda s: s[0]):
+    items = list(grp)</code></pre>
+      </section>
 
-            <h3>String Operations</h3>
-            <pre><code class="python"># f-strings (Python 3.6+)
-name, age = "Alice", 30
-f"{name} is {age} years old"
+      <!-- 5. Comprehensions -->
+      <section class="card" aria-labelledby="sec-comprehensions">
+        <h2 id="sec-comprehensions">Comprehensions</h2>
+        <ul>
+          <li>List, dict, set, generator comprehensions; add conditionals and nesting.</li>
+        </ul>
+        <pre><code class="language-python"># List
+squares = [x*x for x in range(10) if x % 2 == 0]
 
-# String methods
-"  text  ".strip()  # "text"
-",".join(["a", "b", "c"])  # "a,b,c"
-"a,b,c".split(",")  # ["a", "b", "c"]
-"hello".replace("l", "L")  # "heLLo"
+# Dict
+mapping = {c: ord(c) for c in "abc"}
 
-# String properties
-"abc".isalpha()  # True
-"123".isdigit()  # True
-"hello".startswith("he")  # True
-"hello".endswith("lo")  # True</code></pre>
+# Set
+uniq = {x % 3 for x in range(10)}
 
-            <h3>Exception Handling</h3>
-            <pre><code class="python"># Basic try/except
-try:
-    result = risky_operation()
-except (TypeError, ValueError) as e:
-    print(f"Error: {e}")
-else:  # Runs if no exceptions
-    print("Success!")
-finally:  # Always runs
+# Generator (lazy)
+gen = (x*x for x in range(1_000_000))
+
+# Nested
+pairs = [(i, j) for i in range(3) for j in range(3) if i != j]</code></pre>
+      </section>
+
+      <!-- 6. Data Processing -->
+      <section class="card" aria-labelledby="sec-data">
+        <h2 id="sec-data">Data Processing</h2>
+        <ul>
+          <li>Use built-ins: sum, min, max, sorted, any, all.</li>
+          <li>Prefer <span class="inline">key=</span> functions and generators.</li>
+        </ul>
+        <pre><code class="language-python">nums = [3, 1, 4, 1, 5, 9]
+total = sum(nums)
+mx = max(nums)
+sorted_nums = sorted(nums, reverse=True)
+
+# any/all with conditions
+has_neg = any(x &lt; 0 for x in nums)
+all_small = all(x &lt; 10 for x in nums)
+
+# key and custom sort
+words = ["apple", "bee", "carrot"]
+sorted_by_len = sorted(words, key=len)
+
+# map/filter/reduce
+from functools import reduce
+evens = list(filter(lambda x: x % 2 == 0, nums))
+doubled = list(map(lambda x: x*2, nums))
+prod = reduce(lambda a, b: a*b, nums, 1)
+
+# statistics
+import statistics as stats
+mean = stats.mean(nums)
+median = stats.median(nums)</code></pre>
+      </section>
+
+      <!-- 7. Functions & Lambdas -->
+      <section class="card" aria-labelledby="sec-functions">
+        <h2 id="sec-functions">Functions & Lambdas</h2>
+        <ul>
+          <li>Use annotations; prefer keyword-only and positional-only when helpful.</li>
+          <li>Default args evaluated once; avoid mutable defaults.</li>
+        </ul>
+        <pre><code class="language-python">def add(a: int, b: int = 0, /, *, scale: float = 1.0) -> float:
+    """Positional-only a,b; keyword-only scale."""
+    return (a + b) * scale
+
+# Avoid mutable default
+def append_safe(x, arr=None):
+    arr = [] if arr is None else arr
+    arr.append(x)
+    return arr
+
+# *args, **kwargs
+def log(*args, **kwargs):
+    print(*args, **kwargs)
+
+# Closure
+def make_adder(n):
+    def add(x): return x + n
+    return add
+
+plus3 = make_adder(3); plus3(7)  # 10
+
+# Lambda
+square = lambda x: x*x
+</code></pre>
+      </section>
+
+      <!-- 8. String Operations -->
+      <section class="card" aria-labelledby="sec-strings">
+        <h2 id="sec-strings">String Operations</h2>
+        <ul>
+          <li>Use f-strings; prefer join/split; normalize with casefold.</li>
+        </ul>
+        <pre><code class="language-python">name, n = "Ada", 3
+f"Hello, {name}! {n=}"         # 'Hello, Ada! n=3'
+f"{n:04d}"                     # zero-padded
+f"{3.14159:.2f}"               # '3.14'
+
+" :: ".join(["a", "b", "c"])
+"  spaced  ".strip()
+"Ümlaut".casefold()            # aggressive lowercasing
+"2025-09-30".split("-")
+
+# Translation table
+tbl = str.maketrans({"-": "/", "_": " "})
+"2025-09-30_report".translate(tbl)
+
+# Regular expressions
+import re
+m = re.search(r"(\w+)@([\w.]+)", "me@example.com")
+user, host = m.groups() if m else (None, None)</code></pre>
+      </section>
+
+      <!-- 9. Exception Handling -->
+      <section class="card" aria-labelledby="sec-exceptions">
+        <h2 id="sec-exceptions">Exception Handling</h2>
+        <ul>
+          <li>Use precise exceptions; leverage else/finally; chain with raise from.</li>
+        </ul>
+        <pre><code class="language-python">try:
+    x = int("42")
+except ValueError as e:
+    raise RuntimeError("Bad input") from e
+else:
+    print("No error")
+finally:
     cleanup()
 
-# Custom exception
-class MyError(Exception):
-    pass
-
 # Context managers
-with open('file.txt') as f:
-    data = f.read()</code></pre>
+from contextlib import suppress, ExitStack
+with suppress(FileNotFoundError):
+    open("maybe.txt").read()
 
-            <h3>Modules & Packages</h3>
-            <pre><code class="python"># Importing modules
+# Custom exception
+class ConfigError(Exception): pass</code></pre>
+      </section>
+
+      <!-- 10. Modules & Packages -->
+      <section class="card" aria-labelledby="sec-modules">
+        <h2 id="sec-modules">Modules & Packages</h2>
+        <ul>
+          <li>Use absolute imports; organize with __init__.py; expose API via __all__.</li>
+        </ul>
+        <pre><code class="language-python"># Imports
 import math
-from datetime import datetime, timedelta
-import numpy as np  # Common convention
+from math import sqrt as root
+from pathlib import Path
 
-# Relative imports (in packages)
-from . import sibling_module
-from ..parent import parent_module
+# Package structure:
+# mypkg/
+#   __init__.py
+#   utils.py
+#   core/
+#     __init__.py
+#     model.py
 
-# Creating modules
-if __name__ == "__main__":
-    # Code runs when module is executed directly
-    main()
-else:
-    # Code runs when imported
-    setup()</code></pre>
-        </div>
+# mypkg/__init__.py
+from .utils import helper
+__all__ = ["helper"]</code></pre>
+        <h3>Virtual environments</h3>
+        <pre><code class="language-python"># Shell
+# python -m venv .venv
+# source .venv/bin/activate  (Windows: .venv\Scripts\activate)
+# python -m pip install -U pip</code></pre>
+      </section>
 
-        <div class="column">
-            <h3>Classes & Methods</h3>
-            <pre><code class="python">class Point:
-    # Class variable (shared by all instances)
-    instances = 0
-    
-    def __init__(self, x, y):
-        self.x, self.y = x, y  # instance vars
-        Point.instances += 1
-    
-    # Regular method (receives self)
-    def distance(self):
-        return (self.x**2 + self.y**2)**0.5
-        
-    # Class method (receives cls)
-    @classmethod
-    def from_tuple(cls, tup):
-        return cls(*tup)
-        
-    # Static method (receives nothing)
-    @staticmethod
-    def origin_distance(x, y):
-        return (x**2 + y**2)**0.5
-        
-    # Property (access like attribute)
+      <!-- 11. Classes & Methods -->
+      <section class="card" aria-labelledby="sec-classes">
+        <h2 id="sec-classes">Classes & Methods</h2>
+        <ul>
+          <li>Use dataclasses for data containers; properties for computed attributes.</li>
+          <li>Class vs static methods; prefer composition over inheritance.</li>
+        </ul>
+        <pre><code class="language-python">class Vector:
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
+
     @property
-    def magnitude(self):
-        return self.distance()</code></pre>
+    def mag(self) -> float:
+        return (self.x**2 + self.y**2) ** 0.5
 
-            <h3>Special Methods</h3>
-            <pre><code class="python"># Operator overloading
-__add__(self, other)      # self + other
-__getitem__(self, key)    # self[key]
-__contains__(self, item)  # item in self
-__len__(self)             # len(self)
-__call__(self, *args)     # self(*args)
-__str__(self)             # str(self)
-__repr__(self)            # repr(self)
-__enter__/__exit__        # with statement
-__iter__/__next__         # iteration</code></pre>
+    def scale(self, k: float) -> "Vector":
+        return Vector(self.x*k, self.y*k)
 
-            <h3>Modern Python Features</h3>
-            <pre><code class="python"># Walrus operator (:=) - Python 3.8+
-if (n := len(data)) > 10:
-    print(f"Processing {n} items")
-    
-# f-strings with = (Python 3.8+)
-x, y = 10, 20
-print(f"{x=}, {y=}")  # x=10, y=20
+    @classmethod
+    def zero(cls) -> "Vector":
+        return cls(0.0, 0.0)
 
-# Pattern matching - Python 3.10+
-match command.split():
-    case ["quit"]:
-        return "Exiting"
-    case ["load", filename]:
-        return f"Loading {filename}"
-    case _:  # Default case
-        return "Unknown command"
+    @staticmethod
+    def dot(a: "Vector", b: "Vector") -> float:
+        return a.x*b.x + a.y*b.y</code></pre>
+        <h3>Dataclasses</h3>
+        <pre><code class="language-python">from dataclasses import dataclass, field
 
-# Structural pattern matching - Python 3.10+
-match value:
-    case [a, b, *rest]:
-        return a + b
-    case {'key': value}:
-        return value
-    case _:
-        return default</code></pre>
-        </div>
+@dataclass(slots=True)
+class User:
+    name: str
+    roles: list[str] = field(default_factory=list)
+
+u = User("Ada"); u.roles.append("admin")</code></pre>
+      </section>
+
+      <!-- 12. Special Methods -->
+      <section class="card" aria-labelledby="sec-dunder">
+        <h2 id="sec-dunder">Special Methods</h2>
+        <ul>
+          <li>Implement dunder methods to integrate with Python protocols.</li>
+        </ul>
+        <pre><code class="language-python">class Box:
+    def __init__(self, items=None): self._items = list(items or [])
+
+    # Representation
+    def __repr__(self): return f"Box({self._items!r})"
+    def __str__(self):  return ", ".join(map(str, self._items))
+
+    # Container protocol
+    def __len__(self): return len(self._items)
+    def __iter__(self): return iter(self._items)
+    def __getitem__(self, i): return self._items[i]
+
+    # Callable
+    def __call__(self, item): self._items.append(item)
+
+    # Comparison
+    def __eq__(self, other): return list(self) == list(other)
+
+    # Context manager
+    def __enter__(self): return self
+    def __exit__(self, exc_type, exc, tb): return False</code></pre>
+      </section>
+
+      <!-- 13. Modern Python Features -->
+      <section class="card" aria-labelledby="sec-modern">
+        <h2 id="sec-modern">Modern Python Features</h2>
+        <ul>
+          <li>Type hints, structural pattern matching, assignment expressions, enums, pathlib, asyncio.</li>
+        </ul>
+        <h3>Type Hints</h3>
+        <pre><code class="language-python">from typing import Iterable, Iterator, Optional, Any
+
+def take(n: int, seq: Iterable[Any]) -> list[Any]:
+    out: list[Any] = []
+    for i, x in enumerate(seq):
+        if i == n: break
+        out.append(x)
+    return out</code></pre>
+        <h3>Pattern Matching (3.10+)</h3>
+        <pre><code class="language-python">def classify(x):
+    match x:
+        case {"status": 200, "data": data}:
+            return ("ok", data)
+        case [a, b, *rest] if a == b:
+            return "starts-with-duplicate"
+        case int(n) if n &gt; 0:
+            return "positive-int"
+        case _:
+            return "unknown"</code></pre>
+        <h3>Assignment Expression (:=)</h3>
+        <pre><code class="language-python"># Read lines until empty
+while (line := input().strip()):
+    print(line.upper())</code></pre>
+        <h3>Enum</h3>
+        <pre><code class="language-python">from enum import Enum, auto
+
+class Color(Enum):
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()</code></pre>
+        <h3>Asyncio</h3>
+        <pre><code class="language-python">import asyncio
+
+async def fetch(n: int) -> int:
+    await asyncio.sleep(0.1)
+    return n * 2
+
+async def main():
+    results = await asyncio.gather(*(fetch(i) for i in range(5)))
+    print(results)
+
+# asyncio.run(main())</code></pre>
+      </section>
+
     </div>
+  </main>
+
+  <footer>
+    <div>© <span id="year"></span> Python Cheatsheet</div>
+    <div class="footer-actions">
+      <a class="btn" href="#" onclick="window.print(); return false;">Download PDF</a>
+      <span class="btn btn-print-hint" title="Tip">Use your browser's Print to PDF</span>
+    </div>
+  </footer>
+
+  <!-- Highlight.js JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-oRBBiX9CjQj2bFf4lBVJQ9Hw6JymD5O/4QzH8D3k2kSybzYzKpQvEn2kz3X8fXOjrqzqRj50Ma07kKcH3mS9JQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
