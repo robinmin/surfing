@@ -1,666 +1,512 @@
 ---
-title: "Python Cheatsheet — Optimized, Responsive, Printable"
+title: "🐍 Python Cheatsheet | Surfing Cheatsheets"
+description: "Comprehensive Python reference for seasoned developers - variables, collections, functions, classes, and modern features"
 customCSS: |
-  :root{
-        --font-stack: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-        --mono-stack: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        --bg: #0f1220;
-        --card: #151a2d;
-        --ink: #eef1f7;
-        --muted: #b8c1d9;
-        --accent: #66d9ef;
-        --accent-2: #a6e22e;
-        --border: #2a3253;
-        --code-bg: #0b0e1a;
-        --link: #7cc1ff;
-        --link-hover: #a7d5ff;
-        --gap: 1.2rem;
-        --radius: 10px;
-        --shadow: 0 6px 20px rgba(0,0,0,.25);
-        --maxw: 1200px;
-        --h1: 1.85rem;
-        --h2: 1.2rem;
-        --h3: 1.05rem;
-        --text: 0.95rem;
-        --code: 0.9rem;
-      }
+  :root {
+              --cheat-primary: #2563eb;
+              --cheat-bg: #f8f9fa;
+              --cheat-card-bg: #ffffff;
+              --cheat-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              --cheat-font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+          }
   
-      html, body {
-        height: 100%;
-        background: var(--bg);
-        color: var(--ink);
-        font-family: var(--font-stack);
-        line-height: 1.5;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
   
-      a { color: var(--link); text-decoration: none; }
-      a:hover { color: var(--link-hover); text-decoration: underline; }
+          body {
+              font-family: var(--cheat-font-family);
+              background: var(--cheat-bg);
+              color: #333;
+              font-size: 11px;
+              line-height: 1.3;
+              max-width: 1500px;
+              margin: 0 auto;
+              padding: 10px;
+          }
   
-      header {
-        max-width: var(--maxw);
-        margin: 1rem auto 0.5rem;
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-      header h1 {
-        font-size: --h1;
-        font-size: var(--h1);
-        margin: 0;
-        letter-spacing: 0.2px;
-      }
-      .subtitle {
-        color: var(--muted);
-        font-size: 0.95rem;
-        margin-top: 0.25rem;
-      }
+          /* Header */
+          header {
+              text-align: center;
+              background: white;
+              padding: 10px;
+              margin-bottom: 10px;
+              border-radius: 5px;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          }
   
-      .toolbar {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-      .btn {
-        appearance: none;
-        border: 1px solid var(--border);
-        background: var(--card);
-        color: var(--ink);
-        border-radius: 8px;
-        padding: 0.5rem 0.8rem;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: transform .05s ease-in-out, background .2s ease, border-color .2s ease;
-      }
-      .btn:hover { background: #1a2040; border-color: #3a4475; }
-      .btn:active { transform: translateY(1px); }
+          header h1 {
+              font-size: 20px;
+              color: #2c3e50;
+              margin-bottom: 3px;
+          }
   
-      main {
-        max-width: var(--maxw);
-        margin: 0 auto;
-        padding: 0 1rem 2rem;
-      }
+          header p {
+              font-size: 11px;
+              color: #6b7280;
+          }
   
-      /* Responsive multi-column layout with balancing */
-      .columns {
-        column-gap: var(--gap);
-        column-fill: balance;
-        /* default mobile: 1 col via column-count */
-        column-count: 1;
-      }
-      @media (min-width: 640px) { .columns { column-count: 2; } }   /* Tablet */
-      @media (min-width: 1024px) { .columns { column-count: 3; } }  /* Desktop */
-      @media (min-width: 1440px) { .columns { column-count: 4; } }  /* Large */
+          /* Multi-column layout (like newspaper) */
+          .container {
+              column-count: 4;
+              column-gap: 10px;
+          }
   
-      section.card {
-        display: inline-block;  /* important for CSS columns */
-        width: 100%;
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 0.9rem 1rem;
-        margin: 0 0 var(--gap);
-        box-shadow: var(--shadow);
-        break-inside: avoid;
-        -webkit-column-break-inside: avoid;
-        -moz-column-break-inside: avoid;
-      }
+          /* Responsive columns */
+          @media screen and (max-width: 1400px) {
+              .container {
+                  column-count: 3;
+              }
+          }
   
-      h2 {
-        font-size: var(--h2);
-        margin: 0 0 0.5rem;
-        color: var(--accent);
-      }
-      h3 {
-        font-size: var(--h3);
-        margin: 0.75rem 0 0.25rem;
-        color: var(--accent-2);
-      }
-      p, ul, ol { margin: 0.25rem 0; font-size: var(--text); color: var(--ink); }
-      ul { padding-left: 1.1rem; }
-      li { margin: 0.15rem 0; }
+          @media screen and (max-width: 1000px) {
+              .container {
+                  column-count: 2;
+              }
+          }
   
-      code, pre, kbd, samp {
-        font-family: var(--mono-stack);
-        font-size: var(--code);
-      }
-      pre {
-        background: var(--code-bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 0.8rem;
-        margin: 0.5rem 0 0.75rem;
-        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
-        /* Ensure no horizontal scrolling */
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow-x: hidden;
-        overflow-y: visible;
-        max-width: 100%;
-      }
-      pre code {
-        white-space: pre-wrap;
-        word-break: break-word;
-        display: block;
-        max-width: 100%;
-      }
-      code.inline {
-        background: rgba(255,255,255,0.06);
-        padding: 0.05rem 0.3rem;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-      }
+          @media screen and (max-width: 600px) {
+              .container {
+                  column-count: 1;
+              }
+          }
   
-      footer {
-        max-width: var(--maxw);
-        margin: 0 auto 2rem;
-        padding: 0 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: var(--muted);
-        font-size: 0.9rem;
-        gap: 1rem;
-      }
-      .footer-actions {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
+          /* Section cards */
+          .section {
+              background: var(--cheat-card-bg);
+              border-radius: 5px;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+              padding: 8px;
+              margin-bottom: 10px;
+              break-inside: avoid;
+              page-break-inside: avoid;
+          }
   
-      /* Print optimizations */
-      @page { size: A4 portrait; margin: 12mm; }
-      @media print {
-        :root {
-          --bg: #ffffff;
-          --card: #ffffff;
-          --ink: #000000;
-          --muted: #444;
-          --border: #bbb;
-          --code-bg: #f4f6fa;
-          --shadow: none;
-        }
-        body { background: #fff; color: #000; }
-        header, .toolbar, .footer-actions .btn-print-hint { display: none !important; }
-        .columns { column-count: 4; column-gap: 10mm; }
-        section.card {
-          box-shadow: none;
-          border-color: #ccc;
-          break-inside: avoid-page;
-          page-break-inside: avoid;
-        }
-        pre { break-inside: avoid-page; page-break-inside: avoid; }
-        a { color: #000; text-decoration: none; }
-      }
+          /* Section headers with simple alternating style */
+          .section h2 {
+              font-size: 13px;
+              font-weight: 600;
+              margin: -8px -8px 8px -8px;
+              padding: 6px 8px;
+              border-radius: 5px 5px 0 0;
+              color: #1f2937;
+              background: #f3f4f6;
+              border-bottom: 2px solid #3b82f6;
+          }
   
-  /* Place any user overrides below. This block loads last to ensure highest priority. */
-      /* Example:
-      :root { --accent: #ffd166; --accent-2: #ef476f; }
-      body { font-size: 15px; }
-      */
+          /* Alternate style for even sections */
+          .section:nth-child(even) h2 {
+              background: #e5e7eb;
+              border-bottom-color: #6b7280;
+          }
+  
+          /* Code blocks */
+          pre {
+              background: #f3f4f6;
+              border-radius: 4px;
+              padding: 6px;
+              margin: 4px 0;
+              overflow-x: auto;
+          }
+  
+          pre code {
+              font-family: var(--cheat-font-mono);
+              font-size: 11px;
+              line-height: 1.4;
+              display: block;
+          }
+  
+          code {
+              font-family: var(--cheat-font-mono);
+          }
+  
+          /* Footer */
+          footer {
+              text-align: center;
+              padding: 10px;
+              margin-top: 10px;
+              font-size: 10px;
+              color: #9ca3af;
+              background: white;
+              border-radius: 5px;
+          }
+  
+          footer a {
+              color: inherit;
+              text-decoration: none;
+          }
+  
+          footer a:hover {
+              color: #6b7280;
+          }
+  
+          /* Remove navigation elements */
+          nav, .nav, .navigation, .toc, .sidebar, .menu {
+              display: none !important;
+          }
+  
+          /* Print optimizations */
+          @media print {
+              body {
+                  padding: 0;
+                  background: white;
+                  max-width: none;
+              }
+  
+              .container {
+                  column-gap: 5px;
+              }
+  
+              .section {
+                  box-shadow: none;
+                  border: 1px solid #e5e7eb;
+              }
+  
+              footer {
+                  display: none;
+              }
+  
+              @page {
+                  size: landscape;
+                  margin: 10px;
+              }
+          }
 customJS: |
-  hljs.highlightAll();
-      document.getElementById('year').textContent = new Date().getFullYear();
+  document.addEventListener('DOMContentLoaded', () => {
+              document.querySelectorAll('pre code').forEach((block) => {
+                  hljs.highlightElement(block);
+              });
+          });
 tags: ["javascript", "typescript", "angular", "css", "html"]
-readingTime: 7
-wordCount: 1233
+readingTime: 5
+wordCount: 880
 publishDate: 2025-09-30
 draft: false
 featured: false
 ---
 
 <header>
-    <div>
-      <h1>Python Cheatsheet</h1>
-      <div class="subtitle">Concise reference for everyday Python. Responsive, balanced columns. Printable.</div>
-    </div>
-    <div class="toolbar">
-      <button class="btn" type="button" onclick="window.print()">Download PDF</button>
-      <a class="btn" href="#top">Top</a>
-    </div>
-  </header>
+        <h1>🐍 Python Cheatsheet</h1>
+        <p>Quick Reference for Seasoned Developers</p>
+    </header>
 
-  <main id="top">
-    <div class="columns">
+    <div class="container">
+        <div class="section">
+            <h2>Variables & References</h2>
+            <pre><code class="python"># Variables are references
+x = [1, 2, 3]
+y = x  # y references same object
+y.append(4)  # modifies x too
+print(x)  # [1, 2, 3, 4]
 
-      <!-- 1. Variables & References -->
-      <section class="card" aria-labelledby="sec-vars">
-        <h2 id="sec-vars">Variables & References</h2>
-        <ul>
-          <li>Everything is an object; names bind to objects (references).</li>
-          <li><span class="inline">==</span> compares value; <span class="inline">is</span> compares identity.</li>
-          <li>Immutable: int, float, bool, str, tuple, frozenset; Mutable: list, dict, set, bytearray.</li>
-        </ul>
-        <pre><code class="language-python">x = 10
-y = x          # y references same int object as x
-x is y         # True (small ints may be interned)
-x == y         # True (values equal)
+# Identity vs equality
+x is y  # True (same object)
+x == [1, 2, 3, 4]  # True (value)
 
-a = [1, 2]
-b = a
-b.append(3)
-a               # [1, 2, 3] (same list)
+# Mutable default trap
+def bad(a, lst=[]):  # created once!
+    lst.append(a)
+    return lst
 
-# Multiple assignment, unpacking
-i, j, k = 1, 2, 3
-head, *mid, tail = [0, 1, 2, 3, 4]   # head=0, mid=[1,2,3], tail=4
+# Fix: use None
+def good(a, lst=None):
+    if lst is None:
+        lst = []
+    lst.append(a)
+    return lst</code></pre>
+        </div>
 
-# Scope
-name = "outer"
-def f():
-    global name
-    name = "modified global"
+        <div class="section">
+            <h2>Collections</h2>
+            <pre><code class="python"># List operations
+lst = [1, 2, 3]
+lst.append(4)  # [1, 2, 3, 4]
+[0, *lst]  # [0, 1, 2, 3, 4]
 
-def g():
-    x = "enclosed"
-    def h():
-        nonlocal x
-        x = "changed enclosed"
-    h()
-    return x  # "changed enclosed"</code></pre>
-      </section>
+# Dict operations
+d = {'a': 1, 'b': 2}
+d.get('c', 0)  # 0 (default)
+{**d, 'c': 3}  # merge
+d | {'c': 3}   # Python 3.9+
 
-      <!-- 2. Collections -->
-      <section class="card" aria-labelledby="sec-collections">
-        <h2 id="sec-collections">Collections</h2>
-        <ul>
-          <li>Built-ins: list, tuple, dict, set; from collections: Counter, defaultdict, deque, namedtuple.</li>
-          <li>Prefer dict and set literal syntax for performance.</li>
-        </ul>
-        <pre><code class="language-python"># Lists and tuples
-nums = [1, 2, 3]
-nums += [4]
-first, *rest = nums
+# Set operations
+s1, s2 = {1, 2, 3}, {3, 4, 5}
+s1 & s2  # {3}
+s1 | s2  # {1, 2, 3, 4, 5}
+s1 - s2  # {1, 2}</code></pre>
+        </div>
 
-point = (10, 20)
+        <div class="section">
+            <h2>File Operations</h2>
+            <pre><code class="python"># Reading files
+with open('file.txt', 'r') as f:
+    content = f.read()
 
-# Sets and dicts
-s = {1, 2, 3}
-s.add(3)         # no effect
-d = {"a": 1, "b": 2}
-d.get("c", 0)    # 0
-
-# Useful collections
-from collections import Counter, defaultdict, deque, namedtuple
-
-cnt = Counter("banana")        # Counter({'a':3,'n':2,'b':1})
-dd = defaultdict(int)
-dd["x"] += 1                   # default 0 => 1
-
-q = deque([1,2,3]); q.appendleft(0); q.pop()
-
-Point = namedtuple("Point", "x y")
-p = Point(2, 3); p.x  # 2</code></pre>
-        <h3>pathlib and glob</h3>
-        <pre><code class="language-python">from pathlib import Path
-root = Path(".")
-py_files = list(root.glob("**/*.py"))
-for path in py_files:
-    if path.stat().st_size &gt; 0:
-        pass</code></pre>
-      </section>
-
-      <!-- 3. File Operations -->
-      <section class="card" aria-labelledby="sec-files">
-        <h2 id="sec-files">File Operations</h2>
-        <ul>
-          <li>Use context managers to ensure closure.</li>
-          <li>Use <span class="inline">pathlib.Path</span> for paths; specify encoding.</li>
-        </ul>
-        <pre><code class="language-python">from pathlib import Path
-
-# Read text
-p = Path("notes.txt")
-text = p.read_text(encoding="utf-8")
-
-# Write text
-p.write_text("Hello\n", encoding="utf-8")
-
-# Buffered reading
-with p.open("r", encoding="utf-8", newline="") as f:
+# Line by line (efficient)
+with open('file.txt', 'r') as f:
     for line in f:
-        process(line.rstrip("\n"))
+        process(line.strip())
 
-# Binary
-data = Path("img.bin").read_bytes()
-Path("copy.bin").write_bytes(data)
+# Writing files
+with open('file.txt', 'w') as f:
+    f.write('Hello\n')
+    f.writelines(['a\n', 'b\n'])
 
-# JSON / CSV
-import json, csv
-cfg = json.loads(Path("config.json").read_text(encoding="utf-8"))
-Path("out.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+# JSON handling
+import json
+data = json.loads('{"key": "val"}')
+json_str = json.dumps(data, indent=2)</code></pre>
+        </div>
 
-with open("data.csv", newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f)
-    rows = list(reader)</code></pre>
-      </section>
+        <div class="section">
+            <h2>Iteration Patterns</h2>
+            <pre><code class="python"># Enumerate with index
+for i, val in enumerate(items):
+    print(f"{i}: {val}")
 
-      <!-- 4. Iteration Patterns -->
-      <section class="card" aria-labelledby="sec-iteration">
-        <h2 id="sec-iteration">Iteration Patterns</h2>
-        <ul>
-          <li>Prefer iterables and generators; avoid indexing when not required.</li>
-        </ul>
-        <pre><code class="language-python"># enumerate, zip
-for i, val in enumerate(["a", "b", "c"], start=1):
-    pass
+# Dict iteration
+for k, v in my_dict.items():
+    print(f"{k}: {v}")
 
-for a, b in zip([1,2], [3,4]):
-    pass
+# Multiple sequences
+for x, y in zip(list1, list2):
+    print(x, y)
 
-# iter/next
-it = iter([10,20])
-next(it)  # 10
+# Flatten nested lists
+from itertools import chain
+flat = list(chain.from_iterable(
+    [[1, 2], [3, 4]]
+))
 
-# itertools
-import itertools as it
-it.islice(range(10), 3)               # 0,1,2
-list(it.chain([1,2], [3,4]))          # [1,2,3,4]
-list(it.product("ab", repeat=2))      # ('a','a'), ...
-
-# groupby (input must be sorted by key)
+# Group by property
 from itertools import groupby
-data = sorted(["aa","ab","ba"], key=lambda s: s[0])
-for key, grp in groupby(data, key=lambda s: s[0]):
-    items = list(grp)</code></pre>
-      </section>
+groups = {k: list(g) for k, g in
+          groupby(items, key=lambda x: x.prop)}</code></pre>
+        </div>
 
-      <!-- 5. Comprehensions -->
-      <section class="card" aria-labelledby="sec-comprehensions">
-        <h2 id="sec-comprehensions">Comprehensions</h2>
-        <ul>
-          <li>List, dict, set, generator comprehensions; add conditionals and nesting.</li>
-        </ul>
-        <pre><code class="language-python"># List
-squares = [x*x for x in range(10) if x % 2 == 0]
+        <div class="section">
+            <h2>Comprehensions</h2>
+            <pre><code class="python"># List comprehension
+evens = [x*2 for x in range(10)
+         if x % 2 == 0]
+# [0, 4, 8, 12, 16]
 
-# Dict
-mapping = {c: ord(c) for c in "abc"}
+# Nested (transpose)
+matrix = [[1, 2, 3], [4, 5, 6]]
+transposed = [[row[i] for row in matrix]
+              for i in range(3)]
+# [[1, 4], [2, 5], [3, 6]]
 
-# Set
-uniq = {x % 3 for x in range(10)}
+# Dict comprehension
+squares = {x: x**2 for x in range(5)}
+# {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
 
-# Generator (lazy)
-gen = (x*x for x in range(1_000_000))
+# Set comprehension
+mods = {x % 3 for x in range(10)}
 
-# Nested
-pairs = [(i, j) for i in range(3) for j in range(3) if i != j]</code></pre>
-      </section>
+# Generator (efficient)
+total = sum(x**2 for x in range(1000000))</code></pre>
+        </div>
 
-      <!-- 6. Data Processing -->
-      <section class="card" aria-labelledby="sec-data">
-        <h2 id="sec-data">Data Processing</h2>
-        <ul>
-          <li>Use built-ins: sum, min, max, sorted, any, all.</li>
-          <li>Prefer <span class="inline">key=</span> functions and generators.</li>
-        </ul>
-        <pre><code class="language-python">nums = [3, 1, 4, 1, 5, 9]
-total = sum(nums)
-mx = max(nums)
-sorted_nums = sorted(nums, reverse=True)
+        <div class="section">
+            <h2>Data Processing</h2>
+            <pre><code class="python"># Sorting
+sorted(items, key=lambda x: x.attr,
+       reverse=True)
 
-# any/all with conditions
-has_neg = any(x &lt; 0 for x in nums)
-all_small = all(x &lt; 10 for x in nums)
+# Filtering
+positives = list(filter(
+    lambda x: x > 0, items
+))
 
-# key and custom sort
-words = ["apple", "bee", "carrot"]
-sorted_by_len = sorted(words, key=len)
+# Mapping
+squares = list(map(lambda x: x**2, items))
 
-# map/filter/reduce
+# Reduce
 from functools import reduce
-evens = list(filter(lambda x: x % 2 == 0, nums))
-doubled = list(map(lambda x: x*2, nums))
-prod = reduce(lambda a, b: a*b, nums, 1)
+total = reduce(lambda acc, x: acc + x,
+               items, 0)
 
-# statistics
-import statistics as stats
-mean = stats.mean(nums)
-median = stats.median(nums)</code></pre>
-      </section>
+# Counter
+from collections import Counter
+counts = Counter(['a', 'b', 'a', 'c'])
+most_common = counts.most_common(2)
 
-      <!-- 7. Functions & Lambdas -->
-      <section class="card" aria-labelledby="sec-functions">
-        <h2 id="sec-functions">Functions & Lambdas</h2>
-        <ul>
-          <li>Use annotations; prefer keyword-only and positional-only when helpful.</li>
-          <li>Default args evaluated once; avoid mutable defaults.</li>
-        </ul>
-        <pre><code class="language-python">def add(a: int, b: int = 0, /, *, scale: float = 1.0) -> float:
-    """Positional-only a,b; keyword-only scale."""
-    return (a + b) * scale
+# Named tuples
+from collections import namedtuple
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(1, 2)</code></pre>
+        </div>
 
-# Avoid mutable default
-def append_safe(x, arr=None):
-    arr = [] if arr is None else arr
-    arr.append(x)
-    return arr
+        <div class="section">
+            <h2>Functions & Lambdas</h2>
+            <pre><code class="python"># Positional/keyword-only args
+def f(pos, /, pos_or_kw, *, kw_only):
+    pass
+f(1, 2, kw_only=3)  # valid
 
-# *args, **kwargs
-def log(*args, **kwargs):
-    print(*args, **kwargs)
+# Type hints
+def greet(name: str) -> str:
+    return f"Hello {name}"
 
-# Closure
-def make_adder(n):
-    def add(x): return x + n
-    return add
+# Multiple return values
+def minmax(items):
+    return min(items), max(items)
+lo, hi = minmax([1, 2, 3])
 
-plus3 = make_adder(3); plus3(7)  # 10
+# Lambda functions
+sort_key = lambda obj: obj.name
+squares = list(map(lambda x: x**2,
+                   range(5)))
 
-# Lambda
-square = lambda x: x*x
-</code></pre>
-      </section>
+# Partial application
+from functools import partial
+add5 = partial(add, 5)</code></pre>
+        </div>
 
-      <!-- 8. String Operations -->
-      <section class="card" aria-labelledby="sec-strings">
-        <h2 id="sec-strings">String Operations</h2>
-        <ul>
-          <li>Use f-strings; prefer join/split; normalize with casefold.</li>
-        </ul>
-        <pre><code class="language-python">name, n = "Ada", 3
-f"Hello, {name}! {n=}"         # 'Hello, Ada! n=3'
-f"{n:04d}"                     # zero-padded
-f"{3.14159:.2f}"               # '3.14'
+        <div class="section">
+            <h2>String Operations</h2>
+            <pre><code class="python"># f-strings (Python 3.6+)
+name, age = "Alice", 30
+msg = f"{name} is {age} years old"
 
-" :: ".join(["a", "b", "c"])
-"  spaced  ".strip()
-"Ümlaut".casefold()            # aggressive lowercasing
-"2025-09-30".split("-")
+# String methods
+"  text  ".strip()  # "text"
+",".join(["a", "b", "c"])  # "a,b,c"
+"a,b,c".split(",")  # ["a", "b", "c"]
+"hello".replace("l", "L")  # "heLLo"
 
-# Translation table
-tbl = str.maketrans({"-": "/", "_": " "})
-"2025-09-30_report".translate(tbl)
+# String properties
+"abc".isalpha()  # True
+"123".isdigit()  # True
+"hello".startswith("he")  # True
+"hello".endswith("lo")  # True</code></pre>
+        </div>
 
-# Regular expressions
-import re
-m = re.search(r"(\w+)@([\w.]+)", "me@example.com")
-user, host = m.groups() if m else (None, None)</code></pre>
-      </section>
-
-      <!-- 9. Exception Handling -->
-      <section class="card" aria-labelledby="sec-exceptions">
-        <h2 id="sec-exceptions">Exception Handling</h2>
-        <ul>
-          <li>Use precise exceptions; leverage else/finally; chain with raise from.</li>
-        </ul>
-        <pre><code class="language-python">try:
-    x = int("42")
-except ValueError as e:
-    raise RuntimeError("Bad input") from e
-else:
-    print("No error")
-finally:
+        <div class="section">
+            <h2>Exception Handling</h2>
+            <pre><code class="python"># Try/except/else/finally
+try:
+    result = risky_operation()
+except (TypeError, ValueError) as e:
+    print(f"Error: {e}")
+else:  # No exceptions
+    print("Success!")
+finally:  # Always runs
     cleanup()
 
-# Context managers
-from contextlib import suppress, ExitStack
-with suppress(FileNotFoundError):
-    open("maybe.txt").read()
-
 # Custom exception
-class ConfigError(Exception): pass</code></pre>
-      </section>
+class MyError(Exception):
+    pass
 
-      <!-- 10. Modules & Packages -->
-      <section class="card" aria-labelledby="sec-modules">
-        <h2 id="sec-modules">Modules & Packages</h2>
-        <ul>
-          <li>Use absolute imports; organize with __init__.py; expose API via __all__.</li>
-        </ul>
-        <pre><code class="language-python"># Imports
+# Raising exceptions
+raise MyError("Something wrong")
+
+# Context managers
+with open('file.txt') as f:
+    data = f.read()</code></pre>
+        </div>
+
+        <div class="section">
+            <h2>Modules & Packages</h2>
+            <pre><code class="python"># Importing modules
 import math
-from math import sqrt as root
-from pathlib import Path
+from datetime import datetime, timedelta
+import numpy as np  # convention
 
-# Package structure:
-# mypkg/
-#   __init__.py
-#   utils.py
-#   core/
-#     __init__.py
-#     model.py
+# Relative imports
+from . import sibling_module
+from ..parent import parent_module
 
-# mypkg/__init__.py
-from .utils import helper
-__all__ = ["helper"]</code></pre>
-        <h3>Virtual environments</h3>
-        <pre><code class="language-python"># Shell
-# python -m venv .venv
-# source .venv/bin/activate  (Windows: .venv\Scripts\activate)
-# python -m pip install -U pip</code></pre>
-      </section>
+# Module guard
+if __name__ == "__main__":
+    # Runs when executed directly
+    main()
+else:
+    # Runs when imported
+    setup()</code></pre>
+        </div>
 
-      <!-- 11. Classes & Methods -->
-      <section class="card" aria-labelledby="sec-classes">
-        <h2 id="sec-classes">Classes & Methods</h2>
-        <ul>
-          <li>Use dataclasses for data containers; properties for computed attributes.</li>
-          <li>Class vs static methods; prefer composition over inheritance.</li>
-        </ul>
-        <pre><code class="language-python">class Vector:
-    def __init__(self, x: float, y: float):
-        self.x = x
-        self.y = y
+        <div class="section">
+            <h2>Classes & Methods</h2>
+            <pre><code class="python">class Point:
+    # Class variable (shared)
+    instances = 0
 
-    @property
-    def mag(self) -> float:
-        return (self.x**2 + self.y**2) ** 0.5
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        Point.instances += 1
 
-    def scale(self, k: float) -> "Vector":
-        return Vector(self.x*k, self.y*k)
+    # Instance method
+    def distance(self):
+        return (self.x**2 + self.y**2)**0.5
 
+    # Class method
     @classmethod
-    def zero(cls) -> "Vector":
-        return cls(0.0, 0.0)
+    def from_tuple(cls, tup):
+        return cls(*tup)
 
+    # Static method
     @staticmethod
-    def dot(a: "Vector", b: "Vector") -> float:
-        return a.x*b.x + a.y*b.y</code></pre>
-        <h3>Dataclasses</h3>
-        <pre><code class="language-python">from dataclasses import dataclass, field
+    def origin_distance(x, y):
+        return (x**2 + y**2)**0.5
 
-@dataclass(slots=True)
-class User:
-    name: str
-    roles: list[str] = field(default_factory=list)
+    # Property
+    @property
+    def magnitude(self):
+        return self.distance()</code></pre>
+        </div>
 
-u = User("Ada"); u.roles.append("admin")</code></pre>
-      </section>
+        <div class="section">
+            <h2>Special Methods</h2>
+            <pre><code class="python"># Operator overloading
+__add__(self, other)      # +
+__sub__(self, other)      # -
+__mul__(self, other)      # *
+__getitem__(self, key)    # self[key]
+__setitem__(self, k, v)   # self[k] = v
+__contains__(self, item)  # in
+__len__(self)             # len()
+__call__(self, *args)     # self()
+__str__(self)             # str()
+__repr__(self)            # repr()
+__enter__/__exit__        # with
+__iter__/__next__         # iteration</code></pre>
+        </div>
 
-      <!-- 12. Special Methods -->
-      <section class="card" aria-labelledby="sec-dunder">
-        <h2 id="sec-dunder">Special Methods</h2>
-        <ul>
-          <li>Implement dunder methods to integrate with Python protocols.</li>
-        </ul>
-        <pre><code class="language-python">class Box:
-    def __init__(self, items=None): self._items = list(items or [])
+        <div class="section">
+            <h2>Modern Python Features</h2>
+            <pre><code class="python"># Walrus operator (3.8+)
+if (n := len(data)) > 10:
+    print(f"Processing {n} items")
 
-    # Representation
-    def __repr__(self): return f"Box({self._items!r})"
-    def __str__(self):  return ", ".join(map(str, self._items))
+# f-strings with = (3.8+)
+x, y = 10, 20
+print(f"{x=}, {y=}")  # x=10, y=20
 
-    # Container protocol
-    def __len__(self): return len(self._items)
-    def __iter__(self): return iter(self._items)
-    def __getitem__(self, i): return self._items[i]
+# Pattern matching (3.10+)
+match command.split():
+    case ["quit"]:
+        return "Exiting"
+    case ["load", filename]:
+        return f"Loading {filename}"
+    case _:
+        return "Unknown"
 
-    # Callable
-    def __call__(self, item): self._items.append(item)
-
-    # Comparison
-    def __eq__(self, other): return list(self) == list(other)
-
-    # Context manager
-    def __enter__(self): return self
-    def __exit__(self, exc_type, exc, tb): return False</code></pre>
-      </section>
-
-      <!-- 13. Modern Python Features -->
-      <section class="card" aria-labelledby="sec-modern">
-        <h2 id="sec-modern">Modern Python Features</h2>
-        <ul>
-          <li>Type hints, structural pattern matching, assignment expressions, enums, pathlib, asyncio.</li>
-        </ul>
-        <h3>Type Hints</h3>
-        <pre><code class="language-python">from typing import Iterable, Iterator, Optional, Any
-
-def take(n: int, seq: Iterable[Any]) -> list[Any]:
-    out: list[Any] = []
-    for i, x in enumerate(seq):
-        if i == n: break
-        out.append(x)
-    return out</code></pre>
-        <h3>Pattern Matching (3.10+)</h3>
-        <pre><code class="language-python">def classify(x):
-    match x:
-        case {"status": 200, "data": data}:
-            return ("ok", data)
-        case [a, b, *rest] if a == b:
-            return "starts-with-duplicate"
-        case int(n) if n &gt; 0:
-            return "positive-int"
-        case _:
-            return "unknown"</code></pre>
-        <h3>Assignment Expression (:=)</h3>
-        <pre><code class="language-python"># Read lines until empty
-while (line := input().strip()):
-    print(line.upper())</code></pre>
-        <h3>Enum</h3>
-        <pre><code class="language-python">from enum import Enum, auto
-
-class Color(Enum):
-    RED = auto()
-    GREEN = auto()
-    BLUE = auto()</code></pre>
-        <h3>Asyncio</h3>
-        <pre><code class="language-python">import asyncio
-
-async def fetch(n: int) -> int:
-    await asyncio.sleep(0.1)
-    return n * 2
-
-async def main():
-    results = await asyncio.gather(*(fetch(i) for i in range(5)))
-    print(results)
-
-# asyncio.run(main())</code></pre>
-      </section>
-
+# Structural matching (3.10+)
+match value:
+    case [a, b, *rest]:
+        return a + b
+    case {'key': value}:
+        return value
+    case _:
+        return default</code></pre>
+        </div>
     </div>
-  </main>
 
-  <footer>
-    <div>© <span id="year"></span> Python Cheatsheet</div>
-    <div class="footer-actions">
-      <a class="btn" href="#" onclick="window.print(); return false;">Download PDF</a>
-      <span class="btn btn-print-hint" title="Tip">Use your browser's Print to PDF</span>
-    </div>
-  </footer>
-
-  <!-- Highlight.js JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-oRBBiX9CjQj2bFf4lBVJQ9Hw6JymD5O/4QzH8D3k2kSybzYzKpQvEn2kz3X8fXOjrqzqRj50Ma07kKcH3mS9JQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <footer>
+        <a href="https://surfing.salty.vip/">Surfing Cheatsheets</a>
+        | <a href="/assets/cheatsheets/en/python-cheatsheet.pdf">📄 PDF</a>
+    </footer>
