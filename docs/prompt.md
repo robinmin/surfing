@@ -128,6 +128,28 @@ A few more things need to be considered:
 
 ---
 
+### Fix issues on the process of publishing cheatsheets
+
+#### Background
+
+I am working on fixing the issues on the process of publishing cheatsheets. You can refer to the instruction in file @docs/cheatsheet-workflow.md. And I already run a dev-server on http://localhost:4322/. You always can use MCP playwright to access the result when once we fixed something.
+
+We use a sample to fix the issues, including:
+
+- The original HTML file: @/Users/robin/Downloads/python-cheatsheet.html
+- The converted markdown file by the process of publishing cheatsheets: @src/content/cheatsheets/en/python-cheatsheet.md
+- The relevant URL on dev-server: http://localhost:4322/cheatsheets/en/python-cheatsheet
+
+And, due to the back and force of the process, we lost some beautiful design elements in @/Users/robin/Downloads/python-cheatsheet.html now, But we can refer to another file for reference @golang-cheatsheet-restored.html, especially on the title header part and the footer part.
+
+#### Issues
+
+Here comes the issues I found so far:
+
+- Instead of using the website's footer, we need to use the dedicated footer for cheatsheets like @golang-cheatsheet-restored.html did. It can be applied to all cheatsheets, but you need to take care of the hyperlink of the PDF, it will be dynamically generated based on the current URL.
+
+- Instead of using the website's title part(huge title for the cheatsheet), We need to avoid to add the title part from the website, and relay on the author of the cheatsheets provide the title part. That means you also need to refer to @golang-cheatsheet-restored.html to enhance the title part of @/Users/robin/Downloads/python-cheatsheet.html first, and then we can publish it again.
+
 ## TODO List
 
 - [x] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.
