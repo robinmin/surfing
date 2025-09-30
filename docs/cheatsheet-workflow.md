@@ -66,11 +66,13 @@ This document describes the refined 4-step process for publishing cheatsheets to
 **Purpose:** Analyze and prepare the HTML file for AI optimization
 
 **Command:**
+
 ```bash
 ./scripts/preprocess-cheatsheets.sh your-cheatsheet.html [options]
 ```
 
 **Options:**
+
 - `--style <css-file>` - Preserve custom CSS styles
 - `--columns <n>` - Force specific column count (1-4)
 - `--compact` - Use compact spacing (default)
@@ -79,11 +81,13 @@ This document describes the refined 4-step process for publishing cheatsheets to
 - `--dry-run` - Preview without creating files
 
 **Output:**
+
 - Cached HTML file in `src/content/cheatsheets/en/`
 - Processing configuration in `/tmp/cheatsheet_config_*.json`
 - AI assistant instructions in console
 
 **Example:**
+
 ```bash
 ./scripts/preprocess-cheatsheets.sh golang-cheatsheet.html --compact --columns 3
 ```
@@ -97,6 +101,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 **Prompt:** `docs/prompt_cheatsheets.md`
 
 **What the AI does:**
+
 1. Loads cached HTML from `src/content/cheatsheets/en/`
 2. Refines code examples for accuracy and readability
 3. Optimizes section layout with column balancing
@@ -104,12 +109,14 @@ This document describes the refined 4-step process for publishing cheatsheets to
 5. Previews with Playwright MCP for user approval
 
 **Key Points:**
+
 - ✅ AI focuses ONLY on content and layout
 - 🚫 AI does NOT execute external commands
 - ✅ Uses Playwright MCP to preview results
 - ✅ No permission interruptions
 
 **AI Workflow:**
+
 ```
 1. Read cached HTML file
 2. Analyze and refine content
@@ -126,11 +133,13 @@ This document describes the refined 4-step process for publishing cheatsheets to
 **Purpose:** Review and approve the refined HTML before publishing
 
 **Actions:**
+
 1. **Review** the refined HTML in browser (Playwright preview)
 2. **Verify** content quality, layout, and code readability
 3. **Approve** or iterate back to Step 2 if changes needed
 
 **Quality Checklist:**
+
 - [ ] All content visible in single page
 - [ ] No horizontal scrolling in code blocks
 - [ ] Columns are balanced (<15% variance)
@@ -145,11 +154,13 @@ This document describes the refined 4-step process for publishing cheatsheets to
 **Purpose:** Publish the refined cheatsheet to the website
 
 **Command:**
+
 ```bash
 ./scripts/postprocess-cheatsheets.sh refined-file.html [options]
 ```
 
 **Options:**
+
 - `--lang <lang>` - Content language: en, cn, jp (default: en)
 - `--no-commit` - Skip git commit (only generate files)
 - `--commit-message <msg>` - Custom commit message
@@ -157,6 +168,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 - `--verbose` - Detailed logging
 
 **What it does:**
+
 1. Validates the refined HTML file
 2. Auto-detects if PDF exists in `public/assets/cheatsheets/<lang>/`
 3. Generates PDF if not already present (intelligent auto-generation)
@@ -166,6 +178,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 7. Commits and pushes changes (unless `--no-commit`)
 
 **Example:**
+
 ```bash
 # Auto-generates PDF if not present
 ./scripts/postprocess-cheatsheets.sh golang-cheatsheet.html
@@ -175,6 +188,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 ```
 
 **Output:**
+
 - Markdown file in `src/content/cheatsheets/<lang>/`
 - PDF file in `public/assets/cheatsheets/<lang>/` (auto-generated if not present)
 - Published to website after deployment
@@ -188,6 +202,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 These tools are designed for generic purposes and can be used independently:
 
 #### **html2pdf**
+
 Converts HTML to single-page PDF with customizable settings.
 
 ```bash
@@ -195,6 +210,7 @@ html2pdf input.html output.pdf [options]
 ```
 
 **Options:**
+
 - `--single-page` - Force single-page output
 - `--margin=<value>` - Set page margin (e.g., 10px)
 - `--viewport=<width>x<height>` - Custom viewport size
@@ -202,6 +218,7 @@ html2pdf input.html output.pdf [options]
 **Location:** `scripts/html2pdf/pdf-export.mjs`
 
 #### **postsurfing**
+
 Automated content publishing tool for the Surfing platform.
 
 ```bash
@@ -209,6 +226,7 @@ postsurfing <file-path> --type <content-type> [options]
 ```
 
 **Options:**
+
 - `--type <type>` - Content type (articles|showcase|documents|cheatsheets)
 - `--lang <lang>` - Content language: en, cn, jp (default: en)
 - `--auto-convert` - Auto-convert HTML to Surfing format
@@ -225,15 +243,15 @@ postsurfing <file-path> --type <content-type> [options]
 
 ### Compared to Previous Workflow
 
-| Aspect | Previous | Refined |
-|--------|----------|---------|
-| **Steps** | 3 steps | 4 steps (clearer separation) |
-| **AI Role** | Executes commands | Only content/layout optimization |
-| **Permissions** | Frequent interruptions | Zero interruptions |
-| **User Control** | Auto-publish | Manual review before publish |
-| **Tools** | Tightly coupled | Independent, reusable |
-| **PDF Logic** | In postsurfing | In postprocess (auto-detect) |
-| **Flexibility** | Limited | High (iterate freely, auto PDF) |
+| Aspect           | Previous               | Refined                          |
+| ---------------- | ---------------------- | -------------------------------- |
+| **Steps**        | 3 steps                | 4 steps (clearer separation)     |
+| **AI Role**      | Executes commands      | Only content/layout optimization |
+| **Permissions**  | Frequent interruptions | Zero interruptions               |
+| **User Control** | Auto-publish           | Manual review before publish     |
+| **Tools**        | Tightly coupled        | Independent, reusable            |
+| **PDF Logic**    | In postsurfing         | In postprocess (auto-detect)     |
+| **Flexibility**  | Limited                | High (iterate freely, auto PDF)  |
 
 ### Benefits
 
@@ -357,24 +375,28 @@ surfing/
 ### Common Issues
 
 **Issue:** Preprocess script can't find HTML file
+
 ```bash
 # Solution: Use absolute or relative path
 ./scripts/preprocess-cheatsheets.sh ./path/to/file.html
 ```
 
 **Issue:** AI assistant can't find cached file
+
 ```bash
 # Solution: Check the cached file location
 ls -la src/content/cheatsheets/en/
 ```
 
 **Issue:** PDF generation fails
+
 ```bash
 # Solution: Verify html2pdf tool is installed
 node scripts/html2pdf/pdf-export.mjs --help
 ```
 
 **Issue:** Postprocess script fails
+
 ```bash
 # Solution: Run with --verbose for detailed logs
 ./scripts/postprocess-cheatsheets.sh file.html --verbose
