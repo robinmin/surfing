@@ -1,0 +1,51 @@
+---
+// Cheatsheet Footer Component
+// Dedicated footer for cheatsheets with PDF download link
+
+export interface Props {
+  pdfUrl?: string;
+  currentPath?: string;
+}
+
+const { pdfUrl, currentPath } = Astro.props;
+
+// Generate PDF URL dynamically based on current page URL if not provided
+const dynamicPdfUrl =
+  pdfUrl ||
+  (currentPath
+    ? `/assets/cheatsheets/en${currentPath.replace('/cheatsheets/en/', '/').replace('.html', '')}.pdf`
+    : null);
+---
+
+<!-- Cheatsheet Footer -->
+<div class="bg-white border-t mt-6 py-4">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <p class="text-gray-600 text-xs">
+      <span class="emoji">🏄‍♂️</span>
+      <a href={Astro.site} class="go-blue hover:underline font-medium">Surfing CheatSheet</a>
+      {
+        dynamicPdfUrl && (
+          <>
+            {' • '}
+            <a href={dynamicPdfUrl} class="go-blue hover:underline" target="_blank">
+              <span class="emoji">📄</span>PDF
+            </a>
+          </>
+        )
+      }
+    </p>
+  </div>
+</div>
+
+<style>
+  .go-blue {
+    color: #3776ab;
+  }
+  .go-blue:hover {
+    color: #2c5f8a;
+  }
+  .emoji {
+    font-size: 1.2em;
+    margin-right: 4px;
+  }
+</style>
