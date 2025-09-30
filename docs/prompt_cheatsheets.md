@@ -14,11 +14,17 @@ Refine and optimize HTML cheatsheet content for high-quality display, **while pr
 - ✅ **PRESERVE** original class names (`.container`, `.column`, `.code-section`, etc.)
 - ✅ **PRESERVE** original CSS styles that define the layout
 - ✅ **PRESERVE** the number of columns as defined in the original
+- ✅ **PRESERVE** original design aesthetics (gradients, colors, shadows, hover effects)
+- ✅ **PRESERVE** original footer and other structural elements
 - ❌ **DO NOT** convert to responsive grids if original uses fixed columns
 - ❌ **DO NOT** rename classes or restructure HTML
 - ❌ **DO NOT** change grid column counts
+- ❌ **DO NOT** remove or simplify design elements (headers, footers, visual styling)
+- ❌ **DO NOT** oversimplify beautiful designs in favor of "cleaner" alternatives
 
 **Why**: The original HTML was carefully designed for optimal print/PDF layout. Changing the structure breaks the visual balance.
+
+**⚠️ IMPORTANT**: When user feedback indicates "the original version should be better," **always start fresh from the original file** (`originals/cheatsheets/<filename>`) rather than trying to fix a modified version. The original design is the source of truth.
 
 ---
 
@@ -37,11 +43,13 @@ Refine and optimize HTML cheatsheet content for high-quality display, **while pr
 - Ensure no horizontal scrolling needed
 - Format code consistently
 
-### 3. **Visual Polish** ✅
+### 3. **Visual Polish** ✅ (WITH EXTREME CAUTION)
 
-- Remove any navigation elements (`<nav>`, `.toc`, `.menu`, etc.)
-- Ensure consistent spacing and alignment
-- Polish typography and colors
+- Remove any navigation elements (`<nav>`, `.toc`, `.menu`, etc.) **only if they don't belong in a cheatsheet**
+- Ensure consistent spacing and alignment **without changing the overall design**
+- **DO NOT** change existing color schemes, gradients, or visual effects
+- **DO NOT** "simplify" or "clean up" existing beautiful designs
+- **Ask user first** before making significant visual changes
 
 ### 4. **Column Balancing** (Optional, only if needed)
 
@@ -70,11 +78,14 @@ Refine and optimize HTML cheatsheet content for high-quality display, **while pr
 3. Improve explanations for clarity
 4. **DO NOT touch HTML structure or CSS layout**
 
-### **Step 3: Light Visual Polish**
+### **Step 3: Light Visual Polish (MINIMAL CHANGES ONLY)**
 
-1. Remove navigation elements if present
-2. Ensure consistent spacing
+1. Remove navigation elements **only if clearly inappropriate** (e.g., site navigation bars)
+2. Ensure consistent spacing **without changing the design aesthetic**
 3. **DO NOT modify grid/layout CSS**
+4. **DO NOT change color schemes, gradients, shadows, or visual effects**
+5. **PRESERVE footer, header, and all structural design elements**
+6. **When in doubt, preserve the original design**
 
 ### **Step 4: Write Refined HTML**
 
@@ -115,8 +126,13 @@ Before finishing:
 3. ❌ Renaming `.column` to `.space-y-3`
 4. ❌ Adding responsive media queries when original used fixed layout
 5. ❌ Completely rewriting the CSS structure
+6. ❌ Removing beautiful design elements (gradients, shadows, hover effects)
+7. ❌ Stripping footer or other structural elements
+8. ❌ "Simplifying" a well-designed original into a bland template
+9. ❌ Changing color schemes from vibrant to monochrome without asking
+10. ❌ Attempting to "fix" a rejected version instead of starting from original
 
-**Remember**: You are **refining content**, not **redesigning the layout**.
+**Remember**: You are **refining content**, not **redesigning the layout or aesthetics**.
 
 ---
 
@@ -154,8 +170,11 @@ If the original has:
 
 ## 🎯 **Your Primary Focus**
 
-1. **Content quality** (fix code, improve text)
-2. **Visual polish** (remove nav, fix spacing)
-3. **Layout preservation** (don't touch structure)
+1. **Content quality** (fix code, improve text) - **HIGH PRIORITY**
+2. **Layout preservation** (don't touch structure) - **CRITICAL**
+3. **Design preservation** (keep colors, gradients, effects) - **CRITICAL**
+4. **Minimal visual changes** (only remove truly inappropriate elements) - **LOW PRIORITY**
 
-That's it! Keep it simple. Don't redesign what's already working.
+**Golden Rule**: When the user says "the original version should be better," it means you changed too much. Always err on the side of preserving the original design.
+
+That's it! Keep it simple. Don't redesign what's already working. Your job is **content refinement**, not **visual redesign**.
