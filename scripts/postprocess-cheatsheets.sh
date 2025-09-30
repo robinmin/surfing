@@ -280,16 +280,19 @@ publish_to_surfing() {
 }
 
 # Cleanup temporary working file in /tmp
+# Note: Original files are preserved in originals/cheatsheets by preprocess script
 cleanup_refined_html() {
     local input_file="$1"
     local filename=$(basename "$input_file")
 
-    # Check if file is in /tmp/cheatsheets-working
+    # Only clean up files in /tmp/cheatsheets-working
+    # Original files in originals/cheatsheets are preserved
     if [[ "$input_file" == /tmp/cheatsheets-working/* ]]; then
         if [[ "$DRY_RUN" == true ]]; then
-            log_info "Would remove: $input_file"
+            log_info "Would remove temporary file: $input_file"
         else
             rm -f "$input_file"
+            log_info "Cleaned up temporary file: $input_file"
         fi
     fi
 }
