@@ -5,8 +5,9 @@
  *
  * A comprehensive tool for publishing content to the Surfing platform.
  * Handles markdown files, HTML documents, and automated publishing workflow.
+ * Enhanced with cheatsheet processing and PDF generation capabilities.
  *
- * Usage: postsurfing <file-path> --type <articles|showcase|documents> [options]
+ * Usage: postsurfing <file-path> --type <articles|showcase|documents|cheatsheets> [options]
  */
 
 import { fileURLToPath } from 'url';
@@ -64,10 +65,7 @@ Automated content publishing for the Surfing platform
    <file-path>                   Path to the content file to publish
 
  REQUIRED OPTIONS:
-   -t, --type <type>            Content type: articles, showcase, documents
-
- OPTIONS:
-   -l, --lang <lang>            Content language: en, cn, jp (default: en)
+   -t, --type <type>            Content type: articles, showcase, documents, cheatsheets
 
  OPTIONS:
    -l, --lang <lang>            Content language: en, cn, jp (default: en)
@@ -86,8 +84,8 @@ EXAMPLES:
   # Publish a markdown article
   postsurfing ./my-article.md --type articles
 
-  # Convert and publish HTML document
-  postsurfing ./legacy-page.html --type documents --auto-convert
+  # Convert and publish HTML cheatsheet
+  postsurfing ./cheatsheet.html --type cheatsheets --auto-convert
 
   # Interactive mode for showcase project
   postsurfing ./project.md --type showcase --interactive
@@ -104,7 +102,7 @@ CONTENT TYPES:
   documents   - HTML content for legacy or rich-formatted pieces
   cheatsheets - AI-generated reference materials and quick guides
 
-For more information, visit: https://github.com/robin/surfing
+For more information, visit: https://surfing.salty.vip/
 `);
 }
 
@@ -225,7 +223,7 @@ async function main() {
     logger.success('✅ Content published successfully!');
     if (!options['dry-run']) {
       logger.infoVerbose(`📄 File: ${processedContent.outputPath}`);
-      logger.infoVerbose(`🌐 Content will be available after deployment`);
+      logger.infoVerbose(`🌐 Content will be available after deployment at https://surfing.salty.vip/`);
     }
   } catch (error) {
     logger.error('❌ Publishing failed:');
