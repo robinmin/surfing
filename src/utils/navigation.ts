@@ -25,7 +25,15 @@ export function getLocalizedHeaderData(lang: SupportedLanguage = DEFAULT_LANGUAG
             text: t('nav.documents'),
             href: getPermalink('/documents'),
           },
+          {
+            text: t('nav.cheatsheets'),
+            href: getPermalink('/cheatsheets'),
+          },
         ],
+      },
+      {
+        text: t('nav.cheatsheets'),
+        href: getPermalink('/cheatsheets'),
       },
       {
         text: t('nav.about'),
@@ -48,6 +56,7 @@ export function getLocalizedFooterData(lang: SupportedLanguage = DEFAULT_LANGUAG
           { text: t('nav.articles'), href: '/articles' },
           { text: t('nav.showcase'), href: '/showcase' },
           { text: t('nav.documents'), href: '/documents' },
+          { text: t('nav.cheatsheets'), href: '/cheatsheets' },
         ],
       },
       {
@@ -86,6 +95,7 @@ export function getLocalizedFooterData(lang: SupportedLanguage = DEFAULT_LANGUAG
       { ariaLabel: 'RSS Articles', icon: 'tabler:rss', href: getAsset('/articles/rss.xml') },
       { ariaLabel: 'RSS Showcase', icon: 'tabler:rss', href: getAsset('/showcase/rss.xml') },
       { ariaLabel: 'RSS Documents', icon: 'tabler:rss', href: getAsset('/documents/rss.xml') },
+      { ariaLabel: 'RSS Cheatsheets', icon: 'tabler:rss', href: getAsset('/cheatsheets/rss.xml') },
       { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robin/surfing' },
     ],
     footNote: t('footer.tagline'),

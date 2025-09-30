@@ -108,6 +108,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                       else if (href2?.includes('/articles')) navKey = 'nav.articles';
                       else if (href2?.includes('/showcase')) navKey = 'nav.showcase';
                       else if (href2?.includes('/documents')) navKey = 'nav.documents';
+                      else if (href2?.includes('/cheatsheets')) navKey = 'nav.cheatsheets';
 
                       return (
                         <li>
@@ -133,7 +134,9 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                     { 'aw-link-active': href === currentPath },
                   ]}
                   href={href}
-                  data-i18n={href?.includes('/about') ? 'nav.about' : ''}
+                  data-i18n={
+                    href?.includes('/about') ? 'nav.about' : href?.includes('/cheatsheets') ? 'nav.cheatsheets' : ''
+                  }
                 >
                   {text}
                 </a>
