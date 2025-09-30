@@ -193,7 +193,7 @@ const hasExternalJS = frontmatter.externalJS && frontmatter.externalJS.length > 
   </slot>
 
   <!-- External JavaScript injection -->
-  {hasExternalJS && frontmatter.externalJS!.map((url) => <script src={url}></script>)}
+  {hasExternalJS && frontmatter.externalJS!.map((url) => <script src={url} />)}
 
   <!-- Custom JavaScript injection -->
   {hasCustomJS && <script is:inline set:html={frontmatter.customJS} />}
