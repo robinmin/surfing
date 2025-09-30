@@ -32,6 +32,7 @@ const whenCookieConsentEnabled = (items: (() => AstroIntegration) | (() => Astro
 
 export default defineConfig({
   output: 'static',
+  site: 'https://surfing.salty.vip/',
 
   i18n: {
     defaultLocale: 'en',
