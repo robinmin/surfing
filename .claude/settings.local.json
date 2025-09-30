@@ -25,7 +25,9 @@
       "Bash(node scripts/postsurfing/postsurfing.mjs:*)",
       "Bash(open /Users/robin/projects/surfing/:*)",
       "Bash(html2pdf:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(./scripts/postprocess-cheatsheets.sh:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
