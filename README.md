@@ -82,11 +82,74 @@ postsurfing ./legacy-page.html --type documents --auto-convert
 # Interactive mode for showcase projects
 postsurfing ./project.md --type showcase --interactive
 
-# Publish AI-generated cheatsheet
-postsurfing ./javascript-cheatsheet.md --type cheatsheets
+ # Publish AI-generated cheatsheet
+ postsurfing ./javascript-cheatsheet.md --type cheatsheets
+
+ # Publish HTML cheatsheet
+ postsurfing ./cheatsheet.html --type cheatsheets --auto-convert
 ```
 
 The CLI handles frontmatter validation, build testing, and git operations automatically.
+
+### How do I publish HTML cheatsheets with PDF generation?
+
+For AI-generated HTML cheatsheets that need PDF versions, we have a streamlined 4-step process:
+
+```bash
+# Step 1: Preprocess - Prepare working file in /tmp
+./scripts/preprocess-cheatsheets.sh your-cheatsheet.html
+
+# Step 2: Refine with AI assistant
+# Use AI assistant with prompt: docs/prompt_cheatsheets.md
+# The AI will refine content and layout in /tmp, then preview with Playwright
+
+# Step 3: Review and approve
+# Review the refined HTML in the browser preview
+
+# Step 4: Publish - Convert and publish to website
+# (Auto-generates PDF if not already present)
+./scripts/postprocess-cheatsheets.sh /tmp/cheatsheets-working/your-cheatsheet.html
+```
+
+**What each step does:**
+
+**Step 1 - Preprocess:**
+- ✅ Analyzes HTML structure and content
+- ✅ Generates processing configuration
+- ✅ Copies input file to `/tmp/cheatsheets-working/`
+- ✅ Provides AI assistant instructions with full /tmp path
+
+**Step 2 - AI Refinement:**
+- ✅ Refines content quality and accuracy in /tmp
+- ✅ Optimizes layout and column balancing
+- ✅ Removes navigation elements
+- ✅ Previews with Playwright for approval
+
+**Step 3 - User Review:**
+- ✅ Review refined HTML in browser
+- ✅ Approve or iterate back to Step 2
+
+**Step 4 - Postprocess:**
+- ✅ Validates refined HTML
+- ✅ Auto-generates PDF if not present
+- ✅ Converts HTML to markdown with postsurfing:
+  - Extracts external CSS/JS URLs → `externalCSS`, `externalJS` arrays
+  - Extracts inline styles → `customCSS` frontmatter
+  - Extracts inline scripts → `customJS` frontmatter
+  - Extracts body content → markdown body
+- ✅ Publishes to `src/content/cheatsheets/en/*.md`
+- ✅ Cleans up temporary /tmp file
+- ✅ Commits and publishes to website
+
+**Key improvements:**
+- 🚫 No permission interruptions (AI doesn't call external commands)
+- ✅ User reviews before publishing
+- ✅ Auto PDF generation (only if not already present)
+- ✅ Separate working directory (/tmp) prevents accidental overwrites
+- ✅ External libraries (CDN) preserved via `externalCSS`/`externalJS`
+- ✅ Custom styles preserved via `customCSS`/`customJS`
+- ✅ Site navigation integrated via `ExternalPageLayout`
+- ✅ SEO-friendly markdown format with full styling support
 
 **Option 2: Manual Publishing**
 
@@ -109,12 +172,25 @@ The CLI handles frontmatter validation, build testing, and git operations automa
 
 ### How do I migrate existing HTML content?
 
-The PostSurfing CLI automatically converts HTML files:
+The PostSurfing CLI automatically converts HTML files and extracts external resources:
 
 ```bash
-# Auto-convert HTML to Surfing format
+# Auto-convert HTML to Surfing format (for documents)
 postsurfing ./existing-page.html --type documents --auto-convert
+
+# What gets extracted:
+# - External CSS: <link rel="stylesheet"> → externalCSS array
+# - External JS: <script src="..."> → externalJS array
+# - Inline CSS: <style> → customCSS frontmatter
+# - Inline JS: <script> → customJS frontmatter
+# - Body content → markdown body
 ```
+
+The resulting markdown will use `ExternalPageLayout` which:
+- ✅ Loads external libraries from CDN
+- ✅ Injects custom styles and scripts
+- ✅ Integrates with site navigation
+- ✅ Preserves original layout and functionality
 
 Or see our [Content Specification Guide](./docs/content-specification.md) for manual migration steps.
 
