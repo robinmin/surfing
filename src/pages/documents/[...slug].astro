@@ -1,7 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-import DocumentLayout from '~/layouts/DocumentLayout.astro';
+import ExternalPageLayout from '~/layouts/ExternalPageLayout.astro';
 
 export async function getStaticPaths() {
   const documents = await getCollection('documents', ({ data }) => !data.draft);
@@ -33,6 +33,6 @@ const metadata = {
 };
 ---
 
-<DocumentLayout metadata={metadata} document={documentEntry}>
+<ExternalPageLayout metadata={metadata} entry={documentEntry}>
   <div set:html={renderedContent} />
-</DocumentLayout>
+</ExternalPageLayout>
