@@ -87,6 +87,8 @@ export class HtmlConverter {
   processFullHtmlDocument(content) {
     const results = {
       extractedMetadata: {},
+      externalCSS: null,
+      externalJS: null,
       customCSS: null,
       customJS: null,
       bodyContent: '',
@@ -112,6 +114,20 @@ export class HtmlConverter {
       const metaTags = this.extractMetaTags(headContent);
       results.extractedMetadata = { ...results.extractedMetadata, ...metaTags };
       results.metaExtracted = Object.keys(metaTags);
+
+      // Extract external CSS from head
+      const externalCSS = this.extractExternalCSSFromHead(headContent);
+      if (externalCSS) {
+        results.externalCSS = externalCSS;
+        results.externalCSSCount = externalCSS.length;
+      }
+
+      // Extract external JS from head
+      const externalJS = this.extractExternalJSFromHead(headContent);
+      if (externalJS) {
+        results.externalJS = externalJS;
+        results.externalJSCount = externalJS.length;
+      }
 
       // Extract CSS from head
       const headCSS = this.extractCSSFromHead(headContent);
@@ -226,6 +242,24 @@ export class HtmlConverter {
   }
 
   /**
+   * Extract external CSS links from head section
+   */
+  extractExternalCSSFromHead(headContent) {
+    const externalCSS = [];
+
+    // Extract link tags with rel="stylesheet"
+    const linkMatches = headContent.matchAll(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi);
+    for (const match of linkMatches) {
+      const hrefMatch = match[0].match(/href=["']([^"']+)["']/i);
+      if (hrefMatch) {
+        externalCSS.push(hrefMatch[1]);
+      }
+    }
+
+    return externalCSS.length > 0 ? externalCSS : null;
+  }
+
+  /**
    * Extract CSS from head section
    */
   extractCSSFromHead(headContent) {
@@ -238,6 +272,21 @@ export class HtmlConverter {
     }
 
     return cssBlocks.length > 0 ? cssBlocks.join('\n\n') : null;
+  }
+
+  /**
+   * Extract external JavaScript links from head section
+   */
+  extractExternalJSFromHead(headContent) {
+    const externalJS = [];
+
+    // Extract script tags with src attribute
+    const scriptMatches = headContent.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*>/gi);
+    for (const match of scriptMatches) {
+      externalJS.push(match[1]);
+    }
+
+    return externalJS.length > 0 ? externalJS : null;
   }
 
   /**
