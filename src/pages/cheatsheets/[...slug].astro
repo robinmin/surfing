@@ -20,8 +20,9 @@ interface Props {
 
 const { cheatsheet } = Astro.props;
 
-// Use the already rendered content
-const renderedContent = cheatsheet.rendered?.html || cheatsheet.body;
+// For cheatsheets, use raw body content since it's already HTML
+// The body contains raw HTML that should not be processed as markdown
+const renderedContent = cheatsheet.body;
 
 const metadata = {
   title: cheatsheet.data.title,
