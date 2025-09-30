@@ -1,10 +1,10 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/widgets/Header.astro';
-import Footer from '~/components/widgets/Footer.astro';
+import CheatsheetFooter from '~/components/widgets/CheatsheetFooter.astro';
 import Announcement from '~/components/widgets/Announcement.astro';
 
-import { headerData, footerData } from '~/navigation';
+import { headerData } from '~/navigation';
 import type { MetaData } from '~/types';
 import type { CollectionEntry } from 'astro:content';
 
@@ -22,6 +22,12 @@ const hasCustomCSS = frontmatter.customCSS && frontmatter.customCSS.trim().lengt
 const hasCustomJS = frontmatter.customJS && frontmatter.customJS.trim().length > 0;
 const hasExternalCSS = frontmatter.externalCSS && frontmatter.externalCSS.length > 0;
 const hasExternalJS = frontmatter.externalJS && frontmatter.externalJS.length > 0;
+
+// Check if this is a cheatsheet (to customize layout)
+const isCheatsheet = entry.collection === 'cheatsheets';
+
+// Type guard for cheatsheet frontmatter
+const cheatsheetFrontmatter = isCheatsheet ? (frontmatter as CollectionEntry<'cheatsheets'>['data']) : null;
 ---
 
 <Layout metadata={metadata}>
@@ -31,166 +37,141 @@ const hasExternalJS = frontmatter.externalJS && frontmatter.externalJS.length > 
   <!-- Custom CSS injection -->
   {hasCustomCSS && <style set:html={frontmatter.customCSS} />}
 
-  <slot name="announcement">
-    <Announcement />
-  </slot>
+  <Announcement />
 
-  <slot name="header">
-    <Header {...headerData} isSticky showRssFeed showToggleTheme />
-  </slot>
+  <Header {...headerData} isSticky showRssFeed showToggleTheme />
 
   <main>
-    <!-- Document Header -->
-    <section class="px-4 py-8 sm:px-6 mx-auto lg:px-8 lg:py-12 max-w-6xl">
-      <div class="mb-8">
-        <!-- Content Type Badge -->
-        <div class="mb-4">
-          <span
-            class={`inline-block px-3 py-1 text-sm rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200`}
-          >
-            {
-              frontmatter.contentType === 'legacy'
-                ? 'Legacy Document'
-                : frontmatter.contentType === 'template'
-                  ? 'Template'
-                  : frontmatter.contentType === 'snippet'
-                    ? 'Code Snippet'
-                    : entry.collection === 'cheatsheets'
-                      ? 'Cheatsheet'
-                      : 'HTML Document'
-            }
-          </span>
-        </div>
-
-        <!-- Title -->
-        <h1 class="font-bold font-heading text-4xl md:text-5xl leading-tighter tracking-tighter mb-4 dark:text-white">
-          {frontmatter.title}
-        </h1>
-
-        <!-- Description -->
-        {
-          frontmatter.description && (
-            <p class="text-xl text-gray-600 dark:text-gray-300 mb-6">{frontmatter.description}</p>
-          )
-        }
-
-        <!-- Metadata -->
-        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
-          {
-            frontmatter.author && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                {frontmatter.author}
-              </div>
-            )
-          }
-
-          {
-            frontmatter.publishDate && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <time datetime={frontmatter.publishDate.toISOString()}>
-                  {frontmatter.publishDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              </div>
-            )
-          }
-
-          {
-            frontmatter.readingTime && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {frontmatter.readingTime} min read
-              </div>
-            )
-          }
-
-          {
-            frontmatter.source && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  />
-                </svg>
-                Source: {frontmatter.source}
-              </div>
-            )
-          }
-
-          {
-            'pdfUrl' in frontmatter && frontmatter.pdfUrl && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                <a href={frontmatter.pdfUrl} class="text-blue-600 hover:underline" target="_blank">
-                  Download PDF
-                </a>
-              </div>
-            )
-          }
-        </div>
-
-        <!-- Tags -->
-        {
-          frontmatter.tags && frontmatter.tags.length > 0 && (
-            <div class="flex flex-wrap gap-2 mb-6">
-              {frontmatter.tags.map((tag) => (
-                <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
-                  #{tag}
-                </span>
-              ))}
+    <!-- Document Header - Skip for cheatsheets to preserve author-provided title -->
+    {
+      !isCheatsheet && (
+        <section class="px-4 py-8 sm:px-6 mx-auto lg:px-8 lg:py-12 max-w-6xl">
+          <div class="mb-8">
+            <div class="mb-4">
+              <span
+                class={`inline-block px-3 py-1 text-sm rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200`}
+              >
+                {frontmatter.contentType === 'legacy'
+                  ? 'Legacy Document'
+                  : frontmatter.contentType === 'template'
+                    ? 'Template'
+                    : frontmatter.contentType === 'snippet'
+                      ? 'Code Snippet'
+                      : 'HTML Document'}
+              </span>
             </div>
-          )
-        }
-      </div>
-    </section>
+
+            <h1 class="font-bold font-heading text-4xl md:text-5xl leading-tighter tracking-tighter mb-4 dark:text-white">
+              {frontmatter.title}
+            </h1>
+
+            {frontmatter.description && (
+              <p class="text-xl text-gray-600 dark:text-gray-300 mb-6">{frontmatter.description}</p>
+            )}
+
+            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
+              {frontmatter.author && (
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  {frontmatter.author}
+                </div>
+              )}
+
+              {frontmatter.publishDate && (
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <time datetime={frontmatter.publishDate.toISOString()}>
+                    {frontmatter.publishDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+              )}
+
+              {frontmatter.readingTime && (
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {frontmatter.readingTime} min read
+                </div>
+              )}
+
+              {frontmatter.source && (
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                    />
+                  </svg>
+                  Source: {frontmatter.source}
+                </div>
+              )}
+
+              {cheatsheetFrontmatter?.pdfUrl && (
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  <a href={cheatsheetFrontmatter.pdfUrl} class="text-blue-600 hover:underline" target="_blank">
+                    Download PDF
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {frontmatter.tags && frontmatter.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-6">
+                {frontmatter.tags.map((tag) => (
+                  <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )
+    }
 
     <!-- Content -->
-    <section class="px-4 pb-16 sm:px-6 mx-auto lg:px-8 lg:pb-20 max-w-6xl">
+    <section class={`px-4 pb-16 sm:px-6 mx-auto lg:px-8 lg:pb-20 ${isCheatsheet ? 'max-w-7xl' : 'max-w-6xl'}`}>
       <div class={preserveStyles ? 'external-content-preserved' : 'external-content-styled'}>
         <slot />
       </div>
     </section>
   </main>
 
-  <slot name="footer">
-    <Footer {...footerData} />
-  </slot>
+  <CheatsheetFooter pdfUrl={cheatsheetFrontmatter?.pdfUrl} currentPath={Astro.url.pathname} />
 
   <!-- External JavaScript injection -->
   {hasExternalJS && frontmatter.externalJS!.map((url) => <script src={url} />)}
@@ -219,6 +200,12 @@ const hasExternalJS = frontmatter.externalJS && frontmatter.externalJS.length > 
 
   /* Ensure custom styles don't break the layout */
   .external-content-preserved * {
+    max-width: 100%;
+  }
+
+  /* Handle code block overflow */
+  .external-content-preserved pre {
+    overflow-x: auto;
     max-width: 100%;
   }
 
