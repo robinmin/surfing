@@ -379,16 +379,25 @@ process_cheatsheet() {
     local output_file="$filename"  # Same name as input, no prefix/suffix
     local pdf_file="$PROJECT_ROOT/public/assets/cheatsheets/en/${slug}.pdf"
     local md_file="${slug}.md"
+    local originals_dir="$PROJECT_ROOT/originals/cheatsheets"
 
     log_info "🚀 Preprocessing: $filename"
 
     if [[ "$DRY_RUN" == true ]]; then
         log_warning "DRY RUN MODE - No files will be created"
         log_info "Would process:"
+        log_info "  - Store original: $INPUT_FILE → $originals_dir/$filename"
         log_info "  - Copy $INPUT_FILE → $working_file"
         log_info "  - Analyze content structure and generate configuration"
         log_info "  - Provide AI assistant instructions for content refinement"
         return 0
+    fi
+
+    # Store original file in originals/cheatsheets (if not already from there)
+    if [[ "$INPUT_FILE" != "$originals_dir"* ]]; then
+        mkdir -p "$originals_dir"
+        cp "$INPUT_FILE" "$originals_dir/$filename"
+        log_success "Original saved: $originals_dir/$filename"
     fi
 
     # Copy input file to /tmp working directory
@@ -409,7 +418,8 @@ process_cheatsheet() {
 ════════════════════════════════════════════════════════════════════════════
 
 ✅ STEP 1: PREPROCESS (COMPLETED)
-   Working file prepared at: $working_file
+   ✓ Original stored at: $originals_dir/$filename
+   ✓ Working file prepared at: $working_file
 
 📝 STEP 2: AI REFINEMENT (NEXT)
    Use AI assistant to refine content and layout
@@ -422,7 +432,7 @@ process_cheatsheet() {
    Input file: $working_file
    Target columns: $FORCED_COLUMNS
 
-   After refinement, preview with Playwright for my approval.
+   After refinement, save to the same path and preview with Playwright.
    ────────────────────────────────────────────────────────────────────────
 
 👀 STEP 3: REVIEW AND APPROVE
@@ -436,11 +446,11 @@ process_cheatsheet() {
    ./scripts/postprocess-cheatsheets.sh $working_file
 
    This will:
-   - Extract external CSS/JS libraries
-   - Extract custom styles/scripts
+   - Validate refined HTML
    - Generate PDF if needed
+   - Convert to markdown with frontmatter
    - Publish to website with site navigation
-   - Clean up temporary files
+   - Clean up temporary working file (original preserved)
 
 ════════════════════════════════════════════════════════════════════════════
 EOF
