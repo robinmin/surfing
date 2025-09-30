@@ -124,12 +124,25 @@ export class FrontmatterManager {
     }
 
     // Merge HTML conversion results
+    if (metadata.externalCSS) {
+      merged.externalCSS = metadata.externalCSS;
+    }
+
+    if (metadata.externalJS) {
+      merged.externalJS = metadata.externalJS;
+    }
+
     if (metadata.customCSS) {
       merged.customCSS = metadata.customCSS;
     }
 
     if (metadata.customJS) {
       merged.customJS = metadata.customJS;
+    }
+
+    // Merge PDF URL (for cheatsheets)
+    if (metadata.pdfUrl) {
+      merged.pdfUrl = metadata.pdfUrl;
     }
 
     // Merge suggested tags
