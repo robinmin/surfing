@@ -1,7 +1,7 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
-import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
+import ExternalPageLayout from '~/layouts/ExternalPageLayout.astro';
 
 export async function getStaticPaths() {
   const cheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
@@ -14,10 +14,25 @@ export async function getStaticPaths() {
   }));
 }
 
+interface Props {
+  cheatsheet: CollectionEntry<'cheatsheets'>;
+}
+
 const { cheatsheet } = Astro.props;
-const { Content } = await render(cheatsheet);
+
+// Use the already rendered content
+const renderedContent = cheatsheet.rendered?.html || cheatsheet.body;
+
+const metadata = {
+  title: cheatsheet.data.title,
+  description: cheatsheet.data.description,
+  canonical: `${Astro.site}cheatsheets/${cheatsheet.data.slug || cheatsheet.id}`,
+  openGraph: {
+    type: 'article',
+  },
+};
 ---
 
-<MarkdownLayout frontmatter={{ title: cheatsheet.data.title }}>
-  <Content />
-</MarkdownLayout>
+<ExternalPageLayout metadata={metadata} entry={cheatsheet}>
+  <div set:html={renderedContent} />
+</ExternalPageLayout>
