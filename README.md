@@ -8,41 +8,56 @@ A modern content management and publishing platform designed specifically for AI
 
 Surfing is built on top of:
 
-- **[Astro](https://astro.build/)** - Modern static site generator with zero JS by default
-- **[AstroWind](https://github.com/onwidget/astrowind)** - Professional template with Tailwind CSS integration
-- **Enhanced with** - Custom content collections, automated workflows, and AI-optimized features
+- **[Astro](https://astro.build/)** - Modern static site generator with zero JS by default.
+- **[AstroWind](https://github.com/onwidget/astrowind)** - Professional template with Tailwind CSS integration.
+- **Enhanced with** - A powerful suite of custom features for advanced content management, workflow automation, and technical SEO.
 
 ## 🚀 Features
 
-What we've built beyond the foundation:
+Surfing extends the AstroWind foundation with a focus on robust, automated, and SEO-driven content management.
 
-### 🤖 AI-First Content Workflow
+### 1. Advanced Content Architecture
 
-- Optimized for AI-generated content publishing
-- Automatic metadata extraction and processing
-- Smart categorization and content discovery
-- PostSurfing CLI for automated publishing
+Four distinct, schema-driven content types, turning a simple blog into a multi-faceted knowledge base:
 
-### 📝 Multi-Format Support
+- **Articles**: For in-depth research, AI insights, and technical posts.
+- **Showcase**: To feature project portfolios with live demos and source code links.
+- **Documents**: For full HTML pages with custom CSS/JS, perfect for legacy content or interactive guides.
+- **Cheatsheets**: A specialized format for AI-generated reference materials with metadata for topics, difficulty, and PDF downloads.
 
-- **Articles**: AI insights, research, and technical content
-- **Showcase**: Project portfolios with live demos and source links
-- **Documents**: Full HTML content with custom CSS/JS support
-- **Cheatsheets**: AI-generated reference materials with PDF support and difficulty levels
-- **Obsidian Integration**: Native support for Obsidian markdown files
+### 2. Automated Publishing Workflow (`postsurfing` CLI)
 
-### 🔧 Enhanced Publishing
+A powerful command-line tool that streamlines the entire publishing process from creation to deployment:
 
-- Automated frontmatter validation and completion
-- Build validation before publishing
-- Git integration with smart commit messages
-- HTML-to-Markdown conversion for legacy content
+- **Smart Validation**: Validates frontmatter against predefined schemas for each content type.
+- **Built-in SEO Checks**: Automatically warns against common SEO issues like missing descriptions, tags, or social sharing images before publishing.
+- **HTML Conversion Engine**: Seamlessly converts full HTML files into Markdown, intelligently extracting and preserving inline/external CSS and JavaScript.
+- **Build Verification**: Runs a production build before committing to prevent publishing errors.
+- **Automated Git Integration**: Handles staging, committing (with smart messages), and pushing changes automatically.
 
-### 📡 Content Syndication
+### 3. Comprehensive Internationalization (i18n)
 
-- Multiple RSS feeds (site-wide, articles, showcase, documents, cheatsheets)
-- SEO optimization with structured data
-- Advanced search and filtering capabilities
+Built for a global audience with deep i18n support:
+
+- **Multi-Language Content**: Maintain separate, organized content trees for each language (`en`, `zh`, `ja`).
+- **Automated SEO for i18n**: Automatically generates `hreflang` tags to ensure search engines serve the correct language to users and prevent duplicate content issues.
+
+### 4. Robust SEO & Content Discovery
+
+Engineered for maximum visibility and discoverability:
+
+- **Structured Data (Schema.org)**: Automatically generates JSON-LD for all content (e.g., `Article`, `WebSite`), enabling rich snippets in search results.
+- **Automated `robots.txt` & Sitemap**: Manages `robots.txt` and includes the sitemap URL to guide crawlers effectively.
+- **Client-Side Search**: Fast and efficient on-site search powered by Pagefind.
+- **Content Syndication**: Generates separate RSS feeds for the entire site and for each individual content type.
+
+### 5. Rich Content & Authoring Experience
+
+- **Obsidian Integration**: Includes templates and supports Obsidian-specific syntax (`aliases`, `cssclass`) for a seamless writing workflow.
+- **Advanced Code Highlighting**: Beautiful, readable code blocks powered by Astro Expressive Code.
+- **Full Markdown & MDX Support**: Allows for the use of components directly within your content.
+- **Performance Optimized**: Features like Partytown for third-party scripts and automatic asset compression ensure a fast user experience.
+- **Cookie Consent Management**: Integrated cookie consent banner for GDPR compliance.
 
 ## ⚡ Quick Start
 
