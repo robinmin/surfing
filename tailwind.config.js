@@ -15,8 +15,14 @@ export default {
       },
       fontFamily: {
         sans: ['var(--aw-font-sans, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
-        serif: ['var(--aw-font-serif, ui-serif)', ...defaultTheme.fontFamily.serif],
+        serif: ['var(--aw-font-serif, source-serif-pro)', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
         heading: ['var(--aw-font-heading, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
+      },
+      fontSize: {
+        base: ['18px', { lineHeight: '27spx', letterSpacing: '-0.06px' }],
+      },
+      lineHeight: {
+        medium: '1.5',
       },
 
       animation: {
