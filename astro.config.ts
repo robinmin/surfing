@@ -11,11 +11,19 @@ import icon from 'astro-icon';
 import compress from 'astro-compress';
 import type { AstroIntegration } from 'astro';
 
+import expressiveCode from 'astro-expressive-code';
+import pagefind from 'astro-pagefind';
+import robotsTxt from 'astro-robots-txt';
+
 import surfing from './vendor/integration';
 import cookieconsent from '@jop-software/astro-cookieconsent';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 import loadConfig from './vendor/integration/utils/loadConfig';
+import rehypeMermaid from 'rehype-mermaid';
+import remarkToc from 'remark-toc';
+import rehypeSlug from 'rehype-slug';
+import rehypeExternalLinks from 'rehype-external-links';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -23,7 +31,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const config = (await loadConfig('./src/config.yaml')) as any;
 const isCookieConsentEnabled = config?.cookieConsent?.enabled ?? true;
 
-const hasExternalScripts = false;
+const hasExternalScripts = true; // Enable partytown for analytics
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
@@ -43,6 +51,12 @@ export default defineConfig({
   },
 
   integrations: [
+    expressiveCode({
+      themes: ['github-dark'],
+      styleOverrides: {
+        borderRadius: '0.5rem',
+      },
+    }),
     tailwind({
       applyBaseStyles: false,
     }),
@@ -87,6 +101,9 @@ export default defineConfig({
     surfing({
       config: './src/config.yaml',
     }),
+
+    pagefind(),
+    robotsTxt(),
 
     ...whenCookieConsentEnabled(() =>
       cookieconsent({
@@ -243,8 +260,21 @@ export default defineConfig({
   },
 
   markdown: {
-    remarkPlugins: [readingTimeRemarkPlugin],
-    rehypePlugins: [responsiveTablesRehypePlugin, lazyImagesRehypePlugin],
+    remarkPlugins: [readingTimeRemarkPlugin, [remarkToc, { heading: 'contents', maxDepth: 3 }]],
+    rehypePlugins: [
+      responsiveTablesRehypePlugin,
+      lazyImagesRehypePlugin,
+      rehypeSlug,
+      [
+        rehypeExternalLinks,
+        {
+          target: '_blank',
+          rel: ['noopener', 'noreferrer'],
+        },
+      ],
+      rehypeMermaid,
+    ],
+    syntaxHighlight: false, // Disabled because we use astro-expressive-code
   },
 
   vite: {
