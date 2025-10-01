@@ -27,7 +27,8 @@
       "Bash(html2pdf:*)",
       "Bash(chmod:*)",
       "Bash(./scripts/postprocess-cheatsheets.sh:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
