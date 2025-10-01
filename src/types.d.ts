@@ -64,6 +64,10 @@ export interface MetaData {
 
   openGraph?: MetaDataOpenGraph;
   twitter?: MetaDataTwitter;
+
+  publishDate?: Date;
+  updateDate?: Date;
+  author?: string;
 }
 
 export interface MetaDataRobots {
