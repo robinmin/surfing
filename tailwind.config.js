@@ -19,7 +19,7 @@ export default {
         heading: ['var(--aw-font-heading, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
       },
       fontSize: {
-        base: ['18px', { lineHeight: '27spx', letterSpacing: '-0.06px' }],
+        base: ['18px', { lineHeight: '1.5', letterSpacing: '-0.06px' }],
       },
       lineHeight: {
         medium: '1.5',
