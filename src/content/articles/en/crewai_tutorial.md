@@ -1,15 +1,13 @@
 ---
 title: "CrewAI Tutorial for Full Stack Developers"
 description: "classDiagram"
-tags: ["typescript", "angular", "css", "python", "ai"]
+tags: ["python", "ai", "crewAI"]
 readingTime: 14
 wordCount: 2749
 publishDate: 2025-10-01
 draft: false
 featured: false
 ---
-
-# CrewAI Tutorial for Full Stack Developers
 
 ## Architecture Overview
 
