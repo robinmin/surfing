@@ -1,0 +1,55 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Search',
+  description: 'Search through all content on this site',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 mx-auto max-w-4xl lg:px-8 lg:py-20">
+    <div class="mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold font-heading tracking-tighter mb-4">Search</h1>
+      <p class="text-xl text-muted">Search through all articles, documents, and content on this site</p>
+    </div>
+
+    <div id="search" class="mb-8"></div>
+  </section>
+
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+        excerptLength: 15,
+      });
+    });
+  </script>
+</Layout>
+
+<style is:global>
+  /* Pagefind UI Styling */
+  .pagefind-ui__search-input {
+    @apply w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white;
+  }
+
+  .pagefind-ui__result {
+    @apply mb-6 pb-6 border-b border-gray-200 dark:border-gray-700;
+  }
+
+  .pagefind-ui__result-title {
+    @apply text-xl font-bold text-blue-600 dark:text-blue-400 hover:underline;
+  }
+
+  .pagefind-ui__result-excerpt {
+    @apply mt-2 text-gray-600 dark:text-gray-300;
+  }
+
+  .pagefind-ui__message {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+</style>
