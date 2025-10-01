@@ -20,7 +20,7 @@ fields:
     description: Brief description of the article content
     optional: true
     autoGenerate: true
-    suggestion: 'Auto-generated from first paragraph'
+    suggestion: 'A concise summary (50-160 characters) for SEO and social previews.'
 
   slug:
     type: string
@@ -91,6 +91,7 @@ fields:
     type: string
     description: Featured image path
     optional: true
+    suggestion: 'Crucial for social media previews (Open Graph). Place in /public/images/.'
 
   excerpt:
     type: string
