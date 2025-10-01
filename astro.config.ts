@@ -103,7 +103,9 @@ export default defineConfig({
     }),
 
     pagefind(),
-    robotsTxt(),
+    robotsTxt({
+      sitemap: true,
+    }),
 
     ...whenCookieConsentEnabled(() =>
       cookieconsent({
