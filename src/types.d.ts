@@ -36,6 +36,9 @@ export interface Post {
   /**  */
   draft?: boolean;
 
+  /** Whether this post is featured */
+  featured?: boolean;
+
   /**  */
   Content?: AstroComponentFactory;
   content?: string;
