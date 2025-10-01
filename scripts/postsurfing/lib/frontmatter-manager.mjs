@@ -192,6 +192,33 @@ export class FrontmatterManager {
       }
     });
 
+    // SEO-related checks for optional but important fields
+    if (!frontmatter.description) {
+      warnings.push(
+        `SEO Warning: 'description' is missing. A good description is crucial for search engine visibility.`
+      );
+    } else if (frontmatter.description.length < 50) {
+      warnings.push(
+        `SEO Warning: 'description' is very short (${frontmatter.description.length} chars). Aim for 50-160 characters.`
+      );
+    }
+
+    if (!frontmatter.category) {
+      warnings.push(
+        `Content Warning: 'category' is missing. Categorizing content helps with organization and discovery.`
+      );
+    }
+
+    if (!frontmatter.tags || frontmatter.tags.length === 0) {
+      warnings.push(`Content Warning: No 'tags' found. Tags are important for connecting related content.`);
+    }
+
+    if (['articles', 'showcase'].includes(schema.name) && !frontmatter.image) {
+      warnings.push(
+        `Social Warning: 'image' is missing. An image is vital for social media sharing previews (Open Graph).`
+      );
+    }
+
     // Check field types and provide suggestions
     Object.entries(schema.fields).forEach(([field, config]) => {
       const value = frontmatter[field];
