@@ -170,7 +170,48 @@ We change the original design to store these external HTML files. I already crea
 - originals/documents: store the original HTML files for documents
 - originals/cheatsheets: store the original HTML files for cheatsheets
 - Have a comprehensive scan on each part of the whole process of publishing cheatsheets, including the preprocessing, postprocessing, and the prompt. In case of any issues or against their responsibility, we will investigate and fix them.
-  s
+
+### Improve User Experience for reading
+
+I want to improve the user experience for reading in this website. Here comes a general suggestion from Gemini. Please help to evaluate which part of the website needs improvement, based on current project source code and best practices. Give me a list with importance value or suggestions.
+
+```
+To fine-tune your Astro + AstroWind website for professional reading, focus on optimizing typography, improving content clarity, enhancing accessibility, and boosting SEO. Since AstroWind is built with Tailwind CSS, you can make most of these adjustments by editing your configuration files and component styles.
+1. Optimize typography for readability
+High-quality typography is crucial for a professional reading experience.
+Best fonts for extended reading
+Atkinson Hyperlegible: Specifically designed for maximum readability, even for readers with low vision. You can use the accessible-astro-starter theme as a reference for implementing this font.
+Serif fonts: For long-form content, fonts like Georgia or Merriweather can feel more traditional and are often preferred for their readability in print.
+Fine-tune font properties
+Adjust font size: Use a comfortable base font size (e.g., 18px or 20px) and a relative size unit like rem for headings and body copy to ensure a good reading experience on all devices.
+Set line height (leading): Increase the line height for better spacing between lines of text. A value of 1.5 to 1.7 is a good starting point for professional content.
+Define measure (line length): Aim for 45 to 75 characters per line to minimize eye strain. You can control this with the max-width CSS property on your content containers.
+Optimize letter spacing (tracking): A small amount of positive letter spacing can improve readability, especially for headlines.
+2. Improve content structure and clarity
+Organizing your content logically helps readers quickly find and digest information.
+Use semantic HTML: Ensure you are using proper HTML elements like <header>, <main>, <article>, <section>, and <nav>. AstroWind generally uses a good structure, but double-check that your custom additions don't violate these rules.
+Implement a logical heading hierarchy: Use <h1> for the main title and subsequent <h2>, <h3>, etc., in a sequential order. This structure is essential for SEO and accessibility.
+Break up long text: Use bullet points, numbered lists, and short paragraphs to make large blocks of text less intimidating and easier to scan.
+Use content collections: Astro's content collections feature allows you to structure your content efficiently using Markdown or MDX, which is perfect for a professional blog or site.
+3. Enhance accessibility and user experience
+A professional site should be accessible to all users.
+Check color contrast: Ensure text and background colors have sufficient contrast. AstroWind's default themes are well-designed, but use a color contrast checker when customizing.
+Support keyboard navigation: Make sure all interactive elements (links, buttons, navigation) are fully accessible using only a keyboard. Ensure focus states are clearly visible.
+Add skip links: For long pages with complex navigation, include a "skip to main content" link to help keyboard and screen-reader users jump past the header.
+Implement dark mode: AstroWind includes dark and light mode toggles out of the box, which is a key professional feature for user comfort.
+4. Improve performance and SEO
+Fast, searchable content is the mark of a truly professional website.
+Optimize images: Use Astro's built-in image optimization or the astro-imagetools integration to ensure images are resized and compressed for faster loading.
+Manage metadata: Use Astro's SEO component or astro-seo to easily set title, meta descriptions, and Open Graph tags for each page.
+Enable sitemap generation: Use Astro's sitemap integration to automatically generate an XML sitemap. This helps search engines discover and index your content more efficiently.
+Leverage Astro's "islands" architecture: Astro is already performant by default, but be mindful of adding too much JavaScript. Only hydrate components when truly necessary to maintain speed.
+5. Consider a different Astro theme
+If AstroWind's base design is not suitable for your needs, consider a theme built specifically for professional blogs and content.
+Examples of professional-focused Astro themes:
+Accessible Astro Starter: A theme specifically built with high accessibility standards and excellent typography for readability.
+AstroPaper: A minimal, responsive, and SEO-friendly blog theme.
+Logbook Astro: A clean, minimalist theme for bloggers and writers, with a focus on readability.
+```
 
 ## TODO List
 
