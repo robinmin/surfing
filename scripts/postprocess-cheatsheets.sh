@@ -198,7 +198,7 @@ validate_html() {
     log_success "HTML file validated successfully"
 }
 
-# Auto-generate PDF if it doesn't exist
+# Auto-generate PDF (overwrite if existing for freshness)
 auto_generate_pdf() {
     local input_file="$1"
     local filename=$(basename "$input_file")
@@ -206,11 +206,8 @@ auto_generate_pdf() {
     local pdf_dir="$PROJECT_ROOT/public/assets/cheatsheets/$LANG"
     local pdf_file="$pdf_dir/${slug}.pdf"
 
-    # Check if PDF already exists
-    if [[ -f "$pdf_file" ]]; then
-        PDF_PATH="$pdf_file"
-        return 0
-    fi
+    # Always set PDF_PATH for metadata (even if generation is skipped)
+    PDF_PATH="$pdf_file"
 
     # Create PDF directory if it doesn't exist
     mkdir -p "$pdf_dir"
@@ -262,13 +259,29 @@ publish_to_surfing() {
         return 1
     fi
 
+    # Generate relative PDF URL for metadata
+    local pdf_url=""
+    if [[ -n "$PDF_PATH" ]]; then
+        # Convert absolute path to relative URL
+        pdf_url="${PDF_PATH#$PROJECT_ROOT/public}"
+    fi
+
     # Run postsurfing to convert and publish
+    local postsurfing_args=(
+        "$input_file"
+        --type cheatsheets
+        --lang "$LANG"
+        --auto-convert
+        --no-commit
+    )
+    
+    # Add PDF URL if available
+    if [[ -n "$pdf_url" ]]; then
+        postsurfing_args+=(--pdf-url "$pdf_url")
+    fi
+    
     node "$SCRIPT_DIR/postsurfing/postsurfing.mjs" \
-        "$input_file" \
-        --type cheatsheets \
-        --lang "$LANG" \
-        --auto-convert \
-        --no-commit \
+        "${postsurfing_args[@]}" \
         2>&1 | grep -v "^ℹ️" | grep -v "^📝" | grep -v "^🔍"
 
     if [[ $? -eq 0 ]]; then
