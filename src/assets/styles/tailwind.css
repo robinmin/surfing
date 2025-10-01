@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply font-serif text-base leading-medium;
+    letter-spacing: -0.06px;
+  }
+
+  .prose {
+    @apply text-base leading-medium;
+    letter-spacing: -0.06px;
+  }
+
+  .prose p {
+    @apply text-base leading-medium;
+    letter-spacing: -0.06px;
+  }
+
+  .prose li,
+  .prose ul,
+  .prose ol {
+    @apply text-base leading-normal;
+    letter-spacing: -0.06px;
+  }
+}
+
 @layer utilities {
   .bg-page {
     background-color: var(--aw-color-bg-page);
@@ -35,6 +59,10 @@
 
   .btn-tertiary {
     @apply btn border-none shadow-none text-muted hover:text-gray-900 dark:text-gray-400 dark:hover:text-white;
+  }
+
+  .anchor-link {
+    @apply text-inherit no-underline hover:text-inherit;
   }
 }
 
