@@ -20,7 +20,7 @@ fields:
     description: Document description
     optional: true
     autoGenerate: true
-    suggestion: 'Auto-extracted from content or meta tags'
+    suggestion: 'A concise summary (50-160 characters) for SEO and social previews.'
 
   slug:
     type: string
