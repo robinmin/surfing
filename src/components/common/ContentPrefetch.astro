@@ -1,0 +1,33 @@
+---
+export interface Props {
+  urls?: string[];
+  prefetchStrategy?: 'hover' | 'visible' | 'immediate';
+}
+
+const { urls = [], prefetchStrategy = 'hover' } = Astro.props;
+---
+
+<script is:inline define:vars={{ urls, prefetchStrategy }}>
+  class ContentPrefetch {
+    constructor(urls, strategy = 'hover') {
+      this.urls = urls;
+      this.strategy = strategy;
+      this.prefetched = new Set();
+      this.init();
+    }
+  }
+
+  // Initialize prefetching
+  if (urls && urls.length > 0) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => new ContentPrefetch(urls, prefetchStrategy));
+    } else {
+      new ContentPrefetch(urls, prefetchStrategy);
+    }
+
+    // Re-initialize after Astro page transitions
+    document.addEventListener('astro:after-swap', () => {
+      setTimeout(() => new ContentPrefetch(urls, prefetchStrategy), 100);
+    });
+  }
+</script>

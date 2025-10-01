@@ -3,6 +3,11 @@ import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/widgets/Header.astro';
 import Footer from '~/components/widgets/Footer.astro';
 import Announcement from '~/components/widgets/Announcement.astro';
+import ReadingProgress from '~/components/ui/ReadingProgress.astro';
+import BackToTopButton from '~/components/ui/BackToTopButton.astro';
+import TableOfContents from '~/components/ui/TableOfContents.astro';
+import ReadingKeyboardNavigation from '~/components/common/ReadingKeyboardNavigation.astro';
+import PageHeader from '~/components/ui/PageHeader.astro';
 
 import { headerData, footerData } from '~/navigation';
 import type { MetaData } from '~/types';
@@ -23,6 +28,18 @@ const hasCustomJS = frontmatter.customJS && frontmatter.customJS.trim().length >
 ---
 
 <Layout metadata={metadata}>
+  <!-- Reading Progress Bar -->
+  <ReadingProgress />
+
+  <!-- Keyboard Navigation -->
+  <ReadingKeyboardNavigation />
+
+  <!-- Table of Contents -->
+  <TableOfContents />
+
+  <!-- Back to Top Button -->
+  <BackToTopButton />
+
   <!-- Custom CSS injection -->
   {hasCustomCSS && <style set:html={frontmatter.customCSS} />}
 
@@ -55,109 +72,21 @@ const hasCustomJS = frontmatter.customJS && frontmatter.customJS.trim().length >
           </span>
         </div>
 
-        <!-- Title -->
-        <h1 class="font-bold font-heading text-4xl md:text-5xl leading-tighter tracking-tighter mb-4 dark:text-white">
-          {frontmatter.title}
-        </h1>
-
-        <!-- Description -->
-        {
-          frontmatter.description && (
-            <p class="text-xl text-gray-600 dark:text-gray-300 mb-6">{frontmatter.description}</p>
-          )
-        }
-
-        <!-- Metadata -->
-        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
-          {
-            frontmatter.author && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                {frontmatter.author}
-              </div>
-            )
-          }
-
-          {
-            frontmatter.publishDate && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <time datetime={frontmatter.publishDate.toISOString()}>
-                  {frontmatter.publishDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              </div>
-            )
-          }
-
-          {
-            frontmatter.readingTime && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                {frontmatter.readingTime} min read
-              </div>
-            )
-          }
-
-          {
-            frontmatter.source && (
-              <div class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  />
-                </svg>
-                Source: {frontmatter.source}
-              </div>
-            )
-          }
-        </div>
-
-        <!-- Tags -->
-        {
-          frontmatter.tags && frontmatter.tags.length > 0 && (
-            <div class="flex flex-wrap gap-2 mb-6">
-              {frontmatter.tags.map((tag) => (
-                <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )
-        }
+        <!-- Page Header with Metadata -->
+        <PageHeader
+          title={frontmatter.title || ''}
+          description={frontmatter.description}
+          publishDate={frontmatter.publishDate}
+          updateDate={frontmatter.updateDate}
+          tags={frontmatter.tags}
+          author={frontmatter.author}
+        />
       </div>
     </section>
 
     <!-- Document Content -->
     <section class="px-4 pb-16 sm:px-6 mx-auto lg:px-8 lg:pb-20 max-w-6xl">
-      <div class={preserveStyles ? 'document-content-preserved' : 'document-content-styled'}>
+      <div class={`${preserveStyles ? 'document-content-preserved' : 'document-content-styled'} reading-text`}>
         <slot />
       </div>
     </section>

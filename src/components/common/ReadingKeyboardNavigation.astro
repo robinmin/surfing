@@ -1,0 +1,194 @@
+<script>
+  class ReadingKeyboardNavigation {
+    private headings: NodeListOf<HTMLElement>;
+
+    constructor() {
+      this.headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      this.init();
+    }
+
+    private init() {
+      document.addEventListener('keydown', this.handleKeydown.bind(this));
+    }
+
+    private handleKeydown(e: KeyboardEvent) {
+      // Don't interfere with input fields or when modifier keys are pressed
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.altKey
+      ) {
+        return;
+      }
+
+      const headings = Array.from(this.headings);
+      const currentHeading = this.findCurrentHeading();
+
+      switch (e.key) {
+        case 'j':
+        case 'ArrowDown':
+          e.preventDefault();
+          this.navigateToNextHeading(currentHeading, headings);
+          break;
+
+        case 'k':
+        case 'ArrowUp':
+          e.preventDefault();
+          this.navigateToPreviousHeading(currentHeading, headings);
+          break;
+
+        case 'Home':
+          e.preventDefault();
+          this.scrollToTop();
+          break;
+
+        case 'End':
+          e.preventDefault();
+          this.scrollToBottom();
+          break;
+
+        case 'g':
+          // Double 'g' for top (vim-style)
+          if (this.lastKey === 'g' && Date.now() - this.lastKeyTime < 500) {
+            e.preventDefault();
+            this.scrollToTop();
+          }
+          break;
+
+        case 'G':
+          e.preventDefault();
+          this.scrollToBottom();
+          break;
+      }
+
+      // Track consecutive key presses
+      this.lastKey = e.key;
+      this.lastKeyTime = Date.now();
+    }
+
+    private lastKey: string = '';
+    private lastKeyTime: number = 0;
+
+    private findCurrentHeading(): HTMLElement | null {
+      const viewportCenter = window.scrollY + window.innerHeight / 2;
+
+      // Find the heading closest to the center of the viewport
+      let closestHeading: HTMLElement | null = null;
+      let closestDistance = Infinity;
+
+      this.headings.forEach((heading) => {
+        const distance = Math.abs(heading.offsetTop - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestHeading = heading;
+        }
+      });
+
+      return closestHeading;
+    }
+
+    private navigateToNextHeading(currentHeading: HTMLElement | null, headings: HTMLElement[]) {
+      const currentIndex = currentHeading ? headings.indexOf(currentHeading) : -1;
+      const nextIndex = Math.min(currentIndex + 1, headings.length - 1);
+      const nextHeading = headings[nextIndex];
+
+      if (nextHeading) {
+        this.scrollToHeading(nextHeading);
+      }
+    }
+
+    private navigateToPreviousHeading(currentHeading: HTMLElement | null, headings: HTMLElement[]) {
+      const currentIndex = currentHeading ? headings.indexOf(currentHeading) : 0;
+      const prevIndex = Math.max(currentIndex - 1, 0);
+      const prevHeading = headings[prevIndex];
+
+      if (prevHeading) {
+        this.scrollToHeading(prevHeading);
+      }
+    }
+
+    private scrollToHeading(heading: HTMLElement) {
+      heading.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest',
+      });
+
+      // Update URL hash
+      const id = heading.id || this.generateHeadingId(heading);
+      if (id) {
+        history.replaceState(null, '', `#${id}`);
+      }
+
+      // Focus the heading for screen readers
+      heading.focus({ preventScroll: true });
+    }
+
+    private generateHeadingId(heading: HTMLElement): string {
+      // Generate a unique ID based on heading text
+      const text =
+        heading.textContent
+          ?.trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-') || '';
+      return `heading-${text}`;
+    }
+
+    private scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+
+    private scrollToBottom() {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+
+    public destroy() {
+      document.removeEventListener('keydown', this.handleKeydown.bind(this));
+    }
+  }
+
+  // Initialize keyboard navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new ReadingKeyboardNavigation());
+  } else {
+    new ReadingKeyboardNavigation();
+  }
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:after-swap', () => {
+    setTimeout(() => new ReadingKeyboardNavigation(), 100);
+  });
+</script>
+
+<style>
+  /* Ensure headings are focusable for accessibility */
+  h1:focus,
+  h2:focus,
+  h3:focus,
+  h4:focus,
+  h5:focus,
+  h6:focus {
+    outline: 2px solid var(--aw-color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Hide focus outline for mouse users */
+  h1:focus:not(:focus-visible),
+  h2:focus:not(:focus-visible),
+  h3:focus:not(:focus-visible),
+  h4:focus:not(:focus-visible),
+  h5:focus:not(:focus-visible),
+  h6:focus:not(:focus-visible) {
+    outline: none;
+  }
+</style>

@@ -18,6 +18,16 @@ const { article } = Astro.props;
 const { Content } = await render(article);
 ---
 
-<MarkdownLayout frontmatter={{ title: article.data.title }}>
+<MarkdownLayout
+  frontmatter={{
+    title: article.data.title,
+    description: article.data.description,
+    publishDate: article.data.publishDate,
+    updateDate: article.data.updateDate,
+    readingTime: article.data.readingTime,
+    tags: article.data.tags,
+    author: article.data.author,
+  }}
+>
   <Content />
 </MarkdownLayout>

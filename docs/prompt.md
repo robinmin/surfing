@@ -213,6 +213,27 @@ AstroPaper: A minimal, responsive, and SEO-friendly blog theme.
 Logbook Astro: A clean, minimalist theme for bloggers and writers, with a focus on readability.
 ```
 
+Your previous task has been interupted by unknow reason, Continue to finished it. Here comes the original task:
+
+### Improve User Experience for reading(2)
+
+I agree with you to optimize it in the following items:
+
+- 1. Progressive Reading Enhancements
+- 2. Enhanced Typography Scaling
+- 3. Reading Flow Optimization
+- 5. Focus Management & Keyboard Navigation
+- 6. Content Engagement Features
+- 7. Mobile Reading Experience
+- 8. Performance Enhancements
+
+And I want to check whether we have a existing mature solution to implement:
+
+- back-to-top button for all articles and documents;
+- Floating TOC panel on the sidebar with navigation
+
+### Teammate
+
 ## TODO List
 
 - [x] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.

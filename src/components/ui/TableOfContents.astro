@@ -1,0 +1,295 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<aside
+  id="table-of-contents"
+  class={`hidden lg:block fixed right-8 top-24 w-64 z-30 transition-all duration-300 ${className}`}
+  aria-label="Table of contents"
+>
+  <div
+    class="sticky top-8 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-lg"
+  >
+    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"
+        ></path>
+      </svg>
+      Table of Contents
+    </h3>
+
+    <nav>
+      <ul id="toc-list" class="space-y-1 max-h-96 overflow-y-auto">
+        <!-- Headings will be populated client-side -->
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<script>
+  class TableOfContents {
+    private toc: HTMLElement | null;
+    private tocList: HTMLElement | null;
+    private links: NodeListOf<HTMLAnchorElement>;
+    private headings: Array<{ text: string; level: number; id: string }>;
+    private observer: IntersectionObserver | null = null;
+
+    constructor() {
+      this.toc = document.getElementById('table-of-contents');
+      this.tocList = document.getElementById('toc-list');
+      this.headings = [];
+      this.links = document.querySelectorAll('.toc-link');
+      this.init();
+    }
+
+    private init() {
+      if (!this.toc || !this.tocList) return;
+
+      // Extract headings from the page
+      this.extractHeadings();
+
+      // Only show TOC if there are enough headings
+      if (this.headings.length < 3) {
+        this.toc.style.display = 'none';
+        return;
+      }
+
+      this.toc.style.display = 'block';
+      this.renderTOC();
+      this.setupIntersectionObserver();
+      this.setupClickHandlers();
+      this.setupKeyboardNavigation();
+    }
+
+    private extractHeadings() {
+      const headingElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      this.headings = Array.from(headingElements)
+        .map((heading) => {
+          const level = parseInt(heading.tagName.charAt(1));
+          const text = heading.textContent?.trim() || '';
+          let id = heading.id;
+
+          // Generate ID if not present
+          if (!id) {
+            id = `heading-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+            heading.id = id;
+          }
+
+          return { text, level, id };
+        })
+        .filter((heading) => heading.text.length > 0);
+    }
+
+    private renderTOC() {
+      if (!this.tocList) return;
+
+      const tocItems = this.headings
+        .map((heading) => {
+          const indentClass =
+            heading.level === 2
+              ? 'ml-0'
+              : heading.level === 3
+                ? 'ml-3'
+                : heading.level === 4
+                  ? 'ml-6'
+                  : heading.level === 5
+                    ? 'ml-9'
+                    : 'ml-12';
+
+          return `
+          <li class="text-sm transition-colors duration-200 ${indentClass}">
+            <a
+              href="#${heading.id}"
+              class="block py-1 px-2 rounded text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 toc-link"
+              data-heading-id="${heading.id}"
+            >
+              ${heading.text}
+            </a>
+          </li>
+        `;
+        })
+        .join('');
+
+      this.tocList.innerHTML = tocItems;
+      this.links = document.querySelectorAll('.toc-link');
+    }
+
+    private setupIntersectionObserver() {
+      const headingElements = this.headings.map((h) => document.getElementById(h.id)).filter(Boolean) as HTMLElement[];
+
+      if (headingElements.length === 0) return;
+
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const link = document.querySelector(`[data-heading-id="${entry.target.id}"]`) as HTMLAnchorElement;
+            if (!link) return;
+
+            if (entry.isIntersecting) {
+              // Remove active class from all links
+              this.links.forEach((l) => l.classList.remove('active'));
+              // Add active class to current link
+              link.classList.add('active');
+            }
+          });
+        },
+        {
+          rootMargin: '-80px 0px -80% 0px',
+          threshold: 0.1,
+        }
+      );
+
+      headingElements.forEach((heading) => {
+        this.observer?.observe(heading);
+      });
+    }
+
+    private setupClickHandlers() {
+      this.links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('data-heading-id');
+          if (!targetId) return;
+
+          const targetElement = document.getElementById(targetId);
+          if (!targetElement) return;
+
+          // Smooth scroll to target
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest',
+          });
+
+          // Update URL without triggering scroll
+          history.replaceState(null, '', `#${targetId}`);
+        });
+      });
+    }
+
+    private setupKeyboardNavigation() {
+      document.addEventListener('keydown', (e) => {
+        // Only handle if TOC is visible and no input is focused
+        if (
+          this.toc?.classList.contains('hidden') ||
+          document.activeElement?.tagName === 'INPUT' ||
+          document.activeElement?.tagName === 'TEXTAREA'
+        ) {
+          return;
+        }
+
+        const activeLink = document.querySelector('.toc-link.active') as HTMLAnchorElement;
+        const allLinks = Array.from(this.links);
+        const currentIndex = activeLink ? allLinks.indexOf(activeLink) : -1;
+
+        let targetIndex = currentIndex;
+
+        switch (e.key) {
+          case 'ArrowDown':
+          case 'j':
+            e.preventDefault();
+            targetIndex = Math.min(currentIndex + 1, allLinks.length - 1);
+            break;
+          case 'ArrowUp':
+          case 'k':
+            e.preventDefault();
+            targetIndex = Math.max(currentIndex - 1, 0);
+            break;
+          case 'Home':
+            if (e.ctrlKey) {
+              e.preventDefault();
+              targetIndex = 0;
+            }
+            break;
+          case 'End':
+            if (e.ctrlKey) {
+              e.preventDefault();
+              targetIndex = allLinks.length - 1;
+            }
+            break;
+          case 'Enter':
+            if (activeLink) {
+              e.preventDefault();
+              activeLink.click();
+            }
+            break;
+        }
+
+        if (targetIndex !== currentIndex && targetIndex >= 0) {
+          allLinks[targetIndex].click();
+        }
+      });
+    }
+
+    public destroy() {
+      this.observer?.disconnect();
+    }
+  }
+
+  // Initialize TOC
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new TableOfContents());
+  } else {
+    new TableOfContents();
+  }
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:after-swap', () => {
+    setTimeout(() => new TableOfContents(), 100);
+  });
+</script>
+
+<style>
+  .toc-link.active {
+    @apply text-primary dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 font-medium;
+  }
+
+  .toc-link:hover {
+    @apply text-primary dark:text-blue-400;
+  }
+
+  /* Custom scrollbar for TOC */
+  #table-of-contents nav ul::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  #table-of-contents nav ul::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #table-of-contents nav ul::-webkit-scrollbar-thumb {
+    background: rgb(156 163 175);
+    border-radius: 2px;
+  }
+
+  #table-of-contents nav ul::-webkit-scrollbar-thumb:hover {
+    background: rgb(107 114 128);
+  }
+
+  /* Dark mode scrollbar */
+  .dark #table-of-contents nav ul::-webkit-scrollbar-thumb {
+    background: rgb(75 85 99);
+  }
+
+  .dark #table-of-contents nav ul::-webkit-scrollbar-thumb:hover {
+    background: rgb(107 114 128);
+  }
+
+  /* Responsive behavior */
+  @media (max-width: 1024px) {
+    #table-of-contents {
+      display: none !important;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    #table-of-contents {
+      display: none !important;
+    }
+  }
+</style>

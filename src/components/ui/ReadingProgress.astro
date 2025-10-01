@@ -1,0 +1,168 @@
+---
+export interface Props {
+  class?: string;
+  color?: string;
+}
+
+const { class: className = '', color = 'primary' } = Astro.props;
+---
+
+<div
+  id="reading-progress-container"
+  class={`fixed top-0 left-0 w-full h-1 z-50 bg-gray-200 dark:bg-gray-700 ${className}`}
+  role="progressbar"
+  aria-label="Reading progress"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+>
+  <div
+    id="reading-progress-bar"
+    class={`h-full transition-all duration-150 ease-out ${color === 'primary' ? 'bg-primary' : color === 'secondary' ? 'bg-secondary' : 'bg-accent'}`}
+    style="width: 0%"
+  >
+  </div>
+</div>
+
+<script>
+  class ReadingProgress {
+    private container: HTMLElement | null;
+    private progressBar: HTMLElement | null;
+    private article: HTMLElement | null;
+    private animationFrame: number | null = null;
+
+    constructor() {
+      this.container = document.getElementById('reading-progress-container');
+      this.progressBar = document.getElementById('reading-progress-bar');
+      this.article = this.findMainContent();
+      this.init();
+    }
+
+    private findMainContent(): HTMLElement | null {
+      // Try to find main content area
+      const selectors = ['main', '[role="main"]', '.prose', '.document-content', 'article', '.content'];
+
+      for (const selector of selectors) {
+        const element = document.querySelector(selector) as HTMLElement;
+        if (element && element.offsetHeight > 100) {
+          return element;
+        }
+      }
+
+      // Fallback to body
+      return document.body;
+    }
+
+    private init() {
+      if (!this.container || !this.progressBar || !this.article) return;
+
+      const updateProgress = () => {
+        const scrollTop = window.scrollY;
+        const articleHeight = this.article!.offsetHeight;
+        const articleTop = this.article!.offsetTop;
+
+        // Calculate progress based on article position
+        let progress = 0;
+
+        if (scrollTop >= articleTop) {
+          const scrolledInArticle = scrollTop - articleTop;
+          const visibleArticleHeight = Math.min(articleHeight, window.innerHeight);
+          progress = Math.min(((scrolledInArticle + visibleArticleHeight) / articleHeight) * 100, 100);
+        }
+
+        // Smooth progress updates
+        const currentWidth = parseFloat(this.progressBar!.style.width) || 0;
+        const targetWidth = Math.max(0, Math.min(100, progress));
+        const newWidth = currentWidth + (targetWidth - currentWidth) * 0.1;
+
+        this.progressBar!.style.width = `${newWidth}%`;
+        this.container!.setAttribute('aria-valuenow', Math.round(newWidth).toString());
+
+        this.animationFrame = requestAnimationFrame(updateProgress);
+      };
+
+      // Throttled scroll handler
+      let ticking = false;
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('resize', updateProgress, { passive: true });
+
+      // Initial update
+      updateProgress();
+    }
+
+    public destroy() {
+      if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame);
+      }
+    }
+  }
+
+  // Initialize reading progress
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new ReadingProgress());
+  } else {
+    new ReadingProgress();
+  }
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:after-swap', () => {
+    setTimeout(() => new ReadingProgress(), 100);
+  });
+</script>
+
+<style>
+  #reading-progress-container {
+    /* Ensure it stays above content but below modals */
+    z-index: 50;
+    /* Subtle shadow for better visibility */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  #reading-progress-bar {
+    /* Smooth transitions */
+    transition: width 0.15s ease-out;
+    /* Prevent layout shift */
+    will-change: width;
+  }
+
+  /* Hide on very small screens or when printing */
+  @media (max-width: 480px) {
+    #reading-progress-container {
+      display: none;
+    }
+  }
+
+  @media print {
+    #reading-progress-container {
+      display: none !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    #reading-progress-container {
+      height: 2px;
+    }
+
+    #reading-progress-bar {
+      background: currentColor;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    #reading-progress-bar {
+      transition: none;
+    }
+  }
+</style>

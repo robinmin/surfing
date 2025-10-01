@@ -19,10 +19,26 @@ export default {
         heading: ['var(--aw-font-heading, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
       },
       fontSize: {
-        base: ['18px', { lineHeight: '1.5', letterSpacing: '-0.06px' }],
+        xs: ['0.75rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
+        sm: ['0.875rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
+        base: ['18px', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
+        lg: ['20px', { lineHeight: '1.6', letterSpacing: '-0.01em' }],
+        xl: ['24px', { lineHeight: '1.6', letterSpacing: '-0.005em' }],
+        '2xl': ['30px', { lineHeight: '1.4', letterSpacing: '0' }],
+        '3xl': ['36px', { lineHeight: '1.3', letterSpacing: '0' }],
+        '4xl': ['48px', { lineHeight: '1.2', letterSpacing: '0' }],
+        '5xl': ['60px', { lineHeight: '1.1', letterSpacing: '0' }],
       },
       lineHeight: {
+        none: '1',
+        tight: '1.25',
+        snug: '1.375',
+        normal: '1.5',
+        relaxed: '1.625',
+        loose: '2',
         medium: '1.5',
+        prose: '1.6',
+        reading: '1.7',
       },
 
       animation: {

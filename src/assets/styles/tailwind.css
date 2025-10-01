@@ -4,25 +4,122 @@
 
 @layer base {
   body {
-    @apply font-serif text-base leading-medium;
-    letter-spacing: -0.06px;
+    @apply font-serif text-base leading-reading;
+    letter-spacing: -0.01em;
   }
 
   .prose {
-    @apply text-base leading-medium;
-    letter-spacing: -0.06px;
+    @apply text-base leading-reading;
+    letter-spacing: -0.01em;
   }
 
   .prose p {
-    @apply text-base leading-medium;
-    letter-spacing: -0.06px;
+    @apply text-base leading-reading;
+    letter-spacing: -0.01em;
   }
 
   .prose li,
   .prose ul,
   .prose ol {
-    @apply text-base leading-normal;
-    letter-spacing: -0.06px;
+    @apply text-base leading-relaxed;
+    letter-spacing: -0.01em;
+  }
+
+  /* Reading-specific typography */
+  .reading-text {
+    @apply text-base leading-reading font-serif;
+    letter-spacing: -0.01em;
+    word-spacing: 0.1em;
+  }
+
+  .reading-text p {
+    @apply mb-6;
+  }
+
+  .reading-text h1,
+  .reading-text h2,
+  .reading-text h3,
+  .reading-text h4,
+  .reading-text h5,
+  .reading-text h6 {
+    @apply font-heading leading-tight mb-4 mt-8;
+    letter-spacing: -0.02em;
+  }
+
+  /* Responsive reading typography */
+  @media (max-width: 640px) {
+    .reading-text {
+      font-size: 17px; /* iOS optimal reading size */
+      line-height: 1.6;
+    }
+
+    .reading-text p {
+      @apply mb-5;
+    }
+
+    /* Improve touch targets on mobile */
+    .reading-text a {
+      @apply px-1 py-0.5 -mx-1 -my-0.5 rounded;
+    }
+
+    /* Better spacing for mobile reading */
+    .reading-text h1,
+    .reading-text h2,
+    .reading-text h3 {
+      @apply mt-6 mb-3;
+    }
+
+    .reading-text ul,
+    .reading-text ol {
+      @apply pl-6;
+    }
+
+    .reading-text li {
+      @apply mb-2;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .reading-text {
+      font-size: 19px;
+      line-height: 1.7;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .reading-text {
+      font-size: 20px;
+      line-height: 1.7;
+    }
+  }
+
+  /* Mobile reading enhancements */
+  @media (max-width: 768px) {
+    /* Prevent horizontal scroll */
+    .reading-text {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+
+    /* Better code blocks on mobile */
+    .reading-text pre {
+      @apply text-xs overflow-x-auto;
+    }
+
+    .reading-text code {
+      @apply text-sm;
+    }
+
+    /* Improve table readability */
+    .reading-text table {
+      @apply text-sm;
+    }
+
+    /* Better image handling */
+    .reading-text img {
+      @apply w-full h-auto;
+    }
   }
 }
 
