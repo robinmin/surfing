@@ -55,6 +55,7 @@ const getNormalizedPost = async (post: CollectionEntry<'articles'>): Promise<Pos
     category: rawCategory,
     author,
     draft = false,
+    featured = false,
     metadata = {},
   } = data;
 
@@ -91,6 +92,7 @@ const getNormalizedPost = async (post: CollectionEntry<'articles'>): Promise<Pos
     author: author,
 
     draft: draft,
+    featured: featured,
 
     metadata,
 
@@ -280,3 +282,10 @@ export async function getRelatedPosts(originalPost: Post, maxResults: number = 4
 
   return selectedPosts;
 }
+
+/** Get featured posts */
+export const findFeaturedPosts = async ({ count }: { count?: number } = {}): Promise<Array<Post>> => {
+  const posts = await fetchPosts();
+  const featuredPosts = posts.filter((post) => post.featured === true);
+  return count ? featuredPosts.slice(0, count) : featuredPosts;
+};
