@@ -39,6 +39,7 @@ const { values: options, positionals: args } = parseArgs({
     'no-commit': { type: 'boolean' },
     'commit-message': { type: 'string' },
     force: { type: 'boolean' },
+    'pdf-url': { type: 'string' },
     verbose: { type: 'boolean', short: 'v' },
     help: { type: 'boolean', short: 'h' },
   },
@@ -76,6 +77,7 @@ Automated content publishing for the Surfing platform
        --no-build               Skip build validation step
        --no-commit              Skip git commit and push
        --commit-message <msg>   Custom commit message
+       --pdf-url <url>          PDF URL for cheatsheets (relative to assets/)
        --force                  Overwrite existing files without warning
    -v, --verbose                Enable detailed logging
    -h, --help                   Show this help message
@@ -182,6 +184,11 @@ async function main() {
       // Update content and metadata with conversion results
       processedContent.content = conversionResult.bodyContent;
       processedContent.metadata = { ...processedContent.metadata, ...conversionResult };
+    }
+
+    // Add PDF URL for cheatsheets if provided
+    if (options['pdf-url'] && contentType === 'cheatsheets') {
+      processedContent.metadata.pdfUrl = options['pdf-url'];
     }
 
     // Step 3: Manage frontmatter
