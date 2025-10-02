@@ -1,4 +1,5 @@
 {
+  "contextFile": "docs/AGENTS.md",
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
