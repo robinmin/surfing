@@ -1,5 +1,6 @@
 ---
 title: "Wrangler CLI Cheatsheet"
+pdfUrl: "/assets/cheatsheets/en/wrangler-cheatsheet.pdf"
 description: "Complete Command Reference for Cloudflare Workers"
 customCSS: |
   * {

@@ -233,13 +233,15 @@ And I want to check whether we have a existing mature solution to implement:
 - Floating TOC panel on the sidebar with navigation
 
 ### New cheatsheet for task-master-ai
+
 Your task is helping to design an one page cheatsheet for daily use for specified topics as shown below.
+
 - The cheatsheet will be designed with a focus on clarity, simplicity, and ease of use, well designed, neat and concise one page.
 - To save space, please use column layout instead of current table layout
 - Add some slight background color for the panel header
 
 Current topic is: Task Management:
-https://github.com/eyaltoledano/claude-task-master is an AI-powered task-management system. It can be used in MCP mode or  command mode. You can refer to https://docs.task-master.dev/capabilities/cli-root-commands see the command usage.
+https://github.com/eyaltoledano/claude-task-master is an AI-powered task-management system. It can be used in MCP mode or command mode. You can refer to https://docs.task-master.dev/capabilities/cli-root-commands see the command usage.
 
 ## TODO List
 

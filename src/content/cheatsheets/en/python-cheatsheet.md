@@ -1,5 +1,6 @@
 ---
 title: "Python Cheatsheet for Seasoned Developers 🐍"
+pdfUrl: "/assets/cheatsheets/en/python-cheatsheet.pdf"
 description: "Complete Reference for Seasoned Developers"
 externalCSS: ["https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"]
 customCSS: |

@@ -1,5 +1,6 @@
 ---
 title: "C++ Cheatsheet for Experienced Developers"
+pdfUrl: "/assets/cheatsheets/en/cpp-cheatsheet.pdf"
 externalCSS: ["https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"]
 externalJS: ["https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"]
 customCSS: |
