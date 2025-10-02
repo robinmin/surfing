@@ -1,10 +1,10 @@
 ---
-title: 'Simple Test Article'
-description: 'This is a simple test article for the PostSurfing CLI tool.'
-tags: ['typescript', 'angular']
+title: "Simple Test Article"
+description: "This is a simple test article for the PostSurfing CLI tool."
+tags: ["typescript", "angular"]
 readingTime: 1
 wordCount: 56
-publishDate: 2025-10-01
+publishDate: 2025-10-02
 draft: false
 featured: false
 ---
