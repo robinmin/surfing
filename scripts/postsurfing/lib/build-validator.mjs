@@ -180,7 +180,7 @@ export class BuildValidator {
    * Extract content collection errors
    */
   extractContentError(line) {
-    // Look for patterns like "Invalid frontmatter in src/content/articles/file.md"
+    // Look for patterns like "Invalid frontmatter in contents/articles/file.md"
     const fileMatch = line.match(/src\/content\/[^:]+/);
     const file = fileMatch ? fileMatch[0] : 'unknown file';
 
