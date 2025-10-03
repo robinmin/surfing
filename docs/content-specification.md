@@ -7,10 +7,10 @@ This document provides comprehensive guidelines for creating and managing conten
 ### How to Publish a Markdown File
 
 1. **Choose the content type and language** and create your file in the appropriate directory:
-   - **Articles**: `src/content/articles/{lang}/your-article.md`
-   - **Showcase**: `src/content/showcase/{lang}/your-project.md`
-   - **Documents**: `src/content/documents/{lang}/your-document.md`
-   - **Cheatsheets**: `src/content/cheatsheets/{lang}/your-cheatsheet.md`
+   - **Articles**: `contents/articles/{lang}/your-article.md`
+   - **Showcase**: `contents/showcase/{lang}/your-project.md`
+   - **Documents**: `contents/documents/{lang}/your-document.md`
+   - **Cheatsheets**: `contents/cheatsheets/{lang}/your-cheatsheet.md`
 
    **Supported Languages:**
    - `en` - English
@@ -46,7 +46,7 @@ Surfing supports multi-language content with automatic organization into languag
 ### Content Organization Structure
 
 ```
-src/content/
+contents/
 ├── articles/
 │   ├── en/           # English articles
 │   │   ├── ai-research.md
@@ -106,11 +106,11 @@ Surfing supports full HTML content with custom CSS and JavaScript, perfect for m
 
 #### Basic HTML Document
 
-1. **Create your HTML file** in `src/content/documents/{lang}/your-document.md`
+1. **Create your HTML file** in `contents/documents/{lang}/your-document.md`
 
 2. **Add frontmatter** at the top:
 
-```yaml
+```markdown
 ---
 title: 'Legacy Documentation'
 description: 'Imported documentation from previous system'
@@ -120,10 +120,11 @@ category: 'docs'
 author: 'Your Name'
 contentType: 'legacy' # Options: page, legacy, template, snippet
 ---
+
 <h1>Your HTML Content</h1>
 <p>Any existing HTML content works here.</p>
 <div class="custom-styling">
-<!-- Rich HTML formatting -->
+  <!-- Rich HTML formatting -->
 </div>
 ```
 
@@ -133,21 +134,21 @@ contentType: 'legacy' # Options: page, legacy, template, snippet
 
 For complete HTML applications with custom styling and interactivity:
 
-1. **Create your document** in `src/content/documents/{lang}/your-app.md`
+1. **Create your document** in `contents/documents/{lang}/your-app.md`
 
 2. **Add comprehensive frontmatter**:
 
-```yaml
+```markdown
 ---
-title: "Interactive HTML Application"
-description: "Full HTML content with custom CSS and JavaScript"
+title: 'Interactive HTML Application'
+description: 'Full HTML content with custom CSS and JavaScript'
 publishDate: 2024-01-15
 tags: [html, css, javascript, interactive]
-category: "applications"
-author: "Your Name"
-contentType: "page"
+category: 'applications'
+author: 'Your Name'
+contentType: 'page'
 featured: true
-preserveStyles: true  # Maintains your original styling
+preserveStyles: true # Maintains your original styling
 
 # Custom CSS - moved from <style> tags
 customCSS: |
@@ -215,7 +216,7 @@ customJS: |
   <h2>🚀 Interactive HTML Application</h2>
   <p>This demonstrates full HTML content with custom CSS and JavaScript preserved exactly as written.</p>
 
-  <button class="interactive-button">Click me!</button>
+<button class="interactive-button">Click me!</button>
 
   <p>Current time: <strong id="current-time">Loading...</strong></p>
 
@@ -330,7 +331,7 @@ Your HTML documents automatically appear in:
 
 #### Quick Reference
 
-**File Location**: `src/content/documents/{lang}/your-file.md`
+**File Location**: `contents/documents/{lang}/your-file.md`
 
 **Minimal Example**:
 
@@ -367,7 +368,7 @@ Surfing supports comprehensive cheatsheets with AI-specific metadata, perfect fo
 
 #### Basic Cheatsheet
 
-1. **Create your cheatsheet file** in `src/content/cheatsheets/{lang}/your-cheatsheet.md`
+1. **Create your cheatsheet file** in `contents/cheatsheets/{lang}/your-cheatsheet.md`
 
 2. **Add comprehensive frontmatter**:
 
@@ -554,7 +555,7 @@ draft: true # This hides the content from public view
 Simply delete the markdown/HTML file from the content directory.
 
 **Method 3: Move to Private**
-Move the file outside of `src/content/` directories (e.g., to a `_drafts/` folder).
+Move the file outside of `contents/` directories (e.g., to a `_drafts/` folder).
 
 ## 📄 Markdown Specifications
 
@@ -821,7 +822,7 @@ The site supports automatic dark/light mode. Customize colors:
 ### Daily Publishing Workflow
 
 1. **Write content** in Obsidian or your preferred markdown editor
-2. **Copy/move files** to the appropriate `src/content/` directory
+2. **Copy/move files** to the appropriate `contents/` directory
 3. **Commit changes** to your Git repository
 4. **Automatic deployment** happens via your hosting platform
 
@@ -829,11 +830,11 @@ The site supports automatic dark/light mode. Customize colors:
 
 ```bash
 # Move all articles from Obsidian vault
-cp ~/obsidian-vault/articles/*.md src/content/articles/
+cp ~/obsidian-vault/articles/*.md contents/articles/
 
 # Process and clean up frontmatter if needed
 # Then commit all changes
-git add src/content/
+git add contents/
 git commit -m "Add new articles from Obsidian"
 ```
 
