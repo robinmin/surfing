@@ -30,7 +30,8 @@
       "Bash(node:*)",
       "Bash(test:*)",
       "Bash(curl:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__playwright__browser_navigate_back"
     ],
     "deny": [],
     "ask": []
