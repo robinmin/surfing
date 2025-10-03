@@ -7,6 +7,7 @@ wordCount: 794
 publishDate: 2025-09-29
 draft: false
 featured: true
+image: "~/assets/images/astro_logo.png"
 ---
 
 ## What is Astro?
