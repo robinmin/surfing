@@ -12,9 +12,7 @@ const { pdfUrl, currentPath } = Astro.props;
 // Generate PDF URL dynamically based on current page URL if not provided
 const dynamicPdfUrl =
   pdfUrl ||
-  (currentPath
-    ? `/assets/cheatsheets/en${currentPath.replace('/cheatsheets/en/', '/').replace('.html', '')}.pdf`
-    : null);
+  (currentPath ? `/pdf/cheatsheets/en${currentPath.replace('/cheatsheets/en/', '/').replace('.html', '')}.pdf` : null);
 ---
 
 <!-- Cheatsheet Footer -->
