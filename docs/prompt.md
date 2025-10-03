@@ -137,7 +137,7 @@ I am working on fixing the issues on the process of publishing cheatsheets. You 
 We use a sample to fix the issues, including:
 
 - The original HTML file: @/Users/robin/Downloads/python-cheatsheet.html
-- The converted markdown file by the process of publishing cheatsheets: @src/content/cheatsheets/en/python-cheatsheet.md
+- The converted markdown file by the process of publishing cheatsheets: @contents/cheatsheets/en/python-cheatsheet.md
 - The relevant URL on dev-server: http://localhost:4322/cheatsheets/en/python-cheatsheet
 
 And, due to the back and force of the process, we lost some beautiful design elements in @/Users/robin/Downloads/python-cheatsheet.html now, But we can refer to another file for reference @golang-cheatsheet-restored.html, especially on the title header part and the footer part.
