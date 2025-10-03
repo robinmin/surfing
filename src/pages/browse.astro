@@ -3,6 +3,8 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { getAllContent, filterContent, sortContent, extractTags, extractCategories } from '~/utils/content';
 import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+import { findImage } from '~/utils/images';
+import { Image } from 'astro:assets';
 
 // Use default language for SSG, will be updated on client
 const t = getServerTranslation(DEFAULT_LANGUAGE);
@@ -11,6 +13,13 @@ const t = getServerTranslation(DEFAULT_LANGUAGE);
 const allContent = await getAllContent();
 const publishedContent = filterContent(allContent, { draft: false });
 const sortedContent = sortContent(publishedContent, 'date', 'desc');
+
+// Resolve all images
+for (const entry of sortedContent) {
+  if (entry.data.image) {
+    entry.data.resolvedImage = await findImage(entry.data.image);
+  }
+}
 
 // Get available filters
 const allTags = extractTags(publishedContent);
@@ -139,8 +148,14 @@ const metadata = {
               data-description={(entry.data.description || entry.data.excerpt || '').toLowerCase()}
               data-date={entry.data.publishDate || entry.data.updateDate || new Date()}
             >
-              {entry.data.image && (
-                <img src={entry.data.image} alt={entry.data.title} class="w-full h-48 object-cover" />
+              {entry.data.resolvedImage && (
+                <Image
+                  src={entry.data.resolvedImage}
+                  alt={entry.data.title}
+                  class="w-full h-48 object-cover"
+                  width={400}
+                  height={200}
+                />
               )}
 
               <div class="p-6">
