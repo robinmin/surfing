@@ -9,6 +9,7 @@ featured: true
 author: 'AI Assistant'
 aliases: ['surfing-intro', 'welcome']
 cssclass: 'welcome-article'
+image: "~/assets/images/surfing.png"
 ---
 
 # Welcome to Surfing 🏄‍♂️
