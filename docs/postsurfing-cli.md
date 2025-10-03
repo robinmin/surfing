@@ -49,7 +49,7 @@ postsurfing <file-path> --type <content-type> [--lang <language>] [options]
 - `cn` - Chinese (Simplified)
 - `jp` - Japanese
 
-Content is automatically organized into language-specific subdirectories: `src/content/{type}/{lang}/`
+Content is automatically organized into language-specific subdirectories: `contents/{type}/{lang}/`
 
 ### Examples
 
@@ -91,7 +91,7 @@ The PostSurfing CLI supports multi-language content publishing with automatic di
 Content is automatically placed in language-specific subdirectories:
 
 ```
-src/content/
+contents/
 ├── articles/
 │   ├── en/           # English articles
 │   ├── cn/           # Chinese articles
@@ -140,23 +140,23 @@ postsurfing ./article.md --type articles --lang fr  # → Uses 'en' with warning
 ```bash
 # English article
 postsurfing ./my-article.md --type articles --lang en
-# Output: src/content/articles/en/my-article.md
+# Output: contents/articles/en/my-article.md
 
 # Chinese showcase
 postsurfing ./project.md --type showcase --lang cn
-# Output: src/content/showcase/cn/project.md
+# Output: contents/showcase/cn/project.md
 
 # Japanese document
 postsurfing ./doc.html --type documents --lang jp
-# Output: src/content/documents/jp/doc.md
+# Output: contents/documents/jp/doc.md
 
 # English cheatsheet
 postsurfing ./guide.md --type cheatsheets --lang en
-# Output: src/content/cheatsheets/en/guide.md
+# Output: contents/cheatsheets/en/guide.md
 
 # Chinese cheatsheet
 postsurfing ./reference.html --type cheatsheets --lang cn
-# Output: src/content/cheatsheets/cn/reference.md
+# Output: contents/cheatsheets/cn/reference.md
 ```
 
 ### Options
@@ -355,7 +355,7 @@ scripts/postsurfing/
     └── cheatsheets.yaml
 
 Content Organization:
-src/content/
+contents/
 ├── articles/                 # Article content
 │   ├── en/                   # English articles
 │   ├── cn/                   # Chinese articles
