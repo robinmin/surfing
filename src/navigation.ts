@@ -91,6 +91,6 @@ export const footerData = {
     { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robin/surfing' },
   ],
   footNote: `
-    AI-Powered Content Platform · Built for Creators
+  Surfing - AI-Powered Content Platform for Creators
   `,
 };

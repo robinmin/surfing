@@ -8,7 +8,7 @@ export async function GET(context: APIContext) {
   const sortedContent = sortContent(publishedContent, 'date', 'desc');
 
   return rss({
-    title: 'Surfing - AI-Powered Content Platform',
+    title: 'Surfing - AI-Powered Content Platform for Creators',
     description: 'Discover AI insights, technical articles, project showcases, and creative content.',
     site: context.site!,
     items: sortedContent.map((entry) => {

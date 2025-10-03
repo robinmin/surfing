@@ -175,7 +175,7 @@ export const en = {
     copyright: 'All rights reserved.',
     poweredBy: 'Powered by',
     builtWith: 'Built with',
-    tagline: 'AI-Powered Content Platform · Built for Creators',
+    tagline: 'Surfing - AI-Powered Content Platform for Creators',
   },
   rss: {
     title: 'RSS Feed',
