@@ -18,7 +18,7 @@ metadata:
   openGraph:
     site_name: Surfing
     images:
-      - url: '~/assets/images/surfing.png'
+      - url: '@assets/images/surfing.png'
         width: 1200
         height: 628
     type: website
