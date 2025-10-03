@@ -2,159 +2,331 @@
 
 ## Project Overview
 
-**Surfing** is a modern, AI-powered content management and publishing platform built specifically for AI creators, researchers, and writers. It provides a clean, beautiful space to showcase collected knowledge and AI-driven creations.
+**Surfing** is a modern, AI-powered static site generator for content creators, researchers, and writers. Built on Astro 5, it provides a clean, performant space to publish knowledge and AI-driven creations with zero client-side JavaScript by default.
+
+**Core Value Proposition:**
+
+- **Content-First Architecture:** Type-safe collections with Zod validation
+- **Multi-Format Support:** Markdown, MDX, HTML with intelligent conversion
+- **AI-Powered Workflows:** Automated content processing and PDF generation
+- **Production-Ready:** SEO, i18n, accessibility, and performance built-in
 
 **Key Features:**
 
-- Multi-content type architecture (Articles, Showcase, Documents, Cheatsheets)
-- Automated publishing workflow via PostSurfing CLI
-- Internationalization support (English, Chinese, Japanese)
-- SEO-optimized with structured data and automated sitemaps
-- AI-generated content support with PDF generation
-- Obsidian markdown integration
+- 4 content types: Articles (Obsidian-compatible), Showcase (portfolios), Documents (HTML pages), Cheatsheets (AI-generated references)
+- Automated publishing via PostSurfing CLI with frontmatter validation
+- Native i18n (en/zh/ja) with proper routing and hreflang
+- SEO-optimized with JSON-LD, automated sitemaps, and meta tags
+- PDF generation for cheatsheets with AI refinement pipeline
+- Full Obsidian markdown compatibility (aliases, tags, frontmatter)
 
 ## Architecture & Tech Stack
 
 ### Core Framework
 
-- **Astro 5.12.9** - Static site generator with zero JS by default
-- **AstroWind Template** - Professional UI foundation with Tailwind CSS
-- **TypeScript 5.8.3** - Type-safe development
-- **Node.js 18+** - Runtime environment
+- **Astro 5.12.9** - Static site generator, zero JS by default
+- **TypeScript 5.8.3** - Strict null checks, path aliases (`~/*` → `src/*`, `@contents/*`, `@assets/*`)
+- **Node.js 18.17.1+ | 20.3.0+ | 21+** - Runtime requirement
+- **Tailwind CSS 3.4.17** - Utility-first styling with @tailwindcss/typography
 
-### Key Integrations
+### Essential Integrations
 
-- **@astrojs/sitemap** - Automated sitemap generation
-- **@astrojs/rss** - RSS feed generation for all content types
-- **astro-pagefind** - Client-side search functionality
-- **astro-robots-txt** - Automated robots.txt management
-- **astro-expressive-code** - Advanced code syntax highlighting
-- **astro-icon** - Icon management system
-- **astro-compress** - Asset compression and optimization
+**Content & SEO:**
+
+- `@astrojs/sitemap` - XML sitemap generation
+- `@astrojs/rss` - RSS feeds for all collections
+- `astro-robots-txt` - Automated robots.txt
+- `@astrolib/seo` - SEO meta tags and structured data
+
+**Code & Markdown:**
+
+- `astro-expressive-code` - Syntax highlighting (GitHub Dark theme)
+- `astro-pagefind` - Client-side search
+- `@astrojs/mdx` - MDX component support
+- `rehype-mermaid` - Diagram rendering
+- `remark-toc` - Table of contents generation
+- `rehype-external-links` - External link handling
+
+**Performance:**
+
+- `astro-compress` - CSS/HTML/JS/SVG compression
+- `@astrojs/partytown` - Third-party script isolation
+- `astro-icon` - SVG icon optimization
+- `unpic` - Image optimization utilities
+
+**Privacy & Analytics:**
+
+- `@jop-software/astro-cookieconsent` - GDPR-compliant consent
+- `@astrolib/analytics` - Privacy-focused analytics
 
 ### Content Management
 
-- **Astro Content Collections** - Type-safe content management
-- **Zod schemas** - Content validation and type safety
-- **Multi-language support** - i18n routing and content organization
-
-### Development Tools
-
-- **ESLint** - Code linting with Astro-specific rules
-- **Prettier** - Code formatting
-- **TypeScript** - Type checking
-- **Playwright** - E2E testing and HTML processing
+- **Content Collections API** - File-based with `glob()` loader
+- **Zod Schemas** - Runtime validation in `src/content/config.ts`
+- **Multi-language** - Astro i18n with prefixDefaultLocale: false
+- **Custom Loader** - Supports `.md`, `.mdx`, `.html` files
 
 ## Content Types & Structure
 
-### 1. Articles Collection
+### 1. Articles Collection (`articles`)
 
-**Path:** `src/content/articles/{lang}/`
-**Purpose:** In-depth research, AI insights, and technical posts
-**Schema Features:**
+**Location:** `contents/articles/{lang}/`
+**Formats:** `.md`, `.mdx`
+**Purpose:** Long-form content, technical posts, research articles
 
-- Obsidian frontmatter support (`aliases`, `cssclass`)
-- Reading time and word count auto-generation
-- Tag-based categorization
-- Draft/publish status management
+**Key Schema Fields:**
 
-### 2. Showcase Collection
+```typescript
+{
+  title: string                    // Required
+  description?: string
+  publishDate?: Date
+  updateDate?: Date
+  tags: string[]                   // Default: []
+  category?: string
+  draft: boolean                   // Default: false
+  featured: boolean                // Default: false
 
-**Path:** `src/content/showcase/{lang}/`
-**Purpose:** Featured project portfolios with live demos
-**Schema Features:**
+  // Obsidian compatibility
+  aliases?: string[]               // Alternative titles
+  cssclass?: string                // Custom CSS class
 
-- Project URLs and GitHub links
-- Technology stack tagging
-- Featured project highlighting
+  // Auto-generated
+  readingTime?: number             // Via remark plugin
+  wordCount?: number
+}
+```
 
-### 3. Documents Collection
+### 2. Showcase Collection (`showcase`)
 
-**Path:** `src/content/documents/{lang}/`
-**Purpose:** Full HTML pages with custom CSS/JS (legacy content migration)
-**Schema Features:**
+**Location:** `contents/showcase/{lang}/`
+**Formats:** `.md`, `.mdx`
+**Purpose:** Project portfolios with demos and GitHub links
 
-- External CSS/JS URL support
-- Inline style/script preservation
-- HTML-to-markdown conversion capabilities
+**Key Schema Fields:**
 
-### 4. Cheatsheets Collection
+```typescript
+{
+  title: string                    // Required
+  description: string              // Required
+  publishDate: Date                // Required
+  image: string                    // Required
+  projectUrl?: string              // Live demo URL
+  githubUrl?: string               // Repository URL
+  technologies: string[]           // Tech stack tags
+  featured: boolean                // Default: false
+  tags: string[]
+}
+```
 
-**Path:** `src/content/cheatsheets/{lang}/`
+### 3. Documents Collection (`documents`)
+
+**Location:** `contents/documents/{lang}/`
+**Formats:** `.html`, `.md`
+**Purpose:** Legacy HTML content, rich-formatted pages with custom styling
+
+**Key Schema Fields:**
+
+```typescript
+{
+  title: string
+  contentType: 'page' | 'snippet' | 'template' | 'legacy'  // Default: 'page'
+
+  // Custom styling support
+  externalCSS?: string[]           // CDN CSS URLs
+  externalJS?: string[]            // CDN JS URLs
+  customCSS?: string               // Inline CSS
+  customJS?: string                // Inline JS
+  preserveStyles: boolean          // Default: true
+
+  // Auto-extracted metadata
+  headings?: string[]
+  links?: string[]
+  wordCount?: number
+  readingTime?: number
+}
+```
+
+### 4. Cheatsheets Collection (`cheatsheets`)
+
+**Location:** `contents/cheatsheets/{lang}/`
+**Formats:** `.html`, `.md`
 **Purpose:** AI-generated reference materials with PDF downloads
-**Schema Features:**
 
-- Difficulty levels (beginner/intermediate/advanced)
-- PDF attachment support
-- AI generation metadata
-- Topic categorization
+**Key Schema Fields:**
+
+```typescript
+{
+  title: string
+  topic?: string                   // Main technology/topic
+  difficulty?: 'beginner' | 'intermediate' | 'advanced'
+  format: 'html' | 'markdown'      // Default: 'html'
+
+  // PDF generation
+  pdfUrl?: string                  // Generated PDF path
+  downloadUrl?: string
+
+  // AI metadata
+  generatedBy?: string             // AI model used
+  prompt?: string                  // Original prompt
+  version?: string                 // Cheatsheet version
+
+  // Custom styling (for HTML format)
+  externalCSS?: string[]
+  customCSS?: string
+  preserveStyles: boolean          // Default: true
+}
+```
+
+**Content Organization:**
+
+```
+contents/
+├── articles/
+│   ├── en/           # English articles
+│   ├── zh/           # Chinese articles (if exists)
+│   └── ja/           # Japanese articles (if exists)
+├── showcase/
+│   └── {lang}/
+├── documents/
+│   └── {lang}/
+└── cheatsheets/
+    └── en/           # Currently English only
+```
 
 ## CLI Tools & Workflows
 
-### PostSurfing CLI (`scripts/postsurfing/postsurfing.mjs`)
+### PostSurfing CLI
 
-**Location:** `scripts/postsurfing/`
-**Purpose:** Automated content publishing and processing
+**Main Script:** `scripts/postsurfing/postsurfing.mjs`
+**Modules:**
 
-**Key Features:**
+- `lib/content-processor.mjs` - Content parsing and transformation
+- `lib/frontmatter-manager.mjs` - Zod schema validation
+- `lib/html-converter.mjs` - HTML → Markdown conversion
+- `lib/build-validator.mjs` - Pre-publish build verification
+- `lib/git-manager.mjs` - Git operations
+- `lib/logger.mjs` - Colored console output
 
-- Frontmatter validation against Zod schemas
-- HTML-to-markdown conversion with asset extraction
-- Build verification before publishing
-- Git integration (staging, committing, pushing)
-- Multi-language content support
-- Cheatsheet PDF generation workflow
+**Capabilities:**
 
-**Usage Patterns:**
+1. **Frontmatter Validation** - Validates against Zod schemas from `src/content/config.ts`
+2. **HTML → Markdown** - Converts HTML with asset extraction (CSS, images)
+3. **Build Verification** - Runs `npm run build` before publishing
+4. **Git Integration** - Auto-staging, committing (optional push)
+5. **Multi-language** - Detects language from directory structure
+6. **Interactive Mode** - User prompts for missing frontmatter fields
+
+**Usage Examples:**
 
 ```bash
 # Publish markdown article
-postsurfing ./article.md --type articles
+node scripts/postsurfing/postsurfing.mjs ./my-article.md --type articles
 
-# Convert HTML to Surfing format
-postsurfing ./legacy.html --type documents --auto-convert
+# Convert HTML document with auto-conversion
+node scripts/postsurfing/postsurfing.mjs ./page.html --type documents --auto-convert
 
-# Interactive showcase publishing
-postsurfing ./project.md --type showcase --interactive
+# Interactive showcase publishing (prompts for missing fields)
+node scripts/postsurfing/postsurfing.mjs ./project.md --type showcase --interactive
+
+# Dry run without git operations
+node scripts/postsurfing/postsurfing.mjs ./content.md --type articles --dry-run
 ```
 
-### Cheatsheet Processing Workflow
+### Cheatsheet Processing Pipeline
 
-**Scripts:** `scripts/preprocess-cheatsheets.sh`, `scripts/postprocess-cheatsheets.sh`
-**Process:**
+**Scripts:**
 
-1. Preprocess: Analyze HTML, generate config, copy to `/tmp`
-2. AI Refinement: Content improvement and layout optimization
-3. User Review: Browser preview for approval
-4. Postprocess: Convert to markdown, generate PDF, publish
+- `scripts/preprocess-cheatsheets.sh` - Stage 1: Preparation
+- `scripts/postprocess-cheatsheets.sh` - Stage 2: Finalization
+
+**Workflow:**
+
+```mermaid
+graph LR
+    A[Raw HTML] --> B[preprocess-cheatsheets.sh]
+    B --> C[Analyze & Copy to /tmp]
+    C --> D[AI Refinement]
+    D --> E[Browser Preview]
+    E --> F{User Approval}
+    F -->|Yes| G[postprocess-cheatsheets.sh]
+    F -->|No| D
+    G --> H[Convert to Markdown]
+    H --> I[Generate PDF via Playwright]
+    I --> J[Publish to contents/cheatsheets/]
+```
+
+**Stage 1: Preprocessing**
+
+- Analyzes HTML structure
+- Generates configuration JSON
+- Copies to `/tmp/cheatsheet-preview/` for AI review
+
+**Stage 2: Postprocessing**
+
+- Converts approved HTML to markdown
+- Generates PDF using Playwright (headless Chrome)
+- Copies to `contents/cheatsheets/{lang}/`
+- Updates frontmatter with `pdfUrl`
 
 ## Code Quality Standards
 
-### Linting & Formatting
+### Tooling Configuration
 
-- **ESLint:** Astro-specific configuration with TypeScript support
-- **Prettier:** Consistent code formatting
-- **TypeScript:** Strict null checks enabled
-- **Import alias:** `~/*` maps to `src/*`
+**ESLint (`eslint.config.js`):**
 
-### Code Style Rules
+- `eslint-plugin-astro` - Astro-specific rules
+- `@typescript-eslint` - TypeScript support
+- `astro-eslint-parser` - Astro file parsing
+- Zero errors required for production builds
 
-- No explicit `any` types (except in Astro files for content collections)
-- Unused variables ignored if prefixed with `_`
-- Smart tabs for indentation
-- No mixed spaces and tabs
+**Prettier (`prettier-plugin-astro`):**
+
+- Astro component formatting
+- Consistent spacing and indentation
+- **Critical:** Never add files to `.prettierignore` to bypass checks
+
+**TypeScript (`tsconfig.json`):**
+
+- Strict null checks enabled
+- Path aliases: `~/*` → `src/*`, `@contents/*`, `@assets/*`
+- Type-safe content collections with Zod inference
+
+### Code Style Enforcement
+
+**Strict Rules:**
+
+- ❌ No explicit `any` types (except content collections in `.astro` files)
+- ✅ Unused variables prefixed with `_` are allowed
+- ✅ Smart tabs for indentation
+- ❌ No mixed spaces and tabs
+- ❌ Never bypass Prettier/ESLint via ignore files
+- ❌ No git commands except `git diff` for inspecting changes
+
+**Git Workflow Constraints:**
+
+- Use PostSurfing CLI for content commits
+- Build must pass before merge
+- Linting errors block CI/CD
 
 ### Development Commands
 
 ```bash
 # Development
-npm run dev          # Start dev server
-npm run build        # Production build
-npm run preview      # Preview production build
+npm run dev              # Start Astro dev server (localhost:4321)
+npm run build            # Production build to dist/
+npm run preview          # Preview production build
 
-# Code Quality
-npm run check        # Type checking + linting
-npm run fix          # Auto-fix formatting/linting issues
+# Code Quality (run before commits)
+npm run check            # Astro check + ESLint + Prettier
+npm run check:astro      # Type checking only
+npm run check:eslint     # Linting only
+npm run check:prettier   # Formatting check only
+
+# Auto-fix
+npm run fix              # Fix ESLint + Prettier issues
+npm run fix:eslint       # Fix linting issues
+npm run fix:prettier     # Fix formatting issues
 ```
 
 ## Testing Strategy
@@ -163,246 +335,583 @@ npm run fix          # Auto-fix formatting/linting issues
 
 ```
 tests/
-├── postsurfing/          # CLI tool tests
-│   ├── fixtures/         # Test data files
-│   ├── integration/      # E2E CLI tests
-│   └── unit/            # Unit tests for CLI components
-└── src/                 # Source code tests (future)
+├── postsurfing/
+│   ├── fixtures/              # Test data (sample markdown, HTML)
+│   ├── integration/           # E2E CLI workflow tests
+│   │   └── content-processing.test.mjs
+│   └── unit/                  # Module unit tests
+│       └── content-processor.test.mjs
+├── test-runner.mjs            # Custom test runner
+└── test-utils.mjs             # Shared test utilities
 ```
 
 ### Testing Tools
 
-- **Playwright:** E2E testing and HTML processing
-- **Custom test runner:** `tests/test-runner.mjs`
-- **Test utilities:** `tests/test-utils.mjs`
+- **Playwright** - HTML processing and PDF generation (headless Chrome)
+- **Custom Runner** - Lightweight test framework (`tests/test-runner.mjs`)
+- **Node.js Assert** - Built-in assertion library
+- **Test Utilities** - Fixtures, mocks, temp file management
 
 ### Test Categories
 
-- **Unit Tests:** Individual component testing
-- **Integration Tests:** CLI workflow testing
-- **Content Processing Tests:** HTML/markdown conversion
+**Unit Tests:**
 
-## Key Directories & Files
+- Content processor module logic
+- Frontmatter validation
+- HTML converter functionality
+
+**Integration Tests:**
+
+- End-to-end PostSurfing CLI workflows
+- Build verification
+- Git operations (mocked)
+
+**Content Processing Tests:**
+
+- HTML → Markdown conversion accuracy
+- Asset extraction (CSS, images)
+- Frontmatter parsing edge cases
+
+**Running Tests:**
+
+```bash
+# Run all tests
+node tests/test-runner.mjs
+
+# Run specific test file
+node tests/postsurfing/unit/content-processor.test.mjs
+```
+
+## Project Structure
 
 ### Source Code (`src/`)
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── blog/           # Blog-specific components
-│   ├── common/         # Shared components
-│   ├── ui/            # UI primitives
-│   └── widgets/       # Feature widgets
-├── content/            # Content collections
-├── i18n/              # Internationalization
-├── layouts/           # Page layouts
-├── pages/             # Route pages
-├── utils/             # Utility functions
-└── config.ts          # Site configuration
+├── components/
+│   ├── blog/              # Blog UI (PostList, Tags, Categories)
+│   ├── common/            # Shared (Header, Footer, Metadata)
+│   ├── ui/                # Primitives (Button, Image, Icon)
+│   └── widgets/           # Features (Hero, Features, Stats)
+├── content/
+│   └── config.ts          # Content collections + Zod schemas
+├── i18n/
+│   ├── index.ts           # i18n utilities
+│   └── translations/      # en.ts, zh.ts, ja.ts
+├── layouts/
+│   ├── Layout.astro       # Base layout
+│   └── PageLayout.astro   # Content page layout
+├── pages/
+│   ├── articles/          # Article routes + RSS
+│   ├── showcase/          # Showcase routes + RSS
+│   ├── documents/         # Document routes + RSS
+│   ├── cheatsheets/       # Cheatsheet routes + RSS
+│   ├── browse.astro       # Content browser
+│   └── [...blog]/         # Dynamic blog routes
+├── utils/
+│   ├── blog.ts            # Blog utilities
+│   ├── content.ts         # Content collection helpers
+│   ├── frontmatter.ts     # Remark/rehype plugins
+│   ├── images.ts          # Image processing
+│   ├── navigation.ts      # Menu generation
+│   └── permalinks.ts      # URL generation
+├── navigation.ts          # Site navigation config
+├── types.d.ts             # TypeScript types
+└── env.d.ts               # Astro environment types
+```
+
+### Content (`contents/`)
+
+```
+contents/
+├── articles/{lang}/       # Markdown articles
+├── showcase/{lang}/       # Project showcases
+├── documents/{lang}/      # HTML documents
+└── cheatsheets/{lang}/    # Cheatsheet HTML/MD
 ```
 
 ### Scripts (`scripts/`)
 
 ```
 scripts/
-├── postsurfing/       # CLI tool source
-│   └── lib/          # CLI modules
-└── *-cheatsheets.sh  # Cheatsheet processing scripts
+├── postsurfing/
+│   ├── postsurfing.mjs                # Main CLI entry
+│   └── lib/
+│       ├── content-processor.mjs      # Core processing
+│       ├── frontmatter-manager.mjs    # Schema validation
+│       ├── html-converter.mjs         # HTML → MD
+│       ├── build-validator.mjs        # Build testing
+│       ├── git-manager.mjs            # Git operations
+│       └── logger.mjs                 # Console output
+├── preprocess-cheatsheets.sh          # Stage 1
+└── postprocess-cheatsheets.sh         # Stage 2
 ```
 
 ### Configuration Files
 
-- `astro.config.ts` - Astro configuration with all integrations
-- `tailwind.config.js` - Tailwind CSS configuration
-- `tsconfig.json` - TypeScript configuration
-- `eslint.config.js` - ESLint configuration
-- `package.json` - Dependencies and scripts
+**Core:**
+
+- `astro.config.ts` - Astro + integrations setup
+- `tsconfig.json` - TypeScript + path aliases
+- `package.json` - Dependencies, scripts, Node version
+
+**Code Quality:**
+
+- `eslint.config.js` - Linting rules
+- `.prettierrc` - Formatting config (via prettier-plugin-astro)
+
+**Styling:**
+
+- `tailwind.config.js` - Tailwind + typography plugin
+- `src/config.yaml` - Site config (metadata, i18n, features)
+
+**Other:**
+
+- `vendor/integration/` - Custom Astro integration
 
 ## Internationalization (i18n)
 
+### Configuration
+
+**Astro Config (`astro.config.ts`):**
+
+```typescript
+i18n: {
+  defaultLocale: 'en',
+  locales: ['en', 'zh', 'ja'],
+  routing: {
+    prefixDefaultLocale: false  // English URLs: /articles/post
+  }
+}
+```
+
 ### Supported Languages
 
-- **English (en)** - Default language
-- **Chinese (zh)** - Simplified Chinese
-- **Japanese (ja)** - Japanese
+| Code | Language             | URL Prefix     | Example                |
+| ---- | -------------------- | -------------- | ---------------------- |
+| `en` | English              | None (default) | `/articles/my-post`    |
+| `zh` | Chinese (Simplified) | `/zh/`         | `/zh/articles/my-post` |
+| `ja` | Japanese             | `/ja/`         | `/ja/articles/my-post` |
 
-### URL Structure
+### Translation System
 
-- Default locale: No prefix (e.g., `/articles/my-post`)
-- Other locales: Prefixed (e.g., `/zh/articles/my-post`)
+**Translation Files:** `src/i18n/translations/{lang}.ts`
 
-### Translation Files
+**Structure:**
 
-**Location:** `src/i18n/translations/`
+```typescript
+export default {
+  'nav.home': 'Home',
+  'nav.articles': 'Articles',
+  'footer.copyright': '© 2024 Surfing',
+  // ... more translations
+};
+```
 
-- `en.ts` - English translations
-- `zh.ts` - Chinese translations
-- `ja.ts` - Japanese translations
+**Usage in Components:**
+
+```astro
+---
+import { getTranslation } from '~/i18n';
+const t = getTranslation(Astro.currentLocale);
+---
+
+<p>{t('nav.home')}</p>
+```
+
+### Content Organization
+
+```
+contents/
+├── articles/
+│   ├── en/          # English articles
+│   ├── zh/          # Chinese articles
+│   └── ja/          # Japanese articles
+└── [other collections follow same pattern]
+```
+
+### SEO & Hreflang
+
+- Automatic hreflang tags for multi-language content
+- Language-specific sitemaps
+- Proper canonical URLs per language
 
 ## SEO & Performance
 
-### Automated SEO Features
+### SEO Features
 
-- **Structured Data:** JSON-LD for all content types
-- **Meta Tags:** Automatic OpenGraph and Twitter card generation
-- **Hreflang:** Multi-language SEO support
-- **Sitemap:** Auto-generated XML sitemap
-- **Robots.txt:** Automated crawler directives
+**Automated Meta Tags:**
+
+- OpenGraph (og:title, og:image, og:description, og:type)
+- Twitter Cards (twitter:card, twitter:site)
+- Canonical URLs
+- Language alternates (hreflang)
+
+**Structured Data (JSON-LD):**
+
+- Article schema for blog posts
+- Website schema
+- BreadcrumbList for navigation
+- Organization schema
+
+**Discovery:**
+
+- `@astrojs/sitemap` - XML sitemap at `/sitemap-index.xml`
+- `@astrojs/rss` - RSS feeds at `/[collection]/rss.xml`
+- `astro-robots-txt` - robots.txt with sitemap reference
+- `astro-pagefind` - Static search index
 
 ### Performance Optimizations
 
-- **Asset Compression:** CSS, HTML, JS, SVG compression
-- **Image Optimization:** Automatic image processing
-- **Partytown:** Third-party script isolation
-- **Lazy Loading:** Image lazy loading
-- **Cookie Consent:** GDPR-compliant cookie management
+**Build-Time:**
+
+- Static site generation (SSG) - Zero server latency
+- `astro-compress` - Minifies CSS, HTML, JS, SVG
+- Image optimization via `unpic` and Astro Image
+- Code splitting (automatic per-page bundles)
+
+**Runtime:**
+
+- **Zero JS by default** - Astro's core principle
+- `@astrojs/partytown` - Third-party scripts in web workers
+- Lazy loading images (via `rehype` plugin)
+- Responsive images with `srcset`
+
+**Privacy:**
+
+- `@jop-software/astro-cookieconsent` - GDPR compliance
+- Consent-based Google Analytics (gtag consent mode)
+- Configurable cookie categories (necessary, analytics, marketing)
+
+**Monitoring:**
+
+- Lighthouse CI ready
+- Core Web Vitals tracking via GA4
 
 ## Deployment & Hosting
 
-### Build Output
+### Build Process
 
-- **Static Generation:** `npm run build` creates `dist/` directory
-- **Compatible Platforms:** Cloudflare Pages, Netlify, Vercel, GitHub Pages
+```bash
+npm run build                    # Builds to dist/
+npm run preview                  # Preview production build locally
+```
 
-### Environment Configuration
+**Output:**
 
-- **Site URL:** `https://surfing.salty.vip/`
-- **Domain Configuration:** Netlify/Vercel deployment ready
+- Static HTML files in `dist/`
+- Compressed assets (CSS, JS, images)
+- Sitemap, robots.txt, RSS feeds
+- No server-side rendering required
+
+### Deployment Targets
+
+**Compatible Platforms:**
+
+- **Cloudflare Pages** - Recommended for global CDN
+- **Netlify** - Easy setup with drag-and-drop
+- **Vercel** - Zero-config Astro support
+- **GitHub Pages** - Free hosting for open-source
+
+**Configuration:**
+
+- Site URL: `https://surfing.salty.vip/`
+- Base path: `/` (root deployment)
+- Output mode: `static` (no SSR)
+
+### CI/CD Considerations
+
+**Pre-deploy Checks:**
+
+1. `npm run check` - Linting + type checking
+2. `npm run build` - Production build test
+3. Test runner (optional)
+
+**Recommended Pipeline:**
+
+```yaml
+# Example GitHub Actions
+- run: npm ci
+- run: npm run check
+- run: npm run build
+- deploy: dist/
+```
 
 ## Development Workflow
 
-### Content Creation
+### Content Creation Workflow
 
-1. **Choose content type** and create file in appropriate directory
-2. **Add frontmatter** according to schema requirements
-3. **Use PostSurfing CLI** for automated publishing
-4. **Review and commit** changes
+**Option 1: Manual (Direct file creation)**
 
-### Code Changes
+1. Create file in `contents/{collection}/{lang}/my-content.md`
+2. Add frontmatter matching Zod schema
+3. Test locally with `npm run dev`
+4. Commit via git
 
-1. **Run linting:** `npm run check`
-2. **Fix issues:** `npm run fix`
-3. **Test changes:** Run relevant tests
-4. **Build verification:** `npm run build`
+**Option 2: PostSurfing CLI (Recommended)**
+
+```bash
+# 1. Create content file with frontmatter
+# 2. Run PostSurfing CLI
+node scripts/postsurfing/postsurfing.mjs ./my-article.md --type articles
+
+# PostSurfing will:
+# - Validate frontmatter against schema
+# - Move file to correct location
+# - Run build verification
+# - Stage and commit to git
+# - Optionally push to remote
+```
+
+### Code Development Workflow
+
+**Before Starting:**
+
+```bash
+npm run dev              # Start dev server
+```
+
+**While Developing:**
+
+1. Make code changes
+2. Check browser at `localhost:4321`
+3. Fix TypeScript errors in editor
+
+**Before Committing:**
+
+```bash
+npm run check            # Verify no errors
+npm run fix              # Auto-fix formatting
+npm run build            # Ensure production build works
+```
+
+**Commit Workflow:**
+
+```bash
+git add .
+git diff --staged        # Review changes (ONLY allowed git command)
+git commit -m "feat: add feature X"
+```
 
 ## Common Patterns & Conventions
 
 ### File Naming
 
-- **Kebab-case:** `my-article.md`, `javascript-cheatsheet.html`
-- **Language prefixes:** Automatic in content directories
+**Content Files:**
+
+- Kebab-case: `my-article.md`, `javascript-cheatsheet.html`
+- No language prefix in filename (directory-based: `en/`, `zh/`)
+- Descriptive slugs: `getting-started-with-astro.md`
+
+**Component Files:**
+
+- PascalCase: `BlogPost.astro`, `ArticleList.astro`
+- Feature-based: `CheatsheetFooter.astro`
+
+**Utility Files:**
+
+- camelCase: `blogUtils.ts`, `permalinks.ts`
 
 ### Frontmatter Standards
 
-- **Required fields:** `title`, content-type specific requirements
-- **Optional fields:** `description`, `tags`, `category`, `featured`
-- **Date fields:** ISO format (`2024-01-15`)
+**Required vs Optional:**
+
+```yaml
+# Articles (required)
+title: 'My Article Title'
+# Optional but recommended
+description: 'SEO description'
+publishDate: 2024-01-15
+tags: [astro, typescript]
+category: 'tutorials'
+draft: false
+featured: false
+```
+
+**Date Formats:**
+
+- ISO 8601: `2024-01-15` or `2024-01-15T10:30:00Z`
+- Zod parses as Date objects automatically
 
 ### Component Patterns
 
-- **Props interface:** TypeScript interfaces for component props
-- **Astro components:** `.astro` files with TypeScript
-- **Utility functions:** Pure functions in `src/utils/`
+**Astro Component Template:**
+
+```astro
+---
+// TypeScript in frontmatter
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<div>
+  <h1>{title}</h1>
+  {description && <p>{description}</p>}
+</div>
+```
+
+**Utility Function Pattern:**
+
+```typescript
+// src/utils/myUtil.ts
+export function processContent(content: string): string {
+  // Pure function, no side effects
+  return content.trim();
+}
+```
+
+### Import Aliases
+
+```typescript
+import Layout from '~/layouts/Layout.astro'; // src/
+import article from '@contents/articles/en/post.md'; // contents/
+import logo from '@assets/logo.png'; // assets/
+```
 
 ## Troubleshooting
 
 ### Build Issues
 
-- **Node version:** Ensure Node.js 18+
-- **Dependencies:** Run `npm install` after package changes
-- **Type errors:** Check `npm run check` output
+**Problem:** Build fails with type errors
+
+```bash
+npm run check:astro          # Identify specific errors
+npm run fix                  # Auto-fix formatting issues
+```
+
+**Problem:** Node version mismatch
+
+- Required: Node.js 18.17.1+ | 20.3.0+ | 21+
+- Check: `node --version`
+- Solution: Use nvm or update Node.js
+
+**Problem:** Dependencies out of sync
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
 
 ### Content Issues
 
-- **Frontmatter validation:** Use PostSurfing CLI for validation
-- **Image paths:** Use absolute paths from `public/` directory
-- **Content not appearing:** Check `draft: false` in frontmatter
+**Problem:** Content not appearing on site
+
+- Check `draft: false` in frontmatter
+- Verify file is in correct `contents/{collection}/{lang}/` directory
+- Run `npm run build` and check for Zod validation errors
+
+**Problem:** Frontmatter validation fails
+
+```bash
+# Use PostSurfing CLI for detailed error messages
+node scripts/postsurfing/postsurfing.mjs ./article.md --type articles
+```
+
+**Problem:** Images not loading
+
+- Use paths relative to `public/`: `/images/photo.jpg`
+- Or use Astro assets: `import img from '@assets/photo.jpg'`
+- Supported formats: JPG, PNG, WebP, AVIF, SVG
 
 ### Performance Issues
 
-- **Build optimization:** Check `astro.config.ts` compression settings
-- **Image optimization:** Ensure images are in supported formats
-- **Bundle analysis:** Check build output for large assets
+**Problem:** Slow build times
 
-## Code Review Summary
+- Check `astro-compress` settings in `astro.config.ts`
+- Disable compression during development
+- Reduce image sizes before importing
 
-### ✅ Overall Assessment
+**Problem:** Large bundle size
 
-**Grade: A- (Excellent)**
+- Run `npm run build` and check `dist/` sizes
+- Use `astro:assets` for image optimization
+- Ensure third-party scripts use Partytown
 
-The Surfing project demonstrates high-quality, production-ready code with excellent architecture, comprehensive tooling, and robust testing. The codebase follows modern web development best practices and includes sophisticated automation for content management.
+## Quick Reference
 
-### 🏗️ Architecture Strengths
+### Essential Commands
 
-- **Modular Design:** Clean separation of concerns with dedicated modules for content processing, CLI tools, and UI components
-- **Type Safety:** Comprehensive TypeScript usage with strict null checks and Zod schemas for content validation
-- **Scalable Content Architecture:** Four distinct content types with shared infrastructure and extensible schemas
-- **Internationalization:** Well-implemented i18n with proper routing and content organization
+```bash
+# Development
+npm run dev              # Start dev server (localhost:4321)
+npm run build            # Production build
+npm run preview          # Preview production build
 
-### 🔧 Technical Excellence
+# Code Quality
+npm run check            # Astro + ESLint + Prettier
+npm run fix              # Auto-fix all issues
 
-- **Modern Tooling:** Astro 5.x with latest integrations, proper build optimization, and performance features
-- **Code Quality:** ESLint + Prettier configuration with zero linting errors, consistent formatting
-- **Testing:** Comprehensive test suite with 100% pass rate across unit and integration tests
-- **Build System:** Reliable build process with compression, optimization, and static generation
+# Content Publishing
+node scripts/postsurfing/postsurfing.mjs <file> --type <collection>
 
-### 🚀 Automation & DX
+# Testing
+node tests/test-runner.mjs
+```
 
-- **PostSurfing CLI:** Sophisticated content publishing workflow with validation, conversion, and git integration
-- **Cheatsheet Pipeline:** Multi-step AI-assisted content processing with user review checkpoints
-- **SEO Automation:** Automated sitemaps, structured data, and meta tag generation
-- **Development Workflow:** Streamlined commands for linting, testing, and deployment
+### Key File Locations
 
-### 📊 Content Management
+| Purpose           | Location                              |
+| ----------------- | ------------------------------------- |
+| Content schemas   | `src/content/config.ts`               |
+| Site config       | `src/config.yaml`                     |
+| Astro config      | `astro.config.ts`                     |
+| Navigation        | `src/navigation.ts`                   |
+| i18n translations | `src/i18n/translations/`              |
+| PostSurfing CLI   | `scripts/postsurfing/postsurfing.mjs` |
 
-- **Schema-Driven:** Type-safe content collections with comprehensive validation
-- **Multi-Format Support:** Markdown, HTML, MDX with intelligent conversion capabilities
-- **Rich Metadata:** Extensive frontmatter support including Obsidian integration
-- **Asset Management:** Automatic CSS/JS extraction and optimization
+### Content Collections Reference
 
-### 🔍 Areas for Improvement
+| Collection  | Path                           | Formats        | Key Fields                    |
+| ----------- | ------------------------------ | -------------- | ----------------------------- |
+| Articles    | `contents/articles/{lang}/`    | `.md`, `.mdx`  | title, tags, category         |
+| Showcase    | `contents/showcase/{lang}/`    | `.md`, `.mdx`  | title, image, projectUrl      |
+| Documents   | `contents/documents/{lang}/`   | `.html`, `.md` | title, customCSS, externalCSS |
+| Cheatsheets | `contents/cheatsheets/{lang}/` | `.html`, `.md` | title, topic, pdfUrl          |
 
-- **Test Coverage:** While existing tests pass, coverage could be expanded to UI components
-- **Documentation:** Some advanced CLI features could benefit from more detailed documentation
-- **Performance Monitoring:** Consider adding runtime performance monitoring for content-heavy pages
-- **Error Handling:** CLI tools could have more granular error reporting for debugging
+### Common Tasks
 
-### 🛡️ Security & Reliability
+**Add new article:**
 
-- **Input Validation:** Robust frontmatter validation prevents malformed content
-- **Build Verification:** Pre-commit build checks prevent deployment of broken code
-- **Dependency Management:** Proper Node.js version constraints and security-conscious dependencies
-- **GDPR Compliance:** Cookie consent integration for privacy compliance
+```bash
+# 1. Create file
+vim contents/articles/en/my-post.md
 
-### 📈 Scalability Considerations
+# 2. Add frontmatter
+---
+title: "My Post"
+publishDate: 2024-01-15
+tags: [astro]
+draft: false
+---
 
-- **Static Generation:** Astro's static output ensures excellent performance at scale
-- **Content Processing:** CLI-based processing allows for batch operations and automation
-- **Multi-Language:** Efficient i18n implementation supports global expansion
-- **Asset Optimization:** Compression and optimization pipeline ready for high-traffic deployment
+# 3. Publish with PostSurfing
+node scripts/postsurfing/postsurfing.mjs contents/articles/en/my-post.md --type articles
+```
 
-### 🎯 Recommendations
+**Fix linting errors:**
 
-1. **Expand Test Coverage:** Add component tests for critical UI elements
-2. **Performance Benchmarking:** Establish performance baselines for content processing
-3. **Monitoring:** Implement error tracking and performance monitoring
-4. **Documentation:** Create API documentation for custom integrations
-5. **CI/CD:** Consider adding automated deployment pipelines
+```bash
+npm run check            # See errors
+npm run fix              # Auto-fix
+npm run build            # Verify build works
+```
 
-### 📋 Compliance & Standards
+**Add new language:**
 
-- ✅ **WCAG Accessibility:** Astro components follow accessibility best practices
-- ✅ **SEO Standards:** Comprehensive meta tags, structured data, and sitemap generation
-- ✅ **Performance:** Core Web Vitals optimization with lazy loading and compression
-- ✅ **Security:** CSP headers, secure defaults, and dependency scanning ready
+1. Update `astro.config.ts` i18n.locales
+2. Create `src/i18n/translations/{lang}.ts`
+3. Add content directories: `contents/articles/{lang}/`
 
 ---
 
-**Code Review Date:** October 2025
-**Reviewer:** AI Assistant
-**Last Updated:** October 2025
-**Version:** 1.0.0-beta.52
-**Maintained by:** Surfing Development Team</content>
+**Documentation Version:** 2.0.0
+**Last Updated:** January 2025
+**Project Version:** 1.0.0-beta.52
+**Astro Version:** 5.12.9</content>
 </xai:function_call/>
 <xai:function_call name="bash">
 <parameter name="command">npm run check
