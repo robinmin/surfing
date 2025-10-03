@@ -10,7 +10,7 @@ featured: false
 image: '@assets/images/google_one_tap.png'
 ---
 
-# A Definitive Guide to Implementing Google One Tap and Sign In with Apple on a Static Website with Supabase and Cloudflare
+> A Definitive Guide to Implementing Google One Tap and Sign In with Apple on a Static Website with Supabase and Cloudflare
 
 ## Introduction: Architecting Frictionless Authentication on the Modern Web
 

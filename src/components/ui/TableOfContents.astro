@@ -12,21 +12,40 @@ const { class: className = '' } = Astro.props;
   aria-label="Table of contents"
 >
   <div
-    class="sticky top-8 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-lg"
+    class="sticky top-8 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300"
   >
-    <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center">
-      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"
-        ></path>
+    <button
+      id="toc-toggle"
+      class="absolute -left-3 top-4 w-8 h-8 flex items-center justify-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110"
+      aria-label="Toggle table of contents"
+      title="Toggle table of contents"
+    >
+      <svg
+        id="toc-chevron"
+        class="w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform duration-300"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
       </svg>
-      Table of Contents
-    </h3>
+    </button>
 
-    <nav>
-      <ul id="toc-list" class="space-y-1 max-h-96 overflow-y-auto">
-        <!-- Headings will be populated client-side -->
-      </ul>
-    </nav>
+    <div id="toc-content" class="p-4 transition-all duration-300">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"
+          ></path>
+        </svg>
+        Table of Contents
+      </h3>
+
+      <nav>
+        <ul id="toc-list" class="space-y-1 max-h-96 overflow-y-auto">
+          <!-- Headings will be populated client-side -->
+        </ul>
+      </nav>
+    </div>
   </div>
 </aside>
 
@@ -34,13 +53,20 @@ const { class: className = '' } = Astro.props;
   class TableOfContents {
     private toc: HTMLElement | null;
     private tocList: HTMLElement | null;
+    private tocContent: HTMLElement | null;
+    private tocToggle: HTMLElement | null;
+    private tocChevron: HTMLElement | null;
     private links: NodeListOf<HTMLAnchorElement>;
     private headings: Array<{ text: string; level: number; id: string }>;
     private observer: IntersectionObserver | null = null;
+    private isCollapsed: boolean = false;
 
     constructor() {
       this.toc = document.getElementById('table-of-contents');
       this.tocList = document.getElementById('toc-list');
+      this.tocContent = document.getElementById('toc-content');
+      this.tocToggle = document.getElementById('toc-toggle');
+      this.tocChevron = document.getElementById('toc-chevron');
       this.headings = [];
       this.links = document.querySelectorAll('.toc-link');
       this.init();
@@ -63,6 +89,8 @@ const { class: className = '' } = Astro.props;
       this.setupIntersectionObserver();
       this.setupClickHandlers();
       this.setupKeyboardNavigation();
+      this.setupToggleButton();
+      this.loadCollapsedState();
     }
 
     private extractHeadings() {
@@ -225,6 +253,61 @@ const { class: className = '' } = Astro.props;
       });
     }
 
+    private setupToggleButton() {
+      if (!this.tocToggle) return;
+
+      this.tocToggle.addEventListener('click', () => {
+        this.toggleCollapse();
+      });
+    }
+
+    private toggleCollapse() {
+      if (!this.toc || !this.tocContent || !this.tocChevron) return;
+
+      this.isCollapsed = !this.isCollapsed;
+
+      if (this.isCollapsed) {
+        // Collapse: hide content and shrink width
+        this.tocContent.style.opacity = '0';
+        this.tocContent.style.maxHeight = '0';
+        this.tocContent.style.overflow = 'hidden';
+        this.tocContent.style.padding = '0';
+        this.toc.style.width = '3rem';
+        this.tocChevron.style.transform = 'rotate(180deg)';
+      } else {
+        // Expand: show content and restore width
+        this.tocContent.style.opacity = '1';
+        this.tocContent.style.maxHeight = '100vh';
+        this.tocContent.style.overflow = 'visible';
+        this.tocContent.style.padding = '1rem';
+        this.toc.style.width = '16rem';
+        this.tocChevron.style.transform = 'rotate(0deg)';
+      }
+
+      // Save state to localStorage
+      this.saveCollapsedState();
+    }
+
+    private saveCollapsedState() {
+      try {
+        localStorage.setItem('toc-collapsed', this.isCollapsed.toString());
+      } catch {
+        // Ignore localStorage errors
+      }
+    }
+
+    private loadCollapsedState() {
+      try {
+        const savedState = localStorage.getItem('toc-collapsed');
+        if (savedState === 'true') {
+          this.isCollapsed = false; // Set to false so toggle will make it true
+          this.toggleCollapse();
+        }
+      } catch {
+        // Ignore localStorage errors
+      }
+    }
+
     public destroy() {
       this.observer?.disconnect();
     }
@@ -277,6 +360,18 @@ const { class: className = '' } = Astro.props;
 
   .dark #table-of-contents nav ul::-webkit-scrollbar-thumb:hover {
     background: rgb(107 114 128);
+  }
+
+  /* Collapsed state */
+  #table-of-contents.collapsed {
+    width: 3rem;
+  }
+
+  #toc-content {
+    transition:
+      opacity 0.3s ease,
+      max-height 0.3s ease,
+      padding 0.3s ease;
   }
 
   /* Responsive behavior */
