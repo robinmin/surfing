@@ -232,7 +232,7 @@ async function testLanguageProcessing() {
   utils.assert(resultCnWrite.success, 'Chinese file creation should succeed');
   utils.assertContains(
     resultCnWrite.output,
-    'src/content/articles/cn/test-lang-article.md',
+    'contents/articles/cn/test-lang-article.md',
     'Should create file in Chinese directory'
   );
 
@@ -251,7 +251,7 @@ async function testLanguageProcessing() {
   utils.assert(resultJpWrite.success, 'Japanese file creation should succeed');
   utils.assertContains(
     resultJpWrite.output,
-    'src/content/articles/jp/test-lang-article.md',
+    'contents/articles/jp/test-lang-article.md',
     'Should create file in Japanese directory'
   );
 
