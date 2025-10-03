@@ -31,7 +31,12 @@
       "Bash(test:*)",
       "Bash(curl:*)",
       "Bash(grep:*)",
-      "mcp__playwright__browser_navigate_back"
+      "mcp__playwright__browser_navigate_back",
+      "mcp__task-master-ai__parse_prd",
+      "mcp__task-master-ai__get_tasks",
+      "mcp__task-master-ai__expand_all",
+      "mcp__task-master-ai__next_task",
+      "mcp__task-master-ai__set_task_status"
     ],
     "deny": [],
     "ask": []
