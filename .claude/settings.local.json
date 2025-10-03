@@ -1,5 +1,4 @@
 {
-  "contextFile": "docs/AGENTS.md",
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
@@ -29,9 +28,12 @@
       "Bash(chmod:*)",
       "Bash(./scripts/postprocess-cheatsheets.sh:*)",
       "Bash(node:*)",
-      "Bash(cat:*)"
+      "Bash(test:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "contextFile": "docs/AGENTS.md"
 }
