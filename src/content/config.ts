@@ -50,7 +50,7 @@ const metadataDefinition = () =>
 
 // Articles collection for Obsidian markdown content
 const articlesCollection = defineCollection({
-  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: 'src/content/articles' }),
+  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './contents/articles' }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
@@ -83,7 +83,7 @@ const articlesCollection = defineCollection({
 
 // HTML documents collection for legacy and rich-formatted content
 const documentsCollection = defineCollection({
-  loader: glob({ pattern: ['**/*.{html,md}'], base: 'src/content/documents' }),
+  loader: glob({ pattern: ['**/*.{html,md}'], base: './contents/documents' }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
@@ -123,7 +123,7 @@ const documentsCollection = defineCollection({
 
 // Showcase collection for featured content
 const showcaseCollection = defineCollection({
-  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: 'src/content/showcase' }),
+  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './contents/showcase' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -146,7 +146,7 @@ const showcaseCollection = defineCollection({
 
 // Cheatsheets collection for AI-generated reference materials
 const cheatsheetsCollection = defineCollection({
-  loader: glob({ pattern: ['**/*.{html,md}'], base: 'src/content/cheatsheets' }),
+  loader: glob({ pattern: ['**/*.{html,md}'], base: './contents/cheatsheets' }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
