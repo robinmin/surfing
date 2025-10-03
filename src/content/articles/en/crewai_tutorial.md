@@ -7,6 +7,7 @@ wordCount: 2749
 publishDate: 2025-10-01
 draft: false
 featured: false
+image: "~/assets/images/crewai_logo.png"
 ---
 
 ## Architecture Overview
