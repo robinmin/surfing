@@ -298,13 +298,13 @@ const metadata = {
           // Tag filter
           if (selectedTags.size > 0) {
             const hasMatchingTag = Array.from(selectedTags).some((tag) =>
-              cardTags.some((cardTag: string) => cardTag.toLowerCase() === tag)
+              cardTags.some((cardTag: string) => cardTag.toLowerCase() === (tag as string).toLowerCase())
             );
             if (!hasMatchingTag) return false;
           }
 
           // Category filter
-          if (selectedCategories.size > 0 && !selectedCategories.has(cardCategory)) {
+          if (selectedCategories.size > 0 && !selectedCategories.has(cardCategory?.toLowerCase())) {
             return false;
           }
 
@@ -353,7 +353,7 @@ const metadata = {
 
       tagButtons.forEach((button) => {
         button.addEventListener('click', function () {
-          const tag = this.dataset.tag;
+          const tag = this.dataset.tag?.toLowerCase();
           if (selectedTags.has(tag)) {
             selectedTags.delete(tag);
             this.classList.remove('bg-blue-500', 'text-white', 'dark:bg-blue-600');
@@ -369,7 +369,7 @@ const metadata = {
 
       categoryButtons.forEach((button) => {
         button.addEventListener('click', function () {
-          const category = this.dataset.category;
+          const category = this.dataset.category?.toLowerCase();
           if (selectedCategories.has(category)) {
             selectedCategories.delete(category);
             this.classList.remove('bg-green-500', 'text-white', 'dark:bg-green-600');
