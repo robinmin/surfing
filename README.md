@@ -156,7 +156,7 @@ For AI-generated HTML cheatsheets that need PDF versions, we have a streamlined 
   - Extracts inline styles → `customCSS` frontmatter
   - Extracts inline scripts → `customJS` frontmatter
   - Extracts body content → markdown body
-- ✅ Publishes to `src/content/cheatsheets/en/*.md`
+- ✅ Publishes to `contents/cheatsheets/en/*.md`
 - ✅ Cleans up temporary /tmp file
 - ✅ Commits and publishes to website
 
@@ -174,10 +174,10 @@ For AI-generated HTML cheatsheets that need PDF versions, we have a streamlined 
 **Option 2: Manual Publishing**
 
 1. Create your file in the appropriate directory:
-   - Articles: `src/content/articles/your-article.md`
-   - Showcase: `src/content/showcase/your-project.md`
-   - Documents: `src/content/documents/your-document.md`
-   - Cheatsheets: `src/content/cheatsheets/your-cheatsheet.md`
+   - Articles: `contents/articles/your-article.md`
+   - Showcase: `contents/showcase/your-project.md`
+   - Documents: `contents/documents/your-document.md`
+   - Cheatsheets: `contents/cheatsheets/your-cheatsheet.md`
 
 2. Add frontmatter and content
 3. Commit to git
@@ -218,7 +218,7 @@ Or see our [Content Specification Guide](./docs/content-specification.md) for ma
 ### How do I unpublish content?
 
 1. **Draft mode**: Add `draft: true` to frontmatter
-2. **Delete**: Remove the file from `src/content/`
+2. **Delete**: Remove the file from `contents/`
 3. **Archive**: Move file outside content directories
 
 ## 🔧 Development Commands
@@ -264,7 +264,7 @@ All platforms support Astro with zero configuration needed.
 
 - Build failures: Check Node.js version (18+ required)
 - Content not appearing: Verify file location and frontmatter
-- Images not loading: Place in `public/images/` and use absolute paths
+- Images not loading: Place in `assets/images/` or `public/images/` and use absolute paths
 
 **Getting Help:**
 
