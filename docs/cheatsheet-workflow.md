@@ -20,7 +20,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
                               │
                               │ • Analyzes HTML structure
                               │ • Generates configuration
-                              │ • Caches to src/content/cheatsheets/en/
+                              │ • Caches to contents/cheatsheets/en/
                               │ • Provides AI instructions
                               ▼
    ┌──────────────────────────────────────────────────────────┐
@@ -82,7 +82,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 
 **Output:**
 
-- Cached HTML file in `src/content/cheatsheets/en/`
+- Cached HTML file in `contents/cheatsheets/en/`
 - Processing configuration in `/tmp/cheatsheet_config_*.json`
 - AI assistant instructions in console
 
@@ -102,7 +102,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 
 **What the AI does:**
 
-1. Loads cached HTML from `src/content/cheatsheets/en/`
+1. Loads cached HTML from `contents/cheatsheets/en/`
 2. Refines code examples for accuracy and readability
 3. Optimizes section layout with column balancing
 4. Removes navigation elements (TOC, sidebar, etc.)
@@ -170,11 +170,11 @@ This document describes the refined 4-step process for publishing cheatsheets to
 **What it does:**
 
 1. Validates the refined HTML file
-2. Auto-detects if PDF exists in `public/assets/cheatsheets/<lang>/`
+2. Auto-detects if PDF exists in `public/pdf/cheatsheets/<lang>/`
 3. Generates PDF if not already present (intelligent auto-generation)
 4. Converts HTML to Astro-compatible markdown
 5. Calls `postsurfing` to publish to website
-6. Cleans up cached HTML file from `src/content/cheatsheets/<lang>/`
+6. Cleans up cached HTML file from `contents/cheatsheets/<lang>/`
 7. Commits and pushes changes (unless `--no-commit`)
 
 **Example:**
@@ -189,8 +189,8 @@ This document describes the refined 4-step process for publishing cheatsheets to
 
 **Output:**
 
-- Markdown file in `src/content/cheatsheets/<lang>/`
-- PDF file in `public/assets/cheatsheets/<lang>/` (auto-generated if not present)
+- Markdown file in `contents/cheatsheets/<lang>/`
+- PDF file in `public/pdf/cheatsheets/<lang>/` (auto-generated if not present)
 - Published to website after deployment
 
 ---
@@ -303,11 +303,11 @@ surfing/
 ├── docs/
 │   ├── prompt_cheatsheets_optimized.md # Step 2: AI prompt
 │   └── cheatsheet-workflow.md         # This document
-├── src/content/cheatsheets/
+├── contents/cheatsheets/
 │   ├── en/                            # English cheatsheets
 │   ├── cn/                            # Chinese cheatsheets
 │   └── jp/                            # Japanese cheatsheets
-└── public/assets/cheatsheets/
+└── public/pdf/cheatsheets/
     ├── en/                            # English PDFs
     ├── cn/                            # Chinese PDFs
     └── jp/                            # Japanese PDFs
@@ -364,7 +364,7 @@ surfing/
 ### With Language Specification
 
 ```bash
-# Chinese cheatsheet (PDF goes to public/assets/cheatsheets/cn/)
+# Chinese cheatsheet (PDF goes to public/pdf/cheatsheets/cn/)
 ./scripts/postprocess-cheatsheets.sh golang-cheatsheet.html --lang cn
 ```
 
@@ -385,7 +385,7 @@ surfing/
 
 ```bash
 # Solution: Check the cached file location
-ls -la src/content/cheatsheets/en/
+ls -la contents/cheatsheets/en/
 ```
 
 **Issue:** PDF generation fails
