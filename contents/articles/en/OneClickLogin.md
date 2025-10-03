@@ -32,7 +32,9 @@ The client is initialized with the project's unique URL and its public `anon` ke
 
 A recommended practice is to create a dedicated JavaScript file to manage the Supabase client instance, which can then be imported or included across the application.
 
-\*\*Example `public/js/supabaseClient.js`:\*\*javascript
+**Example `public/js/supabaseClient.js`:**
+
+```javascript
 // public/js/supabaseClient.js
 
 // It is crucial to understand that these values are publicly visible in the browser.
@@ -46,8 +48,7 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // Expose the client for use in other scripts, for example by attaching it to the window object.
 // In a more complex application, you might use ES modules.
 window.supabase = supabase;
-
-````
+```
 
 This file can then be included in the main HTML document before any other application scripts that need to access Supabase.
 
@@ -56,18 +57,18 @@ This file can then be included in the main HTML document before any other applic
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Supabase App</title>
     <script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)"></script>
-</head>
-<body>
+  </head>
+  <body>
     <script src="/js/supabaseClient.js"></script>
     <script src="/js/app.js"></script>
-</body>
+  </body>
 </html>
-````
+```
 
 This setup provides a clean and reusable way to access the Supabase client throughout the static application.[14]
 
@@ -89,16 +90,26 @@ To solve this, Supabase's authentication settings must be configured to accept U
 
 **Step-by-Step URL Configuration:**
 
-1.  **Set the Main Site URL:** In the Supabase dashboard, navigate to `Authentication > URL Configuration`. Set the `Site URL` to the primary, canonical production domain of the website (e.g., `https://www.yourdomain.com`).[6] This URL is used as the default for email templates and other communications.
+#### 1️⃣ Set the Main Site URL
 
-2.  **Add Additional Redirect URLs:** This is the key to supporting multiple environments. In the `Additional Redirect URLs` field, add patterns that match all valid deployment targets. Supabase supports wildcards for this purpose.[18] Add the following entries, replacing `<your-project-name>` with the name of the Cloudflare Pages project:
-    - `http://localhost:3000/**` (Adjust the port if the local development server uses a different one).
-    - `https://*.<your-project-name>.pages.dev/**` (This wildcard pattern will match all Cloudflare preview and branch deployments).
-    - `https://<your-project-name>.pages.dev/**` (This covers the main project URL on Cloudflare).
+In the Supabase dashboard, navigate to `Authentication > URL Configuration`. Set the `Site URL` to the primary, canonical production domain of the website (e.g., `https://www.yourdomain.com`).[6] This URL is used as the default for email templates and other communications.
 
-3.  **Configure CORS:** Cross-Origin Resource Sharing (CORS) is a browser security feature that restricts how web pages can request resources from a different domain. The Supabase API will reject requests from unknown origins. To allow the static website to communicate with the Supabase backend, the application's domains must be added to the CORS allow list.
-    - In the Supabase dashboard, navigate to `Project Settings > API`.
-    - In the `CORS Configuration` section, add the same set of URLs used for redirects: `http://localhost:3000`, `https://www.yourdomain.com`, and `*.pages.dev`.[19]
+#### 2️⃣ Add Additional Redirect URLs
+
+> **⚠️ Critical Step:** This is the key to supporting multiple environments.
+
+In the `Additional Redirect URLs` field, add patterns that match all valid deployment targets. Supabase supports wildcards for this purpose.[18] Add the following entries, replacing `<your-project-name>` with the name of the Cloudflare Pages project:
+
+- `http://localhost:3000/**` (Adjust the port if the local development server uses a different one)
+- `https://*.<your-project-name>.pages.dev/**` (This wildcard pattern will match all Cloudflare preview and branch deployments)
+- `https://<your-project-name>.pages.dev/**` (This covers the main project URL on Cloudflare)
+
+#### 3️⃣ Configure CORS
+
+Cross-Origin Resource Sharing (CORS) is a browser security feature that restricts how web pages can request resources from a different domain. The Supabase API will reject requests from unknown origins. To allow the static website to communicate with the Supabase backend, the application's domains must be added to the CORS allow list.
+
+- In the Supabase dashboard, navigate to `Project Settings > API`
+- In the `CORS Configuration` section, add the same set of URLs used for redirects: `http://localhost:3000`, `https://www.yourdomain.com`, and `*.pages.dev`[19]
 
 By completing this foundational setup, the application is correctly configured to handle authentication requests from any development, preview, or production environment, preventing a common class of deployment-specific errors.
 
@@ -223,15 +234,15 @@ With this code in place, when a user visits the page, the One Tap prompt will ap
 
 While the basic integration works, a production-grade implementation must include nonce verification to prevent replay attacks. A replay attack occurs when an attacker intercepts a user's ID Token and "replays" it to the application's backend to gain unauthorized access. A nonce (number used once) is a unique, randomly generated string for each sign-in attempt that mitigates this threat.
 
-The flow is as follows:
+**Nonce Verification Flow:**
 
-1.  The client application generates a random string (the raw nonce).
-2.  The client includes this nonce in the request to the identity provider (Google).
-3.  The identity provider embeds the nonce within the signed ID Token it returns.
-4.  The client sends this ID Token to the backend (Supabase), along with the original raw nonce.
-5.  The backend verifies the token's signature and confirms that the nonce inside the token matches the one it received from the client for this specific attempt.
+1. **Client generates raw nonce** → The client application generates a random string (the raw nonce)
+2. **Client sends hashed nonce to Google** → The client includes the SHA-256 hash of this nonce in the request to Google
+3. **Google embeds nonce in token** → Google embeds the hashed nonce within the signed ID Token it returns
+4. **Client sends token + raw nonce to Supabase** → The client sends the ID Token to Supabase, along with the original raw (unhashed) nonce
+5. **Supabase verifies** → Supabase hashes the raw nonce, verifies the token's signature, and confirms the hashed value matches the nonce in the token
 
-Supabase introduces a specific requirement to this flow: the nonce value provided to the Google library must be a SHA-256 hash of the raw nonce. Supabase then performs the same hashing on the raw nonce it receives to validate against the value in the token.[7]
+> **Important:** Supabase requires the nonce value provided to Google to be a SHA-256 hash of the raw nonce. Supabase then performs the same hashing on the raw nonce it receives to validate against the value in the token.[7]
 
 **Implementing Nonce Verification:**
 
@@ -481,14 +492,16 @@ The `onAuthStateChange` function subscribes to all significant authentication ev
 
 The listener's callback function receives two arguments: `event` and `session`.
 
-- `event`: A string indicating the type of authentication event that occurred.
-- `session`: The user session object if a user is authenticated, or `null` if they are not.
+- **`event`**: A string indicating the type of authentication event that occurred
+- **`session`**: The user session object if a user is authenticated, or `null` if they are not
 
-The key events for managing UI state are [14]:
+**Key Events for Managing UI State:**[14]
 
-- `INITIAL_SESSION`: Fired once when the client is initialized and attempts to load a session from storage (e.g., `localStorage`). This is essential for determining the user's state when they first land on the page or refresh it.
-- `SIGNED_IN`: Fired whenever a user successfully authenticates, either through a login action or when a session is re-established (e.g., when a tab is refocused).
-- `SIGNED_OUT`: Fired when a user's session is terminated, either by an explicit call to `signOut()` or due to session expiration.
+| Event             | When It Fires                                                                                                                       | Use Case                                    |
+| :---------------- | :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------ |
+| `INITIAL_SESSION` | Fired once when the client is initialized and attempts to load a session from storage (e.g., `localStorage`)                        | Determine user's state on page load/refresh |
+| `SIGNED_IN`       | Fired whenever a user successfully authenticates, either through a login action or when a session is re-established (e.g., refocus) | Show authenticated UI                       |
+| `SIGNED_OUT`      | Fired when a user's session is terminated, either by an explicit call to `signOut()` or due to session expiration                   | Show unauthenticated UI                     |
 
 By implementing a single listener, the application can react to all these state changes from one central location.
 
@@ -570,11 +583,19 @@ This code creates a complete, closed-loop system. When the page loads, `INITIAL_
 
 While powerful, the `onAuthStateChange` callback must be used with care, as some events can fire frequently, especially with multiple tabs open. The following best practices are critical to avoid performance issues and potential deadlocks [14]:
 
-1.  **Keep Callbacks Lightweight:** The callback function should be as fast and efficient as possible. Its primary responsibility should be to update the UI state. Defer or debounce any heavy computations or network requests to be performed outside the callback.
+#### ⚡ Best Practice 1: Keep Callbacks Lightweight
 
-2.  **Avoid `async` Callbacks and `await`:** It is strongly recommended to avoid making the callback function `async`. The callback runs synchronously during the processing of the state change. Using `await` on another Supabase function call from within the callback can easily create a deadlock, where the client library is waiting for a response while also being blocked by the callback it is trying to execute.
+The callback function should be as fast and efficient as possible. Its primary responsibility should be to update the UI state. Defer or debounce any heavy computations or network requests to be performed outside the callback.
 
-3.  **Safe Pattern for Subsequent Supabase Calls:** If it is absolutely necessary to call another Supabase function in response to an auth event (e.g., fetching profile data from a database table after sign-in), do not call it directly from the callback. Instead, use a `setTimeout` with a delay of 0. This dispatches the function to run immediately after the current execution stack has cleared, safely breaking the synchronous chain and preventing deadlocks.
+#### 🚫 Best Practice 2: Avoid `async` Callbacks and `await`
+
+> **Critical Warning:** It is strongly recommended to avoid making the callback function `async`.
+
+The callback runs synchronously during the processing of the state change. Using `await` on another Supabase function call from within the callback can easily create a deadlock, where the client library is waiting for a response while also being blocked by the callback it is trying to execute.
+
+#### ✅ Best Practice 3: Safe Pattern for Subsequent Supabase Calls
+
+If it is absolutely necessary to call another Supabase function in response to an auth event (e.g., fetching profile data from a database table after sign-in), do not call it directly from the callback. Instead, use a `setTimeout` with a delay of 0. This dispatches the function to run immediately after the current execution stack has cleared, safely breaking the synchronous chain and preventing deadlocks.
 
 **Example of the safe pattern:**
 
@@ -634,6 +655,10 @@ This checklist serves as a vital tool for verifying that all interdependent serv
 ### 5.3. Common Errors and Debugging Playbook
 
 When integrating multiple complex systems, errors are inevitable. This playbook provides a first line of defense for diagnosing and resolving the most common issues encountered during the implementation of Supabase Auth with Google and Apple on Cloudflare.
+
+> **💡 Tip:** Keep your browser's Developer Console open during testing to catch errors early. Most authentication issues will display clear error messages in the console.
+
+#### 🔍 Quick Reference: Error Symptoms and Solutions
 
 | Error Message / Symptom                                                          | Likely Cause(s)                                                                                                                                                                                     | Resolution Steps                                                                                                                                                                                                                                                                                                                                                               |
 | :------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
