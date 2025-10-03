@@ -95,11 +95,11 @@ EXAMPLES:
 
 WORKFLOW:
     1. Validates the refined HTML file
-    2. Auto-detects if PDF needs generation (checks public/assets/cheatsheets/)
+    2. Auto-detects if PDF needs generation (checks public/pdf/cheatsheets/)
     3. Generates PDF if not already present
     4. Converts HTML to markdown with frontmatter
     5. Publishes to Surfing platform using postsurfing
-    6. Cleans up cached HTML file from src/content/cheatsheets/
+    6. Cleans up cached HTML file from contents/cheatsheets/
     7. Commits and pushes changes (unless --no-commit)
 
 PREREQUISITES:
@@ -203,7 +203,7 @@ auto_generate_pdf() {
     local input_file="$1"
     local filename=$(basename "$input_file")
     local slug=$(basename "$filename" .html)
-    local pdf_dir="$PROJECT_ROOT/public/assets/cheatsheets/$LANG"
+    local pdf_dir="$PROJECT_ROOT/public/pdf/cheatsheets/$LANG"
     local pdf_file="$pdf_dir/${slug}.pdf"
 
     # Always set PDF_PATH for metadata (even if generation is skipped)
@@ -241,7 +241,7 @@ publish_to_surfing() {
     local input_file="$1"
     local filename=$(basename "$input_file")
     local slug=$(basename "$filename" .html)
-    local target_dir="$PROJECT_ROOT/src/content/cheatsheets/$LANG"
+    local target_dir="$PROJECT_ROOT/contents/cheatsheets/$LANG"
 
     log_info "Publishing cheatsheet..."
 
