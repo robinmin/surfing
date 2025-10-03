@@ -122,7 +122,7 @@ async function testOutputPath(processor) {
   const inputPath = '/test/path/my-article.md';
   const outputPath = processor.determineOutputPath(inputPath, 'articles', 'en');
 
-  utils.assertContains(outputPath, 'src/content/articles/en', 'Should use correct content directory with language');
+  utils.assertContains(outputPath, 'contents/articles/en', 'Should use correct content directory with language');
   utils.assertContains(outputPath, 'my-article.md', 'Should preserve filename with .md extension');
 
   utils.success('Output path determination test passed');
