@@ -283,6 +283,8 @@ export default defineConfig({
     resolve: {
       alias: {
         '~': path.resolve(__dirname, './src'),
+        '@contents': path.resolve(__dirname, './contents'),
+        '@assets': path.resolve(__dirname, './assets'),
       },
     },
   },
