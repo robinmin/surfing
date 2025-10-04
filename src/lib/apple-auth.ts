@@ -113,8 +113,8 @@ export const loadAppleScript = (): Promise<void> => {
  * Get Apple Sign In configuration from environment variables
  */
 export const getAppleConfig = (): AppleSignInConfig => {
-  const clientId = import.meta.env.PUBLIC_APPLE_SERVICES_ID;
-  const redirectURI = import.meta.env.PUBLIC_APPLE_REDIRECT_URI;
+  const clientId = typeof import.meta.env !== 'undefined' ? import.meta.env.PUBLIC_APPLE_SERVICES_ID : undefined;
+  const redirectURI = typeof import.meta.env !== 'undefined' ? import.meta.env.PUBLIC_APPLE_REDIRECT_URI : undefined;
 
   if (!clientId) {
     throw new Error(
@@ -221,7 +221,7 @@ export const signInWithApple = async (): Promise<any> => {
     }
 
     // Validate audience
-    const clientId = import.meta.env.PUBLIC_APPLE_SERVICES_ID;
+    const clientId = typeof import.meta.env !== 'undefined' ? import.meta.env.PUBLIC_APPLE_SERVICES_ID : undefined;
     if (payload.aud !== clientId) {
       throw new Error('Invalid token audience');
     }
@@ -243,6 +243,9 @@ export const signInWithApple = async (): Promise<any> => {
     }
 
     // Sign in with Supabase
+    if (!supabase) {
+      throw new Error('Authentication service not available');
+    }
     const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'apple',
       token: response.authorization.id_token,
@@ -269,6 +272,9 @@ export const signInWithApple = async (): Promise<any> => {
  */
 export const signOut = async (): Promise<void> => {
   try {
+    if (!supabase) {
+      throw new Error('Authentication service not available');
+    }
     await supabase.auth.signOut();
 
     // Also sign out from Apple if available
@@ -286,6 +292,9 @@ export const signOut = async (): Promise<void> => {
  */
 export const getCurrentSession = async () => {
   try {
+    if (!supabase) {
+      throw new Error('Authentication service not available');
+    }
     const {
       data: { session },
       error,
@@ -302,6 +311,9 @@ export const getCurrentSession = async () => {
  * Listen for auth state changes
  */
 export const onAuthStateChange = (callback: (event: string, session: any) => void) => {
+  if (!supabase) {
+    return { data: { subscription: { unsubscribe: () => {} } } };
+  }
   return supabase.auth.onAuthStateChange(callback);
 };
 
