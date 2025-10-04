@@ -113,7 +113,7 @@ export const loadGoogleScript = (): Promise<void> => {
 /**
  * Get Google configuration from environment variables
  */
-export const getGoogleConfig = (): GoogleOneTapConfig => {
+export const getGoogleConfig = async (): Promise<GoogleOneTapConfig> => {
   const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
 
   if (!clientId) {
@@ -141,11 +141,22 @@ export const getGoogleConfig = (): GoogleOneTapConfig => {
     );
   }
 
+  // Generate nonce for security
+  const { generateNonce, sha256Base64Url } = await import('~/utils/crypto');
+  const nonce = generateNonce();
+  const hashedNonce = await sha256Base64Url(nonce);
+
+  // Store original nonce for validation
+  if (typeof sessionStorage !== 'undefined') {
+    sessionStorage.setItem('google_auth_nonce', nonce);
+  }
+
   return {
     client_id: clientId,
     auto_select: false,
     cancel_on_tap_outside: false,
     context: 'signin',
+    nonce: hashedNonce,
     itp_support: true,
   };
 };
@@ -218,10 +229,8 @@ export const initializeGoogleOneTap = async (
     // Load Google script if not already loaded
     await loadGoogleScript();
 
-    // Get configuration without nonce to prevent Supabase conflicts
-    const config = getGoogleConfig();
-    // Remove nonce to avoid Supabase validation issues
-    delete config.nonce;
+    // Get configuration with nonce for security
+    const config = await getGoogleConfig();
 
     // Use traditional Google One Tap (FedCM not yet fully supported by Google)
     initializeGoogleOneTapLegacy(config, onSuccess, onError);
@@ -292,7 +301,7 @@ const initializeGoogleOneTapLegacy = (
  */
 export const signInWithGoogle = async (credential: string): Promise<any> => {
   try {
-    // Decode token for validation (without nonce verification)
+    // Decode token for validation
     const payload = decodeJWT(credential) as GoogleIdTokenPayload;
 
     // Validate token expiration
@@ -317,6 +326,23 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
       throw new Error('Email not verified');
     }
 
+    // Validate nonce to prevent replay attacks
+    let storedNonce: string | null = null;
+    if (typeof sessionStorage !== 'undefined') {
+      storedNonce = sessionStorage.getItem('google_auth_nonce');
+    }
+
+    // Verify nonce matches if both exist
+    if (payload.nonce && storedNonce) {
+      if (payload.nonce !== storedNonce) {
+        throw new Error('Nonce validation failed - possible replay attack');
+      }
+      // Clear the nonce after successful validation
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.removeItem('google_auth_nonce');
+      }
+    }
+
     // Check rate limiting using email as identifier
     const identifier = payload.email || payload.sub;
     if (isRateLimited(identifier)) {
@@ -328,11 +354,11 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
       throw new Error('Authentication service not available');
     }
 
-    // Pass nonce to Supabase if it exists in the token
+    // Pass the original nonce to Supabase for validation
     const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'google',
       token: credential,
-      nonce: payload.nonce || undefined,
+      nonce: storedNonce || undefined,
     });
 
     if (error) {
