@@ -72,3 +72,15 @@ cookieConsent:
 
 ui:
   theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"
+
+# Authentication configuration
+auth:
+  google_one_tap:
+    enabled: true
+  apple_sign_in:
+    enabled: false
+
+# Sentry error tracking configuration
+sentry:
+  enabled: true
+  debug: false # Set to true to enable Sentry in development mode
