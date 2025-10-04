@@ -1,0 +1,43 @@
+# Task ID: 12
+# Title: Configure Supabase Authentication Providers
+# Status: pending
+# Dependencies: 10, 11
+# Priority: medium
+# Description: Enable and configure Google and Apple providers in Supabase dashboard
+# Details:
+In Supabase dashboard: 1) Enable Google provider and add Client ID to 'Authorized Client IDs', 2) Enable Apple provider and add Services ID to 'Authorized Client IDs', 3) Configure ID Token flow settings, 4) Set up Site URL and redirect URLs for all environments (wildcards for preview environments), 5) Configure CORS settings for all origins.
+
+# Test Strategy:
+Test ID token validation from both providers through Supabase Auth and verify CORS settings work for all environments
+
+# Subtasks:
+## 1. Enable Google OAuth Provider in Supabase Dashboard [pending]
+### Dependencies: None
+### Description: Access Supabase dashboard and enable Google provider with proper configuration for ID token flow
+### Details:
+In Supabase dashboard: 1) Navigate to Authentication > Providers, 2) Enable Google provider, 3) Configure for ID Token flow by selecting 'Use an ID token instead of a secret', 4) Add Google Client ID from task 10 to 'Authorized Client IDs' list, 5) Ensure proper nonce validation is enabled. This enables Supabase to validate Google ID tokens without requiring OAuth redirect flow.
+
+## 2. Enable Apple OAuth Provider in Supabase Dashboard [pending]
+### Dependencies: None
+### Description: Access Supabase dashboard and enable Apple provider with proper configuration for client-side authentication
+### Details:
+In Supabase dashboard: 1) Navigate to Authentication > Providers, 2) Enable Apple provider, 3) Add Apple Services ID from task 11 to 'Authorized Client IDs' list, 4) Configure for client-side flow (no private key required), 5) Verify provider settings match Apple Developer Portal configuration. This enables Supabase to validate Apple ID tokens from client-side Sign In with Apple flow.
+
+## 3. Configure Site URL and Redirect URLs for All Environments [pending]
+### Dependencies: 12.1, 12.2
+### Description: Set up comprehensive URL configuration in Supabase to support local development, preview deployments, and production
+### Details:
+In Supabase dashboard Authentication settings: 1) Set Site URL to production domain (https://surfing.salty.vip), 2) Add Additional Redirect URLs: http://localhost:4321/**, https://*.pages.dev/**, https://surfing.salty.vip/**, 3) Use wildcard patterns to support Cloudflare Pages preview environments, 4) Ensure all environment URLs from tasks 10 and 11 are covered. This ensures authentication callbacks work across all deployment environments.
+
+## 4. Configure CORS Settings for Cross-Origin Requests [pending]
+### Dependencies: 12.3
+### Description: Set up CORS configuration in Supabase to allow authentication requests from all deployment environments
+### Details:
+In Supabase dashboard API settings: 1) Navigate to Settings > API, 2) Add CORS origins: http://localhost:4321, https://surfing.salty.vip, https://*.pages.dev, 3) Ensure wildcard patterns are properly configured for Cloudflare Pages, 4) Test CORS headers allow authentication API calls from all environments. This prevents CORS blocking during authentication flows across different domains.
+
+## 5. Document Supabase Configuration and Environment Variables [pending]
+### Dependencies: 12.4
+### Description: Create documentation for Supabase setup process and required environment variables for the authentication system
+### Details:
+Create comprehensive documentation: 1) Document all Supabase dashboard configuration steps, 2) Update .env.example with PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY variables, 3) Document provider-specific configuration requirements, 4) Create troubleshooting guide for common CORS and redirect URL issues, 5) Document environment-specific setup for local, preview, and production. This ensures consistent setup across different environments and team members.
+

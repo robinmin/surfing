@@ -1,0 +1,43 @@
+# Task ID: 15
+# Title: Setup Cloudflare Pages Environment Variables
+# Status: done
+# Dependencies: 2
+# Priority: medium
+# Description: Configure runtime environment variables in Cloudflare Pages dashboard
+# Details:
+In Cloudflare Pages dashboard: 1) Add environment variables for production and preview environments, 2) Configure separate values for preview vs production if needed, 3) Ensure variables are available during both build and runtime, 4) Test automatic deployment from GitHub integration.
+
+# Test Strategy:
+Verify environment variables are correctly loaded in both preview and production Cloudflare deployments
+
+# Subtasks:
+## 1. Access Cloudflare Pages Dashboard [done]
+### Dependencies: None
+### Description: Navigate to Cloudflare dashboard and locate the Surfing project's Pages environment variables section
+### Details:
+Log into Cloudflare dashboard, navigate to Pages section, find the 'surfing' project, and access the Settings > Environment variables section to prepare for configuration.
+
+## 2. Configure Production Environment Variables [done]
+### Dependencies: 15.1
+### Description: Add all required PUBLIC_ environment variables for production deployment
+### Details:
+Add the following environment variables to Production environment: PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_GOOGLE_CLIENT_ID, PUBLIC_APPLE_SERVICES_ID, PUBLIC_APPLE_REDIRECT_URI. Use production values for each variable.
+
+## 3. Configure Preview Environment Variables [done]
+### Dependencies: 15.2
+### Description: Add environment variables for preview/staging deployments with appropriate values
+### Details:
+Configure Preview environment with the same PUBLIC_ prefixed variables but using staging/development values where appropriate. This ensures pull request previews work correctly with proper authentication setup.
+
+## 4. Verify Build and Runtime Availability [done]
+### Dependencies: 15.2, 15.3
+### Description: Ensure environment variables are accessible during both build time and runtime in Cloudflare Pages
+### Details:
+Configure variables to be available during build process (for Astro static generation) and at runtime (for client-side access). Verify the PUBLIC_ prefix ensures client-side availability as required by src/lib/supabase.ts.
+
+## 5. Test Automatic GitHub Integration [done]
+### Dependencies: 15.4
+### Description: Verify automatic deployment triggers and environment variable injection from GitHub repository
+### Details:
+Test the existing GitHub Actions workflow integration by triggering a deployment. Verify that the Cloudflare Pages environment variables are properly injected and the build succeeds with authentication functionality working.
+

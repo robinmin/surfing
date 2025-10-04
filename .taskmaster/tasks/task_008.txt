@@ -1,0 +1,43 @@
+# Task ID: 8
+# Title: Create Authentication UI Container Component
+# Status: done
+# Dependencies: 5, 6, 7
+# Priority: high
+# Description: Create main authentication UI component that handles login/logout states
+# Details:
+Create src/components/auth/AuthContainer.astro that serves as the main authentication UI. Include: 1) Conditional rendering based on auth state, 2) Login buttons container (Google One Tap + Apple Sign In), 3) User profile container with avatar and logout button, 4) Loading states and error messages, 5) Responsive design for mobile/desktop. Use client:load directive and integrate with auth state management.
+
+# Test Strategy:
+Test UI state transitions, responsive design, accessibility features, and proper integration with authentication flow
+
+# Subtasks:
+## 1. Create AuthContainer component structure and props interface [done]
+### Dependencies: None
+### Description: Create the main AuthContainer.astro file with TypeScript interfaces and basic component structure
+### Details:
+Create src/components/auth/AuthContainer.astro with proper TypeScript interfaces for props. Define interfaces for user state, loading states, and error handling. Set up the basic Astro component structure with client:load directive. Include props for controlling authentication state visibility, styling classes, and callback functions.
+
+## 2. Implement conditional rendering logic based on authentication state [done]
+### Dependencies: 8.1
+### Description: Add state management and conditional rendering for authenticated vs unauthenticated states
+### Details:
+Implement reactive state management using Astro's client-side capabilities. Create conditional rendering logic to show different UI components based on authentication status (loading, authenticated, unauthenticated, error states). Use reactive variables and proper state transitions following Astro patterns observed in existing components like ToggleTheme.
+
+## 3. Create login buttons container with Google One Tap and Apple Sign In [done]
+### Dependencies: 8.2
+### Description: Implement the login interface with authentication provider buttons
+### Details:
+Create a login buttons container that displays when user is not authenticated. Include Google One Tap integration and Apple Sign In button following the existing Button component patterns found in Button.astro. Use proper styling classes consistent with the project's Tailwind CSS approach and button variants (primary, secondary, etc). Implement proper accessibility attributes and responsive design.
+
+## 4. Build user profile container with avatar and logout functionality [done]
+### Dependencies: 8.2
+### Description: Create the authenticated user interface showing profile information and logout option
+### Details:
+Build a user profile container that displays when user is authenticated. Include user avatar image, display name, and logout button. Follow the existing component patterns from Header.astro for navigation elements and Button.astro for action buttons. Implement proper user data handling and logout functionality. Use responsive design patterns consistent with the existing Header component.
+
+## 5. Add responsive design and integrate with project styling system [done]
+### Dependencies: 8.3, 8.4
+### Description: Implement responsive design and ensure consistent styling with the existing design system
+### Details:
+Apply responsive design using Tailwind CSS classes following patterns from existing components like Header.astro. Ensure proper mobile/desktop layouts, implement loading states with appropriate spinners or skeleton UI, and add error message display. Integrate with the project's dark/light theme system and ensure accessibility compliance. Add proper focus management and keyboard navigation support.
+

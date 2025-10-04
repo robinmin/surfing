@@ -1,0 +1,43 @@
+# Task ID: 1
+# Title: Install Supabase JavaScript Client
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Install @supabase/supabase-js package to enable authentication functionality
+# Details:
+Install the Supabase JavaScript client library using npm. Run 'npm install @supabase/supabase-js' to add the package to dependencies. Verify the installation by checking package.json for the added dependency. This package provides the client-side SDK for interacting with Supabase Auth services.
+
+# Test Strategy:
+Verify package appears in package.json dependencies and can be imported without errors in TypeScript/JavaScript files
+
+# Subtasks:
+## 1. Install Supabase JavaScript Client Package [done]
+### Dependencies: None
+### Description: Install the @supabase/supabase-js package as a dependency to enable authentication functionality in the Astro project
+### Details:
+Run 'npm install @supabase/supabase-js' in the project root directory. This will add the Supabase JavaScript client to the dependencies section of package.json. The package provides the client-side SDK for interacting with Supabase Auth services and will be used for authentication, session management, and OAuth provider integration.
+
+## 2. Create Environment Configuration Template [done]
+### Dependencies: 1.1
+### Description: Create .env.example file with required Supabase and OAuth provider environment variables
+### Details:
+Create .env.example file in project root with variables: PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_GOOGLE_CLIENT_ID, PUBLIC_APPLE_SERVICES_ID, PUBLIC_APPLE_REDIRECT_URI. Use 'PUBLIC_' prefix to make variables available client-side in Astro. Include comments explaining each variable's purpose and where to obtain the values.
+
+## 3. Create Supabase Client Configuration [done]
+### Dependencies: 1.1, 1.2
+### Description: Create a centralized Supabase client configuration module to initialize and export the client instance
+### Details:
+Create src/lib/supabase.ts file to initialize Supabase client using environment variables. Export createClient instance configured with PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY. Include TypeScript types and error handling for missing environment variables. This module will be imported throughout the application for authentication operations.
+
+## 4. Verify Package Installation and Dependencies [done]
+### Dependencies: 1.1, 1.2, 1.3
+### Description: Run build and type checking to ensure the Supabase package is properly installed and configured
+### Details:
+Execute 'npm run check' to run Astro check, ESLint, and Prettier validation. Run 'npm run build' to ensure the Supabase package doesn't introduce any build errors. Check TypeScript compilation for the Supabase client configuration. Resolve any package conflicts or type errors that may arise.
+
+## 5. Document Installation and Setup Process [done]
+### Dependencies: 1.1, 1.2, 1.3, 1.4
+### Description: Update project documentation to include Supabase setup instructions and environment variable configuration
+### Details:
+Add setup instructions to existing documentation explaining how to install Supabase, configure environment variables, and obtain necessary API keys. Include steps for local development, GitHub Actions secrets, and Cloudflare Pages environment variable configuration. Document the authentication flow architecture and client usage patterns.
+

@@ -1,0 +1,43 @@
+# Task ID: 11
+# Title: Configure Apple Developer Portal Setup
+# Status: pending
+# Dependencies: 2
+# Priority: medium
+# Description: Set up Apple Sign In configuration in Apple Developer Portal
+# Details:
+In Apple Developer Portal: 1) Create App ID with Sign in with Apple capability, 2) Create Services ID (used as Client ID), 3) Configure domains and return URLs for all environments (surfing.salty.vip, *.pages.dev), 4) Set up return URL: https://surfing.salty.vip/auth/callback. Document the configuration process and required settings.
+
+# Test Strategy:
+Verify Apple Sign In flow works correctly and tokens are properly validated
+
+# Subtasks:
+## 1. Create App ID with Sign in with Apple capability [pending]
+### Dependencies: None
+### Description: Navigate to Apple Developer Portal and create a new App ID (bundle identifier) with Sign in with Apple capability enabled for the Surfing application
+### Details:
+In Apple Developer Portal: 1) Go to Certificates, Identifiers & Profiles > Identifiers, 2) Click '+' to create new App ID, 3) Select 'App IDs' type, 4) Choose 'App' platform, 5) Enter Bundle ID (e.g., vip.salty.surfing), 6) Add App Name and description, 7) Enable 'Sign in with Apple' capability from the capabilities list, 8) Review and register the App ID. Document the Bundle ID as it will be needed for Services ID configuration.
+
+## 2. Create Services ID for OAuth Client ID [pending]
+### Dependencies: 11.1
+### Description: Create a Services ID in Apple Developer Portal that will serve as the OAuth Client ID for web-based Sign in with Apple authentication
+### Details:
+In Apple Developer Portal: 1) Go to Certificates, Identifiers & Profiles > Identifiers, 2) Click '+' to create new identifier, 3) Select 'Services IDs' type, 4) Enter unique Services ID identifier (e.g., vip.salty.surfing.web), 5) Add description, 6) Enable 'Sign in with Apple' capability, 7) Click 'Configure' next to Sign in with Apple, 8) Select the App ID created in previous step as Primary App ID, 9) Save the Services ID. Document this Services ID as it becomes the CLIENT_ID for Supabase configuration.
+
+## 3. Configure domains and return URLs for all environments [pending]
+### Dependencies: 11.2
+### Description: Configure authorized domains and return URLs in the Services ID to support local development, Cloudflare preview deployments, and production environment
+### Details:
+In Apple Developer Portal Services ID configuration: 1) Click 'Configure' on the Services ID created earlier, 2) Under 'Website URLs', add primary domain: surfing.salty.vip, 3) Add additional domains for development and preview: localhost (for local dev), *.pages.dev (for Cloudflare previews), 4) Under 'Return URLs', add the primary callback URL: https://surfing.salty.vip/auth/callback, 5) Add additional return URLs for other environments: http://localhost:4321/auth/callback, https://*.pages.dev/auth/callback, 6) Save the configuration. This ensures Apple Sign In works across all deployment environments.
+
+## 4. Generate and download Apple Sign In private key [pending]
+### Dependencies: 11.3
+### Description: Create and download the private key required for Apple Sign In server-to-server communication and token validation
+### Details:
+In Apple Developer Portal: 1) Go to Certificates, Identifiers & Profiles > Keys, 2) Click '+' to create new key, 3) Enter key name (e.g., 'Surfing Apple Sign In Key'), 4) Enable 'Sign in with Apple' capability, 5) Click 'Configure' and select the App ID created earlier, 6) Click 'Continue' and 'Register', 7) Download the .p8 private key file immediately (this is the only chance to download), 8) Note the Key ID displayed on the confirmation page, 9) Also note the Team ID from the top-right corner of the portal. Store these securely as they are required for Supabase Apple provider configuration.
+
+## 5. Document Apple Developer Portal configuration process [pending]
+### Dependencies: 11.4
+### Description: Create comprehensive documentation of the Apple Developer Portal setup process including all configuration values and settings required for integration
+### Details:
+Create documentation that includes: 1) Step-by-step instructions for recreating the Apple Developer Portal setup, 2) All configuration values: App ID Bundle Identifier, Services ID, Key ID, Team ID, 3) List of authorized domains and return URLs for each environment, 4) Screenshots or descriptions of key configuration screens, 5) Troubleshooting section for common issues, 6) Security notes about private key storage and rotation, 7) Integration notes for Supabase configuration (what values go where). Save this documentation in a secure location accessible to the development team.
+

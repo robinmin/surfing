@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: Create Google One Tap Authentication Component
+# Status: done
+# Dependencies: 3, 4
+# Priority: high
+# Description: Implement Google One Tap sign-in component with nonce verification
+# Details:
+Create src/components/auth/GoogleOneTap.astro component that implements Google One Tap authentication. Include: 1) Dynamic loading of Google Identity Services library, 2) Nonce generation and SHA-256 hashing, 3) Google One Tap initialization with proper configuration, 4) Callback handler that verifies nonce and calls Supabase signInWithIdToken, 5) Error handling and loading states. Use client:load directive for Astro hydration.
+
+# Test Strategy:
+Test successful authentication flow, nonce verification, error handling for invalid tokens, and proper Supabase session creation

@@ -1,0 +1,43 @@
+# Task ID: 14
+# Title: Setup GitHub Actions Environment Variables
+# Status: done
+# Dependencies: 2
+# Priority: medium
+# Description: Configure build-time environment variables in GitHub repository secrets
+# Details:
+Add required environment variables to GitHub repository secrets: PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_GOOGLE_CLIENT_ID, PUBLIC_APPLE_SERVICES_ID, PUBLIC_APPLE_REDIRECT_URI. Update GitHub Actions workflow to inject these variables during build process. Ensure variables are available during Astro build for static generation.
+
+# Test Strategy:
+Verify GitHub Actions build succeeds with environment variables and built site includes correct configuration
+
+# Subtasks:
+## 1. Add Environment Variables to GitHub Repository Secrets [done]
+### Dependencies: None
+### Description: Configure the required authentication environment variables as GitHub repository secrets
+### Details:
+Navigate to GitHub repository Settings > Secrets and variables > Actions. Add the following repository secrets: PUBLIC_SUPABASE_URL (Supabase project URL), PUBLIC_SUPABASE_ANON_KEY (Supabase anonymous key), PUBLIC_GOOGLE_CLIENT_ID (Google OAuth client ID), PUBLIC_APPLE_SERVICES_ID (Apple Services ID), PUBLIC_APPLE_REDIRECT_URI (Apple redirect URI). These secrets will be used in GitHub Actions workflows for build-time variable injection.
+
+## 2. Update GitHub Actions Build Workflow with Environment Variables [done]
+### Dependencies: 14.1
+### Description: Modify the existing build workflow to inject environment variables during the build process
+### Details:
+Update .github/workflows/actions.yaml to include environment variables in the build job. Add an 'env:' section to the build step that maps GitHub secrets to environment variables: PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}, PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}, PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.PUBLIC_GOOGLE_CLIENT_ID }}, PUBLIC_APPLE_SERVICES_ID: ${{ secrets.PUBLIC_APPLE_SERVICES_ID }}, PUBLIC_APPLE_REDIRECT_URI: ${{ secrets.PUBLIC_APPLE_REDIRECT_URI }}. Ensure these are available during 'npm run build' step.
+
+## 3. Update GitHub Actions Deploy Workflow with Environment Variables [done]
+### Dependencies: 14.1
+### Description: Modify the Cloudflare Pages deployment workflow to include environment variables during build
+### Details:
+Update .github/workflows/deploy.yml to include the same environment variables in the Build step. Add 'env:' section before the 'npm install && npm run build' command that maps all GitHub secrets to their corresponding environment variable names. This ensures the production build on Cloudflare Pages has access to the authentication configuration during static site generation.
+
+## 4. Validate Environment Variable Injection in Astro Build [done]
+### Dependencies: 14.2, 14.3
+### Description: Ensure Astro properly recognizes and processes PUBLIC_ prefixed environment variables during static generation
+### Details:
+Verify that Astro's build process correctly handles PUBLIC_ prefixed environment variables from GitHub Actions. Test that import.meta.env.PUBLIC_* variables are properly available during build time and get embedded into the static build output. Check that the existing Supabase client configuration in src/lib/supabase.ts can access these variables during the build process without errors.
+
+## 5. Test End-to-End GitHub Actions Environment Variable Flow [done]
+### Dependencies: 14.2, 14.3, 14.4
+### Description: Perform comprehensive testing of the complete GitHub Actions environment variable setup
+### Details:
+Create a test pull request to trigger the GitHub Actions workflows and verify: 1) Build workflow completes successfully with environment variables, 2) Check workflow passes without environment-related errors, 3) Deploy workflow successfully builds and deploys to Cloudflare Pages, 4) Built site properly initializes Supabase client with injected variables, 5) No build errors related to missing PUBLIC_ environment variables. Monitor GitHub Actions logs for any environment variable related issues.
+
