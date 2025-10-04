@@ -14,44 +14,43 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Get environment variables
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+// Get environment variables safely
+const supabaseUrl = import.meta.env?.PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env?.PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Validate required environment variables
-if (!supabaseUrl) {
-  throw new Error(
-    'Missing required environment variable: PUBLIC_SUPABASE_URL\n' +
-      'Please add it to your .env file or Cloudflare environment variables.\n' +
-      'Get this from your Supabase project dashboard: Settings > API'
-  );
-}
+// Check if we have valid configuration
+const hasValidConfig = supabaseUrl && supabaseAnonKey && supabaseUrl !== 'https://placeholder.supabase.co';
 
-if (!supabaseAnonKey) {
-  throw new Error(
-    'Missing required environment variable: PUBLIC_SUPABASE_ANON_KEY\n' +
-      'Please add it to your .env file or Cloudflare environment variables.\n' +
-      'Get this from your Supabase project dashboard: Settings > API'
+// Validate required environment variables with better error handling
+if (!hasValidConfig) {
+  console.warn(
+    'Supabase configuration incomplete. Authentication features will be limited.\n' +
+      'Please add these to your .env file:\n' +
+      '- PUBLIC_SUPABASE_URL=your-project-url.supabase.co\n' +
+      '- PUBLIC_SUPABASE_ANON_KEY=your-anon-key\n' +
+      'Get these from your Supabase project dashboard: Settings > API'
   );
 }
 
 // Create and export the Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    // Store session in local storage for persistence across page refreshes
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    // Automatically refresh the session when it expires
-    autoRefreshToken: true,
-    // Persist the session across browser tabs
-    persistSession: true,
-    // Detect session from URL for OAuth callbacks
-    detectSessionInUrl: true,
-  },
-});
+export const supabase = hasValidConfig
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        // Store session in local storage for persistence across page refreshes
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        // Automatically refresh the session when it expires
+        autoRefreshToken: true,
+        // Persist the session across browser tabs
+        persistSession: true,
+        // Detect session from URL for OAuth callbacks
+        detectSessionInUrl: true,
+      },
+    })
+  : null;
 
 // Export a helper to check if Supabase is properly configured
 export const isSupabaseConfigured = (): boolean => {
-  return !!(supabaseUrl && supabaseAnonKey);
+  return hasValidConfig && !!supabase;
 };
 
 // Export type helpers for TypeScript
