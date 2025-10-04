@@ -160,11 +160,16 @@ export const initializeGoogleOneTap = async (
 ): Promise<void> => {
   // Prevent duplicate initialization
   if (isInitializing) {
-    console.warn('Google One Tap initialization already in progress');
     return;
   }
   isInitializing = true;
   try {
+    // Check if client ID is properly configured
+    const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId || clientId === 'your-production-google-client-id-here') {
+      throw new Error('Google OAuth client ID not configured. Please configure your Google OAuth credentials.');
+    }
+
     // Load Google script if not already loaded
     await loadGoogleScript();
 
@@ -222,8 +227,8 @@ const initializeGoogleOneTapLegacy = (
     }
   });
 
-  // Log FedCM migration notice
-  if (console && console.info) {
+  // Log FedCM migration notice only in development
+  if (console && console.info && typeof window !== 'undefined' && window.location.hostname === 'localhost') {
     console.info(
       '📢 FedCM Migration Notice: Google will require Federated Credential Management in future updates.\n' +
         'This application is prepared for FedCM but currently uses legacy Google One Tap for compatibility.\n' +
