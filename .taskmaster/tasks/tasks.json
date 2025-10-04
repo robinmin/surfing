@@ -753,6 +753,99 @@
             "testStrategy": "Security audit with penetration testing tools, accessibility testing with screen readers, cross-browser compatibility testing, mobile device testing, performance testing under load"
           }
         ]
+      },
+      {
+        "id": 21,
+        "title": "Refactor One Click Login Mechanism",
+        "description": "Comprehensive refactoring of the existing authentication system including enhanced UI with grey avatar and popup menus, robust token caching with guardian timestamps, multi-page authentication support, code quality improvements, and thorough testing infrastructure.",
+        "details": "Refactor the current authentication system (src/components/auth/AuthContainer.astro, src/lib/auth.ts, src/lib/security.ts) with the following improvements: 1) **Enhanced UI Design**: Replace current avatar system with grey default avatar that reveals dropdown popup menus on click, including user profile options, account settings, and logout. Implement smooth animations and responsive design. 2) **Token Caching & Guardian System**: Implement intelligent token caching mechanism with guardian timestamps that track token expiration, automatically refresh tokens before expiry, and implement fallback strategies for token validation failures. 3) **Multi-Page Support**: Enhance authentication state management to persist across page navigation, implement cross-tab synchronization, and ensure seamless user experience on page refreshes. 4) **Code Quality Improvements**: Refactor AuthContainer.astro for better component composition, improve TypeScript types throughout auth system, implement proper error boundaries, add comprehensive JSDoc documentation, and optimize performance with lazy loading and debounced updates. 5) **Security Enhancements**: Strengthen nonce validation system, implement rate limiting for authentication attempts, add CSRF protection, and improve session management. 6) **Testing Infrastructure**: Create comprehensive test suite covering all authentication flows, error scenarios, cross-browser compatibility, and security validations using the existing test-auth.mjs as foundation.",
+        "testStrategy": "Execute comprehensive testing across all authentication scenarios: 1) UI testing for new avatar dropdown functionality across devices and screen sizes, 2) Token caching validation including expiration scenarios and refresh mechanisms, 3) Multi-page authentication persistence testing with page refreshes and navigation, 4) Cross-browser compatibility testing (Chrome, Firefox, Safari, Edge), 5) Security testing including nonce replay attack prevention and rate limiting, 6) Performance testing for improved loading times and memory usage, 7) Integration testing with Google One Tap and Apple Sign In flows, 8) Error handling validation for network failures and service outages, 9) Accessibility testing for keyboard navigation and screen readers.",
+        "status": "done",
+        "dependencies": [1, 7, 8, 16, 18, 20],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and implement grey avatar component for logged-out state",
+            "description": "Create a new AvatarButton component that shows a grey avatar with user icon when logged out. Implement hover state and prepare structure for popup menu.",
+            "details": "- Create new component src/components/auth/AvatarButton.astro\n- Display grey avatar with tabler:user icon when not authenticated\n- Add hover effects and cursor pointer\n- Structure component to support popup menu attachment\n- Ensure responsive design and dark mode support\n<info added on 2025-10-04T22:52:00.726Z>\nI'll analyze the codebase to understand the current structure and provide a specific update for the AvatarButton component. Let me explore the project first.Based on my analysis of the codebase, I can see the current component structure and how props interfaces are defined. The project uses TypeScript interfaces for component props, follows Astro component patterns, and has existing reusable components in the `src/components/` directory with various UI components that are designed for reusability.\n\nLooking at the existing components, particularly the Button component and how the AuthContainer is currently used in the Header, I can provide the appropriate update for making the AvatarButton component more reusable:\n\nDesign component with flexible props interface including optional size, variant, and positioning parameters to support use in header, sidebar, profile pages, or any other location. Add className prop for custom styling and containerClass for wrapper customization. Include onClick handler prop for external popup menu integration. Make all visual styling configurable through props with sensible defaults that work well in the header but can be overridden for other contexts.\n</info added on 2025-10-04T22:52:00.726Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 2,
+            "title": "Implement popup menu for login options",
+            "description": "Create a popup menu component that appears on avatar hover/click, showing available login providers (Google, Apple). Menu should auto-select if only one provider is available.",
+            "details": "- Create AuthPopupMenu component with dropdown positioning below avatar\n- Show Google One Tap and Apple Sign In options as menu items\n- Auto-trigger single provider if only one is available\n- Add smooth animations and transitions\n- Handle click outside to close menu\n- Ensure accessibility (keyboard navigation, ARIA labels)\n<info added on 2025-10-04T22:51:17.979Z>\nI'll analyze the codebase to understand the current implementation and then provide the positioning update for the popup menu.Based on my analysis of the codebase, I can see that the project uses Tailwind CSS classes for positioning dropdown menus. Looking at the LanguageSelector component, dropdowns currently use `top-full mt-1` to position below elements. For positioning above, the pattern would be `bottom-full mb-1`.\n\nThe project also uses provider icons in other components and follows a minimal, clean design approach with compact list items using Tailwind utility classes.\n\nUpdated positioning requirement: Menu should appear above the avatar using `bottom-full mb-1` instead of below. Replace current menu items with compact list design using provider icons (tabler:brand-google, tabler:brand-apple) alongside text labels. Remove complex animations in favor of simple show/hide transitions for cleaner, minimal appearance.\n</info added on 2025-10-04T22:51:17.979Z>",
+            "status": "done",
+            "dependencies": ["21.1"],
+            "parentTaskId": 21
+          },
+          {
+            "id": 3,
+            "title": "Update avatar to show user profile when logged in",
+            "description": "Modify AvatarButton to display user's actual avatar image and show profile menu on hover with sign-out option.",
+            "details": "- Fetch and display user avatar from auth provider metadata\n- Show profile popup menu with provider logo, user email, and Sign Out button\n- Handle avatar image loading errors with fallback to icon\n- Implement sign out functionality\n- Add visual indicator for logged-in state",
+            "status": "done",
+            "dependencies": ["21.1,21.2"],
+            "parentTaskId": 21
+          },
+          {
+            "id": 4,
+            "title": "Implement token guardian cache mechanism",
+            "description": "Create a token caching system using localStorage to track last validation timestamp and reduce unnecessary auth server checks.",
+            "details": "- Create src/lib/token-guardian.ts with cache logic\n- Store last validation timestamp in localStorage\n- Implement 15-minute cache duration (configurable)\n- Check if current time < (last_validation + duration)\n- Validate token expiry even within cache duration\n- Auto-refresh token using Supabase built-in mechanism\n- Handle edge cases (expired tokens, clock skew)\n<info added on 2025-10-04T22:50:38.030Z>\nI'll analyze the codebase to understand the current structure and configuration patterns before updating the subtask details.Based on my analysis of the codebase, I can see that the project uses a custom integration system that loads configuration from `src/config.yaml` and makes it available through a virtual module. The auth section is already defined in the config file. Here's the update for the token guardian implementation:\n\nAdd auth.token_cache_duration configuration property to src/config.yaml (default: 900 seconds). Update token-guardian.ts to import configuration using the project's virtual module system (astrowind:config) and read cache duration from config.auth.token_cache_duration instead of hardcoding 15 minutes. This aligns with existing project patterns where auth configuration is centralized in config.yaml and accessed through the integration's virtual module resolver.\n</info added on 2025-10-04T22:50:38.030Z>",
+            "status": "done",
+            "dependencies": ["21.9"],
+            "parentTaskId": 21
+          },
+          {
+            "id": 5,
+            "title": "Ensure auth state synchronization across all pages",
+            "description": "Implement cross-page auth state sync so user avatar and login state are consistent across the multi-page application.",
+            "details": "- Use localStorage events to sync auth state across tabs/pages\n- Update auth state listener to broadcast changes\n- Ensure AvatarButton appears in Header component on all pages\n- Test navigation between pages maintains auth state\n- Handle session persistence across page refreshes",
+            "status": "done",
+            "dependencies": ["21.4"],
+            "parentTaskId": 21
+          },
+          {
+            "id": 6,
+            "title": "Refactor and clean up authentication code",
+            "description": "Comprehensive code review and refactoring of auth components to improve maintainability and prepare for additional auth providers.",
+            "details": "- Review and simplify google-auth.ts and apple-auth.ts\n- Extract common auth logic into shared utilities\n- Remove dead code and console.log statements\n- Standardize error handling patterns\n- Add JSDoc comments for public APIs\n- Create auth provider interface for extensibility\n- Organize file structure logically",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 7,
+            "title": "Remove or update old AuthContainer component",
+            "description": "Clean up the old AuthContainer component that's no longer needed with the new avatar-based approach, or repurpose it if needed.",
+            "details": "- Audit usage of AuthContainer across codebase\n- Remove from Header.astro and replace with AvatarButton\n- Update any other pages using AuthContainer\n- Delete component file if no longer needed\n- Update imports and references",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 8,
+            "title": "Create comprehensive unit tests for token guardian",
+            "description": "Write unit tests for the token caching mechanism to ensure reliability and correctness.",
+            "details": "- Create tests/auth/token-guardian.test.ts\n- Test cache hit within duration window\n- Test cache miss after duration expires\n- Test token expiry detection even within cache window\n- Test auto-refresh token flow\n- Test localStorage edge cases (disabled, quota exceeded)\n- Test clock skew scenarios\n- Mock Supabase auth calls\n- Ensure 100% code coverage for token-guardian.ts\n<info added on 2025-10-04T22:53:02.380Z>\nI'll analyze the codebase to understand the current testing setup and authentication implementation before updating the subtask.Based on my analysis of the codebase, here's the new text that should be appended to the subtask's details:\n\nPrioritize testing core token validation logic over UI integration. Focus test implementation on: 1) Cache hit/miss timing verification with precise duration window testing, 2) Token expiry detection even when cache appears valid, 3) localStorage state handling (enabled/disabled browser settings, storage quota exceeded scenarios), 4) Edge cases including browser clock skew and invalid token formats. Use existing test infrastructure following patterns in tests/postsurfing/ directory structure. Mock Supabase auth.getSession() and auth.refreshSession() calls rather than actual network requests. Reference src/lib/auth.ts authManager implementation for session handling patterns. Defer comprehensive UI state transition testing to future iterations.\n</info added on 2025-10-04T22:53:02.380Z>",
+            "status": "done",
+            "dependencies": ["21.4"],
+            "parentTaskId": 21
+          },
+          {
+            "id": 9,
+            "title": "Add token cache configuration to config.yaml",
+            "description": "Add token_cache_duration setting to auth section in src/config.yaml for configurable cache duration in seconds.",
+            "details": "- Add token_cache_duration: 900 to auth section in src/config.yaml (900 seconds = 15 minutes)\n- Document the configuration option with comments\n- Ensure it's available through astrowind:config virtual module\n- This should be completed before task 21.4 (token guardian implementation)",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          }
+        ]
       }
     ],
     "metadata": {
@@ -763,7 +856,7 @@
       "tags": ["master"],
       "created": "2025-10-04T04:31:40.676Z",
       "description": "Tasks for master context",
-      "updated": "2025-10-04T05:14:08.692Z"
+      "updated": "2025-10-04T23:14:54.942Z"
     }
   }
 }
