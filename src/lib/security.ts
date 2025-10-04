@@ -5,7 +5,7 @@
  * including nonce management, token validation, and secure storage practices.
  */
 
-import { generateNonce, sha256Base64Url } from '../utils/crypto';
+// Dynamic imports will be used for crypto functions
 
 /**
  * Security configuration interface
@@ -73,9 +73,24 @@ class SecurityManager {
     };
 
     // Clean up expired nonces periodically
-    setInterval(() => {
-      this.cleanupExpiredNonces();
-    }, 60000); // Every minute
+    if (typeof window !== 'undefined') {
+      setInterval(() => {
+        this.cleanupExpiredNonces();
+      }, 60000); // Every minute
+
+      // Clean up on window unload
+      window.addEventListener('beforeunload', () => {
+        this.cleanup();
+      });
+    }
+  }
+
+  /**
+   * Clean up all stored data
+   */
+  private cleanup(): void {
+    this.nonces.clear();
+    this.failedAttempts.clear();
   }
 
   /**
@@ -83,7 +98,7 @@ class SecurityManager {
    */
   private getAllowedOrigins(): string[] {
     const origins = [
-      window.location.origin,
+      typeof window !== 'undefined' ? window.location.origin : 'https://surfing.salty.vip',
       'http://localhost:4321', // Local development
       'https://surfing.salty.vip', // Production
     ];
@@ -108,6 +123,7 @@ class SecurityManager {
    * Generate and store a secure nonce
    */
   async generateAndStoreNonce(userId?: string): Promise<{ nonce: string; hash: string }> {
+    const { generateNonce, sha256Base64Url } = await import('../utils/crypto');
     const nonce = generateNonce();
     const hash = await sha256Base64Url(nonce);
     const timestamp = Date.now();
@@ -126,7 +142,67 @@ class SecurityManager {
   }
 
   /**
-   * Validate and consume a nonce
+   * Validate and consume a nonce by comparing hashes
+   * This is used for OAuth flows where we store a hash and receive the original nonce back
+   */
+  async validateNonceHash(storedHash: string, receivedNonce: string): Promise<boolean> {
+    const entry = this.nonces.get(storedHash);
+
+    if (!entry) {
+      this.notifyListeners('SECURITY_VIOLATION', {
+        type: 'NONCE_NOT_FOUND',
+        hash: storedHash,
+      });
+      return false;
+    }
+
+    if (entry.used) {
+      this.notifyListeners('SECURITY_VIOLATION', {
+        type: 'NONCE_ALREADY_USED',
+        hash: storedHash,
+        timestamp: entry.createdAt,
+      });
+      return false;
+    }
+
+    if (Date.now() - entry.createdAt > this.config.maxNonceAge) {
+      this.nonces.delete(storedHash);
+      this.notifyListeners('SECURITY_VIOLATION', {
+        type: 'NONCE_EXPIRED',
+        hash: storedHash,
+        timestamp: entry.createdAt,
+      });
+      return false;
+    }
+
+    // Hash the received nonce and compare with stored hash
+    const { sha256Base64Url } = await import('../utils/crypto');
+    const receivedHash = await sha256Base64Url(receivedNonce);
+
+    if (receivedHash !== storedHash) {
+      this.notifyListeners('SECURITY_VIOLATION', {
+        type: 'NONCE_MISMATCH',
+        expectedHash: storedHash,
+        receivedHash,
+      });
+      return false;
+    }
+
+    // Mark nonce as used
+    entry.used = true;
+    this.notifyListeners('NONCE_USED', { hash: storedHash, userId: entry.userId });
+
+    // Schedule deletion of used nonce
+    setTimeout(() => {
+      this.nonces.delete(storedHash);
+    }, 5000); // Delete after 5 seconds
+
+    return true;
+  }
+
+  /**
+   * Validate and consume a nonce (direct comparison)
+   * Use this when you have both the original nonce values
    */
   validateNonce(hash: string, providedNonce: string): boolean {
     const entry = this.nonces.get(hash);
@@ -210,6 +286,10 @@ class SecurityManager {
    * Check if current connection is secure
    */
   isSecureConnection(): boolean {
+    if (typeof window === 'undefined') {
+      return true; // Server-side is always considered secure
+    }
+
     if (!this.config.enforceHttps) {
       return true; // Don't enforce in development
     }
@@ -446,6 +526,8 @@ export const securityManager = new SecurityManager();
 // Export convenience functions
 export const generateSecureNonce = (userId?: string) => securityManager.generateAndStoreNonce(userId);
 export const validateNonce = (hash: string, nonce: string) => securityManager.validateNonce(hash, nonce);
+export const validateNonceHash = (storedHash: string, receivedNonce: string) =>
+  securityManager.validateNonceHash(storedHash, receivedNonce);
 export const isAllowedOrigin = (origin: string) => securityManager.isAllowedOrigin(origin);
 export const isSecureConnection = () => securityManager.isSecureConnection();
 export const validateCallbackUrl = (url: string) => securityManager.validateCallbackUrl(url);
