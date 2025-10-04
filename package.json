@@ -28,6 +28,7 @@
     "@fontsource-variable/inter": "^5.2.6",
     "@fontsource/merriweather": "^5.2.11",
     "@jop-software/astro-cookieconsent": "^3.0.1",
+    "@sentry/astro": "^10.17.0",
     "@supabase/supabase-js": "^2.58.0",
     "astro": "^5.12.9",
     "astro-embed": "^0.9.0",
