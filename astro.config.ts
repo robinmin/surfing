@@ -25,6 +25,8 @@ import remarkToc from 'remark-toc';
 import rehypeSlug from 'rehype-slug';
 import rehypeExternalLinks from 'rehype-external-links';
 
+import sentry from '@sentry/astro';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Load configuration to check if cookie consent is enabled
@@ -78,13 +80,11 @@ export default defineConfig({
         ],
       },
     }),
-
     ...whenExternalScripts(() =>
       partytown({
         config: { forward: ['dataLayer.push'] },
       })
     ),
-
     compress({
       CSS: true,
       HTML: {
@@ -97,16 +97,13 @@ export default defineConfig({
       SVG: false,
       Logger: 1,
     }),
-
     surfing({
       config: './src/config.yaml',
     }),
-
     pagefind(),
     robotsTxt({
       sitemap: true,
     }),
-
     ...whenCookieConsentEnabled(() =>
       cookieconsent({
         guiOptions: {
@@ -245,7 +242,7 @@ export default defineConfig({
                   {
                     title: 'Marketing Cookies',
                     description:
-                      'These cookies track your online activity to help advertisers deliver more relevant advertising or to limit how many times you see an ad.',
+                      'These cookies track your onlines activity to help advertisers deliver more relevant advertising or to limit how many times you see an ad.',
                     linkedCategory: 'marketing',
                   },
                 ],
@@ -255,6 +252,11 @@ export default defineConfig({
         },
       })
     ),
+    sentry({
+      sourceMapsUploadOptions: {
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      },
+    }),
   ],
 
   image: {
