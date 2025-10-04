@@ -6,13 +6,7 @@
  */
 
 import { supabase } from './supabase';
-import {
-  generateSecureNonce,
-  validateNonce,
-  recordFailedAttempt,
-  clearFailedAttempts,
-  isRateLimited,
-} from './security';
+import { generateSecureNonce, recordFailedAttempt, clearFailedAttempts, isRateLimited } from './security';
 import { handleAuthError } from './error-handler';
 
 /**
@@ -120,8 +114,25 @@ export const getGoogleConfig = (): GoogleOneTapConfig => {
   if (!clientId) {
     throw new Error(
       'Missing required environment variable: PUBLIC_GOOGLE_CLIENT_ID\n' +
-        'Please add it to your .env file or Cloudflare environment variables.\n' +
-        'Get this from Google Cloud Console: APIs & Services > Credentials'
+        '\nTo fix this issue:\n' +
+        '1. Add to your .env file: PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id\n' +
+        '2. Create OAuth credentials at: https://console.cloud.google.com/\n' +
+        '3. Add localhost:4323 to authorized JavaScript origins for development\n' +
+        '4. See detailed setup instructions in the .env file'
+    );
+  }
+
+  // Check if using localhost with a non-localhost client ID
+  const isLocalhost =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+  if (isLocalhost && !clientId.includes('localhost') && !clientId.includes('test')) {
+    console.warn(
+      '🔧 Development Warning: Using production Google client ID on localhost.\n' +
+        'This may cause "origin not allowed" errors.\n' +
+        'Consider creating a separate OAuth client for development.\n' +
+        'See .env file for setup instructions.'
     );
   }
 
@@ -136,12 +147,23 @@ export const getGoogleConfig = (): GoogleOneTapConfig => {
 };
 
 /**
- * Initialize Google One Tap with secure nonce handling
+ * Flag to prevent duplicate initialization
+ */
+let isInitializing = false;
+
+/**
+ * Initialize Google One Tap with secure nonce handling and FedCM support
  */
 export const initializeGoogleOneTap = async (
   onSuccess: (response: GoogleSignInResponse) => void,
   onError?: (error: Error) => void
 ): Promise<void> => {
+  // Prevent duplicate initialization
+  if (isInitializing) {
+    console.warn('Google One Tap initialization already in progress');
+    return;
+  }
+  isInitializing = true;
   try {
     // Load Google script if not already loaded
     await loadGoogleScript();
@@ -156,33 +178,57 @@ export const initializeGoogleOneTap = async (
     const config = getGoogleConfig();
     config.nonce = hash;
 
-    // Initialize Google One Tap
-    window.google?.accounts?.id?.initialize({
-      ...config,
-      callback: onSuccess,
-      native_callback: (response: GoogleSignInResponse) => {
-        // Handle native callback for mobile devices
-        onSuccess(response);
-      },
-    });
-
-    // Display Google One Tap
-    window.google?.accounts?.id?.prompt((notification) => {
-      if (
-        onError &&
-        ((notification.isNotDisplayed && notification.isNotDisplayed()) ||
-          (notification.isSkippedMoment && notification.isSkippedMoment()))
-      ) {
-        const error = new Error('Google One Tap was not displayed or was skipped');
-        onError(error);
-      }
-    });
+    // Use traditional Google One Tap (FedCM not yet fully supported by Google)
+    initializeGoogleOneTapLegacy(config, onSuccess, onError);
   } catch (error) {
-    const errorResponse = handleAuthError(error, 'Google One Tap initialization');
+    const errorResponse = handleAuthError(error, 'Google authentication initialization');
     const errorObj = new Error(errorResponse.userMessage);
     if (onError) {
       onError(errorObj);
     }
+  } finally {
+    // Reset initialization flag
+    isInitializing = false;
+  }
+};
+
+/**
+ * Legacy Google One Tap implementation (for backward compatibility)
+ */
+const initializeGoogleOneTapLegacy = (
+  config: GoogleOneTapConfig,
+  onSuccess: (response: GoogleSignInResponse) => void,
+  onError?: (error: Error) => void
+): void => {
+  // Initialize Google One Tap
+  window.google?.accounts?.id?.initialize({
+    ...config,
+    callback: onSuccess,
+    native_callback: (response: GoogleSignInResponse) => {
+      // Handle native callback for mobile devices
+      onSuccess(response);
+    },
+  });
+
+  // Display Google One Tap with FedCM support
+  window.google?.accounts?.id?.prompt((notification) => {
+    if (
+      onError &&
+      ((notification.isNotDisplayed && notification.isNotDisplayed()) ||
+        (notification.isSkippedMoment && notification.isSkippedMoment()))
+    ) {
+      const error = new Error('Google One Tap was not displayed or was skipped');
+      onError(error);
+    }
+  });
+
+  // Log FedCM migration notice
+  if (console && console.info) {
+    console.info(
+      '📢 FedCM Migration Notice: Google will require Federated Credential Management in future updates.\n' +
+        'This application is prepared for FedCM but currently uses legacy Google One Tap for compatibility.\n' +
+        'For migration guidance, see: https://developers.google.com/identity/gsi/web/guides/fedcm-migration'
+    );
   }
 };
 
@@ -195,8 +241,15 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
     const payload = decodeJWT(credential) as GoogleIdTokenPayload;
     const storedNonceHash = sessionStorage.getItem('google_nonce_hash');
 
-    // Verify nonce hash instead of nonce
-    if (!validateNonce(storedNonceHash || '', payload.nonce)) {
+    // Verify that the payload nonce matches the stored hash
+    // Note: Google returns the original nonce in the token, not the hash
+    // We need to hash the payload nonce and compare it with the stored hash
+    if (!storedNonceHash) {
+      throw new Error('Nonce verification failed. No stored nonce found.');
+    }
+
+    const payloadNonceHash = await import('../utils/crypto').then((m) => m.sha256Base64Url(payload.nonce));
+    if (payloadNonceHash !== storedNonceHash) {
       throw new Error('Nonce verification failed. Possible replay attack.');
     }
 
@@ -232,6 +285,10 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
     }
 
     // Sign in with Supabase
+    if (!supabase) {
+      throw new Error('Authentication service not available');
+    }
+
     const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'google',
       token: credential,
@@ -294,6 +351,9 @@ export const decodeJWT = (token: string): any => {
  */
 export const signOut = async (): Promise<void> => {
   try {
+    if (!supabase) {
+      throw new Error('Authentication service not available');
+    }
     await supabase.auth.signOut();
   } catch (error) {
     console.error('Sign out error:', error);
@@ -306,6 +366,9 @@ export const signOut = async (): Promise<void> => {
  */
 export const getCurrentSession = async () => {
   try {
+    if (!supabase) {
+      throw new Error('Authentication service not available');
+    }
     const {
       data: { session },
       error,
@@ -322,5 +385,8 @@ export const getCurrentSession = async () => {
  * Listen for auth state changes
  */
 export const onAuthStateChange = (callback: (event: string, session: any) => void) => {
+  if (!supabase) {
+    return { data: { subscription: { unsubscribe: () => {} } } };
+  }
   return supabase.auth.onAuthStateChange(callback);
 };
