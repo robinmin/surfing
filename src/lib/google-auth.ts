@@ -142,11 +142,12 @@ export const getGoogleConfig = async (): Promise<GoogleOneTapConfig> => {
   }
 
   // Generate nonce for security
-  const { generateNonce, sha256Base64Url } = await import('~/utils/crypto');
+  // Per Supabase docs: hash the nonce for Google, but pass raw nonce to Supabase
+  const { generateNonce, sha256 } = await import('~/utils/crypto');
   const nonce = generateNonce();
-  const hashedNonce = await sha256Base64Url(nonce);
+  const hashedNonce = await sha256(nonce);
 
-  // Store original nonce for validation
+  // Store raw nonce for Supabase validation
   if (typeof sessionStorage !== 'undefined') {
     sessionStorage.setItem('google_auth_nonce', nonce);
   }
@@ -156,7 +157,7 @@ export const getGoogleConfig = async (): Promise<GoogleOneTapConfig> => {
     auto_select: false,
     cancel_on_tap_outside: false,
     context: 'signin',
-    nonce: hashedNonce,
+    nonce: hashedNonce, // Send hashed nonce to Google
     itp_support: true,
   };
 };

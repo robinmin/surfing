@@ -19,11 +19,9 @@
       "Bash(html2pdf:*)",
       "Bash(./scripts/postprocess-cheatsheets.sh:*)",
       "Bash(screencapture:*)",
-
       "WebSearch",
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
-
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_close",
       "mcp__playwright__browser_install",
@@ -36,14 +34,15 @@
       "mcp__playwright__browser_navigate_back",
       "mcp__playwright__browser_hover",
       "mcp__playwright__browser_tabs",
-
       "mcp__task-master-ai__parse_prd",
       "mcp__task-master-ai__get_tasks",
       "mcp__task-master-ai__expand_all",
       "mcp__task-master-ai__next_task",
       "mcp__task-master-ai__set_task_status",
       "mcp__task-master-ai__get_task",
-      "mcp__task-master-ai__update_subtask"
+      "mcp__task-master-ai__update_subtask",
+      "WebFetch(domain:supabase.com)",
+      "WebFetch(domain:developers.google.com)"
     ],
     "deny": [],
     "ask": []
