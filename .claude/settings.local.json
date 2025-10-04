@@ -42,7 +42,13 @@
       "mcp__task-master-ai__get_task",
       "mcp__task-master-ai__update_subtask",
       "WebFetch(domain:supabase.com)",
-      "WebFetch(domain:developers.google.com)"
+      "WebFetch(domain:developers.google.com)",
+      "mcp__task-master-ai__add_task",
+      "mcp__task-master-ai__expand_task",
+      "mcp__task-master-ai__add_subtask",
+      "mcp__task-master-ai__add_dependency",
+      "Bash(node tests/auth/run-tests.mjs:*)",
+      "mcp__playwright__browser_resize"
     ],
     "deny": [],
     "ask": []
