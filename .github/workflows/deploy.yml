@@ -23,6 +23,14 @@ jobs:
 
       - name: Build
         run: npm install && npm run build
+        env:
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+          PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.PUBLIC_GOOGLE_CLIENT_ID }}
+          PUBLIC_APPLE_SERVICES_ID: ${{ secrets.PUBLIC_APPLE_SERVICES_ID }}
+          PUBLIC_APPLE_REDIRECT_URI: ${{ secrets.PUBLIC_APPLE_REDIRECT_URI }}
+          PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
