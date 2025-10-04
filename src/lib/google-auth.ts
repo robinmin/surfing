@@ -174,12 +174,11 @@ export const initializeGoogleOneTap = async (
   window.onerror = (message, source, lineno, colno, error) => {
     // Suppress FedCM-related errors
     if (
-      typeof message === 'string' && (
-        message.includes('FedCM get() rejects') ||
+      typeof message === 'string' &&
+      (message.includes('FedCM get() rejects') ||
         message.includes('signal is aborted') ||
         message.includes('request has been aborted') ||
-        message.includes('GSI_LOGGER')
-      )
+        message.includes('GSI_LOGGER'))
     ) {
       return true; // Suppress the error
     }
@@ -290,6 +289,7 @@ const initializeGoogleOneTapLegacy = (
     }
   } catch (error) {
     // Handle initialization errors gracefully
+    console.debug('Google One Tap initialization error:', error);
     if (onError) {
       onError(new Error('Failed to initialize Google Sign-In'));
     }
