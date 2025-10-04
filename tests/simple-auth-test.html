@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Google Auth Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .status {
+        font-weight: bold;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+      .info {
+        color: blue;
+      }
+      #google-signin-button {
+        margin: 20px 0;
+      }
+      .debug-output {
+        background: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Google Authentication Test</h1>
+
+    <div class="test-section">
+      <h2>1. Environment Check</h2>
+      <div id="env-status" class="status">Checking...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>2. Google GSI Script Load</h2>
+      <div id="gsi-status" class="status">Checking...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>3. Google Sign-In Button</h2>
+      <div id="google-signin-button">
+        <div
+          id="g_id_onload"
+          data-client_id=""
+          data-context="signin"
+          data-ux_mode="popup"
+          data-callback="handleSignIn"
+          data-auto_select="false"
+          data-cancel_on_tap_outside="false"
+        ></div>
+        <div
+          class="g_id_signin"
+          data-type="standard"
+          data-shape="rectangular"
+          data-theme="outline"
+          data-text="signin_with"
+          data-size="large"
+          data-logo_alignment="left"
+          data-client_id=""
+        ></div>
+      </div>
+      <div id="button-status" class="status">Waiting for script to load...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>4. Debug Output</h2>
+      <div id="debug-output" class="debug-output">Initializing...</div>
+    </div>
+
+    <script>
+      const debugOutput = document.getElementById('debug-output');
+
+      function log(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        debugOutput.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+        debugOutput.scrollTop = debugOutput.scrollHeight;
+        console.log(message);
+      }
+
+      function updateStatus(elementId, message, isSuccess = null) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = 'status ' + (isSuccess === true ? 'success' : isSuccess === false ? 'error' : 'info');
+      }
+
+      // Test 1: Environment Variables
+      log('Testing environment variables...');
+      fetch('/src/lib/google-auth.ts')
+        .then((response) => response.text())
+        .then((code) => {
+          const hasClientId = code.includes('PUBLIC_GOOGLE_CLIENT_ID');
+          if (hasClientId) {
+            updateStatus('env-status', '✅ Environment variables configured', true);
+            log('Environment variables: PUBLIC_GOOGLE_CLIENT_ID found', 'success');
+
+            // Extract the client ID
+            const match = code.match(/PUBLIC_GOOGLE_CLIENT_ID[^,]*,?[^;]*;?/);
+            if (match) {
+              log('Found Google Client ID configuration', 'success');
+            }
+          } else {
+            updateStatus('env-status', '❌ Missing environment variables', false);
+            log('Environment variables: PUBLIC_GOOGLE_CLIENT_ID not found', 'error');
+          }
+        })
+        .catch((error) => {
+          updateStatus('env-status', '❌ Error checking environment', false);
+          log('Error checking environment: ' + error.message, 'error');
+        });
+
+      // Test 2: Load Google GSI Script
+      log('Loading Google GSI script...');
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+
+      script.onload = function () {
+        log('Google GSI script loaded successfully', 'success');
+        updateStatus('gsi-status', '✅ Google GSI script loaded', true);
+
+        // Check if Google API is available
+        setTimeout(() => {
+          if (window.google && window.google.accounts) {
+            log('Google Accounts API available', 'success');
+            initializeGoogleSignIn();
+          } else {
+            log('Google Accounts API not available', 'error');
+            updateStatus('button-status', '❌ Google API not available', false);
+          }
+        }, 1000);
+      };
+
+      script.onerror = function () {
+        log('Failed to load Google GSI script', 'error');
+        updateStatus('gsi-status', '❌ Failed to load Google GSI script', false);
+        updateStatus('button-status', '❌ Cannot initialize without GSI script', false);
+      };
+
+      document.head.appendChild(script);
+
+      // Test 3: Initialize Google Sign-In
+      function initializeGoogleSignIn() {
+        try {
+          // Get client ID from environment (we'll use a placeholder for testing)
+          const clientId = '511333300252-2d54h6n4th9q0c3r1ed7k4eq9c5dj7v.apps.googleusercontent.com'; // From the actual config
+
+          if (!clientId) {
+            throw new Error('Google Client ID not available');
+          }
+
+          log('Initializing Google Sign-In with Client ID: ' + clientId.substring(0, 20) + '...', 'success');
+
+          // Set client ID in the HTML elements
+          const onloadDiv = document.getElementById('g_id_onload');
+          const signinDiv = document.querySelector('.g_id_signin');
+
+          if (onloadDiv) {
+            onloadDiv.setAttribute('data-client_id', clientId);
+          }
+          if (signinDiv) {
+            signinDiv.setAttribute('data-client_id', clientId);
+          }
+
+          // Initialize Google Sign-In
+          if (window.google && window.google.accounts && window.google.accounts.id) {
+            window.google.accounts.id.initialize({
+              client_id: clientId,
+              callback: handleSignIn,
+              auto_select: false,
+              cancel_on_tap_outside: false,
+              context: 'signin',
+            });
+
+            log('Google Sign-In initialized successfully', 'success');
+            updateStatus('button-status', '✅ Google Sign-In button ready', true);
+
+            // Display the button
+            window.google.accounts.id.prompt((notification) => {
+              if (notification.isNotDisplayed && notification.isNotDisplayed()) {
+                log('Google One Tap not displayed', 'error');
+              } else if (notification.isSkippedMoment && notification.isSkippedMoment()) {
+                log('Google One Tap was skipped', 'info');
+              } else {
+                log('Google One Tap displayed', 'success');
+              }
+            });
+          } else {
+            throw new Error('Google Accounts ID API not available');
+          }
+        } catch (error) {
+          log('Error initializing Google Sign-In: ' + error.message, 'error');
+          updateStatus('button-status', '❌ Error initializing Google Sign-In', false);
+        }
+      }
+
+      // Handle sign-in response
+      function handleSignIn(response) {
+        log('Google Sign-In response received', 'success');
+        log('Credential: ' + response.credential.substring(0, 50) + '...', 'success');
+        log('Select by: ' + response.select_by, 'success');
+        log('Client ID: ' + response.client_id, 'success');
+
+        // Here you would normally send the credential to your backend
+        // For testing, we'll just decode the JWT
+        try {
+          const payload = decodeJWT(response.credential);
+          log('Decoded JWT payload:', 'success');
+          log('Email: ' + payload.email, 'success');
+          log('Name: ' + payload.name, 'success');
+          log('Email verified: ' + payload.email_verified, 'success');
+        } catch (error) {
+          log('Error decoding JWT: ' + error.message, 'error');
+        }
+      }
+
+      // Decode JWT function
+      function decodeJWT(token) {
+        try {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split('')
+              .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+              .join('')
+          );
+          return JSON.parse(jsonPayload);
+        } catch (error) {
+          throw new Error('Failed to decode JWT token');
+        }
+      }
+
+      log('Test page initialized');
+    </script>
+  </body>
+</html>
