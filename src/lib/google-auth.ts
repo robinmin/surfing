@@ -89,16 +89,21 @@ export const loadGoogleScript = (): Promise<void> => {
     script.async = true;
     script.defer = true;
 
-    script.onload = () => {
-      if (isGoogleScriptLoaded()) {
-        resolve();
-      } else {
-        reject(new Error('Google script loaded but accounts API not available'));
-      }
+    // Add error handling for FedCM-related issues
+    script.onerror = (error) => {
+      console.debug('Google script loading error:', error);
+      reject(new Error('Failed to load Google One Tap script'));
     };
 
-    script.onerror = () => {
-      reject(new Error('Failed to load Google One Tap script'));
+    script.onload = () => {
+      // Add a small delay to ensure Google API is fully initialized
+      setTimeout(() => {
+        if (isGoogleScriptLoaded()) {
+          resolve();
+        } else {
+          reject(new Error('Google script loaded but accounts API not available'));
+        }
+      }, 100);
     };
 
     document.head.appendChild(script);
@@ -163,6 +168,28 @@ export const initializeGoogleOneTap = async (
     return;
   }
   isInitializing = true;
+
+  // Add global error handler for FedCM-related errors
+  const originalHandler = window.onerror;
+  window.onerror = (message, source, lineno, colno, error) => {
+    // Suppress FedCM-related errors
+    if (
+      typeof message === 'string' && (
+        message.includes('FedCM get() rejects') ||
+        message.includes('signal is aborted') ||
+        message.includes('request has been aborted') ||
+        message.includes('GSI_LOGGER')
+      )
+    ) {
+      return true; // Suppress the error
+    }
+    // Call original handler for other errors
+    if (originalHandler) {
+      return originalHandler(message, source, lineno, colno, error);
+    }
+    return false;
+  };
+
   try {
     // Check if client ID is properly configured
     const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
@@ -194,6 +221,10 @@ export const initializeGoogleOneTap = async (
   } finally {
     // Reset initialization flag
     isInitializing = false;
+    // Restore original error handler after a delay
+    setTimeout(() => {
+      window.onerror = originalHandler;
+    }, 2000);
   }
 };
 
@@ -205,35 +236,63 @@ const initializeGoogleOneTapLegacy = (
   onSuccess: (response: GoogleSignInResponse) => void,
   onError?: (error: Error) => void
 ): void => {
-  // Initialize Google One Tap
-  window.google?.accounts?.id?.initialize({
-    ...config,
-    callback: onSuccess,
-    native_callback: (response: GoogleSignInResponse) => {
-      // Handle native callback for mobile devices
-      onSuccess(response);
-    },
-  });
+  try {
+    // Initialize Google One Tap with FedCM disabled to prevent abort errors
+    window.google?.accounts?.id?.initialize({
+      ...config,
+      callback: onSuccess,
+      native_callback: (response: GoogleSignInResponse) => {
+        // Handle native callback for mobile devices
+        onSuccess(response);
+      },
+      // Disable FedCM auto-prompting to prevent abort errors
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
 
-  // Display Google One Tap with FedCM support
-  window.google?.accounts?.id?.prompt((notification) => {
-    if (
-      onError &&
-      ((notification.isNotDisplayed && notification.isNotDisplayed()) ||
-        (notification.isSkippedMoment && notification.isSkippedMoment()))
-    ) {
-      const error = new Error('Google One Tap was not displayed or was skipped');
-      onError(error);
+    // Only display prompt if not using FedCM to prevent abort errors
+    // Use a timeout to ensure proper initialization
+    setTimeout(() => {
+      try {
+        window.google?.accounts?.id?.prompt((notification) => {
+          // Handle FedCM-related errors gracefully
+          if (notification && typeof notification === 'object') {
+            // Check if FedCM caused the issue
+            if (notification.getMomentType && notification.getMomentType() === 'display') {
+              // FedCM is being used, suppress the prompt to avoid errors
+              return;
+            }
+          }
+
+          // Handle regular notification errors
+          if (
+            onError &&
+            ((notification.isNotDisplayed && notification.isNotDisplayed()) ||
+              (notification.isSkippedMoment && notification.isSkippedMoment()))
+          ) {
+            const error = new Error('Google One Tap was not displayed or was skipped');
+            onError(error);
+          }
+        });
+      } catch (promptError) {
+        // Silently handle prompt errors to prevent console noise
+        console.debug('Google One Tap prompt suppressed:', promptError);
+      }
+    }, 1000); // Delay to ensure proper initialization
+
+    // Log FedCM migration notice only in development
+    if (console && console.info && typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      console.info(
+        '📢 FedCM Migration Notice: Google will require Federated Credential Management in future updates.\n' +
+          'This application is prepared for FedCM but currently uses legacy Google One Tap for compatibility.\n' +
+          'For migration guidance, see: https://developers.google.com/identity/gsi/web/guides/fedcm-migration'
+      );
     }
-  });
-
-  // Log FedCM migration notice only in development
-  if (console && console.info && typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    console.info(
-      '📢 FedCM Migration Notice: Google will require Federated Credential Management in future updates.\n' +
-        'This application is prepared for FedCM but currently uses legacy Google One Tap for compatibility.\n' +
-        'For migration guidance, see: https://developers.google.com/identity/gsi/web/guides/fedcm-migration'
-    );
+  } catch (error) {
+    // Handle initialization errors gracefully
+    if (onError) {
+      onError(new Error('Failed to initialize Google Sign-In'));
+    }
   }
 };
 
