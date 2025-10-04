@@ -163,6 +163,12 @@ const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
           clientId === '511333300252-2d54h6n4th9q0c3r1ed7k4eq9c5dj7v.apps.googleusercontent.com' ||
           clientId === '644801417181-e1glvt4j9tpsaakvfqrlfrq56m277e4f.apps.googleusercontent.com';
 
+        // Check for unconfigured client ID
+        if (!clientId || clientId === 'your-production-google-client-id-here') {
+          showError('Google Sign-In is not configured. Please configure your Google OAuth credentials.');
+          return;
+        }
+
         if (isDev && isTestClientId) {
           // In development with test client ID, show a helpful message instead of trying to initialize
           showError(
@@ -193,9 +199,11 @@ const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
             // Check for specific error types
             if (error.message) {
               if (error.message.includes('origin is not allowed')) {
-                errorMessage = 'Google Sign-In domain configuration needed. Add localhost to authorized domains.';
+                errorMessage = 'Google Sign-In domain configuration needed. Add this domain to authorized domains.';
               } else if (error.message.includes('client_id') || error.message.includes('not found')) {
                 errorMessage = 'Google OAuth client ID not configured or invalid.';
+              } else if (error.message.includes('not configured')) {
+                errorMessage = 'Google Sign-In is not configured. Please configure your Google OAuth credentials.';
               }
             }
 
