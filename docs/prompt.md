@@ -243,6 +243,33 @@ Your task is helping to design an one page cheatsheet for daily use for specifie
 Current topic is: Task Management:
 https://github.com/eyaltoledano/claude-task-master is an AI-powered task-management system. It can be used in MCP mode or command mode. You can refer to https://docs.task-master.dev/capabilities/cli-root-commands see the command usage.
 
+### Reefactory One Click Login Mechanism
+
+Take the following as a new task for task-master. After confirming these unclear parts, split it as subtasks and add them all into the task-master. Then we can start to work on it.
+
+#### Background
+
+As we already get the One Click Login Mechanism working(So far only tested with Google One Tap)s, It's time for us to refactory it to provide a more stable/relaiable and extendable service to the website.
+
+#### Current Issues
+
+- For UI-wise, current solution is not good for user reading experience.
+- No authorization token cache mechanism
+- Due to build and test round, we got the code a little bit messy.
+
+#### Solutions
+
+- For UI-wise, we do the following enhancements:
+  - When user not login, we just show a grey avatar(with question mark or not we can discuss or design a better way) at current position. Once user moves the mouse over this component, we need to show a popup menu to the user to select the way to login(In case of one way login way available, this step can be skipped directly.)
+  - Once user login success, change this grey avatar as the real avatar of the user(The data can be retrieved). One user mouse over again, show another popup menu with one menu item for Sign Out (For example, Auth Provider's logo + 'Sign Out' + User Email). It will trigger user logout if anyone clicks the menu item.
+- For authorization token cache mechanism, we can add a token guardian to void checking the token with Supabase Auth server every time. It's a simple value stored in local storage to represent the user's latest authorization timestamp. As our website is a multiple page application, we need to ensure that the token is valid across all pages and avoid checking the token with Supabase Auth server every time.
+  - If current timestamp is less than the token guardian + duration, we should not check the token with Supabase Auth server. Of course, if current timestamp < token guardian + duration but auth token already expired, we should also check the token with Supabase Auth server.
+  - If current timestamp > token guardian + duration, we should check the token with Supabase Auth server.
+  - auto refresh token will be enabled, as it's a feature of Supabase JS.
+- As we get authorization token cache mechanism ready, we need to show the user avatar and email in the popup menu on every page (It looks like we only can see it on the home page? need to be confirmed).
+- Have a comprehensive code review, and do some refactoring work to improve the code quality and maintainability, we should also consider the capacity to add some other login providers going forwards.
+- Add a set of unit tests for the authorization token cache mechanism into @tests/auth/, and make sure all of them pass the tests.
+
 ## TODO List
 
 - [x] Add a banner and consent mode: Choose a platform, such as Cookie Information, Complianz, or another Google-certified CMP. For Astro, the @jop-software/astro-cookieconsent package is a popular option that wraps the vanilla-cookieconsent library.
