@@ -5,7 +5,8 @@
  * session handling, and authentication utilities for the entire application.
  */
 
-import { supabase } from './supabase';
+import { supabase, isSupabaseConfigured } from './supabase';
+import type { Session as SupabaseSession, User as SupabaseUser } from '@supabase/supabase-js';
 
 /**
  * User interface for authentication state
@@ -25,6 +26,7 @@ export interface User {
 
 /**
  * Session interface for authentication state
+ * Note: This wraps Supabase's session but adds our custom user type
  */
 export interface Session {
   user: User | null;
@@ -78,6 +80,15 @@ class AuthManager {
     try {
       this.setState({ isLoading: true, error: null });
 
+      // Check if Supabase is configured
+      if (!isSupabaseConfigured() || !supabase) {
+        this.setState({
+          error: 'Authentication service not configured. Please check your environment variables.',
+          isLoading: false,
+        });
+        return;
+      }
+
       // Get initial session
       const {
         data: { session },
@@ -106,12 +117,24 @@ class AuthManager {
   /**
    * Handle session changes from Supabase
    */
-  private handleSessionChange(session: Session | null, event: AuthEvent): void {
+  private handleSessionChange(session: SupabaseSession | null, event: AuthEvent): void {
     const user = session?.user ? this.formatUser(session.user) : null;
+
+    // Convert Supabase session to our custom session type
+    const customSession: Session | null = session
+      ? {
+          user,
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_at: session.expires_at,
+          expires_in: session.expires_in,
+          token_type: session.token_type,
+        }
+      : null;
 
     this.setState({
       user,
-      session,
+      session: customSession,
       isLoading: false,
       isAuthenticated: !!user,
       error: null,
@@ -121,17 +144,19 @@ class AuthManager {
     this.notifyListeners(event, session);
 
     // Emit custom events for component integration
-    window.dispatchEvent(
-      new CustomEvent('authStateChange', {
-        detail: { event, session, user },
-      })
-    );
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('authStateChange', {
+          detail: { event, session, user },
+        })
+      );
+    }
   }
 
   /**
    * Format user data from Supabase
    */
-  private formatUser(supabaseUser: any): User {
+  private formatUser(supabaseUser: SupabaseUser): User {
     const provider = this.extractProvider(supabaseUser);
 
     return {
@@ -140,7 +165,7 @@ class AuthManager {
       name: this.extractDisplayName(supabaseUser, provider),
       avatar_url: this.extractAvatarUrl(supabaseUser, provider),
       provider: provider || undefined,
-      email_verified: supabaseUser.email_verified,
+      email_verified: supabaseUser.user_metadata?.email_verified || supabaseUser.email_confirmed_at != null,
       created_at: supabaseUser.created_at,
       last_sign_in_at: supabaseUser.last_sign_in_at,
       user_metadata: supabaseUser.user_metadata,
@@ -232,17 +257,19 @@ class AuthManager {
    * Notify listeners of state changes
    */
   private notifyStateChange(): void {
-    window.dispatchEvent(
-      new CustomEvent('authStateUpdate', {
-        detail: { ...this.state },
-      })
-    );
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('authStateUpdate', {
+          detail: { ...this.state },
+        })
+      );
+    }
   }
 
   /**
    * Notify listeners of auth events
    */
-  private notifyListeners(event: AuthEvent, session: Session | null): void {
+  private notifyListeners(event: AuthEvent, session: SupabaseSession | null): void {
     this.listeners.forEach((callback) => {
       try {
         callback(event, session);
@@ -301,6 +328,10 @@ class AuthManager {
     try {
       this.setState({ isLoading: true });
 
+      if (!supabase) {
+        throw new Error('Authentication service not available');
+      }
+
       await supabase.auth.signOut();
 
       // State will be updated by the auth state change listener
@@ -319,6 +350,10 @@ class AuthManager {
   async refreshSession(): Promise<void> {
     try {
       this.setState({ isLoading: true });
+
+      if (!supabase) {
+        throw new Error('Authentication service not available');
+      }
 
       const { error } = await supabase.auth.refreshSession();
 
@@ -342,6 +377,10 @@ class AuthManager {
   async updateUserMetadata(metadata: Record<string, any>): Promise<void> {
     try {
       this.setState({ isLoading: true });
+
+      if (!supabase) {
+        throw new Error('Authentication service not available');
+      }
 
       const { error } = await supabase.auth.updateUser({
         data: metadata,
