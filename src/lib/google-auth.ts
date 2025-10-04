@@ -328,9 +328,11 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
       throw new Error('Authentication service not available');
     }
 
+    // Pass nonce to Supabase if it exists in the token
     const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'google',
       token: credential,
+      nonce: payload.nonce || undefined,
     });
 
     if (error) {
