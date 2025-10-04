@@ -327,19 +327,14 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
       throw new Error('Email not verified');
     }
 
-    // Validate nonce to prevent replay attacks
+    // Get stored nonce for Supabase
+    // Note: We don't validate the nonce ourselves - Supabase does this
+    // Supabase compares hash(storedNonce) with payload.nonce
     let storedNonce: string | null = null;
     if (typeof sessionStorage !== 'undefined') {
       storedNonce = sessionStorage.getItem('google_auth_nonce');
-    }
-
-    // Verify nonce matches if both exist
-    if (payload.nonce && storedNonce) {
-      if (payload.nonce !== storedNonce) {
-        throw new Error('Nonce validation failed - possible replay attack');
-      }
-      // Clear the nonce after successful validation
-      if (typeof sessionStorage !== 'undefined') {
+      // Clear the nonce after retrieval to prevent reuse
+      if (storedNonce) {
         sessionStorage.removeItem('google_auth_nonce');
       }
     }
