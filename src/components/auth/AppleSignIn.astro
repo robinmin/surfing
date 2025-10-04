@@ -6,9 +6,10 @@ interface Props {
   width?: string;
   height?: string;
   type?: 'sign-in' | 'continue' | 'sign-up';
+  tooltip?: string;
 }
 
-const { class: className = '', width = '100%', height = '44px', type = 'sign-in', ...rest } = Astro.props;
+const { class: className = '', width = '100%', height = '44px', tooltip = '', ...rest } = Astro.props;
 
 // Generate unique ID for this component instance
 const buttonId = `apple-signin-${Math.random().toString(36).substring(2, 11)}`;
@@ -18,26 +19,29 @@ const buttonId = `apple-signin-${Math.random().toString(36).substring(2, 11)}`;
   id={buttonId}
   class={twMerge('apple-signin-container', className)}
   style={`width: ${width}; height: ${height};`}
+  title={tooltip}
   {...rest}
 >
   <!-- Apple Sign-In button will be rendered here -->
 </div>
 
-<script define:vars={{ buttonId, type }} is:inline>
+<script>
   import { initializeAppleAuth, signInWithApple } from '~/lib/apple-auth';
 
-  // Get the container element
-  const container = document.getElementById(buttonId);
-  if (!container) {
-    console.error('Apple Sign In container not found');
-    // Don't return, just exit the script execution
-    throw new Error('Apple Sign In container not found');
-  }
+  // Initialize component when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get the container element - find by class pattern instead
+    const containers = document.querySelectorAll('[id^="apple-signin-"]');
+    const container = containers[containers.length - 1]; // Get the last one
+    if (!container) {
+      console.error('Apple Sign In container not found');
+      return;
+    }
 
-  // Show loading state
-  const showLoading = (type = 'loading', message) => {
-    const loadingMessage = message || 'Loading Apple Sign-In...';
-    container.innerHTML = `
+    // Show loading state
+    const showLoading = (type = 'loading', message?: string) => {
+      const loadingMessage = message || 'Loading Apple Sign-In...';
+      container.innerHTML = `
       <div class="apple-loading-container flex items-center justify-center w-full h-full p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <div class="flex flex-col items-center space-y-3">
           <!-- Apple Icon -->
@@ -82,12 +86,12 @@ const buttonId = `apple-signin-${Math.random().toString(36).substring(2, 11)}`;
         </div>
       </div>
     `;
-  };
+    };
 
-  // Show error state
-  const showError = (message) => {
-    console.log('Error:', message); // Keep for debugging
-    container.innerHTML = `
+    // Show error state
+    const showError = (message: string) => {
+      console.log('Error:', message); // Keep for debugging
+      container.innerHTML = `
       <div class="flex flex-col items-center justify-center w-full h-full p-4 border border-red-200 rounded-lg bg-red-50">
         <svg class="w-5 h-5 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -101,11 +105,11 @@ const buttonId = `apple-signin-${Math.random().toString(36).substring(2, 11)}`;
         </button>
       </div>
     `;
-  };
+    };
 
-  // Show success state (signed in)
-  const showSuccess = (userData) => {
-    container.innerHTML = `
+    // Show success state (signed in)
+    const showSuccess = (userData: any) => {
+      container.innerHTML = `
       <div class="flex items-center justify-center w-full h-full p-4 border border-green-200 rounded-lg bg-green-50">
         <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -117,32 +121,32 @@ const buttonId = `apple-signin-${Math.random().toString(36).substring(2, 11)}`;
       </div>
     `;
 
-    // Emit custom event for parent components
-    window.dispatchEvent(new CustomEvent('appleSignInSuccess', { detail: userData }));
-  };
-
-  // Show Apple Sign In button
-  const showAppleButton = () => {
-    // Get button text based on type
-    const getButtonText = (buttonType) => {
-      switch (buttonType) {
-        case 'continue':
-          return 'Continue with Apple';
-        case 'sign-up':
-          return 'Sign up with Apple';
-        case 'sign-in':
-        default:
-          return 'Sign in with Apple';
-      }
+      // Emit custom event for parent components
+      window.dispatchEvent(new CustomEvent('appleSignInSuccess', { detail: userData }));
     };
 
-    const buttonText = getButtonText(type);
-    const isDarkVariant = false; // Default to light variant
-    const textColor = isDarkVariant ? 'text-white' : 'text-gray-800';
-    const bgColor = isDarkVariant ? 'bg-black' : 'bg-white';
-    const borderColor = isDarkVariant ? 'border-black' : 'border-gray-300';
+    // Show Apple Sign In button
+    const showAppleButton = () => {
+      // Get button text based on type - use default since we can't pass type
+      const getButtonText = (buttonType: string) => {
+        switch (buttonType) {
+          case 'continue':
+            return 'Continue with Apple';
+          case 'sign-up':
+            return 'Sign up with Apple';
+          case 'sign-in':
+          default:
+            return 'Sign in with Apple';
+        }
+      };
 
-    container.innerHTML = `
+      const buttonText = getButtonText('sign-in'); // Default to sign-in
+      const isDarkVariant = false; // Default to light variant
+      const textColor = isDarkVariant ? 'text-white' : 'text-gray-800';
+      const bgColor = isDarkVariant ? 'bg-black' : 'bg-white';
+      const borderColor = isDarkVariant ? 'border-black' : 'border-gray-300';
+
+      container.innerHTML = `
       <button
         class="apple-signin-button flex items-center justify-center w-full h-full px-4 border ${borderColor} ${bgColor} rounded-lg hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
         type="button"
@@ -155,102 +159,110 @@ const buttonId = `apple-signin-${Math.random().toString(36).substring(2, 11)}`;
       </button>
     `;
 
-    // Add click handler to the button
-    const button = container.querySelector('.apple-signin-button');
-    if (button) {
-      button.addEventListener('click', handleAppleSignIn);
-    }
-  };
+      // Add click handler to the button
+      const button = container.querySelector('.apple-signin-button');
+      if (button) {
+        button.addEventListener('click', handleAppleSignIn);
+      }
+    };
 
-  // Handle Apple Sign In
-  const handleAppleSignIn = async () => {
-    try {
-      showLoading('signing-in', 'Connecting to Apple...');
+    // Handle Apple Sign In
+    const handleAppleSignIn = async () => {
+      try {
+        showLoading('signing-in', 'Connecting to Apple...');
 
-      // Initialize Apple Sign In
-      await initializeAppleAuth();
+        // Initialize Apple Sign In
+        await initializeAppleAuth();
 
-      showLoading('validating', 'Verifying your Apple account...');
+        showLoading('validating', 'Verifying your Apple account...');
 
-      // Perform sign in
-      const userData = await signInWithApple();
+        // Perform sign in
+        const userData = await signInWithApple();
 
-      showSuccess(userData);
-    } catch (error) {
-      console.error('Apple sign in error:', error);
-      let message = 'Failed to sign in with Apple';
+        showSuccess(userData);
+      } catch (error) {
+        console.error('Apple sign in error:', error);
+        let message = 'Failed to sign in with Apple';
 
-      if (error.message) {
-        if (error.message.includes('environment variable')) {
-          message = 'Apple Sign In not configured';
-        } else if (error.message.includes('popup')) {
-          message = 'Please allow popups for this site';
-        } else if (error.message.includes('network')) {
-          message = 'Network error. Please try again';
-        } else {
-          message = error.message;
+        if (error.message) {
+          if (error.message.includes('environment variable')) {
+            message = 'Apple Sign In not configured';
+          } else if (error.message.includes('popup')) {
+            message = 'Please allow popups for this site';
+          } else if (error.message.includes('network')) {
+            message = 'Network error. Please try again';
+          } else {
+            message = error.message;
+          }
         }
+
+        showError(message);
       }
+    };
 
-      showError(message);
-    }
-  };
+    // Initialize component
+    const initComponent = async () => {
+      try {
+        showLoading('loading', 'Setting up Apple Sign-In...');
 
-  // Initialize component
-  const initComponent = async () => {
-    try {
-      showLoading('loading', 'Setting up Apple Sign-In...');
+        // Check if Apple environment variables are configured safely
+        let clientId: string | undefined, redirectURI: string | undefined;
+        try {
+          clientId = typeof import.meta.env !== 'undefined' ? import.meta.env.PUBLIC_APPLE_SERVICES_ID : undefined;
+          redirectURI = typeof import.meta.env !== 'undefined' ? import.meta.env.PUBLIC_APPLE_REDIRECT_URI : undefined;
+        } catch {
+          throw new Error(
+            'Apple Sign In not configured. Please set PUBLIC_APPLE_SERVICES_ID and PUBLIC_APPLE_REDIRECT_URI.'
+          );
+        }
 
-      // Check if Apple environment variables are configured
-      const clientId = import.meta.env.PUBLIC_APPLE_SERVICES_ID;
-      const redirectURI = import.meta.env.PUBLIC_APPLE_REDIRECT_URI;
+        if (!clientId || !redirectURI) {
+          throw new Error(
+            'Apple Sign In not configured. Please set PUBLIC_APPLE_SERVICES_ID and PUBLIC_APPLE_REDIRECT_URI.'
+          );
+        }
 
-      if (!clientId || !redirectURI) {
-        throw new Error('Apple Sign In not configured. Please contact the administrator.');
+        // Show the Apple Sign In button
+        showAppleButton();
+      } catch (error) {
+        console.error('Apple Sign In component initialization error:', error);
+        showError(error.message || 'Failed to initialize Apple Sign In');
       }
+    };
 
-      // Show the Apple Sign In button
-      showAppleButton();
-    } catch (error) {
-      console.error('Apple Sign In component initialization error:', error);
-      showError(error.message || 'Failed to initialize Apple Sign In');
-    }
-  };
+    // Listen for retry events
+    container.addEventListener('retryAppleSignIn', handleAppleSignIn);
 
-  // Listen for retry events
-  container.addEventListener('retryAppleSignIn', handleAppleSignIn);
-
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initComponent);
-  } else {
+    // Initialize component
     initComponent();
-  }
 
-  // Listen for sign out events
-  const handleSignOut = () => {
-    setTimeout(() => {
-      showAppleButton();
-    }, 100);
-  };
+    // Listen for sign out events
+    const handleSignOut = () => {
+      setTimeout(() => {
+        showAppleButton();
+      }, 100);
+    };
 
-  window.addEventListener('appleSignOut', handleSignOut);
+    window.addEventListener('appleSignOut', handleSignOut);
 
-  // Cleanup on component unmount
-  const cleanup = () => {
-    window.removeEventListener('appleSignOut', handleSignOut);
-    container.removeEventListener('retryAppleSignIn', handleAppleSignIn);
-  };
+    // Cleanup on component unmount
+    const cleanup = () => {
+      window.removeEventListener('appleSignOut', handleSignOut);
+      container.removeEventListener('retryAppleSignIn', handleAppleSignIn);
+    };
 
-  // Export cleanup for potential external use
-  if (typeof window !== 'undefined') {
-    window.appleSignInCleanup = cleanup;
-  }
+    // Export cleanup for potential external use
+    if (typeof window !== 'undefined') {
+      window.appleSignInCleanup = cleanup;
+    }
+  });
 </script>
 
 <style>
   .apple-signin-container {
     @apply relative overflow-hidden;
+    @apply w-full;
+    @apply flex items-center justify-center;
   }
 
   .apple-signin-button {
