@@ -10,6 +10,7 @@ interface Props {
   logo_alignment?: 'left' | 'center';
   width?: string;
   locale?: string;
+  tooltip?: string;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   logo_alignment = 'left',
   width = '',
   locale = 'en',
+  tooltip = '',
   ...rest
 } = Astro.props;
 
@@ -28,7 +30,7 @@ const {
 const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
 ---
 
-<div id={buttonId} class={twMerge('google-signin-container', className)} {...rest}>
+<div id={buttonId} class={twMerge('google-signin-container', className)} title={tooltip} {...rest}>
   <!-- Google Sign-In button will be rendered here -->
 </div>
 
@@ -45,6 +47,7 @@ const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
 >
 </div>
 
+<!-- Google Sign In button (Fallback) -->
 <div
   class="g_id_signin"
   data-type="standard"
@@ -55,24 +58,27 @@ const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
   data-logo_alignment={logo_alignment}
   data-width={width ? width : undefined}
   data-locale={locale}
+  data-client_id=""
 >
 </div>
 
-<script define:vars={{ buttonId }} is:inline>
+<script>
   import { initializeGoogleOneTap, signInWithGoogle } from '~/lib/google-auth';
 
-  // Get the container element
-  const container = document.getElementById(buttonId);
-  if (!container) {
-    console.error('Google One Tap container not found');
-    // Don't return, just exit the script execution
-    throw new Error('Google One Tap container not found');
-  }
+  // Initialize component when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get the container element - find by class pattern instead
+    const containers = document.querySelectorAll('[id^="google-signin-"]');
+    const container = containers[containers.length - 1]; // Get the last one
+    if (!container) {
+      console.error('Google One Tap container not found');
+      return;
+    }
 
-  // Show loading state
-  const showLoading = (type = 'loading', message = '') => {
-    const loadingMessage = message || 'Loading Google Sign-In...';
-    container.innerHTML = `
+    // Show loading state
+    const showLoading = (type = 'loading', message = '') => {
+      const loadingMessage = message || 'Loading Google Sign-In...';
+      container.innerHTML = `
       <div class="google-loading-container flex items-center justify-center p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <div class="flex flex-col items-center space-y-3">
           <!-- Google Icon -->
@@ -107,12 +113,12 @@ const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
         </div>
       </div>
     `;
-  };
+    };
 
-  // Show error state
-  const showError = (message) => {
-    console.log('Error:', message); // Keep for debugging
-    container.innerHTML = `
+    // Show error state
+    const showError = (message: string) => {
+      console.log('Error:', message); // Keep for debugging
+      container.innerHTML = `
       <div class="p-4 border border-red-200 rounded-lg bg-red-50">
         <p class="text-red-600 text-sm">${message}</p>
         <button
@@ -123,11 +129,11 @@ const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
         </button>
       </div>
     `;
-  };
+    };
 
-  // Show success state (signed in)
-  const showSuccess = (userData) => {
-    container.innerHTML = `
+    // Show success state (signed in)
+    const showSuccess = (userData: any) => {
+      container.innerHTML = `
       <div class="p-4 border border-green-200 rounded-lg bg-green-50">
         <div class="flex items-center">
           <img
@@ -143,67 +149,111 @@ const buttonId = `google-signin-${Math.random().toString(36).substring(2, 11)}`;
       </div>
     `;
 
-    // Emit custom event for parent components
-    window.dispatchEvent(new CustomEvent('googleSignInSuccess', { detail: userData }));
-  };
+      // Emit custom event for parent components
+      window.dispatchEvent(new CustomEvent('googleSignInSuccess', { detail: userData }));
+    };
 
-  // Initialize Google One Tap
-  const initGoogleOneTap = async () => {
-    try {
-      showLoading('loading', 'Initializing Google Sign-In...');
+    // Initialize Google One Tap
+    const initGoogleOneTap = async () => {
+      try {
+        // Check if we're in development and using a test client ID
+        const clientId = import.meta.env?.PUBLIC_GOOGLE_CLIENT_ID || '';
+        const isDev = import.meta.env.DEV;
+        const isTestClientId =
+          clientId === '511333300252-2d54h6n4th9q0c3r1ed7k4eq9c5dj7v.apps.googleusercontent.com' ||
+          clientId === '644801417181-e1glvt4j9tpsaakvfqrlfrq56m277e4f.apps.googleusercontent.com';
 
-      await initializeGoogleOneTap(
-        // Success callback
-        async (response) => {
-          try {
-            showLoading('validating', 'Verifying your Google account...');
-            const userData = await signInWithGoogle(response.credential);
-            showSuccess(userData);
-          } catch (error) {
-            console.error('Google sign in error:', error);
-            showError(error instanceof Error ? error.message : 'Failed to sign in with Google');
-          }
-        },
-        // Error callback
-        (error) => {
-          console.error('Google One Tap initialization error:', error);
-          showError(error instanceof Error ? error.message : 'Failed to initialize Google Sign-In');
+        if (isDev && isTestClientId) {
+          // In development with test client ID, show a helpful message instead of trying to initialize
+          showError(
+            'Google Sign-In is using test credentials. Configure production OAuth client ID for full functionality.'
+          );
+          return;
         }
-      );
 
-      // Hide loading if initialization succeeds (button will be shown by Google)
-    } catch (error) {
-      console.error('Google One Tap setup error:', error);
-      showError(error instanceof Error ? error.message : 'Failed to set up Google Sign-In');
-    }
-  };
+        showLoading('loading', 'Initializing Google Sign-In...');
 
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGoogleOneTap);
-  } else {
+        await initializeGoogleOneTap(
+          // Success callback
+          async (response) => {
+            try {
+              showLoading('validating', 'Verifying your Google account...');
+              const userData = await signInWithGoogle(response.credential);
+              showSuccess(userData);
+            } catch (error) {
+              console.error('Google sign in error:', error);
+              showError(error instanceof Error ? error.message : 'Failed to sign in with Google');
+            }
+          },
+          // Error callback
+          (error) => {
+            console.error('Google One Tap initialization error:', error);
+            let errorMessage = 'Failed to initialize Google Sign-In. Please try again later.';
+
+            // Check for specific error types
+            if (error.message) {
+              if (error.message.includes('origin is not allowed')) {
+                errorMessage = 'Google Sign-In domain configuration needed. Add localhost to authorized domains.';
+              } else if (error.message.includes('client_id') || error.message.includes('not found')) {
+                errorMessage = 'Google OAuth client ID not configured or invalid.';
+              }
+            }
+
+            showError(errorMessage);
+          }
+        );
+
+        // Hide loading if initialization succeeds (button will be shown by Google)
+      } catch (error) {
+        console.error('Google One Tap setup error:', error);
+        showError('Failed to set up Google Sign-In. Please try again later.');
+      }
+    };
+
+    // Set client ID in HTML attributes safely
+    const setClientIds = () => {
+      try {
+        const clientId = import.meta.env?.PUBLIC_GOOGLE_CLIENT_ID || '';
+        const onloadDiv = document.getElementById('g_id_onload');
+        const signinDiv = container.querySelector('.g_id_signin');
+
+        if (onloadDiv) {
+          onloadDiv.setAttribute('data-client_id', clientId);
+        }
+        if (signinDiv) {
+          signinDiv.setAttribute('data-client_id', clientId);
+        }
+      } catch (error) {
+        console.warn('Failed to set Google client ID:', error);
+      }
+    };
+
+    // Set client IDs before initializing
+    setClientIds();
+
+    // Initialize component
     initGoogleOneTap();
-  }
 
-  // Listen for sign out events
-  const handleSignOut = () => {
-    // Reset component to initial state
-    setTimeout(() => {
-      location.reload();
-    }, 100);
-  };
+    // Listen for sign out events
+    const handleSignOut = () => {
+      // Reset component to initial state
+      setTimeout(() => {
+        location.reload();
+      }, 100);
+    };
 
-  window.addEventListener('googleSignOut', handleSignOut);
+    window.addEventListener('googleSignOut', handleSignOut);
 
-  // Cleanup on component unmount
-  const cleanup = () => {
-    window.removeEventListener('googleSignOut', handleSignOut);
-  };
+    // Cleanup on component unmount
+    const cleanup = () => {
+      window.removeEventListener('googleSignOut', handleSignOut);
+    };
 
-  // Export cleanup for potential external use
-  if (typeof window !== 'undefined') {
-    window.googleOneTapCleanup = cleanup;
-  }
+    // Export cleanup for potential external use
+    if (typeof window !== 'undefined') {
+      window.googleOneTapCleanup = cleanup;
+    }
+  });
 </script>
 
 <style>
