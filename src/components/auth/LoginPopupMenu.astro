@@ -1,0 +1,89 @@
+---
+/**
+ * LoginPopupMenu Component
+ * Compact popup menu with login provider options
+ * Displays above the avatar button with provider icons + text
+ */
+import { Icon } from 'astro-icon/components';
+import { getEnabledAuthMethods } from '~/lib/config';
+
+export interface Props {
+  className?: string;
+}
+
+const { className = '' } = Astro.props;
+const { google, apple } = getEnabledAuthMethods();
+---
+
+<div
+  class:list={[
+    'login-popup-menu absolute top-full mt-2 right-0',
+    'bg-white dark:bg-gray-800',
+    'border border-gray-200 dark:border-gray-700',
+    'rounded-lg shadow-xl',
+    'min-w-[220px]',
+    'opacity-0 invisible',
+    'transition-all duration-200 ease-in-out',
+    'z-[60]', // Higher z-index to ensure it's above everything
+    className,
+  ]}
+  data-popup-menu
+>
+  <div class="py-3">
+    {
+      google && (
+        <button
+          type="button"
+          class="login-option-google w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors rounded-md mx-2 my-1 border border-transparent hover:border-blue-200 dark:hover:border-blue-800"
+          data-provider="google"
+        >
+          <Icon name="tabler:brand-google" class="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Sign in with Google</span>
+        </button>
+      )
+    }
+
+    {
+      apple && (
+        <button
+          type="button"
+          class="login-option-apple w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-md mx-2 my-1 border border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+          data-provider="apple"
+        >
+          <Icon name="tabler:brand-apple" class="h-5 w-5 text-gray-800 dark:text-gray-200 flex-shrink-0" />
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Sign in with Apple</span>
+        </button>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .login-popup-menu.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Arrow pointing up to avatar */
+  .login-popup-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 16px;
+    width: 12px;
+    height: 12px;
+    background: inherit;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-color: inherit;
+    transform: rotate(-45deg);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .login-popup-menu {
+      right: 0;
+      min-width: 180px;
+    }
+  }
+</style>

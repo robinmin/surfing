@@ -15,6 +15,7 @@ export interface AuthConfig {
     apple_sign_in: {
       enabled: boolean;
     };
+    token_cache_duration: number;
   };
 }
 
@@ -26,6 +27,7 @@ const AUTH_CONFIG: AuthConfig['auth'] = {
   apple_sign_in: {
     enabled: false,
   },
+  token_cache_duration: 900, // 15 minutes in seconds
 };
 
 // Sentry configuration based on YAML
@@ -116,6 +118,14 @@ export const getEnabledAuthMethods = (): {
     apple: appleEnabled,
     showDivider: googleEnabled && appleEnabled,
   };
+};
+
+/**
+ * Get token cache duration in seconds
+ * @returns Cache duration in seconds (default: 900 = 15 minutes)
+ */
+export const getTokenCacheDuration = (): number => {
+  return AUTH_CONFIG.token_cache_duration;
 };
 
 /**

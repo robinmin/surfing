@@ -1,0 +1,72 @@
+---
+/**
+ * AvatarButton Component
+ * Displays a grey avatar with user icon for logged-out state
+ * Reusable component with hover effects and dark mode support
+ */
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+  containerClass?: string;
+}
+
+const { size = 'md', className = '', containerClass = '' } = Astro.props;
+
+// Size configurations
+const sizeClasses = {
+  sm: 'h-8 w-8',
+  md: 'h-10 w-10',
+  lg: 'h-12 w-12',
+};
+
+const iconSizeClasses = {
+  sm: 'h-4 w-4',
+  md: 'h-5 w-5',
+  lg: 'h-6 w-6',
+};
+---
+
+<button
+  type="button"
+  class:list={[
+    'avatar-button relative flex items-center justify-center rounded-full',
+    'bg-gray-200 dark:bg-gray-700',
+    'border-2 border-gray-300 dark:border-gray-600',
+    'hover:bg-gray-300 dark:hover:bg-gray-600',
+    'hover:border-gray-400 dark:hover:border-gray-500',
+    'transition-all duration-200 ease-in-out',
+    'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+    sizeClasses[size],
+    containerClass,
+  ]}
+  aria-label="User menu"
+>
+  <Icon name="tabler:user" class:list={['text-gray-500 dark:text-gray-400', iconSizeClasses[size], className]} />
+</button>
+
+<style>
+  .avatar-button {
+    transform-origin: center;
+  }
+
+  .avatar-button:hover {
+    transform: scale(1.05);
+  }
+
+  .avatar-button:active {
+    transform: scale(0.95);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .avatar-button {
+      transform: scale(0.95);
+    }
+
+    .avatar-button:hover {
+      transform: scale(1);
+    }
+  }
+</style>

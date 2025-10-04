@@ -6,7 +6,7 @@ import ToggleTheme from '~/components/common/ToggleTheme.astro';
 import ToggleMenu from '~/components/common/ToggleMenu.astro';
 import LanguageSelector from '~/components/common/LanguageSelector.astro';
 import Button from '~/components/ui/Button.astro';
-import AuthContainer from '~/components/auth/AuthContainer.astro';
+import AuthAvatar from '~/components/auth/AuthAvatar.astro';
 
 import { getHomePermalink } from '~/utils/permalinks';
 import { trimSlash, getAsset } from '~/utils/permalinks';
@@ -173,7 +173,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
           {
             showAuth && (
               <div class="hidden md:flex md:items-center">
-                <AuthContainer variant="compact" showEmail={false} showProviderBadge={false} class="max-w-xs" />
+                <AuthAvatar size="md" />
               </div>
             )
           }
@@ -196,8 +196,8 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
         {/* Mobile authentication */}
         {
           showAuth && (
-            <div class="md:hidden mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-              <AuthContainer variant="compact" showEmail={false} showProviderBadge={false} />
+            <div class="md:hidden mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-center">
+              <AuthAvatar size="md" />
             </div>
           )
         }

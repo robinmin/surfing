@@ -169,6 +169,17 @@ let isInitializing = false;
 
 /**
  * Initialize Google One Tap with secure nonce handling and FedCM support
+ *
+ * @param onSuccess - Callback function when user successfully signs in with Google
+ * @param onError - Optional error callback if initialization fails
+ *
+ * @example
+ * ```typescript
+ * await initializeGoogleOneTap(
+ *   (response) => console.log('Sign in success:', response),
+ *   (error) => console.error('Sign in error:', error)
+ * );
+ * ```
  */
 export const initializeGoogleOneTap = async (
   onSuccess: (response: GoogleSignInResponse) => void,
@@ -299,31 +310,38 @@ const initializeGoogleOneTapLegacy = (
 
 /**
  * Sign in with Google using ID token with enhanced security
+ *
+ * @param credential - Google ID token (JWT) from Google One Tap
+ * @returns Supabase session data containing user information
+ * @throws Error if token validation fails, rate limiting is triggered, or Supabase auth fails
+ *
+ * @example
+ * ```typescript
+ * const session = await signInWithGoogle(googleIdToken);
+ * console.log('Logged in user:', session.user.email);
+ * ```
  */
 export const signInWithGoogle = async (credential: string): Promise<any> => {
   try {
-    // Decode token for validation
-    const payload = decodeJWT(credential) as GoogleIdTokenPayload;
+    // Decode and validate token
+    const payload = (await decodeJWT(credential)) as GoogleIdTokenPayload;
+    const { AuthProviderUtils } = await import('./auth-provider');
+    const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
 
-    // Validate token expiration
-    const now = Math.floor(Date.now() / 1000);
-    if (payload.exp < now) {
+    // Perform comprehensive token validation
+    if (AuthProviderUtils.isTokenExpired(payload.exp)) {
       throw new Error('Token has expired');
     }
 
-    // Validate audience
-    const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
-    if (payload.aud !== clientId) {
+    if (!AuthProviderUtils.validateAudience(payload, clientId)) {
       throw new Error('Invalid token audience');
     }
 
-    // Validate issuer
-    if (!payload.iss.startsWith('https://accounts.google.com')) {
+    if (!AuthProviderUtils.validateIssuer(payload, 'https://accounts.google.com')) {
       throw new Error('Invalid token issuer');
     }
 
-    // Validate email if present
-    if (payload.email && !payload.email_verified) {
+    if (!AuthProviderUtils.validateEmailVerified(payload)) {
       throw new Error('Email not verified');
     }
 
@@ -366,6 +384,16 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
     // Clear failed attempts on successful login
     clearFailedAttempts(identifier);
 
+    // Update token guardian cache on successful login
+    if (data.user) {
+      const { updateTokenCache } = await import('./token-guardian');
+      updateTokenCache(data.user.id, data.user.email);
+
+      // Notify other tabs about login
+      const { notifyLogin } = await import('./auth-sync');
+      notifyLogin(data.user.id);
+    }
+
     return data;
   } catch (error) {
     const errorResponse = handleAuthError(error, 'Google sign in');
@@ -391,32 +419,30 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
 };
 
 /**
- * Decode JWT token (for nonce verification)
+ * Decode JWT token (uses shared utility)
  */
-export const decodeJWT = (token: string): any => {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    throw new Error('Failed to decode JWT token');
-  }
+export const decodeJWT = async (token: string): Promise<any> => {
+  const { AuthProviderUtils } = await import('./auth-provider');
+  return AuthProviderUtils.decodeJWT(token);
 };
 
 /**
- * Sign out current user
+ * Sign out current user and clear token cache
  */
 export const signOut = async (): Promise<void> => {
   try {
     if (!supabase) {
       throw new Error('Authentication service not available');
     }
+
+    // Clear token guardian cache
+    const { clearTokenCache } = await import('./token-guardian');
+    clearTokenCache();
+
+    // Notify other tabs about logout
+    const { notifyLogout } = await import('./auth-sync');
+    notifyLogout();
+
     await supabase.auth.signOut();
   } catch (error) {
     console.error('Sign out error:', error);
@@ -425,18 +451,67 @@ export const signOut = async (): Promise<void> => {
 };
 
 /**
- * Get current session
+ * Get current session with token guardian caching
+ * Reduces unnecessary auth server checks by using cached validation
+ *
+ * @param skipCache - If true, bypass cache and fetch fresh session from auth server
+ * @returns Session object if user is authenticated, null otherwise
+ *
+ * @example
+ * ```typescript
+ * // Get session (may use cache)
+ * const session = await getCurrentSession();
+ *
+ * // Force fresh session fetch
+ * const freshSession = await getCurrentSession(true);
+ * ```
  */
-export const getCurrentSession = async () => {
+export const getCurrentSession = async (skipCache = false) => {
   try {
     if (!supabase) {
       throw new Error('Authentication service not available');
     }
+
+    // Use token guardian cache unless explicitly skipped
+    if (!skipCache) {
+      const { isCacheValid, getCachedTokenInfo } = await import('./token-guardian');
+
+      // If cache is valid, return cached session info
+      if (isCacheValid()) {
+        const cachedInfo = getCachedTokenInfo();
+        if (cachedInfo) {
+          console.debug('Using cached token validation', {
+            userId: cachedInfo.userId,
+            cacheAge: Math.floor((Date.now() - cachedInfo.timestamp) / 1000) + 's',
+          });
+
+          // Return lightweight session object from cache
+          // Full session will be fetched only when cache expires
+          return {
+            user: {
+              id: cachedInfo.userId,
+              email: cachedInfo.email,
+            },
+            cached: true,
+          };
+        }
+      }
+    }
+
+    // Cache expired or skipped - fetch fresh session from auth server
     const {
       data: { session },
       error,
     } = await supabase.auth.getSession();
+
     if (error) throw error;
+
+    // Update cache with fresh validation
+    if (session?.user) {
+      const { updateTokenCache } = await import('./token-guardian');
+      updateTokenCache(session.user.id, session.user.email);
+    }
+
     return session;
   } catch (error) {
     console.error('Get session error:', error);

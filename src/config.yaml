@@ -79,6 +79,9 @@ auth:
     enabled: true
   apple_sign_in:
     enabled: false
+  # Token cache duration in seconds (default: 900 = 15 minutes)
+  # Reduces unnecessary auth server checks by caching token validation
+  token_cache_duration: 900
 
 # Sentry error tracking configuration
 sentry:

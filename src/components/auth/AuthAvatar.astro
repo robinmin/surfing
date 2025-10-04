@@ -1,0 +1,293 @@
+---
+/**
+ * AuthAvatar Component
+ * Main component that combines AvatarButton with LoginPopupMenu or UserMenu
+ * Handles authentication state and click interactions
+ */
+import { Icon } from 'astro-icon/components';
+import LoginPopupMenu from './LoginPopupMenu.astro';
+import UserMenu from './UserMenu.astro';
+
+export interface Props {
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const { size = 'md', className = '' } = Astro.props;
+
+// Size configurations
+const sizeClasses = {
+  sm: 'h-8 w-8',
+  md: 'h-10 w-10',
+  lg: 'h-12 w-12',
+};
+
+const iconSizeClasses = {
+  sm: 'h-4 w-4',
+  md: 'h-5 w-5',
+  lg: 'h-6 w-6',
+};
+---
+
+<div class:list={['auth-avatar-container relative', className]}>
+  <!-- Avatar Button - shows grey icon when logged out, user photo when logged in -->
+  <button
+    type="button"
+    class:list={[
+      'avatar-button relative flex items-center justify-center rounded-full',
+      'border-2 shadow-sm hover:shadow-md',
+      'hover:border-blue-400 dark:hover:border-blue-500 hover:scale-105',
+      'transition-all duration-200 ease-in-out',
+      'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+      sizeClasses[size],
+    ]}
+    aria-label="User menu"
+    data-auth-avatar
+  >
+    <!-- Logged out state - grey avatar with user icon -->
+    <div
+      class:list={[
+        'logged-out-avatar absolute inset-0 flex items-center justify-center rounded-full',
+        'bg-gray-200 dark:bg-gray-700',
+        'border-gray-300 dark:border-gray-600',
+      ]}
+      data-logged-out
+    >
+      <Icon name="tabler:user" class:list={['text-gray-500 dark:text-gray-400', iconSizeClasses[size]]} />
+    </div>
+
+    <!-- Logged in state - user profile picture -->
+    <img
+      class:list={[
+        'logged-in-avatar absolute inset-0 rounded-full object-cover hidden',
+        'border-gray-300 dark:border-gray-600',
+      ]}
+      src=""
+      alt="User avatar"
+      data-logged-in
+    />
+  </button>
+
+  <!-- Login popup for logged out users -->
+  <LoginPopupMenu />
+
+  <!-- User menu for logged in users -->
+  <UserMenu />
+</div>
+
+<script>
+  import { initializeGoogleOneTap, signInWithGoogle, signOut, getCurrentSession } from '~/lib/google-auth';
+
+  let isLoggedIn = false;
+
+  // Handle avatar click to toggle appropriate menu
+  const setupAvatarClick = () => {
+    const container = document.querySelector('.auth-avatar-container');
+    const avatarButton = container?.querySelector('[data-auth-avatar]');
+    const loginMenu = container?.querySelector('[data-popup-menu]');
+    const userMenu = container?.querySelector('[data-user-menu]');
+
+    if (!avatarButton) return;
+
+    // Toggle appropriate menu on avatar click
+    avatarButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      if (isLoggedIn && userMenu) {
+        userMenu.classList.toggle('show');
+        loginMenu?.classList.remove('show');
+      } else if (loginMenu) {
+        loginMenu.classList.toggle('show');
+        userMenu?.classList.remove('show');
+      }
+    });
+
+    // Close menus when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!container?.contains(e.target as Node)) {
+        loginMenu?.classList.remove('show');
+        userMenu?.classList.remove('show');
+      }
+    });
+
+    // Close menus on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        loginMenu?.classList.remove('show');
+        userMenu?.classList.remove('show');
+      }
+    });
+  };
+
+  // Update UI based on auth state
+  const updateAuthUI = (session: any) => {
+    const loggedOutAvatar = document.querySelector('[data-logged-out]');
+    const loggedInAvatar = document.querySelector('[data-logged-in]') as HTMLImageElement;
+    const userName = document.querySelector('[data-user-name]');
+    const userEmail = document.querySelector('[data-user-email]');
+
+    if (session?.user) {
+      isLoggedIn = true;
+
+      // Show user avatar, hide grey avatar
+      loggedOutAvatar?.classList.add('hidden');
+      loggedInAvatar?.classList.remove('hidden');
+
+      // Set user profile picture
+      if (loggedInAvatar && session.user.user_metadata?.avatar_url) {
+        loggedInAvatar.src = session.user.user_metadata.avatar_url;
+      } else if (loggedInAvatar && session.user.user_metadata?.picture) {
+        loggedInAvatar.src = session.user.user_metadata.picture;
+      }
+
+      // Update user info in menu
+      if (userName) {
+        userName.textContent = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User';
+      }
+      if (userEmail) {
+        userEmail.textContent = session.user.email || '';
+      }
+    } else {
+      isLoggedIn = false;
+
+      // Show grey avatar, hide user avatar
+      loggedOutAvatar?.classList.remove('hidden');
+      loggedInAvatar?.classList.add('hidden');
+    }
+  };
+
+  // Handle login option clicks
+  const setupLoginHandlers = () => {
+    const googleButton = document.querySelector('.login-option-google');
+    const appleButton = document.querySelector('.login-option-apple');
+
+    // Google Sign In
+    if (googleButton) {
+      googleButton.addEventListener('click', async () => {
+        try {
+          // Initialize Google One Tap
+          await initializeGoogleOneTap(
+            async (response) => {
+              try {
+                await signInWithGoogle(response.credential);
+                console.log('Google sign in success');
+                // Reload page to reflect authenticated state
+                window.location.reload();
+              } catch (error) {
+                console.error('Google sign in error:', error);
+              }
+            },
+            (error) => {
+              console.error('Google initialization error:', error);
+            }
+          );
+
+          // Trigger Google prompt
+          if (window.google?.accounts?.id) {
+            window.google.accounts.id.prompt();
+          }
+        } catch (error) {
+          console.error('Failed to initialize Google Sign In:', error);
+        }
+      });
+    }
+
+    // Apple Sign In (placeholder for future implementation)
+    if (appleButton) {
+      appleButton.addEventListener('click', () => {
+        console.log('Apple Sign In clicked - to be implemented');
+      });
+    }
+  };
+
+  // Handle sign out
+  const setupSignOutHandler = () => {
+    const signOutButton = document.querySelector('.user-menu-signout');
+
+    if (signOutButton) {
+      signOutButton.addEventListener('click', async () => {
+        try {
+          await signOut();
+          console.log('Sign out success');
+          window.location.reload();
+        } catch (error) {
+          console.error('Sign out error:', error);
+        }
+      });
+    }
+  };
+
+  // Check auth state and update UI
+  const checkAuthState = async () => {
+    try {
+      const session = await getCurrentSession();
+      updateAuthUI(session);
+    } catch {
+      console.debug('No active session');
+      updateAuthUI(null);
+    }
+  };
+
+  // Setup auth sync across tabs
+  const setupAuthSync = async () => {
+    const { initAuthSync, onAuthSync } = await import('~/lib/auth-sync');
+
+    // Initialize auth sync
+    initAuthSync();
+
+    // Listen for auth events from other tabs
+    onAuthSync((event) => {
+      console.debug('Auth sync event received:', event);
+
+      if (event === 'login') {
+        // Reload page to reflect logged in state
+        window.location.reload();
+      } else if (event === 'logout') {
+        // Reload page to reflect logged out state
+        window.location.reload();
+      }
+    });
+  };
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setupAvatarClick();
+      setupLoginHandlers();
+      setupSignOutHandler();
+      checkAuthState();
+      setupAuthSync();
+    });
+  } else {
+    setupAvatarClick();
+    setupLoginHandlers();
+    setupSignOutHandler();
+    checkAuthState();
+    setupAuthSync();
+  }
+</script>
+
+<style>
+  .avatar-button {
+    transform-origin: center;
+  }
+
+  .avatar-button:hover {
+    transform: scale(1.05);
+  }
+
+  .avatar-button:active {
+    transform: scale(0.95);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .avatar-button {
+      transform: scale(0.95);
+    }
+
+    .avatar-button:hover {
+      transform: scale(1);
+    }
+  }
+</style>
