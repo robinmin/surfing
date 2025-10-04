@@ -172,7 +172,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
           }
           {
             showAuth && (
-              <div class="hidden md:block">
+              <div class="hidden md:flex md:items-center">
                 <AuthContainer variant="compact" showEmail={false} showProviderBadge={false} class="max-w-xs" />
               </div>
             )
