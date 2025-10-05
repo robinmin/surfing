@@ -1,6 +1,12 @@
 ---
 title: 'Wrangler CLI Cheatsheet'
 pdfUrl: '/pdf/cheatsheets/en/wrangler-cheatsheet.pdf'
+tags: ['tools', 'devops', 'cloudflare', 'wrangler']
+readingTime: 3
+wordCount: 522
+publishDate: 2025-09-30
+draft: false
+featured: false
 description: 'Complete Command Reference for Cloudflare Workers'
 customCSS: |
   * {
@@ -185,12 +191,6 @@ customCSS: |
                   font-size: 2.2rem;
               }
           }
-tags: ['javascript', 'typescript', 'angular', 'html', 'ai']
-readingTime: 3
-wordCount: 522
-publishDate: 2025-09-30
-draft: false
-featured: false
 ---
 
 <div class="container">

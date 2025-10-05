@@ -1,5 +1,12 @@
 ---
 title: 'Task Master AI - Quick Reference'
+pdfUrl: '/pdf/cheatsheets/en/taskmaster_cheatsheet.pdf'
+tags: ['tools', 'AI', 'programming', 'task-master']
+readingTime: 3
+wordCount: 414
+publishDate: 2025-10-02
+draft: false
+featured: true
 description: 'AI-Powered Task Management for Development Projects • github.com/eyaltoledano/claude-task-master'
 customCSS: |
   @media print {
@@ -188,13 +195,6 @@ customCSS: |
               font-weight: 600;
               margin-left: 4px;
           }
-pdfUrl: '/pdf/cheatsheets/en/taskmaster_cheatsheet.pdf'
-tags: ['javascript', 'typescript', 'angular', 'html', 'ai']
-readingTime: 3
-wordCount: 414
-publishDate: 2025-10-02
-draft: false
-featured: false
 ---
 
 <div class="container">

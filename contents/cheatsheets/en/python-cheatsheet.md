@@ -1,6 +1,12 @@
 ---
 title: 'Python Cheatsheet for Seasoned Developers 🐍'
 pdfUrl: '/pdf/cheatsheets/en/python-cheatsheet.pdf'
+tags: ['cheatsheet', 'programing', 'python']
+readingTime: 5
+wordCount: 941
+publishDate: 2025-09-30
+draft: false
+featured: false
 description: 'Complete Reference for Seasoned Developers'
 externalCSS:
   [
@@ -122,12 +128,6 @@ customJS: |
               });
             });
           });
-tags: ['javascript', 'typescript', 'angular', 'css', 'html']
-readingTime: 5
-wordCount: 941
-publishDate: 2025-09-30
-draft: false
-featured: false
 ---
 
 <!-- Header -->

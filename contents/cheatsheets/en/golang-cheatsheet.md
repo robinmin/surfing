@@ -1,6 +1,12 @@
 ---
 title: 'Go Cheatsheet for Seasoned Developers 🐹'
 pdfUrl: '/pdf/cheatsheets/en/golang-cheatsheet.pdf'
+tags: ['cheatsheet', 'programing', 'golang']
+readingTime: 7
+wordCount: 1267
+publishDate: 2025-09-30
+draft: false
+featured: false
 description: 'Complete Reference for Seasoned Developers'
 externalCSS:
   [
@@ -103,12 +109,6 @@ customJS: |
             });
           });
         });
-tags: ['javascript', 'typescript', 'angular', 'css', 'html']
-readingTime: 7
-wordCount: 1267
-publishDate: 2025-09-30
-draft: false
-featured: false
 ---
 
 <!-- Header -->

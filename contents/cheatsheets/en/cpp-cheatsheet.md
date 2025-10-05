@@ -1,6 +1,12 @@
 ---
 title: 'C++ Cheatsheet for Experienced Developers'
 pdfUrl: '/pdf/cheatsheets/en/cpp-cheatsheet.pdf'
+tags: ['cheatsheet', 'programing', 'cpp']
+readingTime: 6
+wordCount: 1071
+publishDate: 2025-09-30
+draft: false
+featured: false
 externalCSS: ['https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css']
 externalJS: ['https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js']
 customCSS: |
@@ -128,12 +134,6 @@ customCSS: |
               }
           }
 customJS: 'hljs.highlightAll();'
-tags: ['javascript', 'typescript', 'angular', 'css', 'html']
-readingTime: 6
-wordCount: 1071
-publishDate: 2025-09-30
-draft: false
-featured: false
 ---
 
 <h1>C++ Cheatsheet for Experienced Developers</h1>
