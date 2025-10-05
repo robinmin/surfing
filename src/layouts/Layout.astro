@@ -38,6 +38,7 @@ const { language, textDirection } = I18N;
     <SiteVerification />
     <Analytics />
     <Schema {metadata} />
+    <slot name="head" />
 
     <!-- Comment the line below to disable View Transitions -->
     <ClientRouter fallback="swap" />
