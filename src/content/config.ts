@@ -137,8 +137,20 @@ const showcaseCollection = defineCollection({
     technologies: z.array(z.string()).default([]),
 
     featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
     category: z.string().optional(),
     tags: z.array(z.string()).default([]),
+
+    // Custom styling support (for interactive showcases)
+    externalCSS: z.array(z.string()).optional(), // External CSS URLs (CDN, etc.)
+    externalJS: z.array(z.string()).optional(), // External JS URLs (CDN, etc.)
+    customCSS: z.string().optional(),
+    customJS: z.string().optional(),
+    preserveStyles: z.boolean().default(true),
+
+    // Auto-generated fields
+    readingTime: z.number().optional(),
+    wordCount: z.number().optional(),
 
     metadata: metadataDefinition(),
   }),
