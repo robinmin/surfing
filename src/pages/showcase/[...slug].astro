@@ -1,10 +1,10 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 
-import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
+import ShowcaseLayout from '~/layouts/ShowcaseLayout.astro';
 
 export async function getStaticPaths() {
-  const showcases = await getCollection('showcase', ({ data }) => data.featured !== false);
+  const showcases = await getCollection('showcase', ({ data }) => data.draft !== true);
 
   return showcases.map((showcase) => ({
     params: {
@@ -20,9 +20,19 @@ interface Props {
 
 const { showcase }: Props = Astro.props;
 const { Content } = await render(showcase);
+
+// Check if this is an HTML-based interactive showcase
+const hasCustomHTML = showcase.body?.trim().startsWith('<') ?? false;
 ---
 
-<MarkdownLayout frontmatter={{ title: showcase.data.title }}>
+<ShowcaseLayout metadata={{ title: showcase.data.title }}>
+  <!-- Custom External Styles -->
+  <Fragment slot="head">
+    {showcase.data.externalCSS && showcase.data.externalCSS.map((url: string) => <link rel="stylesheet" href={url} />)}
+
+    <!-- Custom Inline Styles -->
+    {showcase.data.customCSS && <style set:html={showcase.data.customCSS} />}
+  </Fragment>
   <!-- Project Links -->
   {
     (showcase.data.projectUrl || showcase.data.githubUrl) && (
@@ -81,5 +91,24 @@ const { Content } = await render(showcase);
     )
   }
 
-  <Content />
-</MarkdownLayout>
+  <!-- Showcase Content -->
+  <div class="w-full">
+    {
+      hasCustomHTML ? (
+        <div set:html={showcase.body ?? ''} />
+      ) : (
+        <div class="px-4 py-16 sm:px-6 mx-auto lg:px-8 lg:py-20 max-w-4xl">
+          <div class="prose prose-lg max-w-4xl dark:prose-invert">
+            <Content />
+          </div>
+        </div>
+      )
+    }
+  </div>
+</ShowcaseLayout>
+
+<!-- Custom External Scripts (loaded after HTML) -->
+{showcase.data.externalJS && showcase.data.externalJS.map((url: string) => <script src={url} />)}
+
+<!-- Custom Inline Scripts (loaded after HTML) -->
+{showcase.data.customJS && <script set:html={showcase.data.customJS} is:inline />}
