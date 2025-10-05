@@ -232,45 +232,73 @@ const iconSizeClasses = {
     }, 10);
   };
 
+  // Global flag to track if Google has been initialized
+  let isGoogleInitialized = false;
+
+  // Initialize Google One Tap once on page load
+  const initializeGoogle = async () => {
+    if (isGoogleInitialized) {
+      return;
+    }
+
+    try {
+      await initializeGoogleOneTap(
+        async (response) => {
+          try {
+            await signInWithGoogle(response.credential);
+            console.log('Google sign in success');
+            // Reload page to reflect authenticated state
+            window.location.reload();
+          } catch (error) {
+            console.error('Google sign in error:', error);
+          }
+        },
+        (error) => {
+          console.error('Google initialization error:', error);
+        }
+      );
+      isGoogleInitialized = true;
+      console.debug('Google One Tap initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize Google Sign In:', error);
+    }
+  };
+
   // Handle login option clicks
   const setupLoginHandlers = () => {
     const googleButton = document.querySelector('.login-option-google');
     const appleButton = document.querySelector('.login-option-apple');
 
-    // Google Sign In
+    // Google Sign In - Remove existing listeners by cloning
     if (googleButton) {
-      googleButton.addEventListener('click', async () => {
+      const newGoogleButton = googleButton.cloneNode(true) as HTMLElement;
+      googleButton.parentNode?.replaceChild(newGoogleButton, googleButton);
+
+      newGoogleButton.addEventListener('click', async () => {
         try {
-          // Initialize Google One Tap
-          await initializeGoogleOneTap(
-            async (response) => {
-              try {
-                await signInWithGoogle(response.credential);
-                console.log('Google sign in success');
-                // Reload page to reflect authenticated state
-                window.location.reload();
-              } catch (error) {
-                console.error('Google sign in error:', error);
-              }
-            },
-            (error) => {
-              console.error('Google initialization error:', error);
-            }
-          );
+          // Ensure Google is initialized
+          if (!isGoogleInitialized) {
+            await initializeGoogle();
+          }
 
           // Trigger Google prompt
           if (window.google?.accounts?.id) {
             window.google.accounts.id.prompt();
+          } else {
+            console.error('Google Sign In not available');
           }
         } catch (error) {
-          console.error('Failed to initialize Google Sign In:', error);
+          console.error('Failed to show Google Sign In:', error);
         }
       });
     }
 
-    // Apple Sign In (placeholder for future implementation)
+    // Apple Sign In - Remove existing listeners by cloning
     if (appleButton) {
-      appleButton.addEventListener('click', () => {
+      const newAppleButton = appleButton.cloneNode(true) as HTMLElement;
+      appleButton.parentNode?.replaceChild(newAppleButton, appleButton);
+
+      newAppleButton.addEventListener('click', () => {
         console.log('Apple Sign In clicked - to be implemented');
       });
     }
@@ -429,6 +457,7 @@ const iconSizeClasses = {
         setupAvatarClick();
         setupLoginHandlers();
         setupSignOutHandler();
+        // Google is already initialized, no need to re-initialize
       }, 100); // Small delay to ensure DOM is ready
     };
 
@@ -460,6 +489,7 @@ const iconSizeClasses = {
                   setupAvatarClick();
                   setupLoginHandlers();
                   setupSignOutHandler();
+                  // Google is already initialized, no need to re-initialize
                 }, 50);
               }
             }
@@ -494,6 +524,7 @@ const iconSizeClasses = {
           setupAvatarClick();
           setupLoginHandlers();
           setupSignOutHandler();
+          // Google is already initialized, no need to re-initialize
         }
       }
     }, 2000); // Check every 2 seconds
@@ -501,7 +532,7 @@ const iconSizeClasses = {
 
   // Initialize on page load
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       setupAvatarClick();
       setupLoginHandlers();
       setupSignOutHandler();
@@ -509,6 +540,8 @@ const iconSizeClasses = {
       setupAuthSync();
       setupLanguageListener();
       setupNavigationListener();
+      // Pre-initialize Google for faster sign-in
+      await initializeGoogle();
     });
   } else {
     setupAvatarClick();
@@ -518,6 +551,8 @@ const iconSizeClasses = {
     setupAuthSync();
     setupLanguageListener();
     setupNavigationListener();
+    // Pre-initialize Google for faster sign-in
+    initializeGoogle();
   }
 </script>
 
