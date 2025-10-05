@@ -51,7 +51,8 @@
       "mcp__playwright__browser_resize",
       "Bash(npx prettier:*)",
       "Bash(npm run check:astro:*)",
-      "mcp__playwright__browser_press_key"
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_network_requests"
     ],
     "deny": [],
     "ask": []
