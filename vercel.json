@@ -1,6 +1,28 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/showcase",
+      "destination": "/showcase/",
+      "permanent": false
+    },
+    {
+      "source": "/articles",
+      "destination": "/articles/",
+      "permanent": false
+    },
+    {
+      "source": "/cheatsheets",
+      "destination": "/cheatsheets/",
+      "permanent": false
+    },
+    {
+      "source": "/documents",
+      "destination": "/documents/",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/_astro/(.*)",
