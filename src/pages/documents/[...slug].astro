@@ -23,6 +23,7 @@ const { document: documentEntry } = Astro.props;
 // Use the already rendered content
 const renderedContent = documentEntry.rendered?.html || documentEntry.body;
 
+// Merge custom metadata with defaults
 const metadata = {
   title: documentEntry.data.title,
   description: documentEntry.data.description,
@@ -30,6 +31,7 @@ const metadata = {
   openGraph: {
     type: 'article',
   },
+  ...documentEntry.data.metadata,
 };
 ---
 
