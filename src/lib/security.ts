@@ -97,10 +97,13 @@ class SecurityManager {
    * Get allowed origins from environment
    */
   private getAllowedOrigins(): string[] {
+    // Get site URL from environment (set by Astro from config.yaml)
+    const siteUrl = import.meta.env.SITE || 'https://surfing.salty.vip';
+
     const origins = [
-      typeof window !== 'undefined' ? window.location.origin : 'https://surfing.salty.vip',
+      typeof window !== 'undefined' ? window.location.origin : siteUrl,
       'http://localhost:4321', // Local development
-      'https://surfing.salty.vip', // Production
+      siteUrl, // Production (from config)
     ];
 
     // Add preview origins from environment if available
