@@ -18,12 +18,15 @@ export interface Props {
     tags?: string[];
     author?: string;
   };
+  metadata?: MetaData;
 }
 
-const { frontmatter } = Astro.props;
+const { frontmatter, metadata: customMetadata } = Astro.props;
 
+// Merge custom metadata with frontmatter-derived metadata
 const metadata: MetaData = {
   title: frontmatter?.title,
+  ...customMetadata,
 };
 
 // Headings will be extracted client-side
