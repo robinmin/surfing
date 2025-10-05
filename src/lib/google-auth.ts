@@ -387,7 +387,7 @@ export const signInWithGoogle = async (credential: string): Promise<any> => {
     // Update token guardian cache on successful login
     if (data.user) {
       const { updateTokenCache } = await import('./token-guardian');
-      updateTokenCache(data.user.id, data.user.email);
+      updateTokenCache(data.user.id, data.user.email, data.user.user_metadata);
 
       // Notify other tabs about login
       const { notifyLogin } = await import('./auth-sync');
@@ -491,6 +491,7 @@ export const getCurrentSession = async (skipCache = false) => {
             user: {
               id: cachedInfo.userId,
               email: cachedInfo.email,
+              user_metadata: cachedInfo.userMetadata,
             },
             cached: true,
           };
@@ -509,7 +510,7 @@ export const getCurrentSession = async (skipCache = false) => {
     // Update cache with fresh validation
     if (session?.user) {
       const { updateTokenCache } = await import('./token-guardian');
-      updateTokenCache(session.user.id, session.user.email);
+      updateTokenCache(session.user.id, session.user.email, session.user.user_metadata);
     }
 
     return session;

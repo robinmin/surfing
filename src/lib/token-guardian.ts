@@ -20,6 +20,12 @@ export interface CachedTokenInfo {
   timestamp: number;
   userId: string;
   email?: string;
+  userMetadata?: {
+    avatar_url?: string;
+    picture?: string;
+    full_name?: string;
+    name?: string;
+  };
 }
 
 /**
@@ -76,6 +82,7 @@ export const getCachedTokenInfo = (): CachedTokenInfo | null => {
       timestamp: parseInt(timestampStr, 10),
       userId: user.id,
       email: user.email,
+      userMetadata: user.userMetadata,
     };
   } catch (error) {
     console.debug('Failed to get cached token info:', error);
@@ -86,7 +93,7 @@ export const getCachedTokenInfo = (): CachedTokenInfo | null => {
 /**
  * Update token cache with new validation timestamp
  */
-export const updateTokenCache = (userId: string, email?: string): void => {
+export const updateTokenCache = (userId: string, email?: string, userMetadata?: any): void => {
   try {
     if (typeof localStorage === 'undefined') {
       return;
@@ -99,6 +106,7 @@ export const updateTokenCache = (userId: string, email?: string): void => {
       JSON.stringify({
         id: userId,
         email: email || '',
+        userMetadata: userMetadata || {},
       })
     );
 
@@ -106,6 +114,7 @@ export const updateTokenCache = (userId: string, email?: string): void => {
       userId,
       timestamp: now,
       expiresIn: `${getCacheDurationMs() / 1000}s`,
+      hasUserMetadata: !!userMetadata,
     });
   } catch (error) {
     console.error('Failed to update token cache:', error);

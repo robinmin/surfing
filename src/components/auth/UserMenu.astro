@@ -14,14 +14,14 @@ const { className = '' } = Astro.props;
 
 <div
   class:list={[
-    'user-menu absolute bottom-full mb-2 right-0',
+    'user-menu absolute top-full mt-2 right-0',
     'bg-white dark:bg-gray-800',
     'border border-gray-200 dark:border-gray-700',
-    'rounded-lg shadow-lg',
-    'min-w-[200px]',
+    'rounded-lg shadow-xl',
+    'min-w-[220px]',
     'opacity-0 invisible',
     'transition-all duration-200 ease-in-out',
-    'z-50',
+    'z-[60]', // Higher z-index to ensure it's above everything
     className,
   ]}
   data-user-menu
@@ -36,10 +36,10 @@ const { className = '' } = Astro.props;
     <!-- Sign out button -->
     <button
       type="button"
-      class="user-menu-signout w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+      class="user-menu-signout w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors rounded-md mx-2 my-1 border border-transparent hover:border-red-200 dark:hover:border-red-800"
     >
-      <Icon name="tabler:logout" class="h-5 w-5 text-gray-700 dark:text-gray-300" />
-      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Sign out</span>
+      <Icon name="tabler:logout" class="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+      <span class="text-sm font-medium text-red-700 dark:text-red-300">Sign out</span>
     </button>
   </div>
 </div>
@@ -50,19 +50,19 @@ const { className = '' } = Astro.props;
     visibility: visible;
   }
 
-  /* Arrow pointing down to avatar */
-  .user-menu::after {
+  /* Arrow pointing up to avatar */
+  .user-menu::before {
     content: '';
     position: absolute;
-    bottom: -6px;
-    right: 12px;
+    top: -6px;
+    right: 16px;
     width: 12px;
     height: 12px;
     background: inherit;
     border-right: 1px solid;
     border-bottom: 1px solid;
     border-color: inherit;
-    transform: rotate(45deg);
+    transform: rotate(-45deg);
   }
 
   /* Responsive adjustments */
