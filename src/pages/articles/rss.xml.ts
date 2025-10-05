@@ -7,6 +7,9 @@ export async function GET(context: APIContext) {
   const publishedArticles = filterContent(articles, { draft: false });
   const sortedArticles = sortContent(publishedArticles, 'date', 'desc');
 
+  // Extract domain from context.site for email addresses
+  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip';
+
   return rss({
     title: 'Surfing Articles - AI Insights & Technical Content',
     description: 'Latest articles on AI, technology, and innovation from the Surfing platform.',
@@ -29,8 +32,8 @@ export async function GET(context: APIContext) {
     })),
     customData: `
       <language>en-us</language>
-      <managingEditor>noreply@surfing.salty.vip</managingEditor>
-      <webMaster>noreply@surfing.salty.vip</webMaster>
+      <managingEditor>noreply@${siteDomain}</managingEditor>
+      <webMaster>noreply@${siteDomain}</webMaster>
       <generator>Astro + Surfing Platform</generator>
       <category>Articles</category>
     `,
