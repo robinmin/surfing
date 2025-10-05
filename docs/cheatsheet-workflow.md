@@ -170,7 +170,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 **What it does:**
 
 1. Validates the refined HTML file
-2. Auto-detects if PDF exists in `public/pdf/cheatsheets/<lang>/`
+2. Auto-detects if PDF exists in `assets/pdf/cheatsheets/<lang>/`
 3. Generates PDF if not already present (intelligent auto-generation)
 4. Converts HTML to Astro-compatible markdown
 5. Calls `postsurfing` to publish to website
@@ -190,7 +190,7 @@ This document describes the refined 4-step process for publishing cheatsheets to
 **Output:**
 
 - Markdown file in `contents/cheatsheets/<lang>/`
-- PDF file in `public/pdf/cheatsheets/<lang>/` (auto-generated if not present)
+- PDF file in `assets/pdf/cheatsheets/<lang>/` (auto-generated if not present)
 - Published to website after deployment
 
 ---
@@ -307,7 +307,7 @@ surfing/
 │   ├── en/                            # English cheatsheets
 │   ├── cn/                            # Chinese cheatsheets
 │   └── jp/                            # Japanese cheatsheets
-└── public/pdf/cheatsheets/
+└── assets/pdf/cheatsheets/
     ├── en/                            # English PDFs
     ├── cn/                            # Chinese PDFs
     └── jp/                            # Japanese PDFs
@@ -364,7 +364,7 @@ surfing/
 ### With Language Specification
 
 ```bash
-# Chinese cheatsheet (PDF goes to public/pdf/cheatsheets/cn/)
+# Chinese cheatsheet (PDF goes to assets/pdf/cheatsheets/cn/)
 ./scripts/postprocess-cheatsheets.sh golang-cheatsheet.html --lang cn
 ```
 

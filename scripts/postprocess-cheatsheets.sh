@@ -230,7 +230,7 @@ auto_generate_pdf() {
     if [[ $? -eq 0 ]]; then
         log_success "PDF: $pdf_file"
         # Copy to public directory for web access
-        local public_pdf_dir="$PROJECT_ROOT/public/pdf/cheatsheets/$LANG"
+        local public_pdf_dir="$PROJECT_ROOT/assets/pdf/cheatsheets/$LANG"
         mkdir -p "$public_pdf_dir"
         cp "$pdf_file" "$public_pdf_dir/${slug}.pdf"
         log_success "PDF copied to public directory: $public_pdf_dir/${slug}.pdf"
