@@ -382,7 +382,7 @@ export class ContentProcessor {
    */
   determineOutputPath(inputPath, contentType, lang = 'en') {
     const baseName = basename(inputPath, extname(inputPath));
-    const outputDir = join(process.cwd(), 'src', 'content', contentType, lang);
+    const outputDir = join(process.cwd(), 'contents', contentType, lang);
 
     // Always use .md extension for output
     const outputFileName = `${baseName}.md`;
