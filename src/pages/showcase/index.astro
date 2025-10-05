@@ -7,7 +7,7 @@ import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
 // Use default language for SSG, will be updated on client
 const t = getServerTranslation(DEFAULT_LANGUAGE);
 
-const showcases = await getCollection('showcase', ({ data }) => data.featured !== false);
+const showcases = await getCollection('showcase', ({ data }) => data.draft !== true);
 const featuredShowcases = showcases.filter((item) => item.data.featured);
 const sortedShowcases = showcases.sort(
   (a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime()
