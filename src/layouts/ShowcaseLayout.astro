@@ -1,0 +1,38 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Announcement from '~/components/widgets/Announcement.astro';
+
+import { getLocalizedHeaderData } from '~/utils/navigation';
+import type { MetaData } from '~/types';
+
+export interface Props {
+  metadata?: MetaData;
+}
+
+const { metadata } = Astro.props;
+
+// Get localized navigation data with default language (will be updated on client)
+const headerData = getLocalizedHeaderData();
+---
+
+<Layout metadata={metadata}>
+  <slot name="head" slot="head" />
+  <slot name="announcement">
+    <Announcement />
+  </slot>
+  <slot name="header">
+    <Header {...headerData} isSticky showRssFeed showToggleTheme />
+  </slot>
+  <main id="main-content">
+    <slot />
+  </main>
+  <!-- Minimal footer - no navigation sections -->
+  <footer class="border-t border-gray-200 dark:border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+        Surfing - AI-Powered Content Platform for Creators
+      </p>
+    </div>
+  </footer>
+</Layout>
