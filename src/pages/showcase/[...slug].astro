@@ -23,9 +23,18 @@ const { Content } = await render(showcase);
 
 // Check if this is an HTML-based interactive showcase
 const hasCustomHTML = showcase.body?.trim().startsWith('<') ?? false;
+
+// Merge custom metadata with defaults
+const metadata = {
+  title: showcase.data.title,
+  description: showcase.data.description,
+  image: showcase.data.image,
+  canonical: new URL(`showcase/${showcase.data.slug || showcase.id}`, Astro.site).href,
+  ...showcase.data.metadata,
+};
 ---
 
-<ShowcaseLayout metadata={{ title: showcase.data.title }}>
+<ShowcaseLayout metadata={metadata}>
   <!-- Custom External Styles -->
   <Fragment slot="head">
     {showcase.data.externalCSS && showcase.data.externalCSS.map((url: string) => <link rel="stylesheet" href={url} />)}
