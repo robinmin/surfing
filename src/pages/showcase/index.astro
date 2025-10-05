@@ -89,60 +89,21 @@ const metadata = {
 
                 <p class="text-gray-600 dark:text-gray-300 mb-6">{showcase.data.description}</p>
 
-                {/* Technologies */}
-                {showcase.data.technologies && showcase.data.technologies.length > 0 && (
-                  <div class="mb-6">
-                    <div class="flex flex-wrap gap-2">
-                      {showcase.data.technologies.slice(0, 4).map((tech: string) => (
-                        <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded dark:bg-gray-700 dark:text-gray-400">
-                          {tech}
-                        </span>
-                      ))}
-                      {showcase.data.technologies.length > 4 && (
-                        <span class="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
-                          +{showcase.data.technologies.length - 4} more
-                        </span>
-                      )}
-                    </div>
+                {/* Tags */}
+                {showcase.data.tags && showcase.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2">
+                    {showcase.data.tags.slice(0, 4).map((tag: string) => (
+                      <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded dark:bg-gray-700 dark:text-gray-400">
+                        {tag}
+                      </span>
+                    ))}
+                    {showcase.data.tags.length > 4 && (
+                      <span class="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
+                        +{showcase.data.tags.length - 4}
+                      </span>
+                    )}
                   </div>
                 )}
-
-                {/* Links */}
-                <div class="flex flex-wrap gap-3">
-                  <a
-                    href={`/showcase/${showcase.data.slug || showcase.id}`}
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                  >
-                    <span data-i18n="pages.showcase.learnMore">{t('pages.showcase.learnMore')}</span>
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                      />
-                    </svg>
-                  </a>
-
-                  {showcase.data.projectUrl && (
-                    <a
-                      href={showcase.data.projectUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-                    >
-                      <span data-i18n="pages.showcase.liveDemo">{t('pages.showcase.liveDemo')}</span>
-                      <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                        />
-                      </svg>
-                    </a>
-                  )}
-                </div>
               </div>
             </article>
           ))}
@@ -208,57 +169,23 @@ const metadata = {
                 </a>
               </h3>
 
-              <p class="text-gray-600 dark:text-gray-300 mb-4 text-sm">{showcase.data.description}</p>
+              <p class="text-gray-600 dark:text-gray-300 mb-4 text-sm line-clamp-2">{showcase.data.description}</p>
 
-              {/* Technologies */}
-              {showcase.data.technologies && showcase.data.technologies.length > 0 && (
-                <div class="mb-4">
-                  <div class="flex flex-wrap gap-1">
-                    {showcase.data.technologies.slice(0, 3).map((tech: string) => (
-                      <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded dark:bg-gray-700 dark:text-gray-400">
-                        {tech}
-                      </span>
-                    ))}
-                    {showcase.data.technologies.length > 3 && (
-                      <span class="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
-                        +{showcase.data.technologies.length - 3} more
-                      </span>
-                    )}
-                  </div>
+              {/* Tags */}
+              {showcase.data.tags && showcase.data.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2 mb-4">
+                  {showcase.data.tags.slice(0, 3).map((tag: string) => (
+                    <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded dark:bg-gray-700 dark:text-gray-400">
+                      {tag}
+                    </span>
+                  ))}
+                  {showcase.data.tags.length > 3 && (
+                    <span class="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
+                      +{showcase.data.tags.length - 3}
+                    </span>
+                  )}
                 </div>
               )}
-
-              {/* Links */}
-              <div class="flex flex-wrap gap-2 text-sm">
-                <a
-                  href={`/showcase/${showcase.data.slug || showcase.id}`}
-                  class="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                >
-                  <span data-i18n="pages.showcase.details">{t('pages.showcase.details')}</span>
-                </a>
-
-                {showcase.data.projectUrl && (
-                  <a
-                    href={showcase.data.projectUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-                  >
-                    <span data-i18n="pages.showcase.demo">{t('pages.showcase.demo')}</span>
-                  </a>
-                )}
-
-                {showcase.data.githubUrl && (
-                  <a
-                    href={showcase.data.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-                  >
-                    <span data-i18n="pages.showcase.code">{t('pages.showcase.code')}</span>
-                  </a>
-                )}
-              </div>
             </div>
           </article>
         ))
