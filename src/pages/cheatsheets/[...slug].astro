@@ -24,6 +24,7 @@ const { cheatsheet } = Astro.props;
 // The body contains raw HTML that should not be processed as markdown
 const renderedContent = cheatsheet.body;
 
+// Merge custom metadata with defaults
 const metadata = {
   title: cheatsheet.data.title,
   description: cheatsheet.data.description,
@@ -31,6 +32,7 @@ const metadata = {
   openGraph: {
     type: 'article',
   },
+  ...cheatsheet.data.metadata,
 };
 ---
 
