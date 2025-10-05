@@ -27,6 +27,13 @@ const metadata = {
       },
     ]}
   >
+    <Fragment slot="bg">
+      <div
+        class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style="background-image: url(/assets/surfing_hero.png)"
+      >
+      </div>
+    </Fragment>
     <Fragment slot="title">
       <span data-i18n="pages.home.title">{t('pages.home.title')}</span>
       <span class="text-accent dark:text-white" data-i18n="site.name">{t('site.name')}</span>
