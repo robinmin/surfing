@@ -7,6 +7,9 @@ export async function GET(context: APIContext) {
   const publishedCheatsheets = filterContent(cheatsheets, { draft: false });
   const sortedCheatsheets = sortContent(publishedCheatsheets, 'date', 'desc');
 
+  // Extract domain from context.site for email addresses
+  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip';
+
   return rss({
     title: 'Surfing Cheatsheets - AI-Generated Reference Materials',
     description:
@@ -43,8 +46,8 @@ export async function GET(context: APIContext) {
     })),
     customData: `
       <language>en-us</language>
-      <managingEditor>noreply@surfing.salty.vip</managingEditor>
-      <webMaster>noreply@surfing.salty.vip</webMaster>
+      <managingEditor>noreply@${siteDomain}</managingEditor>
+      <webMaster>noreply@${siteDomain}</webMaster>
       <generator>Astro + Surfing Platform</generator>
       <category>Cheatsheets</category>
       <category>Reference Materials</category>
