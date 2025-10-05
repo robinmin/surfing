@@ -84,10 +84,6 @@ export const footerData = {
   ],
   socialLinks: [
     { ariaLabel: 'RSS All Content', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-    { ariaLabel: 'RSS Articles', icon: 'tabler:rss', href: getAsset('/articles/rss.xml') },
-    { ariaLabel: 'RSS Showcase', icon: 'tabler:rss', href: getAsset('/showcase/rss.xml') },
-    { ariaLabel: 'RSS Documents', icon: 'tabler:rss', href: getAsset('/documents/rss.xml') },
-    { ariaLabel: 'RSS Cheatsheets', icon: 'tabler:rss', href: getAsset('/cheatsheets/rss.xml') },
     { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robin/surfing' },
   ],
   footNote: `
