@@ -233,6 +233,21 @@ export const en = {
     emailContact: 'Email',
     location: 'Location',
   },
+  auth: {
+    signIn: 'Sign In',
+    signOut: 'Sign Out',
+    signInWith: 'Sign in with',
+    signInWithGoogle: 'Sign in with Google',
+    signInWithApple: 'Sign in with Apple',
+    userMenu: 'User menu',
+    loading: 'Loading...',
+    profile: 'Profile',
+    account: 'Account',
+    settings: 'Settings',
+    oneClickLogin: 'One Click Login',
+    signedInAs: 'Signed in as',
+    welcomeBack: 'Welcome back',
+  },
 };
 
 export type Translation = {
@@ -460,5 +475,20 @@ export type Translation = {
     phone: string;
     emailContact: string;
     location: string;
+  };
+  auth: {
+    signIn: string;
+    signOut: string;
+    signInWith: string;
+    signInWithGoogle: string;
+    signInWithApple: string;
+    userMenu: string;
+    loading: string;
+    profile: string;
+    account: string;
+    settings: string;
+    oneClickLogin: string;
+    signedInAs: string;
+    welcomeBack: string;
   };
 };
