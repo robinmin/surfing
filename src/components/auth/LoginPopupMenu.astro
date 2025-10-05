@@ -114,11 +114,40 @@ const lang = (Astro.currentLocale || getCurrentLanguage()) as SupportedLanguage;
     }
   }
 
-  /* Prevent text overflow and improve readability */
+  /* Prevent text overflow and ensure proper containment */
   .login-popup-menu {
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-word;
+    min-width: 280px;
+    max-width: 320px;
+    width: max-content;
+    container-type: inline-size;
+  }
+
+  /* Ensure button text doesn't overflow */
+  .login-option-google,
+  .login-option-apple {
+    width: 100%;
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  .login-option-google .text-sm.font-medium,
+  .login-option-apple .text-sm.font-medium {
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Container query for responsive text sizing */
+  @container (max-width: 300px) {
+    .login-option-google .text-sm.font-medium,
+    .login-option-apple .text-sm.font-medium {
+      font-size: 0.875rem; /* Keep text size but ensure it fits */
+    }
   }
 
   /* Button hover effects */
