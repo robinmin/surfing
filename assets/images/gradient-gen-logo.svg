@@ -1,0 +1,33 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="400" fill="#ffffff"/>
+  
+  <!-- Main gradient bars -->
+  <g transform="translate(80, 120)">
+    <!-- First gradient bar -->
+    <rect x="0" y="0" width="240" height="35" rx="8" fill="#FF6B6B"/>
+    
+    <!-- Second gradient bar -->
+    <rect x="0" y="50" width="240" height="35" rx="8" fill="#FF8787"/>
+    
+    <!-- Third gradient bar -->
+    <rect x="0" y="100" width="240" height="35" rx="8" fill="#FFA5A5"/>
+    
+    <!-- Fourth gradient bar -->
+    <rect x="0" y="150" width="240" height="35" rx="8" fill="#C2C2FF"/>
+    
+    <!-- Fifth gradient bar -->
+    <rect x="0" y="200" width="240" height="35" rx="8" fill="#8787FF"/>
+  </g>
+  
+  <!-- Arrow indicating gradient direction -->
+  <g transform="translate(350, 200)">
+    <line x1="0" y1="-60" x2="0" y2="60" stroke="#667eea" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="0,70 -8,55 8,55" fill="#667eea"/>
+    <polygon points="0,-70 -8,-55 8,-55" fill="#667eea"/>
+  </g>
+  
+  <!-- Decorative circles on the left -->
+  <circle cx="50" cy="137" r="12" fill="#FF6B6B" opacity="0.3"/>
+  <circle cx="50" cy="237" r="12" fill="#8787FF" opacity="0.3"/>
+</svg>
