@@ -16,6 +16,15 @@ export async function getStaticPaths() {
 
 const { article } = Astro.props;
 const { Content } = await render(article);
+
+// Merge custom metadata with defaults
+const metadata = {
+  title: article.data.title,
+  description: article.data.description,
+  image: article.data.image,
+  canonical: new URL(`articles/${article.data.slug || article.id}`, Astro.site).href,
+  ...article.data.metadata,
+};
 ---
 
 <MarkdownLayout
@@ -28,6 +37,7 @@ const { Content } = await render(article);
     tags: article.data.tags,
     author: article.data.author,
   }}
+  metadata={metadata}
 >
   <Content />
 </MarkdownLayout>
