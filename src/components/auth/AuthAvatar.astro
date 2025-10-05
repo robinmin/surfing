@@ -281,33 +281,51 @@ const iconSizeClasses = {
             await initializeGoogle();
           }
 
-          // Use prompt() to trigger Google Sign In
-          // This will automatically use FedCM if available, or fall back to One Tap
           if (window.google?.accounts?.id) {
-            console.debug('Triggering Google Sign In (FedCM/One Tap)');
+            console.debug('Triggering Google Sign In');
 
-            // Suppress FedCM errors temporarily
-            const originalConsoleError = console.error;
-            console.error = (...args: any[]) => {
-              const message = args.join(' ');
-              if (message.includes('FedCM') || message.includes('GSI_LOGGER') || message.includes('NetworkError')) {
-                console.debug('Suppressed FedCM error:', message);
-                return;
-              }
-              return originalConsoleError.apply(console, args);
-            };
+            // Create a container for the button if it doesn't exist
+            let buttonContainer = document.getElementById('google-signin-button-container');
+            if (!buttonContainer) {
+              buttonContainer = document.createElement('div');
+              buttonContainer.id = 'google-signin-button-container';
+              buttonContainer.style.cssText =
+                'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+              document.body.appendChild(buttonContainer);
 
-            // Trigger the prompt - will use FedCM if available
-            try {
-              window.google.accounts.id.prompt();
-            } catch (fedcmError) {
-              console.debug('FedCM not available, error suppressed:', fedcmError);
-            } finally {
-              // Restore console.error after a delay
-              setTimeout(() => {
-                console.error = originalConsoleError;
-              }, 2000);
+              // Add close button
+              const closeButton = document.createElement('button');
+              closeButton.textContent = '×';
+              closeButton.style.cssText =
+                'position: absolute; top: 5px; right: 10px; border: none; background: none; font-size: 24px; cursor: pointer; color: #666;';
+              closeButton.onclick = () => {
+                buttonContainer?.remove();
+              };
+              buttonContainer.appendChild(closeButton);
             }
+
+            // Clear previous content
+            const existingButton = buttonContainer.querySelector('[data-google-button]');
+            if (existingButton) {
+              existingButton.remove();
+            }
+
+            // Create button wrapper
+            const buttonWrapper = document.createElement('div');
+            buttonWrapper.setAttribute('data-google-button', 'true');
+            buttonContainer.appendChild(buttonWrapper);
+
+            // Use renderButton as primary method (works when FedCM is blocked)
+            window.google.accounts.id.renderButton(buttonWrapper, {
+              theme: 'outline',
+              size: 'large',
+              text: 'signin_with',
+              shape: 'rectangular',
+              logo_alignment: 'left',
+              width: 280,
+            });
+
+            console.debug('Google Sign In button rendered');
           } else {
             console.error('Google Sign In not available');
           }
