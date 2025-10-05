@@ -225,8 +225,10 @@ const iconSizeClasses = {
     }
 
     // Re-initialize click handlers after UI update to ensure they work with new state
-    setTimeout(() => {
+    setTimeout(async () => {
       setupAvatarClick();
+      // Update translations when user state changes
+      await updatePopupTranslations();
     }, 10);
   };
 
@@ -276,16 +278,36 @@ const iconSizeClasses = {
 
   // Handle sign out
   const setupSignOutHandler = () => {
-    const signOutButton = document.querySelector('.user-menu-signout');
+    const signOutButton = document.querySelector('.user-menu-signout') as HTMLButtonElement;
 
     if (signOutButton) {
       signOutButton.addEventListener('click', async () => {
         try {
+          // Add visual feedback that sign out is processing
+          signOutButton.disabled = true;
+          signOutButton.innerHTML = `
+            <Icon name="tabler:loader" class="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 animate-spin" />
+            <span class="text-sm font-medium text-red-700 dark:text-red-300">Signing out...</span>
+          `;
+
           await signOut();
           console.log('Sign out success');
-          window.location.reload();
+
+          // Clear session storage (Supabase handles localStorage automatically)
+          sessionStorage.clear();
+
+          // Add a small delay to ensure all cleanup is complete
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         } catch (error) {
           console.error('Sign out error:', error);
+          // Restore button state on error
+          signOutButton.disabled = false;
+          signOutButton.innerHTML = `
+            <Icon name="tabler:logout" class="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 group-hover:scale-110 transition-transform duration-150" />
+            <span class="text-sm font-medium text-red-700 dark:text-red-300 group-hover:text-red-800 dark:group-hover:text-red-200 transition-colors duration-150">Sign Out</span>
+          `;
         }
       });
     }
@@ -321,6 +343,79 @@ const iconSizeClasses = {
         window.location.reload();
       }
     });
+  };
+
+  // Update popup menu translations when language changes
+  const updatePopupTranslations = async () => {
+    const getCurrentLanguage = () => {
+      if (typeof window !== 'undefined') {
+        const lang = localStorage.getItem('preferred-language') || navigator.language.split('-')[0] || 'en';
+        return ['en', 'zh', 'ja'].includes(lang) ? lang : 'en';
+      }
+      return 'en';
+    };
+
+    const lang = getCurrentLanguage() as 'en' | 'zh' | 'ja';
+    const { t } = await import('~/i18n');
+
+    // Update login popup menu
+    const loginTitle = document.querySelector('[data-popup-menu] .text-sm.font-semibold');
+    const loginSubtitle = document.querySelector('[data-popup-menu] .text-xs.text-gray-500');
+    const googleButtonText = document.querySelector('.login-option-google .text-sm.font-medium');
+    const appleButtonText = document.querySelector('.login-option-apple .text-sm.font-medium');
+
+    if (loginTitle) loginTitle.textContent = t('auth.signIn', lang);
+    if (loginSubtitle) loginSubtitle.textContent = t('auth.oneClickLogin', lang);
+    if (googleButtonText) googleButtonText.textContent = t('auth.signInWithGoogle', lang);
+    if (appleButtonText) appleButtonText.textContent = t('auth.signInWithApple', lang);
+
+    // Update user menu
+    const signedInText = document.querySelector('[data-user-menu] .text-xs.text-gray-400');
+    const signOutButtonText = document.querySelector('.user-menu-signout span');
+
+    if (signedInText) signedInText.textContent = t('auth.signedInAs', lang);
+    if (signOutButtonText) signOutButtonText.textContent = t('auth.signOut', lang);
+
+    console.debug('Updated popup translations for language:', lang);
+  };
+
+  // Setup language change listener
+  const setupLanguageListener = () => {
+    // Listen for language change events
+    document.addEventListener('language:change', () => {
+      console.debug('Language change detected, updating popup translations');
+      setTimeout(async () => await updatePopupTranslations(), 50); // Small delay to ensure DOM is ready
+    });
+
+    // Listen for storage changes (for language changes in other tabs)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'preferred-language') {
+        console.debug('Language change detected in storage, updating popup translations');
+        setTimeout(async () => await updatePopupTranslations(), 50);
+      }
+    });
+
+    // Set up a MutationObserver to detect language changes in the DOM
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const langButton = document.querySelector('[data-language-selector]');
+          if (langButton) {
+            const currentLang = langButton.getAttribute('data-current-lang');
+            if (currentLang && currentLang !== (window as any).__lastLang) {
+              (window as any).__lastLang = currentLang;
+              setTimeout(async () => await updatePopupTranslations(), 50);
+            }
+          }
+        }
+      });
+    });
+
+    // Start observing the language button
+    const langButton = document.querySelector('[data-language-selector]');
+    if (langButton) {
+      observer.observe(langButton, { attributes: true, attributeFilter: ['class'] });
+    }
   };
 
   // Setup navigation listener to re-check auth state on page navigation
@@ -380,13 +475,14 @@ const iconSizeClasses = {
     });
 
     // Set up periodic auth state check as a fallback
-    setInterval(() => {
+    setInterval(async () => {
       const currentAvatar = document.querySelector('img[data-logged-in]') as HTMLImageElement;
       const loggedOutAvatar = document.querySelector('[data-logged-out]');
 
       // Check if user appears logged out but should be logged in (has auth tokens)
-      const hasAuthToken = localStorage.getItem('sb-txenxuywwzrftyoooblu-auth-token');
+      // Since Supabase handles localStorage automatically, we just check our cache
       const hasValidCache = localStorage.getItem('auth_token_guardian_timestamp');
+      const hasAuthToken = hasValidCache !== null; // If we have cache, user should be logged in
 
       if (hasAuthToken && hasValidCache && currentAvatar && loggedOutAvatar) {
         // User should be logged in but avatar shows default SVG
@@ -411,6 +507,7 @@ const iconSizeClasses = {
       setupSignOutHandler();
       checkAuthState();
       setupAuthSync();
+      setupLanguageListener();
       setupNavigationListener();
     });
   } else {
@@ -419,6 +516,7 @@ const iconSizeClasses = {
     setupSignOutHandler();
     checkAuthState();
     setupAuthSync();
+    setupLanguageListener();
     setupNavigationListener();
   }
 </script>
