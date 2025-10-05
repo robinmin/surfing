@@ -84,39 +84,69 @@ const iconSizeClasses = {
   const setupAvatarClick = () => {
     const container = document.querySelector('.auth-avatar-container');
     const avatarButton = container?.querySelector('[data-auth-avatar]');
-    const loginMenu = container?.querySelector('[data-popup-menu]');
-    const userMenu = container?.querySelector('[data-user-menu]');
 
-    if (!avatarButton) return;
+    if (!avatarButton) {
+      console.debug('Avatar button not found, skipping click handler setup');
+      return;
+    }
 
-    // Toggle appropriate menu on avatar click
-    avatarButton.addEventListener('click', (e) => {
+    // Remove existing event listeners to prevent duplicates
+    const newAvatarButton = avatarButton.cloneNode(true);
+    avatarButton.parentNode?.replaceChild(newAvatarButton, avatarButton);
+
+    // Define the click handler function
+    const handleAvatarClick = (e: Event) => {
       e.stopPropagation();
+      console.debug('Avatar clicked, isLoggedIn:', isLoggedIn);
 
-      if (isLoggedIn && userMenu) {
-        userMenu.classList.toggle('show');
-        loginMenu?.classList.remove('show');
-      } else if (loginMenu) {
-        loginMenu.classList.toggle('show');
-        userMenu?.classList.remove('show');
+      // Find fresh references to menus each time
+      const currentLoginMenu = container?.querySelector('[data-popup-menu]');
+      const currentUserMenu = container?.querySelector('[data-user-menu]');
+
+      if (isLoggedIn && currentUserMenu) {
+        currentUserMenu.classList.toggle('show');
+        currentLoginMenu?.classList.remove('show');
+        console.debug('Showing user menu');
+      } else if (currentLoginMenu) {
+        currentLoginMenu.classList.toggle('show');
+        currentUserMenu?.classList.remove('show');
+        console.debug('Showing login menu');
       }
-    });
+    };
 
-    // Close menus when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!container?.contains(e.target as Node)) {
-        loginMenu?.classList.remove('show');
-        userMenu?.classList.remove('show');
+    // Add click event listener
+    newAvatarButton.addEventListener('click', handleAvatarClick);
+
+    // Define outside click handler
+    const handleOutsideClick = (e: Event) => {
+      const currentContainer = document.querySelector('.auth-avatar-container');
+      if (!currentContainer?.contains(e.target as Node)) {
+        const currentLoginMenu = currentContainer?.querySelector('[data-popup-menu]');
+        const currentUserMenu = currentContainer?.querySelector('[data-user-menu]');
+        currentLoginMenu?.classList.remove('show');
+        currentUserMenu?.classList.remove('show');
       }
-    });
+    };
 
-    // Close menus on escape key
-    document.addEventListener('keydown', (e) => {
+    // Define escape key handler
+    const handleEscapeKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        loginMenu?.classList.remove('show');
-        userMenu?.classList.remove('show');
+        const currentLoginMenu = document.querySelector('[data-popup-menu]');
+        const currentUserMenu = document.querySelector('[data-user-menu]');
+        currentLoginMenu?.classList.remove('show');
+        currentUserMenu?.classList.remove('show');
       }
-    });
+    };
+
+    // Remove existing global listeners to prevent duplicates
+    document.removeEventListener('click', handleOutsideClick);
+    document.removeEventListener('keydown', handleEscapeKey);
+
+    // Add fresh global event listeners
+    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('keydown', handleEscapeKey);
+
+    console.debug('Avatar click handlers set up successfully');
   };
 
   // Update UI based on auth state
@@ -126,9 +156,18 @@ const iconSizeClasses = {
     const userName = document.querySelector('[data-user-name]');
     const userEmail = document.querySelector('[data-user-email]');
 
-    if (session?.user) {
-      isLoggedIn = true;
+    // Update global login state
+    const wasLoggedIn = isLoggedIn;
+    isLoggedIn = !!session?.user;
 
+    console.debug('Updating auth UI:', {
+      wasLoggedIn,
+      isLoggedIn,
+      hasSession: !!session?.user,
+      userEmail: session?.user?.email,
+    });
+
+    if (session?.user) {
       // Show user avatar, hide grey avatar
       loggedOutAvatar?.classList.add('hidden');
       loggedInAvatar?.classList.remove('hidden');
@@ -160,7 +199,14 @@ const iconSizeClasses = {
       // Show grey avatar, hide user avatar
       loggedOutAvatar?.classList.remove('hidden');
       loggedInAvatar?.classList.add('hidden');
+
+      console.debug('User logged out, hiding user avatar');
     }
+
+    // Re-initialize click handlers after UI update to ensure they work with new state
+    setTimeout(() => {
+      setupAvatarClick();
+    }, 10);
   };
 
   // Handle login option clicks
@@ -263,6 +309,10 @@ const iconSizeClasses = {
       console.debug('Navigation detected, re-checking auth state');
       setTimeout(() => {
         checkAuthState();
+        // Re-initialize event listeners after navigation to ensure they work with new DOM
+        setupAvatarClick();
+        setupLoginHandlers();
+        setupSignOutHandler();
       }, 100); // Small delay to ensure DOM is ready
     };
 
@@ -291,6 +341,9 @@ const iconSizeClasses = {
                 console.debug('AuthAvatar detected in DOM, checking auth state');
                 setTimeout(() => {
                   checkAuthState();
+                  setupAvatarClick();
+                  setupLoginHandlers();
+                  setupSignOutHandler();
                 }, 50);
               }
             }
@@ -321,6 +374,9 @@ const iconSizeClasses = {
             'Detected inconsistent auth state - user should be logged in but showing default avatar, re-checking'
           );
           checkAuthState();
+          setupAvatarClick();
+          setupLoginHandlers();
+          setupSignOutHandler();
         }
       }
     }, 2000); // Check every 2 seconds
