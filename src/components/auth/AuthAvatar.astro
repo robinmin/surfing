@@ -256,6 +256,76 @@ const iconSizeClasses = {
     });
   };
 
+  // Setup navigation listener to re-check auth state on page navigation
+  const setupNavigationListener = () => {
+    // Listen for browser navigation events
+    const handleNavigation = () => {
+      console.debug('Navigation detected, re-checking auth state');
+      setTimeout(() => {
+        checkAuthState();
+      }, 100); // Small delay to ensure DOM is ready
+    };
+
+    // Listen for popstate events (browser back/forward)
+    window.addEventListener('popstate', handleNavigation);
+
+    // Listen for Astro view transitions if available
+    if (typeof window !== 'undefined' && 'navigation' in window) {
+      (window.navigation as any).addEventListener('navigate', handleNavigation);
+    }
+
+    // Listen for Astro view transition events
+    document.addEventListener('astro:page-load', handleNavigation);
+    document.addEventListener('astro:after-preparation', handleNavigation);
+    document.addEventListener('astro:after-swap', handleNavigation);
+
+    // Also set up a MutationObserver to detect when the AuthAvatar is added to DOM
+    // This helps with dynamic content loading
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              const authAvatar = (node as Element).querySelector?.('[data-auth-avatar]');
+              if (authAvatar) {
+                console.debug('AuthAvatar detected in DOM, checking auth state');
+                setTimeout(() => {
+                  checkAuthState();
+                }, 50);
+              }
+            }
+          });
+        }
+      });
+    });
+
+    // Start observing the document body for changes
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    // Set up periodic auth state check as a fallback
+    setInterval(() => {
+      const currentAvatar = document.querySelector('img[data-logged-in]') as HTMLImageElement;
+      const loggedOutAvatar = document.querySelector('[data-logged-out]');
+
+      // Check if user appears logged out but should be logged in (has auth tokens)
+      const hasAuthToken = localStorage.getItem('sb-txenxuywwzrftyoooblu-auth-token');
+      const hasValidCache = localStorage.getItem('auth_token_guardian_timestamp');
+
+      if (hasAuthToken && hasValidCache && currentAvatar && loggedOutAvatar) {
+        // User should be logged in but avatar shows default SVG
+        if (currentAvatar.src.includes('data:image/svg+xml') && !loggedOutAvatar.classList.contains('hidden')) {
+          console.debug(
+            'Detected inconsistent auth state - user should be logged in but showing default avatar, re-checking'
+          );
+          checkAuthState();
+        }
+      }
+    }, 2000); // Check every 2 seconds
+  };
+
   // Initialize on page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
@@ -264,6 +334,7 @@ const iconSizeClasses = {
       setupSignOutHandler();
       checkAuthState();
       setupAuthSync();
+      setupNavigationListener();
     });
   } else {
     setupAvatarClick();
@@ -271,6 +342,7 @@ const iconSizeClasses = {
     setupSignOutHandler();
     checkAuthState();
     setupAuthSync();
+    setupNavigationListener();
   }
 </script>
 
