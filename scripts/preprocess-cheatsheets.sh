@@ -377,7 +377,7 @@ process_cheatsheet() {
     local working_dir="/tmp/cheatsheets-working"
     local working_file="$working_dir/$filename"
     local output_file="$filename"  # Same name as input, no prefix/suffix
-    local pdf_file="$PROJECT_ROOT/public/assets/cheatsheets/en/${slug}.pdf"
+    local pdf_file="$PROJECT_ROOT/assets/pdf/cheatsheets/en/${slug}.pdf"
     local md_file="${slug}.md"
     local originals_dir="$PROJECT_ROOT/originals/cheatsheets"
 

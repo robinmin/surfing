@@ -95,7 +95,7 @@ EXAMPLES:
 
 WORKFLOW:
     1. Validates the refined HTML file
-    2. Auto-detects if PDF needs generation (checks public/pdf/cheatsheets/)
+    2. Auto-detects if PDF needs generation (checks assets/pdf/cheatsheets/)
     3. Generates PDF if not already present
     4. Converts HTML to markdown with frontmatter
     5. Publishes to Surfing platform using postsurfing
@@ -203,7 +203,7 @@ auto_generate_pdf() {
     local input_file="$1"
     local filename=$(basename "$input_file")
     local slug=$(basename "$filename" .html)
-    local pdf_dir="$PROJECT_ROOT/public/pdf/cheatsheets/$LANG"
+    local pdf_dir="$PROJECT_ROOT/assets/pdf/cheatsheets/$LANG"
     local pdf_file="$pdf_dir/${slug}.pdf"
 
     # Always set PDF_PATH for metadata (even if generation is skipped)
@@ -229,6 +229,11 @@ auto_generate_pdf() {
 
     if [[ $? -eq 0 ]]; then
         log_success "PDF: $pdf_file"
+        # Copy to public directory for web access
+        local public_pdf_dir="$PROJECT_ROOT/public/pdf/cheatsheets/$LANG"
+        mkdir -p "$public_pdf_dir"
+        cp "$pdf_file" "$public_pdf_dir/${slug}.pdf"
+        log_success "PDF copied to public directory: $public_pdf_dir/${slug}.pdf"
         PDF_PATH="$pdf_file"
     else
         log_warning "PDF generation failed, continuing without PDF"
