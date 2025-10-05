@@ -8,6 +8,18 @@ readingTime: 1
 wordCount: 16
 draft: false
 featured: false
+metadata:
+  title: 'Color Gradient Generator - Create Beautiful CSS Gradients Online'
+  description: 'Free online color gradient generator with live preview. Create smooth color transitions, export to CSS, and customize gradient segments. Perfect for web designers and developers.'
+  canonical: 'https://surfing.salty.vip/showcase/en/color-gradient-gen'
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    type: 'website'
+    siteName: 'Surfing'
+  twitter:
+    cardType: 'summary_large_image'
 customCSS: |
   * {
               margin: 0;
