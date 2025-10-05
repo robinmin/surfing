@@ -7,6 +7,9 @@ export async function GET(context: APIContext) {
   const publishedContent = filterContent(allContent, { draft: false });
   const sortedContent = sortContent(publishedContent, 'date', 'desc');
 
+  // Extract domain from context.site for email addresses
+  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip';
+
   return rss({
     title: 'Surfing - AI-Powered Content Platform for Creators',
     description: 'Discover AI insights, technical articles, project showcases, and creative content.',
@@ -44,8 +47,8 @@ export async function GET(context: APIContext) {
     }),
     customData: `
       <language>en-us</language>
-      <managingEditor>noreply@surfing.salty.vip</managingEditor>
-      <webMaster>noreply@surfing.salty.vip</webMaster>
+      <managingEditor>noreply@${siteDomain}</managingEditor>
+      <webMaster>noreply@${siteDomain}</webMaster>
       <docs>https://www.rssboard.org/rss-specification</docs>
       <generator>Astro + Surfing Platform</generator>
     `,
