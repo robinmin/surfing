@@ -2,6 +2,8 @@
 // Cheatsheet Footer Component
 // Dedicated footer for cheatsheets with PDF download link
 
+import { Icon } from 'astro-icon/components';
+
 export interface Props {
   pdfUrl?: string;
   currentPath?: string;
@@ -25,8 +27,8 @@ const dynamicPdfUrl =
         dynamicPdfUrl && (
           <>
             {' • '}
-            <a href={dynamicPdfUrl} class="go-blue hover:underline" target="_blank">
-              <span class="emoji">📄</span>PDF
+            <a href={dynamicPdfUrl} class="go-blue hover:underline inline-flex items-center gap-1" target="_blank">
+              <Icon name="tabler:file-type-pdf" class="w-3 h-3" />PDF
             </a>
           </>
         )
