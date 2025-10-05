@@ -7,6 +7,9 @@ export async function GET(context: APIContext) {
   const publishedShowcases = filterContent(showcases, { draft: false });
   const sortedShowcases = sortContent(publishedShowcases, 'date', 'desc');
 
+  // Extract domain from context.site for email addresses
+  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip';
+
   return rss({
     title: 'Surfing Showcase - Latest Projects & Creations',
     description: 'Discover amazing projects, tools, and creations from our community of creators.',
@@ -38,8 +41,8 @@ export async function GET(context: APIContext) {
     })),
     customData: `
       <language>en-us</language>
-      <managingEditor>noreply@surfing.salty.vip</managingEditor>
-      <webMaster>noreply@surfing.salty.vip</webMaster>
+      <managingEditor>noreply@${siteDomain}</managingEditor>
+      <webMaster>noreply@${siteDomain}</webMaster>
       <generator>Astro + Surfing Platform</generator>
       <category>Showcase</category>
     `,
