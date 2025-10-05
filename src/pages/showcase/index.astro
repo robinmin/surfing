@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
+import Image from '~/components/common/Image.astro';
 import { getCollection } from 'astro:content';
 import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
 
@@ -50,7 +51,18 @@ const metadata = {
           {featuredShowcases.slice(0, 2).map((showcase) => (
             <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
               {showcase.data.image && (
-                <img src={showcase.data.image} alt={showcase.data.title} class="w-full h-64 object-cover" />
+                <Image
+                  src={showcase.data.image}
+                  alt={showcase.data.title}
+                  class="w-full h-64 object-cover"
+                  widths={[400, 800]}
+                  width={400}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  aspectRatio="16:9"
+                  layout="cover"
+                  loading="lazy"
+                  decoding="async"
+                />
               )}
 
               <div class="p-8">
@@ -158,7 +170,18 @@ const metadata = {
         sortedShowcases.map((showcase) => (
           <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
             {showcase.data.image && (
-              <img src={showcase.data.image} alt={showcase.data.title} class="w-full h-48 object-cover" />
+              <Image
+                src={showcase.data.image}
+                alt={showcase.data.title}
+                class="w-full h-48 object-cover"
+                widths={[300, 600]}
+                width={300}
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                aspectRatio="16:9"
+                layout="cover"
+                loading="lazy"
+                decoding="async"
+              />
             )}
 
             <div class="p-6">

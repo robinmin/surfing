@@ -1,7 +1,7 @@
 ---
 title: 'Color Gradient Generator'
 description: 'Interactive color gradient generator with live preview and CSS export. Create smooth color transitions with customizable segments.'
-image: '/assets/images/gradient-gen-logo.png'
+image: '@assets/images/gradient-gen-logo.png'
 publishDate: 2025-10-05
 tags: ['showcase', 'tools', 'web', 'programming']
 readingTime: 1
