@@ -281,9 +281,33 @@ const iconSizeClasses = {
             await initializeGoogle();
           }
 
-          // Trigger Google prompt
+          // Use prompt() to trigger Google Sign In
+          // This will automatically use FedCM if available, or fall back to One Tap
           if (window.google?.accounts?.id) {
-            window.google.accounts.id.prompt();
+            console.debug('Triggering Google Sign In (FedCM/One Tap)');
+
+            // Suppress FedCM errors temporarily
+            const originalConsoleError = console.error;
+            console.error = (...args: any[]) => {
+              const message = args.join(' ');
+              if (message.includes('FedCM') || message.includes('GSI_LOGGER') || message.includes('NetworkError')) {
+                console.debug('Suppressed FedCM error:', message);
+                return;
+              }
+              return originalConsoleError.apply(console, args);
+            };
+
+            // Trigger the prompt - will use FedCM if available
+            try {
+              window.google.accounts.id.prompt();
+            } catch (fedcmError) {
+              console.debug('FedCM not available, error suppressed:', fedcmError);
+            } finally {
+              // Restore console.error after a delay
+              setTimeout(() => {
+                console.error = originalConsoleError;
+              }, 2000);
+            }
           } else {
             console.error('Google Sign In not available');
           }
@@ -375,16 +399,8 @@ const iconSizeClasses = {
 
   // Update popup menu translations when language changes
   const updatePopupTranslations = async () => {
-    const getCurrentLanguage = () => {
-      if (typeof window !== 'undefined') {
-        const lang = localStorage.getItem('preferred-language') || navigator.language.split('-')[0] || 'en';
-        return ['en', 'zh', 'ja'].includes(lang) ? lang : 'en';
-      }
-      return 'en';
-    };
-
-    const lang = getCurrentLanguage() as 'en' | 'zh' | 'ja';
-    const { t } = await import('~/i18n');
+    const { getPreferredLanguage, t } = await import('~/i18n');
+    const lang = getPreferredLanguage();
 
     // Update login popup menu
     const loginTitle = document.querySelector('[data-popup-menu] .text-sm.font-semibold');
@@ -408,7 +424,9 @@ const iconSizeClasses = {
   };
 
   // Setup language change listener
-  const setupLanguageListener = () => {
+  const setupLanguageListener = async () => {
+    const { LANGUAGE_STORAGE_KEY } = await import('~/i18n');
+
     // Listen for language change events
     document.addEventListener('language:change', () => {
       console.debug('Language change detected, updating popup translations');
@@ -417,7 +435,7 @@ const iconSizeClasses = {
 
     // Listen for storage changes (for language changes in other tabs)
     window.addEventListener('storage', (e) => {
-      if (e.key === 'preferred-language') {
+      if (e.key === LANGUAGE_STORAGE_KEY) {
         console.debug('Language change detected in storage, updating popup translations');
         setTimeout(async () => await updatePopupTranslations(), 50);
       }
