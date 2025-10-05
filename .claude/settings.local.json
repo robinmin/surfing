@@ -49,7 +49,9 @@
       "mcp__task-master-ai__add_dependency",
       "Bash(node tests/auth/run-tests.mjs:*)",
       "mcp__playwright__browser_resize",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(npm run check:astro:*)",
+      "mcp__playwright__browser_press_key"
     ],
     "deny": [],
     "ask": []
