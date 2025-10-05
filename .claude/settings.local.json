@@ -48,7 +48,8 @@
       "mcp__task-master-ai__add_subtask",
       "mcp__task-master-ai__add_dependency",
       "Bash(node tests/auth/run-tests.mjs:*)",
-      "mcp__playwright__browser_resize"
+      "mcp__playwright__browser_resize",
+      "Bash(npx prettier:*)"
     ],
     "deny": [],
     "ask": []
