@@ -428,6 +428,7 @@ export const decodeJWT = async (token: string): Promise<any> => {
 
 /**
  * Sign out current user and clear token cache
+ * Uses Supabase's built-in cleanup methods
  */
 export const signOut = async (): Promise<void> => {
   try {
@@ -435,15 +436,25 @@ export const signOut = async (): Promise<void> => {
       throw new Error('Authentication service not available');
     }
 
-    // Clear token guardian cache
+    // Clear token guardian cache first (our custom cache, not handled by Supabase)
     const { clearTokenCache } = await import('./token-guardian');
     clearTokenCache();
 
-    // Notify other tabs about logout
+    // Notify other tabs about logout before signing out
     const { notifyLogout } = await import('./auth-sync');
     notifyLogout();
 
-    await supabase.auth.signOut();
+    // Use Supabase's built-in signOut which automatically clears:
+    // - User from browser session
+    // - All localStorage items
+    // - Triggers "SIGNED_OUT" event
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      throw error;
+    }
+
+    console.debug('Supabase sign out completed successfully');
   } catch (error) {
     console.error('Sign out error:', error);
     throw new Error('Failed to sign out');
