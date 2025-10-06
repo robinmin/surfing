@@ -26,11 +26,20 @@ const hasCustomHTML = showcase.body?.trim().startsWith('<') ?? false;
 
 // Merge custom metadata with defaults
 const metadata = {
-  title: showcase.data.title,
-  description: showcase.data.description,
-  image: showcase.data.image,
+  title: showcase.data.metadata?.title || showcase.data.title,
+  description: showcase.data.metadata?.description || showcase.data.description,
   canonical: new URL(`showcase/${showcase.data.slug || showcase.id}`, Astro.site).href,
+  robots: {
+    index: true,
+    follow: true,
+    ...showcase.data.metadata?.robots,
+  },
   ...showcase.data.metadata,
+  openGraph: {
+    type: 'website',
+    ...(showcase.data.image && { images: [{ url: showcase.data.image }] }),
+    ...showcase.data.metadata?.openGraph,
+  },
 };
 ---
 
