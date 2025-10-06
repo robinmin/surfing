@@ -29,9 +29,6 @@ const {
 // If no custom title, use the default template format
 const finalTitle = title ? `Surfing -- ${title}` : undefined;
 
-
-
-
 const seoProps: AstroSeoProps = merge(
   {
     title: '',
@@ -79,7 +76,7 @@ const seoProps: AstroSeoProps = merge(
   },
   {
     title: finalTitle || title || '',
-    titleTemplate: finalTitle ? '%s' : (ignoreTitleTemplate ? '%s' : undefined),
+    titleTemplate: finalTitle ? '%s' : ignoreTitleTemplate ? '%s' : undefined,
     canonical: canonical,
     noindex: typeof robots?.index !== 'undefined' ? !robots.index : undefined,
     nofollow: typeof robots?.follow !== 'undefined' ? !robots.follow : undefined,
@@ -87,15 +84,14 @@ const seoProps: AstroSeoProps = merge(
     openGraph: {
       url: canonical,
       ...openGraph,
-      ...(finalTitle && { title: finalTitle }) // Use finalTitle for OG title if we have it
+      ...(finalTitle && { title: finalTitle }), // Use finalTitle for OG title if we have it
     },
     twitter: {
       ...twitter,
-      ...(finalTitle && { title: finalTitle }) // Use finalTitle for Twitter title if we have it
+      ...(finalTitle && { title: finalTitle }), // Use finalTitle for Twitter title if we have it
     },
   }
 );
-
 ---
 
 <AstroSeo {...{ ...seoProps, openGraph: await adaptOpenGraphImages(seoProps?.openGraph, Astro.site) }} />
