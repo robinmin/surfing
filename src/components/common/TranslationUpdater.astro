@@ -23,14 +23,8 @@
     }
 
     private updateContent(): void {
-      // Update page title
-      const title = document.title;
-      // Only update title if it doesn't already have our custom format "Surfing -- Custom Title"
-      if (title.includes('Surfing') && !title.includes('Surfing -- ')) {
-        const siteName = t('site.name', this.currentLanguage as any);
-        const siteDesc = t('site.description', this.currentLanguage as any);
-        document.title = `${siteName} — ${siteDesc}`;
-      }
+      // Page titles are now handled during static generation in Metadata.astro
+      // No runtime title manipulation needed
 
       // Update all translatable elements with data-i18n
       this.updateTranslatableElements();
