@@ -25,6 +25,7 @@ export interface Props {
 
 const { metadata = {} } = Astro.props;
 const { language, textDirection } = I18N;
+
 ---
 
 <!doctype html>
@@ -34,7 +35,7 @@ const { language, textDirection } = I18N;
     <Favicons />
     <CustomStyles />
     <ApplyColorMode />
-    <Metadata {...metadata} />
+    <Metadata {...metadata} dontUseTitleTemplate={!!metadata?.title} />
     <SiteVerification />
     <Analytics />
     <Schema {metadata} />
