@@ -103,6 +103,7 @@ const documentsCollection = defineCollection({
     source: z.string().optional(),
     contentType: z.enum(['page', 'snippet', 'template', 'legacy']).default('page'),
     author: z.string().optional(),
+    image: z.string().optional(),
 
     // Custom styling support
     externalCSS: z.array(z.string()).optional(), // External CSS URLs (CDN, etc.)
@@ -192,6 +193,7 @@ const cheatsheetsCollection = defineCollection({
     // Content metadata
     author: z.string().optional(),
     source: z.string().optional(),
+    image: z.string().optional(),
 
     // Auto-extracted metadata
     wordCount: z.number().optional(),
