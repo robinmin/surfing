@@ -25,13 +25,20 @@ const renderedContent = documentEntry.rendered?.html || documentEntry.body;
 
 // Merge custom metadata with defaults
 const metadata = {
-  title: documentEntry.data.title,
-  description: documentEntry.data.description,
+  title: documentEntry.data.metadata?.title || documentEntry.data.title,
+  description: documentEntry.data.metadata?.description || documentEntry.data.description,
   canonical: `${Astro.site}documents/${documentEntry.data.slug || documentEntry.id}`,
-  openGraph: {
-    type: 'article',
+  robots: {
+    index: true,
+    follow: true,
+    ...documentEntry.data.metadata?.robots,
   },
   ...documentEntry.data.metadata,
+  openGraph: {
+    type: 'article',
+    ...(documentEntry.data.image && { images: [{ url: documentEntry.data.image }] }),
+    ...documentEntry.data.metadata?.openGraph,
+  },
 };
 ---
 
