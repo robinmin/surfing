@@ -1,8 +1,9 @@
 import * as Sentry from '@sentry/astro';
+import loadConfig from './vendor/integration/utils/loadConfig';
 
-// Note: We can't import from src/lib/config here due to server context limitations
-// So we'll read the config value directly
-const SENTRY_DEBUG = false; // Match config.yaml sentry.debug value
+// Load Sentry debug config from YAML
+const config = (await loadConfig('./src/config.yaml')) as any;
+const SENTRY_DEBUG = config?.sentry?.debug ?? false;
 
 // Get Sentry DSN from environment or use hardcoded value
 const sentryDsn = process.env.PUBLIC_SENTRY_DSN || '';
