@@ -19,11 +19,20 @@ const { Content } = await render(article);
 
 // Merge custom metadata with defaults
 const metadata = {
-  title: article.data.title,
-  description: article.data.description,
-  image: article.data.image,
+  title: article.data.metadata?.title || article.data.title,
+  description: article.data.metadata?.description || article.data.description,
   canonical: new URL(`articles/${article.data.slug || article.id}`, Astro.site).href,
+  robots: {
+    index: true,
+    follow: true,
+    ...article.data.metadata?.robots,
+  },
   ...article.data.metadata,
+  openGraph: {
+    type: 'article',
+    ...(article.data.image && { images: [{ url: article.data.image }] }),
+    ...article.data.metadata?.openGraph,
+  },
 };
 ---
 
