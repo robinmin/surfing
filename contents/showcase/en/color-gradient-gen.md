@@ -1,7 +1,7 @@
 ---
 title: 'Color Gradient Generator'
 description: 'Interactive color gradient generator with live preview and CSS export. Create smooth color transitions with customizable segments.'
-image: '@assets/images/gradient-gen-logo.svg'
+image: '@assets/images/gradient-gen-logo-og.png'
 publishDate: 2025-10-05
 tags: ['showcase', 'tools', 'web', 'programming']
 readingTime: 1
@@ -11,11 +11,7 @@ featured: false
 metadata:
   title: 'Color Gradient Generator - Create Beautiful CSS Gradients Online'
   description: 'Free online color gradient generator with live preview. Create smooth color transitions, export to CSS, and customize gradient segments. Perfect for web designers and developers.'
-  robots:
-    index: true
-    follow: true
   openGraph:
-    type: 'website'
     siteName: 'Surfing'
   twitter:
     cardType: 'summary_large_image'
@@ -30,9 +26,9 @@ customCSS: |
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
               background: #ffffff;
               min-height: 100vh;
-              padding: 40px 20px;
+              padding: 20px 15px;
           }
-          
+
           .container {
               max-width: 900px;
               margin: 0 auto;
@@ -41,19 +37,39 @@ customCSS: |
           .container h1 {
               text-align: center;
               color: #333;
-              margin-bottom: 30px;
-              font-size: 42px;
+              margin-bottom: 20px;
+              font-size: 28px;
               font-weight: bold;
+          }
+
+          @media (min-width: 768px) {
+              body {
+                  padding: 40px 20px;
+              }
+
+              .container h1 {
+                  font-size: 42px;
+                  margin-bottom: 30px;
+              }
           }
           
           .controls {
               background: #f8f9fa;
-              padding: 20px;
+              padding: 15px;
               border-radius: 12px;
-              margin-bottom: 30px;
+              margin-bottom: 20px;
               display: flex;
+              flex-direction: column;
               gap: 15px;
-              align-items: flex-end;
+          }
+
+          @media (min-width: 768px) {
+              .controls {
+                  padding: 20px;
+                  margin-bottom: 30px;
+                  flex-direction: row;
+                  align-items: flex-end;
+              }
           }
           
           .color-input-group {
@@ -97,7 +113,13 @@ customCSS: |
           }
           
           .segments-control {
-              width: 140px;
+              width: 100%;
+          }
+
+          @media (min-width: 768px) {
+              .segments-control {
+                  width: 140px;
+              }
           }
           
           .segments-control label {
@@ -118,17 +140,26 @@ customCSS: |
           }
           
           .generate-btn {
-              padding: 8px 24px;
+              width: 100%;
+              padding: 12px 24px;
               background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
               color: white;
               border: none;
               border-radius: 6px;
-              font-size: 14px;
+              font-size: 16px;
               font-weight: 600;
               cursor: pointer;
               transition: transform 0.2s;
               white-space: nowrap;
-              height: 38px;
+          }
+
+          @media (min-width: 768px) {
+              .generate-btn {
+                  width: auto;
+                  padding: 8px 24px;
+                  font-size: 14px;
+                  height: 38px;
+              }
           }
           
           .generate-btn:hover {
@@ -142,8 +173,17 @@ customCSS: |
           .color-blocks {
               display: flex;
               flex-wrap: wrap;
-              gap: 20px;
-              margin-bottom: 30px;
+              gap: 12px;
+              margin-bottom: 20px;
+              justify-content: center;
+          }
+
+          @media (min-width: 768px) {
+              .color-blocks {
+                  gap: 20px;
+                  margin-bottom: 30px;
+                  justify-content: flex-start;
+              }
           }
           
           .color-block-wrapper {
@@ -175,43 +215,75 @@ customCSS: |
           .css-output {
               background: #1e1e1e;
               color: #d4d4d4;
-              padding: 20px;
+              padding: 15px;
               border-radius: 12px;
               overflow-x: auto;
               position: relative;
           }
+
+          @media (min-width: 768px) {
+              .css-output {
+                  padding: 20px;
+              }
+          }
           
           .css-output h3 {
               color: #fff;
-              margin-bottom: 15px;
-              padding-right: 40px;
-              font-size: 16px;
+              margin-bottom: 12px;
+              padding-right: 45px;
+              font-size: 14px;
+          }
+
+          @media (min-width: 768px) {
+              .css-output h3 {
+                  margin-bottom: 15px;
+                  font-size: 16px;
+              }
           }
           
           .css-output pre {
               font-family: 'Courier New', monospace;
-              font-size: 13px;
-              line-height: 1.6;
+              font-size: 11px;
+              line-height: 1.5;
               white-space: pre-wrap;
               margin: 0;
+              word-break: break-all;
+          }
+
+          @media (min-width: 768px) {
+              .css-output pre {
+                  font-size: 13px;
+                  line-height: 1.6;
+                  word-break: normal;
+              }
           }
           
           .copy-btn {
               position: absolute;
-              top: 20px;
-              right: 20px;
-              padding: 6px;
+              top: 15px;
+              right: 15px;
+              padding: 5px;
               background: transparent;
               color: #d4d4d4;
               border: 1px solid #555;
               border-radius: 6px;
               cursor: pointer;
               transition: all 0.2s;
-              width: 32px;
-              height: 32px;
+              width: 28px;
+              height: 28px;
               display: flex;
               align-items: center;
               justify-content: center;
+          }
+
+          @media (min-width: 768px) {
+              .copy-btn {
+                  top: 20px;
+                  right: 20px;
+                  padding: 6px;
+                  width: 32px;
+                  height: 32px;
+              }
           }
           
           .copy-btn:hover {
@@ -225,13 +297,20 @@ customCSS: |
           }
           
           .copy-btn svg {
-              width: 20px;
-              height: 20px;
+              width: 16px;
+              height: 16px;
               stroke: currentColor;
               stroke-width: 2;
               stroke-linecap: round;
               stroke-linejoin: round;
               fill: none;
+          }
+
+          @media (min-width: 768px) {
+              .copy-btn svg {
+                  width: 20px;
+                  height: 20px;
+              }
           }
 customJS: |
   const elements = {
