@@ -27,7 +27,10 @@ const {
 
 // If we have a custom title from markdown metadata, use the format "Surfing -- Custom Title"
 // But only add "Surfing -- " if the title doesn't already start with it (check both dash variations)
-const finalTitle = title && !title.startsWith('Surfing -- ') && !title.startsWith('Surfing — ') ? `Surfing -- ${title}` : title || undefined;
+const finalTitle =
+  title && !title.startsWith('Surfing -- ') && !title.startsWith('Surfing — ')
+    ? `Surfing -- ${title}`
+    : title || undefined;
 
 const seoProps: AstroSeoProps = merge(
   {
