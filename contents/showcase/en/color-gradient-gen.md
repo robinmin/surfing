@@ -9,7 +9,7 @@ wordCount: 16
 draft: false
 featured: false
 metadata:
-  title: 'Color Gradient Generator - Create Beautiful CSS Gradients Online'
+  title: 'Color Gradient Generator'
   description: 'Free online color gradient generator with live preview. Create smooth color transitions, export to CSS, and customize gradient segments. Perfect for web designers and developers.'
   openGraph:
     siteName: 'Surfing'
