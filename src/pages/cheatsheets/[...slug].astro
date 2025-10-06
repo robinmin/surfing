@@ -26,13 +26,20 @@ const renderedContent = cheatsheet.body;
 
 // Merge custom metadata with defaults
 const metadata = {
-  title: cheatsheet.data.title,
-  description: cheatsheet.data.description,
+  title: cheatsheet.data.metadata?.title || cheatsheet.data.title,
+  description: cheatsheet.data.metadata?.description || cheatsheet.data.description,
   canonical: `${Astro.site}cheatsheets/${cheatsheet.data.slug || cheatsheet.id}`,
-  openGraph: {
-    type: 'article',
+  robots: {
+    index: true,
+    follow: true,
+    ...cheatsheet.data.metadata?.robots,
   },
   ...cheatsheet.data.metadata,
+  openGraph: {
+    type: 'article',
+    ...(cheatsheet.data.image && { images: [{ url: cheatsheet.data.image }] }),
+    ...cheatsheet.data.metadata?.openGraph,
+  },
 };
 ---
 
