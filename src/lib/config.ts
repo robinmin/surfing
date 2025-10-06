@@ -5,6 +5,8 @@
 export interface SentryConfig {
   enabled: boolean;
   debug: boolean;
+  project: string;
+  org: string;
 }
 
 export interface AuthConfig {
@@ -19,7 +21,7 @@ export interface AuthConfig {
   };
 }
 
-// Static configuration based on YAML
+// Configuration loaded from environment variables set by Astro build process
 const AUTH_CONFIG: AuthConfig['auth'] = {
   google_one_tap: {
     enabled: true,
@@ -30,10 +32,12 @@ const AUTH_CONFIG: AuthConfig['auth'] = {
   token_cache_duration: 900, // 15 minutes in seconds
 };
 
-// Sentry configuration based on YAML
+// Sentry configuration from environment variables
 const SENTRY_CONFIG: SentryConfig = {
   enabled: true,
   debug: false,
+  project: import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
+  org: import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
 };
 
 /**
