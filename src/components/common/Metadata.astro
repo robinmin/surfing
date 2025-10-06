@@ -26,8 +26,8 @@ const {
 } = Astro.props;
 
 // If we have a custom title from markdown metadata, use the format "Surfing -- Custom Title"
-// If no custom title, use the default template format
-const finalTitle = title ? `Surfing -- ${title}` : undefined;
+// But only add "Surfing -- " if the title doesn't already start with it
+const finalTitle = title && !title.startsWith('Surfing -- ') ? `Surfing -- ${title}` : (title || undefined);
 
 const seoProps: AstroSeoProps = merge(
   {
