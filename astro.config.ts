@@ -33,6 +33,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const config = (await loadConfig('./src/config.yaml')) as any;
 const isCookieConsentEnabled = config?.cookieConsent?.enabled ?? true;
 
+// Extract domain from site URL for cookie configuration
+const siteUrl = config?.site?.site || 'https://surfing.salty.vip';
+const siteDomain = new URL(siteUrl).hostname;
+
+// Set environment variables for client-side config access
+process.env.PUBLIC_SENTRY_PROJECT = config?.sentry?.project || '4510129071783936';
+process.env.PUBLIC_SENTRY_ORG = config?.sentry?.org || '40fintech';
+
 const hasExternalScripts = true; // Enable partytown for analytics
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
@@ -42,7 +50,7 @@ const whenCookieConsentEnabled = (items: (() => AstroIntegration) | (() => Astro
 
 export default defineConfig({
   output: 'static',
-  site: 'https://surfing.salty.vip/',
+  site: config.site.site,
 
   i18n: {
     defaultLocale: 'en',
@@ -226,13 +234,13 @@ export default defineConfig({
                       body: [
                         {
                           name: '_ga',
-                          domain: 'surfing.salty.vip',
+                          domain: siteDomain,
                           description: 'Google Analytics cookie used to distinguish users.',
                           expiration: '2 years',
                         },
                         {
                           name: '_ga_*',
-                          domain: 'surfing.salty.vip',
+                          domain: siteDomain,
                           description: 'Google Analytics cookie used to persist session state.',
                           expiration: '2 years',
                         },
@@ -255,6 +263,8 @@ export default defineConfig({
     sentry({
       sourceMapsUploadOptions: {
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        project: config.sentry.project,
+        org: config.sentry.org,
       },
     }),
   ],
