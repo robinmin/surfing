@@ -62,7 +62,7 @@ export const adaptOpenGraphImages = async (
 
   const images = openGraph.images;
   const defaultWidth = 1200;
-  const defaultHeight = 626;
+  const defaultHeight = 630; // Standard OG image height for Facebook/Threads/Meta (1.9:1 aspect ratio)
 
   const adaptedImages = await Promise.all(
     images.map(async (image) => {
@@ -95,6 +95,7 @@ export const adaptOpenGraphImages = async (
             url: 'src' in _image && typeof _image.src === 'string' ? String(new URL(_image.src, astroSite)) : '',
             width: 'width' in _image && typeof _image.width === 'number' ? _image.width : undefined,
             height: 'height' in _image && typeof _image.height === 'number' ? _image.height : undefined,
+            alt: image.alt, // Preserve alt text from original image metadata
           };
         }
         return {

@@ -79,6 +79,7 @@ export interface MetaDataImage {
   url: string;
   width?: number;
   height?: number;
+  alt?: string; // Alt text for the image (recommended for Threads/Facebook)
 }
 
 export interface MetaDataOpenGraph {

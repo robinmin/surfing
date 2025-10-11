@@ -20,7 +20,8 @@ metadata:
     images:
       - url: '@assets/images/surfing.png'
         width: 1200
-        height: 628
+        height: 630
+        alt: 'Surfing - AI-Powered Content Showcase Platform'
     type: website
   twitter:
     handle: '@tangmian'
