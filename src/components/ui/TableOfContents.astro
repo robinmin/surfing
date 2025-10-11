@@ -162,6 +162,8 @@ const { class: className = '' } = Astro.props;
               this.links.forEach((l) => l.classList.remove('active'));
               // Add active class to current link
               link.classList.add('active');
+              // Scroll the TOC list to keep the active link in view
+              this.scrollToActiveLink(link);
             }
           });
         },
@@ -174,6 +176,32 @@ const { class: className = '' } = Astro.props;
       headingElements.forEach((heading) => {
         this.observer?.observe(heading);
       });
+    }
+
+    private scrollToActiveLink(link: HTMLAnchorElement) {
+      if (!this.tocList) return;
+
+      const tocListRect = this.tocList.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+
+      // Calculate if the link is out of view in the TOC list
+      const linkTop = linkRect.top - tocListRect.top;
+      const linkBottom = linkRect.bottom - tocListRect.top;
+
+      // Scroll the TOC list if the active link is not fully visible
+      if (linkTop < 0) {
+        // Link is above the visible area, scroll up
+        this.tocList.scrollBy({
+          top: linkTop - 20, // Add some padding
+          behavior: 'smooth',
+        });
+      } else if (linkBottom > this.tocList.clientHeight) {
+        // Link is below the visible area, scroll down
+        this.tocList.scrollBy({
+          top: linkBottom - this.tocList.clientHeight + 20, // Add some padding
+          behavior: 'smooth',
+        });
+      }
     }
 
     private setupClickHandlers() {
