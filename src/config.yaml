@@ -67,6 +67,8 @@ analytics:
   vendors:
     googleAnalytics:
       id: 'G-S3D3Q82DSX'
+    microsoftClarity:
+      id: 'topkp7sgz2'
 
 cookieConsent:
   enabled: true
