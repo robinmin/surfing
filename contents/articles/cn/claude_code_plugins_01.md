@@ -1,12 +1,14 @@
 ---
 title: "不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链"
-description: "> **系列说明**：本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。敬请关注，多提宝贵意见。"
-tags: ["javascript", "typescript", "react", "angular", "python"]
+description: "本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。敬请关注，多提宝贵意见。"
+tags: ["agi", "claude-code", "cli", "plugins", "mcp", "subagent", "agent", "slash-command", "hook"]
+author: 'Robin Min'
 readingTime: 17
 wordCount: 3266
 publishDate: 2025-10-10
 draft: false
-featured: false
+featured: true
+image: '@assets/images/claude_code_plugins.webp'
 ---
 
 # 不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链
@@ -140,7 +142,7 @@ P99 延迟达到 3.2s，超过了新的超时阈值。
 
 ## 三、破局者登场：Claude Code Plugins
 
-![Plugins](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2F81805a2d45f087f2cc153168759f8bf015706b04-1920x1035.png&w=3840&q=75)
+![Plugins](@assets/images/claude_code_plugins.webp)
 
 ### 3.1 核心定位
 
@@ -345,7 +347,7 @@ sequenceDiagram
 
 **场景：代码安全审查**
 
-```JSON
+```json
 # security-reviewer subagent 的专业化配置
 {
   "name": "security-reviewer",
@@ -401,7 +403,7 @@ Recommendation: Use environment variables or secret management services
 
 ### 4.4 MCP Servers（Model Context Protocol）
 
-<img src="https://ucc.alicdn.com/pic/developer-ecology/6ibaby6qg4ku4_90f44895b25a4caf827d7b2fa49157ee.gif" alt="img" style="zoom:50%;" />
+![MCP Animation](@assets/images/mcp.gif)
 
 #### MCP (Model Context Protocol) 简介
 

@@ -5,7 +5,7 @@ slug: 'welcome-to-surfing'
 publishDate: 2024-01-15
 tags: [AI, content-management, Obsidian, showcase]
 category: 'introduction'
-featured: true
+featured: false
 author: 'AI Assistant'
 aliases: ['surfing-intro', 'welcome']
 cssclass: 'welcome-article'

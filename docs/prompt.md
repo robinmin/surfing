@@ -278,3 +278,44 @@ As we already get the One Click Login Mechanism working(So far only tested with 
 - [x] Move scripts/postsurfing/README.md into docs and rename it, it will be treated as a part of the documentation. → Moved to docs/postsurfing-cli.md
 - [ ] Define the SOP of generating and publishing new contents.
 - [ ] Add new category 'cheatsheet'
+
+
+### 技术科普作家
+#### Background
+你是一位具有全栈研发背景的资深程序员，技术推广者、内容创作者；其擅长面向初级技术研发人员、科技爱好者，使用朴实又不失生动的语言将技术细节条分缕析、层层阐明原理、内核、技术细节，以及如何解决实际问题等。
+
+这里的 `@draft/第一篇：概念篇-打破AI助手的次元壁.md` 是根据 `@draft/大纲草案_final.md` 撰写出来的系列文章中的第一篇。
+本系列文章的目地是介绍目前Claude Code生态在Plugins机制正在推向市场之际，它瞄准的问题、针对这些问题的具体解决方案，以及研发人员通过利用这些机制可以如何便利自身的日常开发工作。
+
+#### Current Status
+目前的`@draft/第一篇：概念篇-打破AI助手的次元壁.md`是初版，还有不少问题。主要表现在：
+- 全篇更像是一份技术文档细节，缺乏科普文章最起码的起承转合衔接，以及如何吸引读者兴趣等。
+- 对于目前人工review第一遍之后的结果，皆在文中以`TODO`标记出来，等待后续补充。
+- 文中部分地方不够严谨的，需要进一步查核相关文档（比如`/plugin update --check`是否存在的问题等）。
+
+#### Goals
+- 针对文章现在的缺陷，在不丢失目前的文档细节、并保持当前文章整体框架的前提下，适当增加写作细节、丰富骨架，使其更符合科普文章的常见规范。
+- 尤其针对已经标记出`TODO`的地方，重点注意解决当前的问题。
+- 通过查阅官方文档，合适是否存在当前有争议的地方。如有则可直接跳过；如无，则应好好考虑如何调整（是删、是改要看具体情况）
+- 整体目标是文档可发布状态。所以也需要对一些错别字、语句组织予以适当调整，以便读者阅读。这本应是一个职业编辑的工作，但由于我们的敏捷发布流程，这一步将被取消。所以此处会额外做一些文字、语句校勘相关的工作，以确保文档质量。
+
+### adjustments
+`第一篇_改进版.md`已使用命令`postsurfing draft/claude_code_plugins_01.md --type articles --lang cn`作为正式版发布到本网站的`Articles`下面。该文件现在路径为 `@contents/articles/cn/claude_code_plugins_01.md`. 
+
+我已经将相关网络图片保存至本地，现需要将这些网络图片修改为本地化、方便发布时候的资源都在本站，包括：
+- 将`三、破局者登场：Claude Code Plugins`的
+```markdown
+![Plugins](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2F81805a2d45f087f2cc153168759f8bf015706b04-1920x1035.png&w=3840&q=75)
+```
+数据源替换为`@assets/images/claude_code_plugins.webp`。
+
+- 将`4.4 MCP Servers（Model Context Protocol）`中的
+```markdown
+<img src="https://ucc.alicdn.com/pic/developer-ecology/6ibaby6qg4ku4_90f44895b25a4caf827d7b2fa49157ee.gif" alt="img" style="zoom:50%;" />
+```
+数据源替换为`@assets/images/mcp.gif`。
+
+### translation
+New I need you act as a senior translator to translate this Chinese version into English as a new file in @contents/articles/en/claude_code_plugins_01.md. Please keep the structure and content aligned with the original. Do not translate all
+blocks (including code, diagrams, flows, scripts, and etc., unless there are some Chinese comments I already noticed). I will try to
+publish it to https://medium.com/. Try your best to help native speakers understand this articles
