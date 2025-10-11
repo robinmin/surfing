@@ -32,6 +32,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Load configuration to check if cookie consent is enabled
 const config = (await loadConfig('./src/config.yaml')) as any;
 const isCookieConsentEnabled = config?.cookieConsent?.enabled ?? true;
+const isIncrementalContentCacheEnabled = config?.build?.incrementalContentCache ?? false;
 
 // Extract domain from site URL for cookie configuration
 const siteUrl = config?.site?.site || 'https://surfing.salty.vip';
@@ -51,6 +52,12 @@ const whenCookieConsentEnabled = (items: (() => AstroIntegration) | (() => Astro
 export default defineConfig({
   output: 'static',
   site: config.site.site,
+
+  // Configure build cache for faster incremental builds
+  // In Astro 5, content layer caching is built-in and automatic
+  ...(isIncrementalContentCacheEnabled && {
+    cacheDir: './.astro/cache',
+  }),
 
   i18n: {
     defaultLocale: 'en',

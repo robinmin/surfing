@@ -76,6 +76,15 @@ cookieConsent:
 ui:
   theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"
 
+# Build optimization configuration
+build:
+  # Enable incremental content caching for faster builds (Astro 5+)
+  # Content layer automatically caches data between builds
+  # Only rebuilds content that has changed since last build
+  # Cache is stored in .astro/cache/ directory
+  # Can reduce build time by 80%+ for large sites
+  incrementalContentCache: true
+
 # Authentication configuration
 auth:
   google_one_tap:

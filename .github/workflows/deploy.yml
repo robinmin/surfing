@@ -21,6 +21,14 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
+      - name: Cache Astro Content
+        uses: actions/cache@v4
+        with:
+          path: .astro/cache
+          key: ${{ runner.os }}-astro-cache-${{ hashFiles('contents/**', 'src/content/**') }}
+          restore-keys: |
+            ${{ runner.os }}-astro-cache-
+
       - name: Build
         run: npm install && npm run build
         env:
