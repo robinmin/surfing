@@ -1,5 +1,5 @@
 ---
-title: "不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链"
+title: "不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链(1/4)"
 description: "本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。敬请关注，多提宝贵意见。"
 tags: ["agi", "claude-code", "cli", "plugins", "mcp", "subagent", "agent", "slash-command", "hook"]
 author: 'Robin Min'
@@ -10,8 +10,6 @@ draft: false
 featured: true
 image: '@assets/images/claude_code_plugins.webp'
 ---
-
-# 不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链
 
 ## 第一篇：概念篇 - 打破 AI 助手的"次元壁"
 

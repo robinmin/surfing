@@ -1,5 +1,5 @@
 ---
-title: "More Than a Code Assistant: Building Your Custom Toolchain with Claude Code Plugins"
+title: "More Than a Code Assistant: Building Your Custom Toolchain with Claude Code Plugins (1/4)"
 description: "This is the first article in the Claude Code Plugins series, focusing on core concepts and principles. Stay tuned for upcoming articles on hands-on development, enterprise applications, and future perspectives."
 tags: ["agi", "claude-code", "cli", "plugins", "mcp", "subagent", "agent", "slash-command", "hook"]
 author: 'Robin Min'
@@ -10,8 +10,6 @@ draft: false
 featured: true
 image: '@assets/images/claude_code_plugins.webp'
 ---
-
-# More Than a Code Assistant: Building Your Custom Toolchain with Claude Code Plugins
 
 ## Part One: Conceptual Foundation - Breaking the "Dimensional Barrier" of AI Assistants
 
