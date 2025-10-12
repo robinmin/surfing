@@ -71,6 +71,7 @@ Plugins机制的核心目的很明确：**将原本分散的Slash Commands（斜
 这正是无数研发人员每天都在上演的"囧境"：**频繁的上下文切换、割裂的信息孤岛、以及无法真正融入团队真实工作流的 AI 助手**。
 
 ---
+<div style="page-break-after: always; height: 0;"></div>
 
 ## 二、问题的根源：通用 AI 的"知识边界"
 
@@ -154,6 +155,7 @@ P99 延迟达到 3.2s，超过了新的超时阈值。
 那么，如何实现这样的理想工作流？这正是 Claude Code Plugins 要解决的核心问题。
 
 ---
+<div style="page-break-after: always; height: 0;"></div>
 
 ## 三、破局者登场：Claude Code Plugins
 
@@ -243,6 +245,7 @@ Claude Code：
 让我们开始这场探索之旅。
 
 ---
+<div style="page-break-after: always; height: 0;"></div>
 
 ## 四、核心概念：Plugins 的四大组成部分
 
@@ -672,6 +675,7 @@ sequenceDiagram
 - 四者边界清晰但协作流畅
 
 ---
+<div style="page-break-after: always; height: 0;"></div>
 
 ## 五、工作原理：Claude 如何"学会"使用工具
 
@@ -989,6 +993,7 @@ Claude 内部处理：
 5. **社区支持**：大量工具和库可直接使用
 
 ---
+<div style="page-break-after: always; height: 0;"></div>
 
 ## 六、插件市场生态体系
 
@@ -1338,6 +1343,7 @@ Do you want to proceed? [y/N]
 4. **AI 辅助开发**：Claude 帮助开发者生成插件代码
 
 ---
+<div style="page-break-after: always; height: 0;"></div>
 
 ## 七、总结与展望
 
