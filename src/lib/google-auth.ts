@@ -155,7 +155,7 @@ export const getGoogleConfig = async (): Promise<GoogleOneTapConfig> => {
   }
 
   // Check if Google is the only enabled auth method
-  const authMethods = getEnabledAuthMethods();
+  const authMethods = await getEnabledAuthMethods();
   const isOnlyAuthMethod = authMethods.google && !authMethods.apple;
 
   return {
@@ -251,7 +251,7 @@ export const initializeGoogleOneTap = async (
     const config = await getGoogleConfig();
 
     // Use traditional Google One Tap (FedCM not yet fully supported by Google)
-    initializeGoogleOneTapLegacy(config, onSuccess, onError);
+    await initializeGoogleOneTapLegacy(config, onSuccess, onError);
   } catch (error) {
     const errorResponse = handleAuthError(error, 'Google authentication initialization');
     const errorObj = new Error(errorResponse.userMessage);
@@ -272,14 +272,14 @@ export const initializeGoogleOneTap = async (
 /**
  * Legacy Google One Tap implementation (for backward compatibility)
  */
-const initializeGoogleOneTapLegacy = (
+const initializeGoogleOneTapLegacy = async (
   config: GoogleOneTapConfig,
   onSuccess: (response: GoogleSignInResponse) => void,
   onError?: (error: Error) => void
-): void => {
+): Promise<void> => {
   try {
     // Check if Google is the only enabled auth method
-    const authMethods = getEnabledAuthMethods();
+    const authMethods = await getEnabledAuthMethods();
     const isOnlyAuthMethod = authMethods.google && !authMethods.apple;
 
     // Initialize Google One Tap with FedCM disabled to prevent abort errors
@@ -507,8 +507,8 @@ export const getCurrentSession = async (skipCache = false) => {
       const { isCacheValid, getCachedTokenInfo } = await import('./token-guardian');
 
       // If cache is valid, return cached session info
-      if (isCacheValid()) {
-        const cachedInfo = getCachedTokenInfo();
+      if (await isCacheValid()) {
+        const cachedInfo = await getCachedTokenInfo();
         if (cachedInfo) {
           console.debug('Using cached token validation', {
             userId: cachedInfo.userId,
