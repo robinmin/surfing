@@ -27,3 +27,12 @@ const {
     ></span>
   </slot>
 </button>
+
+<style>
+  /* Print styles */
+  @media print {
+    button[data-aw-toggle-menu] {
+      display: none !important;
+    }
+  }
+</style>
