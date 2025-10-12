@@ -31,14 +31,15 @@ export interface CachedTokenInfo {
 /**
  * Get cache duration in milliseconds
  */
-const getCacheDurationMs = (): number => {
-  return getTokenCacheDuration() * 1000; // Convert seconds to milliseconds
+const getCacheDurationMs = async (): Promise<number> => {
+  const duration = await getTokenCacheDuration();
+  return duration * 1000; // Convert seconds to milliseconds
 };
 
 /**
  * Check if cached token validation is still valid
  */
-export const isCacheValid = (): boolean => {
+export const isCacheValid = async (): Promise<boolean> => {
   try {
     if (typeof localStorage === 'undefined') {
       return false;
@@ -51,7 +52,7 @@ export const isCacheValid = (): boolean => {
 
     const timestamp = parseInt(timestampStr, 10);
     const now = Date.now();
-    const cacheDuration = getCacheDurationMs();
+    const cacheDuration = await getCacheDurationMs();
 
     // Check if cache is within valid duration
     return now - timestamp < cacheDuration;
@@ -64,9 +65,9 @@ export const isCacheValid = (): boolean => {
 /**
  * Get cached token info if valid
  */
-export const getCachedTokenInfo = (): CachedTokenInfo | null => {
+export const getCachedTokenInfo = async (): Promise<CachedTokenInfo | null> => {
   try {
-    if (!isCacheValid()) {
+    if (!(await isCacheValid())) {
       return null;
     }
 
@@ -110,12 +111,15 @@ export const updateTokenCache = (userId: string, email?: string, userMetadata?: 
       })
     );
 
-    console.debug('Token cache updated:', {
-      userId,
-      timestamp: now,
-      expiresIn: `${getCacheDurationMs() / 1000}s`,
-      hasUserMetadata: !!userMetadata,
-    });
+    (async () => {
+      const cacheDurationMs = await getCacheDurationMs();
+      console.debug('Token cache updated:', {
+        userId,
+        timestamp: now,
+        expiresIn: `${cacheDurationMs / 1000}s`,
+        hasUserMetadata: !!userMetadata,
+      });
+    })();
   } catch (error) {
     console.error('Failed to update token cache:', error);
   }
@@ -142,7 +146,7 @@ export const clearTokenCache = (): void => {
 /**
  * Get time remaining until cache expires (in seconds)
  */
-export const getCacheTimeRemaining = (): number => {
+export const getCacheTimeRemaining = async (): Promise<number> => {
   try {
     const timestampStr = localStorage.getItem(CACHE_TIMESTAMP_KEY);
     if (!timestampStr) {
@@ -151,7 +155,7 @@ export const getCacheTimeRemaining = (): number => {
 
     const timestamp = parseInt(timestampStr, 10);
     const now = Date.now();
-    const cacheDuration = getCacheDurationMs();
+    const cacheDuration = await getCacheDurationMs();
     const elapsed = now - timestamp;
     const remaining = cacheDuration - elapsed;
 
