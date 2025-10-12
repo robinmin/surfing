@@ -11,9 +11,13 @@ import UserMenu from './UserMenu.astro';
 export interface Props {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  isPrimary?: boolean;
 }
 
-const { size = 'md', className = '' } = Astro.props;
+const { size = 'md', className = '', isPrimary = false } = Astro.props;
+
+// Generate unique instance ID to prevent duplicate popups
+const instanceId = `auth-avatar-${Math.random().toString(36).substring(2, 11)}`;
 
 // Size configurations
 const sizeClasses = {
@@ -29,7 +33,7 @@ const iconSizeClasses = {
 };
 ---
 
-<div class:list={['auth-avatar-container relative', className]}>
+<div class:list={['auth-avatar-container relative', className]} data-instance-id={instanceId}>
   <!-- Avatar Button - shows grey icon when logged out, user photo when logged in -->
   <button
     type="button"
@@ -43,6 +47,7 @@ const iconSizeClasses = {
     ]}
     aria-label="User menu"
     data-auth-avatar
+    data-instance-id={instanceId}
   >
     <!-- Logged out state - grey avatar with user icon -->
     <div
@@ -68,61 +73,80 @@ const iconSizeClasses = {
     />
   </button>
 
-  <!-- Login popup for logged out users -->
-  <LoginPopupMenu />
-
-  <!-- User menu for logged in users -->
-  <UserMenu />
+  {/* Only include popup menus in the primary instance to prevent duplicates */}
+  {
+    isPrimary ? (
+      <>
+        <LoginPopupMenu />
+        <UserMenu />
+      </>
+    ) : null
+  }
 </div>
 
 <script>
   import { initializeGoogleOneTap, signInWithGoogle, signOut, getCurrentSession } from '~/lib/google-auth';
+  import { supabase } from '~/lib/supabase';
 
   let isLoggedIn = false;
 
   // Handle avatar click to toggle appropriate menu
   const setupAvatarClick = () => {
-    const container = document.querySelector('.auth-avatar-container');
-    const avatarButton = container?.querySelector('[data-auth-avatar]');
+    // Find the primary container that has popup menus
+    const primaryContainer = document
+      .querySelector('.auth-avatar-container [data-popup-menu]')
+      ?.closest('.auth-avatar-container');
+    const allAvatarButtons = document.querySelectorAll('[data-auth-avatar]');
 
-    if (!avatarButton) {
-      console.debug('Avatar button not found, skipping click handler setup');
+    if (!primaryContainer) {
+      console.debug('Primary container not found, skipping click handler setup');
       return;
     }
 
-    // Remove existing event listeners to prevent duplicates
-    const newAvatarButton = avatarButton.cloneNode(true);
-    avatarButton.parentNode?.replaceChild(newAvatarButton, avatarButton);
+    // Set up click handlers for all avatar buttons to control the primary popup menus
+    allAvatarButtons.forEach((avatarButton) => {
+      // Remove existing event listeners to prevent duplicates
+      const newAvatarButton = avatarButton.cloneNode(true);
+      avatarButton.parentNode?.replaceChild(newAvatarButton, avatarButton);
 
-    // Define the click handler function
-    const handleAvatarClick = (e: Event) => {
-      e.stopPropagation();
-      console.debug('Avatar clicked, isLoggedIn:', isLoggedIn);
+      // Define the click handler function
+      const handleAvatarClick = (e: Event) => {
+        e.stopPropagation();
+        console.debug('Avatar clicked, isLoggedIn:', isLoggedIn);
 
-      // Find fresh references to menus each time
-      const currentLoginMenu = container?.querySelector('[data-popup-menu]');
-      const currentUserMenu = container?.querySelector('[data-user-menu]');
+        // Find popup menus in the primary container
+        const currentLoginMenu = primaryContainer?.querySelector('[data-popup-menu]');
+        const currentUserMenu = primaryContainer?.querySelector('[data-user-menu]');
 
-      if (isLoggedIn && currentUserMenu) {
-        currentUserMenu.classList.toggle('show');
-        currentLoginMenu?.classList.remove('show');
-        console.debug('Showing user menu');
-      } else if (currentLoginMenu) {
-        currentLoginMenu.classList.toggle('show');
-        currentUserMenu?.classList.remove('show');
-        console.debug('Showing login menu');
-      }
-    };
+        if (isLoggedIn && currentUserMenu) {
+          currentUserMenu.classList.toggle('show');
+          currentLoginMenu?.classList.remove('show');
+          console.debug('Showing user menu');
+        } else if (currentLoginMenu) {
+          currentLoginMenu.classList.toggle('show');
+          currentUserMenu?.classList.remove('show');
+          console.debug('Showing login menu');
+        }
+      };
 
-    // Add click event listener
-    newAvatarButton.addEventListener('click', handleAvatarClick);
+      // Add click event listener
+      newAvatarButton.addEventListener('click', handleAvatarClick);
+    });
 
     // Define outside click handler
     const handleOutsideClick = (e: Event) => {
-      const currentContainer = document.querySelector('.auth-avatar-container');
-      if (!currentContainer?.contains(e.target as Node)) {
-        const currentLoginMenu = currentContainer?.querySelector('[data-popup-menu]');
-        const currentUserMenu = currentContainer?.querySelector('[data-user-menu]');
+      // Check if click is outside all auth-avatar-container elements
+      const allContainers = document.querySelectorAll('.auth-avatar-container');
+      const clickedOutsideAllContainers = Array.from(allContainers).every(
+        (container) => !container.contains(e.target as Node)
+      );
+
+      if (clickedOutsideAllContainers) {
+        const primaryContainer = document
+          .querySelector('.auth-avatar-container [data-popup-menu]')
+          ?.closest('.auth-avatar-container');
+        const currentLoginMenu = primaryContainer?.querySelector('[data-popup-menu]');
+        const currentUserMenu = primaryContainer?.querySelector('[data-user-menu]');
         currentLoginMenu?.classList.remove('show');
         currentUserMenu?.classList.remove('show');
       }
@@ -131,8 +155,11 @@ const iconSizeClasses = {
     // Define escape key handler
     const handleEscapeKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        const currentLoginMenu = document.querySelector('[data-popup-menu]');
-        const currentUserMenu = document.querySelector('[data-user-menu]');
+        const primaryContainer = document
+          .querySelector('.auth-avatar-container [data-popup-menu]')
+          ?.closest('.auth-avatar-container');
+        const currentLoginMenu = primaryContainer?.querySelector('[data-popup-menu]');
+        const currentUserMenu = primaryContainer?.querySelector('[data-user-menu]');
         currentLoginMenu?.classList.remove('show');
         currentUserMenu?.classList.remove('show');
       }
@@ -235,6 +262,46 @@ const iconSizeClasses = {
   // Global flag to track if Google has been initialized
   let isGoogleInitialized = false;
 
+  // Check if user has valid session before triggering auto-login
+  const shouldTriggerAutoLogin = async (): Promise<boolean> => {
+    try {
+      // Check if supabase is available
+      if (!supabase) {
+        console.debug('Supabase not available, proceeding with Google One Tap');
+        return true;
+      }
+
+      // Check if user already has a valid Supabase session
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error) {
+        console.debug('Session check failed:', error);
+        return true; // Proceed with Google One Tap if session check fails
+      }
+
+      if (session?.user) {
+        // Verify session is not expired
+        const now = Math.floor(Date.now() / 1000);
+        if (session.expires_at && session.expires_at < now) {
+          console.debug('Session expired, proceeding with Google One Tap');
+          return true;
+        }
+
+        console.debug('User already has valid session, skipping Google One Tap');
+        return false; // Don't trigger Google One Tap if user has valid session
+      }
+
+      // No session found, proceed with Google One Tap
+      return true;
+    } catch (error) {
+      console.debug('Session validation error, proceeding with Google One Tap:', error);
+      return true;
+    }
+  };
+
   // Initialize Google One Tap once on page load
   const initializeGoogle = async () => {
     if (isGoogleInitialized) {
@@ -242,6 +309,22 @@ const iconSizeClasses = {
     }
 
     try {
+      // 🔄 First check if we should trigger auto-login based on session
+      const shouldTrigger = await shouldTriggerAutoLogin();
+      if (!shouldTrigger) {
+        console.debug('Skipping Google One Tap - user already authenticated');
+        isGoogleInitialized = true; // Mark as initialized to prevent re-checks
+        return;
+      }
+
+      // 🚀 Only proceed if Google is the only enabled auth method
+      const authMethods = await import('~/lib/config').then(({ getEnabledAuthMethods }) => getEnabledAuthMethods());
+      if (!authMethods.google || authMethods.apple) {
+        console.debug('Google One Tap not needed - either disabled or multiple auth methods available');
+        isGoogleInitialized = true;
+        return;
+      }
+
       await initializeGoogleOneTap(
         async (response) => {
           try {
@@ -258,7 +341,7 @@ const iconSizeClasses = {
         }
       );
       isGoogleInitialized = true;
-      console.debug('Google One Tap initialized successfully');
+      console.debug('Google One Tap initialized with auto-trigger (only auth method enabled)');
     } catch (error) {
       console.error('Failed to initialize Google Sign In:', error);
     }
@@ -353,12 +436,8 @@ const iconSizeClasses = {
     if (signOutButton) {
       signOutButton.addEventListener('click', async () => {
         try {
-          // Add visual feedback that sign out is processing
+          // Disable button to prevent multiple clicks during sign out process
           signOutButton.disabled = true;
-          signOutButton.innerHTML = `
-            <Icon name="tabler:loader" class="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 animate-spin" />
-            <span class="text-sm font-medium text-red-700 dark:text-red-300">Signing out...</span>
-          `;
 
           await signOut();
           console.log('Sign out success');
@@ -372,12 +451,8 @@ const iconSizeClasses = {
           }, 500);
         } catch (error) {
           console.error('Sign out error:', error);
-          // Restore button state on error
+          // Re-enable button on error
           signOutButton.disabled = false;
-          signOutButton.innerHTML = `
-            <Icon name="tabler:logout" class="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 group-hover:scale-110 transition-transform duration-150" />
-            <span class="text-sm font-medium text-red-700 dark:text-red-300 group-hover:text-red-800 dark:group-hover:text-red-200 transition-colors duration-150">Sign Out</span>
-          `;
         }
       });
     }
