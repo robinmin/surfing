@@ -1,0 +1,94 @@
+---
+/**
+ * PageBreak Component
+ *
+ * A component for adding forced page breaks in markdown/MDX files.
+ * Useful for print layouts and PDF generation.
+ *
+ * Usage in markdown:
+ * ```mdx
+ * import PageBreak from '~/components/ui/PageBreak.astro';
+ *
+ * Some content...
+ *
+ * <PageBreak />
+ *
+ * Content on next page...
+ * ```
+ */
+
+interface Props {
+  /**
+   * Additional CSS classes to apply to the page break
+   */
+  class?: string;
+
+  /**
+   * Whether to show a visual indicator in the browser (not visible in print)
+   * Default: false
+   */
+  showIndicator?: boolean;
+}
+
+const { class: className, showIndicator = false } = Astro.props;
+---
+
+<div class:list={['page-break', showIndicator && 'page-break-indicator', className]} aria-hidden="true">
+  {showIndicator && <span class="indicator-text">Page Break</span>}
+</div>
+
+<style>
+  .page-break {
+    /* Force page break after this element */
+    page-break-after: always;
+    break-after: page;
+
+    /* Ensure it doesn't take up space in normal flow */
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .page-break-indicator {
+    /* Show visual indicator in browser (hidden in print) */
+    height: auto;
+    margin: 2rem 0;
+    padding: 0.5rem;
+    border-top: 2px dashed #e0e0e0;
+    border-bottom: 2px dashed #e0e0e0;
+    text-align: center;
+    position: relative;
+  }
+
+  .indicator-text {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #f5f5f5;
+    color: #666;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+  }
+
+  /* Hide indicator when printing */
+  @media print {
+    .page-break {
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .page-break-indicator {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .indicator-text {
+      display: none;
+    }
+  }
+</style>

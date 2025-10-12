@@ -1,7 +1,21 @@
 ---
-title: "不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链(1/4)"
-description: "本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。敬请关注，多提宝贵意见。"
-tags: ["agi", "claude-code", "cli", "plugins", "mcp", "subagent", "agent", "slash-command", "hook", "AI Coding", "AI原生开发", "Vibe Coding"]
+title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链(1/4)'
+description: '本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。敬请关注，多提宝贵意见。'
+tags:
+  [
+    'agi',
+    'claude-code',
+    'cli',
+    'plugins',
+    'mcp',
+    'subagent',
+    'agent',
+    'slash-command',
+    'hook',
+    'AI Coding',
+    'AI原生开发',
+    'Vibe Coding',
+  ]
 author: 'Robin Min'
 readingTime: 17
 wordCount: 3266
@@ -14,7 +28,6 @@ image: '@assets/images/claude_code_plugins.webp'
 ## 第一篇：概念篇 - 打破 AI 助手的"次元壁"
 
 > **系列说明**：本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。敬请关注，多提宝贵意见。
-
 
 ## **Claude Code Plugins 的诞生背景**
 
@@ -49,6 +62,7 @@ Plugins机制的核心目的很明确：**将原本分散的Slash Commands（斜
 **上午 10:40 - 疲惫的总结**
 
 张三终于拼凑出一个完整的问题描述，但此时他已经：
+
 - 切换了 **5 个不同的工具**
 - 打开了 **12 个浏览器标签页**
 - 复制粘贴了 **7 段文本**
@@ -75,13 +89,13 @@ Plugins机制的核心目的很明确：**将原本分散的Slash Commands（斜
 
 让我们通过一个对比表格，清晰地看到这种局限：
 
-| 维度 | 传统 AI 代码助手 | 理想的 AI 工作伙伴 |
-|------|-----------------|------------------|
+| 维度         | 传统 AI 代码助手             | 理想的 AI 工作伙伴         |
+| ------------ | ---------------------------- | -------------------------- |
 | **知识来源** | 静态训练数据（截止某时间点） | 实时访问企业系统和动态数据 |
-| **工作模式** | 旁观者、顾问角色 | 执行者、深度协作者 |
-| **能力范围** | 知识问答、代码生成、文本总结 | 跨系统操作、任务自动执行 |
-| **系统边界** | 封闭系统，无法扩展 | 开放平台，可无限扩展 |
-| **团队适配** | 通用配置，难以定制 | 深度定制，适配团队流程 |
+| **工作模式** | 旁观者、顾问角色             | 执行者、深度协作者         |
+| **能力范围** | 知识问答、代码生成、文本总结 | 跨系统操作、任务自动执行   |
+| **系统边界** | 封闭系统，无法扩展           | 开放平台，可无限扩展       |
+| **团队适配** | 通用配置，难以定制           | 深度定制，适配团队流程     |
 
 ### 2.3 "张三"真正需要的是什么？
 
@@ -116,12 +130,14 @@ P99 延迟达到 3.2s，超过了新的超时阈值。
 在Plugins机制推出之前，开发者面临着配置管理的挑战：
 
 **四大功能各自独立**：
+
 - **Slash Commands**：需要单独在`.claude`目录下配置
 - **Subagents**：独立的agent配置文件
 - **MCP Servers**：分散的server配置
 - **Hooks**：各自的hooks定义
 
 **带来的问题**：
+
 1. **配置分散**：想要分享一个完整的工作流，需要分别复制多个配置文件
 2. **版本管理困难**：各组件版本独立，缺乏统一的依赖管理
 3. **团队协作障碍**：难以保证团队成员使用相同的配置
@@ -129,6 +145,7 @@ P99 延迟达到 3.2s，超过了新的超时阈值。
 
 **Plugins的解决方案**：
 将这四大组件统一打包进一个plugin，实现：
+
 - ✅ 一键安装完整功能
 - ✅ 统一的版本管理
 - ✅ 便捷的团队共享
@@ -159,6 +176,7 @@ P99 延迟达到 3.2s，超过了新的超时阈值。
 Claude Code Plugins 的设计哲学可以用一句话概括：**"Bring Your Own Tools"（带上你自己的工具）**。
 
 **类比理解**：
+
 - 如果 **Claude** 是一个智能手机操作系统（OS）
 - 那么 **Plugins** 就是你可以安装在上面的应用程序（App）
 
@@ -182,17 +200,18 @@ Claude Code Plugins 的设计哲学可以用一句话概括：**"Bring Your Own 
 
 Plugins 的引入，带来的是根本性的范式转变。让我们通过表格看清这种革命性的差异：
 
-| 特性 | 传统 AI 代码助手 | 集成 Plugins 的 Claude Code |
-|------|-----------------|---------------------------|
-| **知识来源** | 静态的、截止于某个时间的训练数据 | 动态的、可实时访问任何 API 获取的数据 |
-| **能力范围** | 知识问答、代码生成、文本总结 | 所有前述能力 + **执行操作**（查数据库、创建工单、触发部署） |
-| **工作模式** | 作为独立的"顾问"在旁辅助 | 作为"智能代理"深度嵌入工作流 |
-| **系统边界** | 封闭系统，功能固定 | 开放系统，可无限扩展 |
-| **团队协作** | 个人工具，难以共享配置 | 团队共享，统一工作流 |
+| 特性         | 传统 AI 代码助手                 | 集成 Plugins 的 Claude Code                                 |
+| ------------ | -------------------------------- | ----------------------------------------------------------- |
+| **知识来源** | 静态的、截止于某个时间的训练数据 | 动态的、可实时访问任何 API 获取的数据                       |
+| **能力范围** | 知识问答、代码生成、文本总结     | 所有前述能力 + **执行操作**（查数据库、创建工单、触发部署） |
+| **工作模式** | 作为独立的"顾问"在旁辅助         | 作为"智能代理"深度嵌入工作流                                |
+| **系统边界** | 封闭系统，功能固定               | 开放系统，可无限扩展                                        |
+| **团队协作** | 个人工具，难以共享配置           | 团队共享，统一工作流                                        |
 
 **举例说明转变**：
 
 **传统模式**：
+
 ```
 开发者："这段代码有什么问题？"
 AI："这里可能有性能问题，建议优化查询语句。"
@@ -200,6 +219,7 @@ AI："这里可能有性能问题，建议优化查询语句。"
 ```
 
 **Plugins 模式**：
+
 ```
 开发者："优化这段代码的性能，并运行测试验证。"
 Claude Code：
@@ -252,6 +272,7 @@ graph TB
 ### 4.2 Slash Commands（斜杠命令）
 
 #### 定义
+
 通过输入 `/command` 触发的自定义快捷操作，类似 VS Code 的 Command Palette 或 Slack 的斜杠命令。
 
 #### 典型应用场景
@@ -305,6 +326,7 @@ You are helping review a Pull Request. Follow these steps:
 ```
 
 **关键特性**：
+
 - 使用自然语言描述任务步骤
 - Claude 根据指令自主执行
 - 可引用项目文档和配置文件
@@ -312,6 +334,7 @@ You are helping review a Pull Request. Follow these steps:
 ### 4.3 Subagents（子代理）
 
 #### 定义
+
 为特定领域或任务优化的专用 AI 代理，拥有独立的 system prompt 和工具集。
 
 #### 协作模式
@@ -395,6 +418,7 @@ Recommendation: Use environment variables or secret management services
 ```
 
 **关键优势**：
+
 - **专业化**：每个 subagent 专注特定领域，表现更出色
 - **并行化**：多个 subagent 可同时工作，提升效率
 - **可复用**：优秀的 subagent 可在团队内共享
@@ -414,6 +438,7 @@ Recommendation: Use environment variables or secret management services
 - **灵活部署**：支持Local（项目级）、Project（团队级）、User（用户级）三种安装范围
 
 **当前状态（2025年10月）**：
+
 - 已有丰富的社区MCP Servers
 - 支持Issue Trackers、Monitoring、Databases、Design Tools等多种集成
 - 通过CLI命令轻松添加和配置
@@ -451,6 +476,7 @@ MCP的引入，让Claude Code从封闭走向开放，成为真正可扩展的AI�
 ```
 
 **对话示例**：
+
 ```
 开发者："昨天通过小程序渠道注册的新用户有多少？"
 
@@ -482,6 +508,7 @@ Claude Code：
 ```
 
 **对话示例**：
+
 ```
 开发者："payment-service 的 Pod 状态如何？"
 
@@ -508,16 +535,17 @@ Claude Code：
 ### 4.5 Hooks（钩子）
 
 #### 定义
+
 在工作流的特定事件点自动触发的动作，类似 Git Hooks 但更强大。
 
 #### 关键触发点
 
-| Hook 类型 | 触发时机 | 典型用途 |
-|----------|---------|---------|
-| `PreToolUse` | 工具调用前 | 权限检查、参数验证 |
-| `PostToolUse` | 工具调用后 | 自动测试、代码格式化 |
-| `PrePrompt` | 用户输入处理前 | 注入上下文、安全过滤 |
-| `PostResponse` | Claude 回复生成后 | 审计日志、合规检查 |
+| Hook 类型      | 触发时机          | 典型用途             |
+| -------------- | ----------------- | -------------------- |
+| `PreToolUse`   | 工具调用前        | 权限检查、参数验证   |
+| `PostToolUse`  | 工具调用后        | 自动测试、代码格式化 |
+| `PrePrompt`    | 用户输入处理前    | 注入上下文、安全过滤 |
+| `PostResponse` | Claude 回复生成后 | 审计日志、合规检查   |
 
 #### 应用示例
 
@@ -545,6 +573,7 @@ Claude Code：
 ```
 
 **工作流程**：
+
 ```
 1. Claude 修改 Python 文件（例如 src/api/payment.py）
 2. [触发 PostToolUse Hook]
@@ -575,6 +604,7 @@ Claude Code：
 ```
 
 **审计日志输出**：
+
 ```json
 {
   "timestamp": "2025-10-10T14:32:15Z",
@@ -634,6 +664,7 @@ sequenceDiagram
 ```
 
 **关键洞察**：
+
 - **Slash Commands** 作为入口，协调整个流程
 - **Subagents** 并行处理不同技术栈的代码生成
 - **Hooks** 在关键节点自动执行检查和测试
@@ -651,6 +682,7 @@ sequenceDiagram
 让我们通过一个具体例子，走完一次完整的工具调用流程：
 
 **用户输入**：
+
 ```
 "Claude, check the status of ticket PROJ-123 on JIRA."
 ```
@@ -756,20 +788,20 @@ paths:
       parameters:
         # 所有输入参数
         - name: project_id
-          in: path              # URL 路径参数
+          in: path # URL 路径参数
           required: true
           description: The ID of the project
           schema:
             type: string
-            example: "42"
+            example: '42'
 
         - name: ref_name
-          in: query             # URL 查询参数 (?ref_name=main)
+          in: query # URL 查询参数 (?ref_name=main)
           required: false
           description: The name of a branch or tag
           schema:
             type: string
-            default: "main"
+            default: 'main'
 
         - name: per_page
           in: query
@@ -795,15 +827,15 @@ paths:
                     id:
                       type: string
                       description: Commit SHA
-                      example: "a3f9c2b1d5e8..."
+                      example: 'a3f9c2b1d5e8...'
                     message:
                       type: string
                       description: Commit message
-                      example: "feat: add payment integration"
+                      example: 'feat: add payment integration'
                     author_name:
                       type: string
                       description: Author of the commit
-                      example: "Alice Wang"
+                      example: 'Alice Wang'
                     created_at:
                       type: string
                       format: date-time
@@ -818,7 +850,7 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Project not found"
+                    example: 'Project not found'
 
         '401':
           description: Unauthorized - invalid or missing credentials
@@ -829,24 +861,29 @@ paths:
 让我们逐一解析每个部分：
 
 **1. Info 块：插件身份信息**
+
 ```yaml
 info:
   title: Internal GitLab Service Plugin
   description: A plugin for interacting with company's private GitLab repository
   version: 1.0.0
 ```
+
 - 提供插件的基础信息
 - Claude 用这些信息识别和描述插件
 
 **2. Servers 块：API 基础地址**
+
 ```yaml
 servers:
   - url: https://gitlab.internal.company.com/api/v4
 ```
+
 - 定义 API 的根 URL
 - 支持多个环境（开发、测试、生产）
 
 **3. Paths 块：可用操作**
+
 ```yaml
 paths:
   /projects/{project_id}/repository/commits:
@@ -854,23 +891,27 @@ paths:
       summary: Get recent commits for a project
       operationId: getRecentCommits
 ```
+
 - 列出所有可用的 API 端点
 - `operationId` 是 Claude 内部引用的唯一标识
 
 **4. Parameters 块：输入参数**
+
 ```yaml
 parameters:
   - name: project_id
-    in: path              # 参数位置：path/query/header/cookie
-    required: true        # 是否必需
+    in: path # 参数位置：path/query/header/cookie
+    required: true # 是否必需
     schema:
-      type: string        # 数据类型
-      example: "42"       # 示例值
+      type: string # 数据类型
+      example: '42' # 示例值
 ```
+
 - 详细描述每个参数的类型、位置、约束
 - Claude 根据这些信息构造正确的 API 调用
 
 **5. Responses 块：返回数据结构**
+
 ```yaml
 responses:
   '200':
@@ -881,9 +922,10 @@ responses:
           type: array
           items:
             properties:
-              id: {type: string}
-              message: {type: string}
+              id: { type: string }
+              message: { type: string }
 ```
+
 - 定义不同状态码下的响应格式
 - Claude 用这些信息解析和理解返回数据
 
@@ -907,6 +949,7 @@ Claude 内部处理：
 ```
 
 **Claude 的回复**：
+
 ```
 最近 5 次提交记录：
 
@@ -930,12 +973,12 @@ Claude 内部处理：
 
 **对比其他方案**：
 
-| 方案 | 优点 | 缺点 |
-|------|------|------|
-| **自然语言描述** | 易于理解 | 模糊、易产生歧义、难以机器解析 |
-| **代码注释** | 与实现紧密 | 格式不统一、缺乏标准化 |
-| **自定义 DSL** | 灵活定制 | 学习成本高、工具支持少 |
-| **OpenAPI** ✅ | 标准化、精确、工具丰富、被广泛采用 | 需要学习规范格式 |
+| 方案             | 优点                               | 缺点                           |
+| ---------------- | ---------------------------------- | ------------------------------ |
+| **自然语言描述** | 易于理解                           | 模糊、易产生歧义、难以机器解析 |
+| **代码注释**     | 与实现紧密                         | 格式不统一、缺乏标准化         |
+| **自定义 DSL**   | 灵活定制                           | 学习成本高、工具支持少         |
+| **OpenAPI** ✅   | 标准化、精确、工具丰富、被广泛采用 | 需要学习规范格式               |
 
 **OpenAPI 的独特优势**：
 
@@ -958,11 +1001,13 @@ Claude 内部处理：
 #### 类比理解
 
 **Plugin Marketplace** 就像：
+
 - **VS Code Extension Marketplace**：发现和安装编辑器扩展
 - **Chrome Web Store**：浏览和安装浏览器插件
 - **npm Registry**：查找和使用 JavaScript 包
 
 但它更加灵活——你可以：
+
 - 使用官方公共市场
 - 创建企业私有市场
 - 同时连接多个市场源
@@ -994,14 +1039,14 @@ mindmap
 
 #### 对比分析
 
-| 维度 | Public Marketplace | Private Marketplace |
-|------|-------------------|---------------------|
-| **访问范围** | 全球所有开发者 | 企业内部员工 |
-| **插件类型** | 通用 SaaS 服务（GitHub、AWS、Slack） | 内部系统集成（企业数据库、监控） |
-| **安全模型** | 社区审核 + 用户评价 + Anthropic 官方审查 | 企业安全团队审计 + 细粒度权限 |
-| **发布流程** | 提交 → 审核 → 公开发布 | 内部提交 → 安全扫描 → 内部发布 |
-| **托管方式** | Anthropic 官方托管 | 企业自建（GitLab/GitHub Enterprise） |
-| **典型用户** | 个人开发者、小团队 | 中大型企业、有合规要求的组织 |
+| 维度         | Public Marketplace                       | Private Marketplace                  |
+| ------------ | ---------------------------------------- | ------------------------------------ |
+| **访问范围** | 全球所有开发者                           | 企业内部员工                         |
+| **插件类型** | 通用 SaaS 服务（GitHub、AWS、Slack）     | 内部系统集成（企业数据库、监控）     |
+| **安全模型** | 社区审核 + 用户评价 + Anthropic 官方审查 | 企业安全团队审计 + 细粒度权限        |
+| **发布流程** | 提交 → 审核 → 公开发布                   | 内部提交 → 安全扫描 → 内部发布       |
+| **托管方式** | Anthropic 官方托管                       | 企业自建（GitLab/GitHub Enterprise） |
+| **典型用户** | 个人开发者、小团队                       | 中大型企业、有合规要求的组织         |
 
 #### 公共市场示例
 
@@ -1140,7 +1185,7 @@ graph TB
 ```json
 {
   "name": "my-plugin",
-  "version": "2.3.1",
+  "version": "2.3.1"
   //          │ │ └─ Patch: 向后兼容的 bug 修复
   //          │ └─── Minor: 向后兼容的新功能
   //          └───── Major: 破坏性变更（不兼容旧版）
@@ -1186,18 +1231,9 @@ graph TB
   "version": "1.0.0",
   "description": "Safe database query interface",
 
-  "permissions": [
-    "database:read:users",
-    "database:read:orders",
-    "network:internal:10.0.0.0/8"
-  ],
+  "permissions": ["database:read:users", "database:read:orders", "network:internal:10.0.0.0/8"],
 
-  "denied_permissions": [
-    "database:write",
-    "database:delete",
-    "filesystem:write",
-    "network:external"
-  ],
+  "denied_permissions": ["database:write", "database:delete", "filesystem:write", "network:external"],
 
   "security": {
     "data_retention": "none",
@@ -1244,24 +1280,24 @@ Do you want to proceed? [y/N]
 
 #### Claude Plugins vs ChatGPT Plugins
 
-| 特性 | Claude Plugins | ChatGPT Plugins |
-|------|---------------|----------------|
-| **架构模型** | 四大组件（Commands/Agents/MCP/Hooks） | 单一 API 调用模型 |
-| **本地执行** | 支持本地命令和脚本 | 仅支持远程 API 调用 |
-| **安全模型** | 细粒度权限 + 企业级控制 | OAuth 2.0 授权 |
-| **企业支持** | 原生支持私有市场和内网部署 | 主要面向公开 SaaS 服务 |
-| **工作流集成** | Hooks 支持自动化工作流 | 需要手动触发 |
-| **开发复杂度** | 中等（需理解多组件协作） | 较低（标准 REST API） |
+| 特性           | Claude Plugins                        | ChatGPT Plugins        |
+| -------------- | ------------------------------------- | ---------------------- |
+| **架构模型**   | 四大组件（Commands/Agents/MCP/Hooks） | 单一 API 调用模型      |
+| **本地执行**   | 支持本地命令和脚本                    | 仅支持远程 API 调用    |
+| **安全模型**   | 细粒度权限 + 企业级控制               | OAuth 2.0 授权         |
+| **企业支持**   | 原生支持私有市场和内网部署            | 主要面向公开 SaaS 服务 |
+| **工作流集成** | Hooks 支持自动化工作流                | 需要手动触发           |
+| **开发复杂度** | 中等（需理解多组件协作）              | 较低（标准 REST API）  |
 
 #### Claude Plugins vs VS Code Extensions
 
-| 维度 | Claude Plugins | VS Code Extensions |
-|------|---------------|-------------------|
-| **主要目的** | 扩展 AI 能力，连接外部系统 | 扩展编辑器功能，提升开发体验 |
-| **运行环境** | Claude Code 上下文 | VS Code 进程内 |
-| **API 访问** | 远程 API + 本地命令 | 本地文件系统 + VS Code API |
-| **分发方式** | Git 仓库 + Marketplace | 中心化 Marketplace |
-| **相似点** | 版本管理、权限声明、市场化分发 | 版本管理、权限声明、市场化分发 |
+| 维度         | Claude Plugins                 | VS Code Extensions             |
+| ------------ | ------------------------------ | ------------------------------ |
+| **主要目的** | 扩展 AI 能力，连接外部系统     | 扩展编辑器功能，提升开发体验   |
+| **运行环境** | Claude Code 上下文             | VS Code 进程内                 |
+| **API 访问** | 远程 API + 本地命令            | 本地文件系统 + VS Code API     |
+| **分发方式** | Git 仓库 + Marketplace         | 中心化 Marketplace             |
+| **相似点**   | 版本管理、权限声明、市场化分发 | 版本管理、权限声明、市场化分发 |
 
 ### 6.5 开发者生态展望
 
@@ -1310,11 +1346,13 @@ Do you want to proceed? [y/N]
 通过本文，我们系统地探讨了 Claude Code Plugins 的核心概念和工作原理。让我们回顾关键要点：
 
 **1. 问题与机遇**
+
 - 传统 AI 助手被困在"知识边界"内，无法访问企业私有系统
 - 开发者面临频繁的工具切换和信息孤岛
 - Plugins 机制打破了这些限制，重新定义了 AI 助手的能力边界
 
 **2. 四大核心组件**
+
 ```
 Slash Commands  → 快捷操作入口，用户主动触发
 Subagents       → 专业任务代理，复杂任务分工
@@ -1323,10 +1361,12 @@ Hooks           → 自动化触发器，工作流关键节点
 ```
 
 **3. 技术基石**
+
 - OpenAPI Specification 是 Claude "学会"使用工具的关键
 - 精确的 API 规范消除了歧义，实现了可靠的工具调用
 
 **4. 生态价值**
+
 - 插件市场促进了能力共享和知识沉淀
 - 公共市场 + 私有市场满足不同场景需求
 - 开发者社区正在快速成长
@@ -1336,14 +1376,17 @@ Hooks           → 自动化触发器，工作流关键节点
 Claude Code Plugins 代表的不仅是技术创新，更是开发范式的根本转变：
 
 **从"工具"到"平台"**：
+
 - 过去：Claude 是一个封闭的代码助手工具
 - 现在：Claude 是一个开放的 AI 开发平台
 
 **从"对话"到"执行"**：
+
 - 过去：AI 提供建议，人类执行操作
 - 现在：AI 直接执行任务，人类监督结果
 
 **从"通用"到"定制"**：
+
 - 过去：所有用户使用相同的 AI 能力
 - 现在：每个团队打造专属的 AI 工作环境
 
@@ -1354,6 +1397,7 @@ Claude Code Plugins 代表的不仅是技术创新，更是开发范式的根本
 **📘 第二篇：实战篇 - 从零构建第一个插件**
 
 内容预告：
+
 - 完整构建"提交前检查"插件（包含完整代码）
 - 目录结构设计与文件组织
 - 本地测试与调试技巧
@@ -1361,6 +1405,7 @@ Claude Code Plugins 代表的不仅是技术创新，更是开发范式的根本
 - 常见问题排查清单
 
 **🎯 你将学会**：
+
 - 如何将日常重复任务插件化
 - 编写 plugin.json、commands、hooks 的实战技巧
 - 如何测试和调试插件
@@ -1373,12 +1418,14 @@ Claude Code Plugins 代表的不仅是技术创新，更是开发范式的根本
 在你的日常工作中，哪个任务最适合成为你的**第一个插件**？
 
 判断标准：
+
 - ✅ 每天重复 3 次以上
 - ✅ 需要切换 2+ 个工具
 - ✅ 步骤相对固定和标准化
 - ✅ 能节省 10+ 分钟/次
 
 **示例场景：**
+
 - 代码提交前的自动检查（linter + test + 文档更新）
 - 生产环境日志快速查询和分析
 - JIRA 工单创建和状态同步
@@ -1386,6 +1433,7 @@ Claude Code Plugins 代表的不仅是技术创新，更是开发范式的根本
 - 部署前的安全扫描和合规检查
 
 **欢迎留言分享：**
+
 - 💬 你计划构建什么插件？
 - 🤔 遇到了什么技术疑问？
 - 💡 有什么独特的应用场景想法？
@@ -1411,8 +1459,6 @@ Claude Code Plugins 代表的不仅是技术创新，更是开发范式的根本
 
 **作者注**：本文是 Claude Code Plugins 系列的第一篇，后续将持续更新实战开发、企业应用、安全最佳实践等内容。如果你觉得有帮助，欢迎关注、点赞、转发！
 
-
-
 ---
 
-*声明：本文部分场景和案例为了说明概念进行了简化处理，实际应用中请根据具体情况调整。*
+_声明：本文部分场景和案例为了说明概念进行了简化处理，实际应用中请根据具体情况调整。_

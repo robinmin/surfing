@@ -1,7 +1,21 @@
 ---
-title: "More Than a Code Assistant: Building Your Custom Toolchain with Claude Code Plugins (1/4)"
-description: "This is the first article in the Claude Code Plugins series, focusing on core concepts and principles. Stay tuned for upcoming articles on hands-on development, enterprise applications, and future perspectives."
-tags: ["agi", "claude-code", "cli", "plugins", "mcp", "subagent", "agent", "slash-command", "hook", "AI Coding", "AI原生开发", "Vibe Coding"]
+title: 'More Than a Code Assistant: Building Your Custom Toolchain with Claude Code Plugins (1/4)'
+description: 'This is the first article in the Claude Code Plugins series, focusing on core concepts and principles. Stay tuned for upcoming articles on hands-on development, enterprise applications, and future perspectives.'
+tags:
+  [
+    'agi',
+    'claude-code',
+    'cli',
+    'plugins',
+    'mcp',
+    'subagent',
+    'agent',
+    'slash-command',
+    'hook',
+    'AI Coding',
+    'AI原生开发',
+    'Vibe Coding',
+  ]
 author: 'Robin Min'
 readingTime: 17
 wordCount: 3266
@@ -14,7 +28,6 @@ image: '@assets/images/claude_code_plugins.webp'
 ## Part One: Conceptual Foundation - Breaking the "Dimensional Barrier" of AI Assistants
 
 > **Series Introduction**: This is the first article in the Claude Code Plugins series, focusing on core concepts and working principles. Upcoming articles will cover hands-on development, enterprise applications, and future perspectives. Your feedback and suggestions are highly appreciated.
-
 
 ## **The Genesis of Claude Code Plugins**
 
@@ -49,6 +62,7 @@ As a senior developer, Zhang San's (fictional character) day often begins like t
 **10:40 AM - An Exhausted Summary**
 
 Zhang San finally pieces together a complete problem description, but by now he has:
+
 - Switched between **5 different tools**
 - Opened **12 browser tabs**
 - Copy-pasted **7 text segments**
@@ -75,13 +89,13 @@ They seem trapped in a transparent "black box"—able to see the information you
 
 Let's clearly see these limitations through a comparison table:
 
-| Dimension | Traditional AI Code Assistant | Ideal AI Work Partner |
-|------|-----------------|------------------|
-| **Knowledge Source** | Static training data (up to a certain point in time) | Real-time access to enterprise systems and dynamic data |
-| **Working Mode** | Observer, consultant role | Executor, deep collaborator |
-| **Capability Range** | Q&A, code generation, text summarization | Cross-system operations, automated task execution |
-| **System Boundaries** | Closed system, non-extensible | Open platform, infinitely extensible |
-| **Team Adaptation** | Generic configuration, difficult to customize | Deep customization, adapted to team processes |
+| Dimension             | Traditional AI Code Assistant                        | Ideal AI Work Partner                                   |
+| --------------------- | ---------------------------------------------------- | ------------------------------------------------------- |
+| **Knowledge Source**  | Static training data (up to a certain point in time) | Real-time access to enterprise systems and dynamic data |
+| **Working Mode**      | Observer, consultant role                            | Executor, deep collaborator                             |
+| **Capability Range**  | Q&A, code generation, text summarization             | Cross-system operations, automated task execution       |
+| **System Boundaries** | Closed system, non-extensible                        | Open platform, infinitely extensible                    |
+| **Team Adaptation**   | Generic configuration, difficult to customize        | Deep customization, adapted to team processes           |
 
 ### 2.3 What Does "Zhang San" Really Need?
 
@@ -117,12 +131,14 @@ This is a truly efficiency-enhancing AI assistant—no longer an information por
 Before the Plugins mechanism was introduced, developers faced configuration management challenges:
 
 **Four Major Functions Operating Independently**:
+
 - **Slash Commands**: Required separate configuration in the `.claude` directory
 - **Subagents**: Independent agent configuration files
 - **MCP Servers**: Scattered server configurations
 - **Hooks**: Individual hooks definitions
 
 **Problems This Created**:
+
 1. **Scattered Configuration**: Sharing a complete workflow required separately copying multiple configuration files
 2. **Difficult Version Management**: Component versions were independent, lacking unified dependency management
 3. **Team Collaboration Barriers**: Difficult to ensure team members used identical configurations
@@ -130,6 +146,7 @@ Before the Plugins mechanism was introduced, developers faced configuration mana
 
 **Plugins' Solution**:
 Package these four major components into a single plugin, achieving:
+
 - ✅ One-click installation of complete functionality
 - ✅ Unified version management
 - ✅ Convenient team sharing
@@ -160,6 +177,7 @@ Through Plugins, Claude Code achieves three major breakthroughs:
 Claude Code Plugins' design philosophy can be summarized in one phrase: **"Bring Your Own Tools"**.
 
 **Analogical Understanding**:
+
 - If **Claude** is a smartphone operating system (OS)
 - Then **Plugins** are the applications (Apps) you can install on it
 
@@ -183,17 +201,18 @@ A phone without Apps has very limited functionality, while a rich App ecosystem 
 
 The introduction of Plugins brings a fundamental paradigm shift. Let's clearly see this revolutionary difference through a table:
 
-| Feature | Traditional AI Code Assistant | Claude Code with Plugins |
-|------|-----------------|---------------------------|
-| **Knowledge Source** | Static, data cutoff at a certain time | Dynamic, real-time access to any API-retrieved data |
-| **Capability Range** | Q&A, code generation, text summarization | All aforementioned abilities + **Execute Operations** (query databases, create tickets, trigger deployments) |
-| **Working Mode** | Works as an independent "consultant" alongside | Works as an "intelligent agent" deeply embedded in workflows |
-| **System Boundaries** | Closed system, fixed functionality | Open system, infinitely extensible |
-| **Team Collaboration** | Personal tool, difficult to share configurations | Team sharing, unified workflows |
+| Feature                | Traditional AI Code Assistant                    | Claude Code with Plugins                                                                                     |
+| ---------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| **Knowledge Source**   | Static, data cutoff at a certain time            | Dynamic, real-time access to any API-retrieved data                                                          |
+| **Capability Range**   | Q&A, code generation, text summarization         | All aforementioned abilities + **Execute Operations** (query databases, create tickets, trigger deployments) |
+| **Working Mode**       | Works as an independent "consultant" alongside   | Works as an "intelligent agent" deeply embedded in workflows                                                 |
+| **System Boundaries**  | Closed system, fixed functionality               | Open system, infinitely extensible                                                                           |
+| **Team Collaboration** | Personal tool, difficult to share configurations | Team sharing, unified workflows                                                                              |
 
 **Illustrative Transformation**:
 
 **Traditional Mode**:
+
 ```
 Developer: "What's wrong with this code?"
 AI: "There might be a performance issue here, suggest optimizing the query statement."
@@ -201,6 +220,7 @@ Developer: [Manually modify code] → [Manually run tests] → [Manually commit]
 ```
 
 **Plugins Mode**:
+
 ```
 Developer: "Optimize this code's performance and run tests to verify."
 Claude Code:
@@ -253,6 +273,7 @@ graph TB
 ### 4.2 Slash Commands
 
 #### Definition
+
 Custom quick operations triggered by entering `/command`, similar to VS Code's Command Palette or Slack's slash commands.
 
 #### Typical Application Scenarios
@@ -306,6 +327,7 @@ You are helping review a Pull Request. Follow these steps:
 ```
 
 **Key Features**:
+
 - Uses natural language to describe task steps
 - Claude executes autonomously based on instructions
 - Can reference project documentation and configuration files
@@ -313,6 +335,7 @@ You are helping review a Pull Request. Follow these steps:
 ### 4.3 Subagents
 
 #### Definition
+
 Specialized AI agents optimized for specific domains or tasks, possessing independent system prompts and toolsets.
 
 #### Collaboration Model
@@ -396,6 +419,7 @@ Recommendation: Use environment variables or secret management services
 ```
 
 **Key Advantages**:
+
 - **Specialization**: Each subagent focuses on a specific domain, performing more effectively
 - **Parallelization**: Multiple subagents can work simultaneously, improving efficiency
 - **Reusability**: Excellent subagents can be shared within the team
@@ -415,6 +439,7 @@ Recommendation: Use environment variables or secret management services
 - **Flexible Deployment**: Supports Local (project-level), Project (team-level), User (user-level) three installation scopes
 
 **Current Status (October 2025)**:
+
 - Rich community MCP Servers available
 - Supports multiple integrations including Issue Trackers, Monitoring, Databases, Design Tools
 - Easy addition and configuration through CLI commands
@@ -452,6 +477,7 @@ A standardized protocol-based connector for external tools and data sources, ser
 ```
 
 **Dialogue Example**:
+
 ```
 Developer: "How many new users registered through the mini-program channel yesterday?"
 
@@ -483,6 +509,7 @@ Claude Code:
 ```
 
 **Dialogue Example**:
+
 ```
 Developer: "What's the status of the payment-service Pods?"
 
@@ -509,16 +536,17 @@ Suggestion: Need to check database connection configuration and memory limit set
 ### 4.5 Hooks
 
 #### Definition
+
 Actions automatically triggered at specific event points in workflows, similar to Git Hooks but more powerful.
 
 #### Key Trigger Points
 
-| Hook Type | Trigger Timing | Typical Use |
-|----------|---------|---------|
-| `PreToolUse` | Before tool invocation | Permission check, parameter validation |
-| `PostToolUse` | After tool invocation | Auto testing, code formatting |
-| `PrePrompt` | Before user input processing | Inject context, security filtering |
-| `PostResponse` | After Claude response generation | Audit logging, compliance checking |
+| Hook Type      | Trigger Timing                   | Typical Use                            |
+| -------------- | -------------------------------- | -------------------------------------- |
+| `PreToolUse`   | Before tool invocation           | Permission check, parameter validation |
+| `PostToolUse`  | After tool invocation            | Auto testing, code formatting          |
+| `PrePrompt`    | Before user input processing     | Inject context, security filtering     |
+| `PostResponse` | After Claude response generation | Audit logging, compliance checking     |
 
 #### Application Examples
 
@@ -546,6 +574,7 @@ Actions automatically triggered at specific event points in workflows, similar t
 ```
 
 **Workflow**:
+
 ```
 1. Claude modifies Python file (e.g., src/api/payment.py)
 2. [Trigger PostToolUse Hook]
@@ -576,6 +605,7 @@ Actions automatically triggered at specific event points in workflows, similar t
 ```
 
 **Audit Log Output**:
+
 ```json
 {
   "timestamp": "2025-10-10T14:32:15Z",
@@ -635,6 +665,7 @@ sequenceDiagram
 ```
 
 **Key Insights**:
+
 - **Slash Commands** serve as the entry point, coordinating the entire process
 - **Subagents** handle code generation for different tech stacks in parallel
 - **Hooks** automatically execute checks and tests at critical points
@@ -652,6 +683,7 @@ Having understood the four major components, a key question emerges: How does Cl
 Let's walk through a complete tool invocation process with a specific example:
 
 **User Input**:
+
 ```
 "Claude, check the status of ticket PROJ-123 on JIRA."
 ```
@@ -757,20 +789,20 @@ paths:
       parameters:
         # All input parameters
         - name: project_id
-          in: path              # URL path parameter
+          in: path # URL path parameter
           required: true
           description: The ID of the project
           schema:
             type: string
-            example: "42"
+            example: '42'
 
         - name: ref_name
-          in: query             # URL query parameter (?ref_name=main)
+          in: query # URL query parameter (?ref_name=main)
           required: false
           description: The name of a branch or tag
           schema:
             type: string
-            default: "main"
+            default: 'main'
 
         - name: per_page
           in: query
@@ -796,15 +828,15 @@ paths:
                     id:
                       type: string
                       description: Commit SHA
-                      example: "a3f9c2b1d5e8..."
+                      example: 'a3f9c2b1d5e8...'
                     message:
                       type: string
                       description: Commit message
-                      example: "feat: add payment integration"
+                      example: 'feat: add payment integration'
                     author_name:
                       type: string
                       description: Author of the commit
-                      example: "Alice Wang"
+                      example: 'Alice Wang'
                     created_at:
                       type: string
                       format: date-time
@@ -819,7 +851,7 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Project not found"
+                    example: 'Project not found'
 
         '401':
           description: Unauthorized - invalid or missing credentials
@@ -830,24 +862,29 @@ paths:
 Let's parse each part:
 
 **1. Info Block: Plugin Identity Information**
+
 ```yaml
 info:
   title: Internal GitLab Service Plugin
   description: A plugin for interacting with company's private GitLab repository
   version: 1.0.0
 ```
+
 - Provides basic plugin information
 - Claude uses this information to identify and describe the plugin
 
 **2. Servers Block: API Base Address**
+
 ```yaml
 servers:
   - url: https://gitlab.internal.company.com/api/v4
 ```
+
 - Defines the API's root URL
 - Supports multiple environments (development, testing, production)
 
 **3. Paths Block: Available Operations**
+
 ```yaml
 paths:
   /projects/{project_id}/repository/commits:
@@ -855,23 +892,27 @@ paths:
       summary: Get recent commits for a project
       operationId: getRecentCommits
 ```
+
 - Lists all available API endpoints
 - `operationId` is Claude's internal unique reference identifier
 
 **4. Parameters Block: Input Parameters**
+
 ```yaml
 parameters:
   - name: project_id
-    in: path              # Parameter location: path/query/header/cookie
-    required: true        # Whether required
+    in: path # Parameter location: path/query/header/cookie
+    required: true # Whether required
     schema:
-      type: string        # Data type
-      example: "42"       # Example value
+      type: string # Data type
+      example: '42' # Example value
 ```
+
 - Describes in detail each parameter's type, location, constraints
 - Claude constructs correct API calls based on this information
 
 **5. Responses Block: Return Data Structure**
+
 ```yaml
 responses:
   '200':
@@ -882,9 +923,10 @@ responses:
           type: array
           items:
             properties:
-              id: {type: string}
-              message: {type: string}
+              id: { type: string }
+              message: { type: string }
 ```
+
 - Defines response formats under different status codes
 - Claude uses this information to parse and understand returned data
 
@@ -908,6 +950,7 @@ Claude Internal Processing:
 ```
 
 **Claude's Response**:
+
 ```
 Last 5 commit records:
 
@@ -931,12 +974,12 @@ Last 5 commit records:
 
 **Comparing Other Approaches**:
 
-| Approach | Advantages | Disadvantages |
-|------|------|------|
-| **Natural Language Description** | Easy to understand | Vague, ambiguous, difficult for machines to parse |
-| **Code Comments** | Closely tied to implementation | Inconsistent format, lack of standardization |
-| **Custom DSL** | Flexible customization | High learning curve, limited tool support |
-| **OpenAPI** ✅ | Standardized, precise, tool-rich, widely adopted | Requires learning specification format |
+| Approach                         | Advantages                                       | Disadvantages                                     |
+| -------------------------------- | ------------------------------------------------ | ------------------------------------------------- |
+| **Natural Language Description** | Easy to understand                               | Vague, ambiguous, difficult for machines to parse |
+| **Code Comments**                | Closely tied to implementation                   | Inconsistent format, lack of standardization      |
+| **Custom DSL**                   | Flexible customization                           | High learning curve, limited tool support         |
+| **OpenAPI** ✅                   | Standardized, precise, tool-rich, widely adopted | Requires learning specification format            |
 
 **Unique Advantages of OpenAPI**:
 
@@ -959,11 +1002,13 @@ If every developer needed to build plugins for all tools from scratch, it would 
 #### Analogical Understanding
 
 **Plugin Marketplace** is like:
+
 - **VS Code Extension Marketplace**: Discover and install editor extensions
 - **Chrome Web Store**: Browse and install browser plugins
 - **npm Registry**: Find and use JavaScript packages
 
 But it's more flexible—you can:
+
 - Use official public marketplaces
 - Create enterprise private marketplaces
 - Connect to multiple marketplace sources simultaneously
@@ -995,14 +1040,14 @@ mindmap
 
 #### Comparative Analysis
 
-| Dimension | Public Marketplace | Private Marketplace |
-|------|-------------------|---------------------|
-| **Access Scope** | All developers globally | Enterprise internal employees |
-| **Plugin Types** | Generic SaaS services (GitHub, AWS, Slack) | Internal system integrations (enterprise databases, monitoring) |
-| **Security Model** | Community review + user ratings + Anthropic official review | Enterprise security team audit + fine-grained permissions |
-| **Release Process** | Submit → Review → Public release | Internal submission → Security scan → Internal release |
-| **Hosting Method** | Anthropic official hosting | Enterprise self-built (GitLab/GitHub Enterprise) |
-| **Typical Users** | Individual developers, small teams | Medium-large enterprises, organizations with compliance requirements |
+| Dimension           | Public Marketplace                                          | Private Marketplace                                                  |
+| ------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Access Scope**    | All developers globally                                     | Enterprise internal employees                                        |
+| **Plugin Types**    | Generic SaaS services (GitHub, AWS, Slack)                  | Internal system integrations (enterprise databases, monitoring)      |
+| **Security Model**  | Community review + user ratings + Anthropic official review | Enterprise security team audit + fine-grained permissions            |
+| **Release Process** | Submit → Review → Public release                            | Internal submission → Security scan → Internal release               |
+| **Hosting Method**  | Anthropic official hosting                                  | Enterprise self-built (GitLab/GitHub Enterprise)                     |
+| **Typical Users**   | Individual developers, small teams                          | Medium-large enterprises, organizations with compliance requirements |
 
 #### Public Marketplace Example
 
@@ -1141,7 +1186,7 @@ graph TB
 ```json
 {
   "name": "my-plugin",
-  "version": "2.3.1",
+  "version": "2.3.1"
   //          │ │ └─ Patch: backward-compatible bug fixes
   //          │ └─── Minor: backward-compatible new features
   //          └───── Major: breaking changes (not backward compatible)
@@ -1187,18 +1232,9 @@ graph TB
   "version": "1.0.0",
   "description": "Safe database query interface",
 
-  "permissions": [
-    "database:read:users",
-    "database:read:orders",
-    "network:internal:10.0.0.0/8"
-  ],
+  "permissions": ["database:read:users", "database:read:orders", "network:internal:10.0.0.0/8"],
 
-  "denied_permissions": [
-    "database:write",
-    "database:delete",
-    "filesystem:write",
-    "network:external"
-  ],
+  "denied_permissions": ["database:write", "database:delete", "filesystem:write", "network:external"],
 
   "security": {
     "data_retention": "none",
@@ -1245,24 +1281,24 @@ Do you want to proceed? [y/N]
 
 #### Claude Plugins vs ChatGPT Plugins
 
-| Feature | Claude Plugins | ChatGPT Plugins |
-|------|---------------|----------------|
-| **Architecture Model** | Four components (Commands/Agents/MCP/Hooks) | Single API call model |
-| **Local Execution** | Supports local commands and scripts | Only supports remote API calls |
-| **Security Model** | Fine-grained permissions + enterprise-level control | OAuth 2.0 authorization |
-| **Enterprise Support** | Native support for private marketplaces and intranet deployment | Mainly for public SaaS services |
-| **Workflow Integration** | Hooks support automated workflows | Requires manual triggering |
-| **Development Complexity** | Moderate (requires understanding multi-component collaboration) | Lower (standard REST API) |
+| Feature                    | Claude Plugins                                                  | ChatGPT Plugins                 |
+| -------------------------- | --------------------------------------------------------------- | ------------------------------- |
+| **Architecture Model**     | Four components (Commands/Agents/MCP/Hooks)                     | Single API call model           |
+| **Local Execution**        | Supports local commands and scripts                             | Only supports remote API calls  |
+| **Security Model**         | Fine-grained permissions + enterprise-level control             | OAuth 2.0 authorization         |
+| **Enterprise Support**     | Native support for private marketplaces and intranet deployment | Mainly for public SaaS services |
+| **Workflow Integration**   | Hooks support automated workflows                               | Requires manual triggering      |
+| **Development Complexity** | Moderate (requires understanding multi-component collaboration) | Lower (standard REST API)       |
 
 #### Claude Plugins vs VS Code Extensions
 
-| Dimension | Claude Plugins | VS Code Extensions |
-|------|---------------|-------------------|
-| **Primary Purpose** | Extend AI capabilities, connect external systems | Extend editor functionality, enhance dev experience |
-| **Runtime Environment** | Claude Code context | VS Code process |
-| **API Access** | Remote API + local commands | Local filesystem + VS Code API |
-| **Distribution Method** | Git repositories + Marketplace | Centralized Marketplace |
-| **Similarities** | Version management, permission declaration, marketplace distribution | Version management, permission declaration, marketplace distribution |
+| Dimension               | Claude Plugins                                                       | VS Code Extensions                                                   |
+| ----------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Primary Purpose**     | Extend AI capabilities, connect external systems                     | Extend editor functionality, enhance dev experience                  |
+| **Runtime Environment** | Claude Code context                                                  | VS Code process                                                      |
+| **API Access**          | Remote API + local commands                                          | Local filesystem + VS Code API                                       |
+| **Distribution Method** | Git repositories + Marketplace                                       | Centralized Marketplace                                              |
+| **Similarities**        | Version management, permission declaration, marketplace distribution | Version management, permission declaration, marketplace distribution |
 
 ### 6.5 Developer Ecosystem Outlook
 
@@ -1311,11 +1347,13 @@ Do you want to proceed? [y/N]
 Through this article, we've systematically explored the core concepts and working principles of Claude Code Plugins. Let's recap the key points:
 
 **1. Problems and Opportunities**
+
 - Traditional AI assistants are trapped within "knowledge boundaries," unable to access enterprise private systems
 - Developers face frequent tool switching and information silos
 - The Plugins mechanism breaks these limitations, redefining AI assistant capability boundaries
 
 **2. Four Core Components**
+
 ```
 Slash Commands  → Quick operation entry, user-triggered
 Subagents       → Specialized task agents, complex task division
@@ -1324,10 +1362,12 @@ Hooks           → Automation triggers, workflow critical points
 ```
 
 **3. Technical Foundation**
+
 - OpenAPI Specification is key to Claude "learning" how to use tools
 - Precise API specifications eliminate ambiguity, enabling reliable tool invocation
 
 **4. Ecosystem Value**
+
 - Plugin marketplaces promote capability sharing and knowledge accumulation
 - Public + private marketplaces meet different scenario needs
 - Developer community is rapidly growing
@@ -1337,14 +1377,17 @@ Hooks           → Automation triggers, workflow critical points
 Claude Code Plugins represents not just technical innovation, but a fundamental development paradigm transformation:
 
 **From "Tool" to "Platform"**:
+
 - Past: Claude was a closed code assistant tool
 - Present: Claude is an open AI development platform
 
 **From "Conversation" to "Execution"**:
+
 - Past: AI provides suggestions, humans execute operations
 - Present: AI directly executes tasks, humans supervise results
 
 **From "Generic" to "Customized"**:
+
 - Past: All users use identical AI capabilities
 - Present: Each team builds their own AI work environment
 
@@ -1355,6 +1398,7 @@ In the second article of this series, we'll enter the **hands-on development** p
 **📘 Part Two: Practical Guide - Building Your First Plugin from Scratch**
 
 Content Preview:
+
 - Complete construction of a "pre-commit check" plugin (with full code)
 - Directory structure design and file organization
 - Local testing and debugging techniques
@@ -1362,6 +1406,7 @@ Content Preview:
 - Common troubleshooting checklist
 
 **🎯 You Will Learn**:
+
 - How to pluginize daily repetitive tasks
 - Practical tips for writing plugin.json, commands, hooks
 - How to test and debug plugins
@@ -1374,12 +1419,14 @@ Content Preview:
 In your daily work, which task is most suitable to become your **first plugin**?
 
 Evaluation Criteria:
+
 - ✅ Repeated 3+ times daily
 - ✅ Requires switching 2+ tools
 - ✅ Steps relatively fixed and standardized
 - ✅ Can save 10+ minutes/occurrence
 
 **Example Scenarios:**
+
 - Pre-commit automated checks (linter + test + documentation updates)
 - Production environment log quick query and analysis
 - JIRA ticket creation and status synchronization
@@ -1387,6 +1434,7 @@ Evaluation Criteria:
 - Pre-deployment security scanning and compliance checks
 
 **Welcome to Share in Comments:**
+
 - 💬 What plugin are you planning to build?
 - 🤔 What technical questions have you encountered?
 - 💡 What unique application scenario ideas do you have?
@@ -1412,8 +1460,6 @@ Let's exchange ideas in the comments and explore the infinite possibilities of A
 
 **Author's Note**: This is the first article in the Claude Code Plugins series. Upcoming updates will cover hands-on development, enterprise applications, and security best practices. If you found this helpful, please follow, like, and share!
 
-
-
 ---
 
-*Disclaimer: Some scenarios and examples in this article have been simplified for conceptual clarity. Please adjust according to specific situations in actual applications.*
+_Disclaimer: Some scenarios and examples in this article have been simplified for conceptual clarity. Please adjust according to specific situations in actual applications._

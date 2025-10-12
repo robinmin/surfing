@@ -78,7 +78,9 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     sitemap(),
-    mdx(),
+    mdx({
+      extendMarkdownConfig: true,
+    }),
     icon({
       include: {
         tabler: ['*'],
