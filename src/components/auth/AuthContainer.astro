@@ -4,7 +4,13 @@ import { Icon } from 'astro-icon/components';
 import GoogleOneTap from '~/components/auth/GoogleOneTap.astro';
 import AppleSignIn from '~/components/auth/AppleSignIn.astro';
 import AuthLoading from '~/components/auth/AuthLoading.astro';
-import { getEnabledAuthMethods } from '~/lib/config';
+
+// Fallback values for Astro components (these get updated at runtime)
+const defaultAuthMethods = {
+  google: true,
+  apple: false,
+  showDivider: false,
+};
 
 /**
  * Component props interface
@@ -66,8 +72,8 @@ const getVariantClasses = (variant: string) => {
 
 const variantClasses = getVariantClasses(variant);
 
-// Get enabled authentication methods
-const enabledAuthMethods = getEnabledAuthMethods();
+// Get enabled authentication methods - use fallback for SSR, runtime will handle async loading
+const enabledAuthMethods = defaultAuthMethods;
 
 // Only render the container if there are authentication methods enabled
 const shouldRenderContainer = enabledAuthMethods.google || enabledAuthMethods.apple;
