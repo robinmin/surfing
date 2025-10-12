@@ -11,6 +11,10 @@ export type Config = {
   };
   ui?: unknown;
   analytics?: unknown;
+  auth?: AuthConfig;
+  sentry?: SentryConfig;
+  build?: BuildConfig;
+  cookieConsent?: CookieConsentConfig;
 };
 
 export interface SiteConfig {
@@ -80,6 +84,31 @@ export interface AnalyticsConfig {
 
 export interface UIConfig {
   theme: string;
+}
+
+export interface AuthConfig {
+  google_one_tap: {
+    enabled: boolean;
+  };
+  apple_sign_in: {
+    enabled: boolean;
+  };
+  token_cache_duration: number;
+}
+
+export interface SentryConfig {
+  enabled: boolean;
+  debug: boolean;
+  project: string;
+  org: string;
+}
+
+export interface BuildConfig {
+  incrementalContentCache: boolean;
+}
+
+export interface CookieConsentConfig {
+  enabled: boolean;
 }
 
 const DEFAULT_SITE_NAME = 'Website';
@@ -193,6 +222,47 @@ const getAnalytics = (config: Config) => {
   return merge({}, _default, config?.analytics ?? {}) as AnalyticsConfig;
 };
 
+const getAuth = (config: Config) => {
+  const _default = {
+    google_one_tap: {
+      enabled: true,
+    },
+    apple_sign_in: {
+      enabled: false,
+    },
+    token_cache_duration: 900, // 15 minutes in seconds
+  };
+
+  return merge({}, _default, config?.auth ?? {}) as AuthConfig;
+};
+
+const getSentry = (config: Config) => {
+  const _default = {
+    enabled: false,
+    debug: false,
+    project: '',
+    org: '',
+  };
+
+  return merge({}, _default, config?.sentry ?? {}) as SentryConfig;
+};
+
+const getBuild = (config: Config) => {
+  const _default = {
+    incrementalContentCache: true,
+  };
+
+  return merge({}, _default, config?.build ?? {}) as BuildConfig;
+};
+
+const getCookieConsent = (config: Config) => {
+  const _default = {
+    enabled: true,
+  };
+
+  return merge({}, _default, config?.cookieConsent ?? {}) as CookieConsentConfig;
+};
+
 export default (config: Config) => ({
   SITE: getSite(config),
   I18N: getI18N(config),
@@ -200,4 +270,8 @@ export default (config: Config) => ({
   APP_BLOG: getAppBlog(config),
   UI: getUI(config),
   ANALYTICS: getAnalytics(config),
+  AUTH: getAuth(config),
+  SENTRY: getSentry(config),
+  BUILD: getBuild(config),
+  COOKIE_CONSENT: getCookieConsent(config),
 });
