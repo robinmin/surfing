@@ -8,6 +8,7 @@
 import { supabase } from './supabase';
 import { recordFailedAttempt, clearFailedAttempts, isRateLimited } from './security';
 import { handleAuthError } from './error-handler';
+import { getEnabledAuthMethods } from './config';
 
 /**
  * Google One Tap configuration interface
@@ -153,9 +154,13 @@ export const getGoogleConfig = async (): Promise<GoogleOneTapConfig> => {
     sessionStorage.setItem('google_auth_nonce', nonce);
   }
 
+  // Check if Google is the only enabled auth method
+  const authMethods = getEnabledAuthMethods();
+  const isOnlyAuthMethod = authMethods.google && !authMethods.apple;
+
   return {
     client_id: clientId,
-    auto_select: false,
+    auto_select: isOnlyAuthMethod, // Auto-trigger if Google is the only enabled method
     cancel_on_tap_outside: false,
     context: 'signin',
     nonce: hashedNonce, // Send hashed nonce to Google
@@ -273,6 +278,10 @@ const initializeGoogleOneTapLegacy = (
   onError?: (error: Error) => void
 ): void => {
   try {
+    // Check if Google is the only enabled auth method
+    const authMethods = getEnabledAuthMethods();
+    const isOnlyAuthMethod = authMethods.google && !authMethods.apple;
+
     // Initialize Google One Tap with FedCM disabled to prevent abort errors
     window.google?.accounts?.id?.initialize({
       ...config,
@@ -281,16 +290,25 @@ const initializeGoogleOneTapLegacy = (
         // Handle native callback for mobile devices
         onSuccess(response);
       },
-      // Disable FedCM auto-prompting to prevent abort errors
-      auto_select: false,
+      // Use auto_select from config (true if Google is the only auth method)
+      auto_select: config.auto_select,
       cancel_on_tap_outside: true,
       // Add configuration to prevent FedCM errors
       ux_mode: 'popup',
     });
 
-    // Don't automatically show prompt to prevent FedCM errors
-    // Let user click the sign-in button instead
-    console.debug('Google One Tap initialized successfully (prompt disabled to prevent FedCM errors)');
+    // Automatically show prompt if Google is the only enabled auth method
+    if (isOnlyAuthMethod) {
+      window.google?.accounts?.id?.prompt((notification: any) => {
+        // Handle notification from prompt
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          console.debug('Google One Tap prompt not displayed:', notification.getNotDisplayedReason());
+        }
+      });
+      console.debug('Google One Tap initialized with auto-trigger (only auth method enabled)');
+    } else {
+      console.debug('Google One Tap initialized successfully (manual trigger - multiple auth methods)');
+    }
 
     // Log FedCM migration notice only in development
     if (console && console.info && typeof window !== 'undefined' && window.location.hostname === 'localhost') {
