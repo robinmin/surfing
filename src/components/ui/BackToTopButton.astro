@@ -143,4 +143,11 @@ const { class: className = '' } = Astro.props;
       height: 1.25rem;
     }
   }
+
+  /* Print styles */
+  @media print {
+    #back-to-top {
+      display: none !important;
+    }
+  }
 </style>
