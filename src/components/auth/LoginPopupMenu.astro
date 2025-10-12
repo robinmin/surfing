@@ -5,7 +5,6 @@
  * Displays above the avatar button with provider icons + text
  */
 import { Icon } from 'astro-icon/components';
-import { getEnabledAuthMethods } from '~/lib/config';
 import { t, getCurrentLanguage, type SupportedLanguage } from '~/i18n';
 
 export interface Props {
@@ -13,7 +12,10 @@ export interface Props {
 }
 
 const { className = '' } = Astro.props;
-const { google, apple } = getEnabledAuthMethods();
+
+// Fallback auth methods for SSR - runtime will handle async loading properly
+const fallbackAuthMethods = { google: true, apple: false };
+const { google, apple } = fallbackAuthMethods;
 const lang = (Astro.currentLocale || getCurrentLanguage()) as SupportedLanguage;
 ---
 
