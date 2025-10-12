@@ -173,7 +173,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
           {
             showAuth && (
               <div class="hidden md:flex md:items-center">
-                <AuthAvatar size="md" />
+                <AuthAvatar size="md" isPrimary={true} />
               </div>
             )
           }
@@ -205,3 +205,37 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
     </div>
   </div>
 </header>
+
+<style>
+  /* Print styles - hide navigation and controls but keep logo */
+  @media print {
+    header {
+      /* Keep header but only show logo */
+    }
+
+    /* Hide navigation menu */
+    header nav {
+      display: none !important;
+    }
+
+    /* Hide right side controls (theme toggle, language selector, avatar, buttons) */
+    header > div > div:last-child {
+      display: none !important;
+    }
+
+    /* Hide mobile menu toggle */
+    header .toggle-menu {
+      display: none !important;
+    }
+
+    /* Ensure header with logo is properly positioned */
+    header > div > div:first-child {
+      margin-right: 0 !important;
+    }
+
+    /* Remove any spacing that was meant for navigation */
+    header > div {
+      justify-content: flex-start !important;
+    }
+  }
+</style>
