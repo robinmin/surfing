@@ -1,8 +1,13 @@
 import * as Sentry from '@sentry/astro';
-import { getSentryConfig } from './src/lib/config';
 
-// Get Sentry configuration
-const sentryConfig = getSentryConfig();
+// Fallback Sentry configuration for SSR - runtime will handle async loading properly
+const fallbackSentryConfig = {
+  enabled: true,
+  debug: false,
+  project: import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
+  org: import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
+};
+const sentryConfig = fallbackSentryConfig;
 const sentryDsn = import.meta.env.PUBLIC_SENTRY_DSN || '';
 const environment = import.meta.env.MODE || 'production';
 const isProduction = environment === 'production';
