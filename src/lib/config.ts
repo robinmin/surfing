@@ -1,5 +1,8 @@
 /**
  * Configuration loader for application settings
+ *
+ * This module now loads configuration from the virtual module provided by Astro integration
+ * which reads from config.yaml and makes it available to client-side code.
  */
 
 export interface SentryConfig {
@@ -10,49 +13,54 @@ export interface SentryConfig {
 }
 
 export interface AuthConfig {
-  auth: {
-    google_one_tap: {
-      enabled: boolean;
-    };
-    apple_sign_in: {
-      enabled: boolean;
-    };
-    token_cache_duration: number;
+  google_one_tap: {
+    enabled: boolean;
   };
+  apple_sign_in: {
+    enabled: boolean;
+  };
+  token_cache_duration: number;
 }
 
-// Configuration loaded from environment variables set by Astro build process
-const AUTH_CONFIG: AuthConfig['auth'] = {
-  google_one_tap: {
-    enabled: true,
-  },
-  apple_sign_in: {
-    enabled: false,
-  },
-  token_cache_duration: 900, // 15 minutes in seconds
-};
-
-// Sentry configuration from environment variables
-const SENTRY_CONFIG: SentryConfig = {
-  enabled: true,
-  debug: false,
-  project: import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
-  org: import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
-};
+// Cache for configuration to avoid repeated imports
+let authConfigCache: AuthConfig | null = null;
+let sentryConfigCache: SentryConfig | null = null;
 
 /**
- * Get authentication configuration
+ * Get authentication configuration from config.yaml via virtual module
  */
-export const getAuthConfig = (): AuthConfig['auth'] => {
-  return AUTH_CONFIG;
+export const getAuthConfig = async (): Promise<AuthConfig> => {
+  if (authConfigCache) {
+    return authConfigCache;
+  }
+
+  try {
+    const configModule = (await import('astrowind:config')) as any;
+    const AUTH = configModule.AUTH || {};
+    authConfigCache = {
+      google_one_tap: { enabled: true, ...AUTH.google_one_tap },
+      apple_sign_in: { enabled: false, ...AUTH.apple_sign_in },
+      token_cache_duration: AUTH.token_cache_duration || 900,
+    };
+    return authConfigCache;
+  } catch (error) {
+    console.warn('Failed to load auth config from virtual module, using defaults:', error);
+    const fallback: AuthConfig = {
+      google_one_tap: { enabled: true },
+      apple_sign_in: { enabled: false },
+      token_cache_duration: 900,
+    };
+    authConfigCache = fallback;
+    return fallback;
+  }
 };
 
 /**
  * Check if Google One Tap is enabled
  */
-export const isGoogleOneTapEnabled = (): boolean => {
+export const isGoogleOneTapEnabled = async (): Promise<boolean> => {
   try {
-    const config = getAuthConfig();
+    const config = await getAuthConfig();
     const clientId = import.meta.env?.PUBLIC_GOOGLE_CLIENT_ID || '';
 
     // Must have client ID configured
@@ -94,9 +102,9 @@ export const isGoogleOneTapEnabled = (): boolean => {
 /**
  * Check if Apple Sign In is enabled
  */
-export const isAppleSignInEnabled = (): boolean => {
+export const isAppleSignInEnabled = async (): Promise<boolean> => {
   try {
-    const config = getAuthConfig();
+    const config = await getAuthConfig();
     const hasServicesId = (import.meta.env?.PUBLIC_APPLE_SERVICES_ID || '') !== '';
     const hasRedirectUri = (import.meta.env?.PUBLIC_APPLE_REDIRECT_URI || '') !== '';
     return config.apple_sign_in.enabled && hasServicesId && hasRedirectUri;
@@ -109,13 +117,13 @@ export const isAppleSignInEnabled = (): boolean => {
 /**
  * Get enabled authentication methods
  */
-export const getEnabledAuthMethods = (): {
+export const getEnabledAuthMethods = async (): Promise<{
   google: boolean;
   apple: boolean;
   showDivider: boolean;
-} => {
-  const googleEnabled = isGoogleOneTapEnabled();
-  const appleEnabled = isAppleSignInEnabled();
+}> => {
+  const googleEnabled = await isGoogleOneTapEnabled();
+  const appleEnabled = await isAppleSignInEnabled();
 
   return {
     google: googleEnabled,
@@ -128,13 +136,38 @@ export const getEnabledAuthMethods = (): {
  * Get token cache duration in seconds
  * @returns Cache duration in seconds (default: 900 = 15 minutes)
  */
-export const getTokenCacheDuration = (): number => {
-  return AUTH_CONFIG.token_cache_duration;
+export const getTokenCacheDuration = async (): Promise<number> => {
+  const config = await getAuthConfig();
+  return config.token_cache_duration;
 };
 
 /**
  * Get Sentry configuration
  */
-export const getSentryConfig = (): SentryConfig => {
-  return SENTRY_CONFIG;
+export const getSentryConfig = async (): Promise<SentryConfig> => {
+  if (sentryConfigCache) {
+    return sentryConfigCache;
+  }
+
+  try {
+    const configModule = (await import('astrowind:config')) as any;
+    const SENTRY = configModule.SENTRY || {};
+    sentryConfigCache = {
+      enabled: SENTRY.enabled !== undefined ? SENTRY.enabled : true,
+      debug: SENTRY.debug !== undefined ? SENTRY.debug : false,
+      project: SENTRY.project || import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
+      org: SENTRY.org || import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
+    };
+    return sentryConfigCache;
+  } catch (error) {
+    console.warn('Failed to load Sentry config from virtual module, using defaults:', error);
+    const fallback: SentryConfig = {
+      enabled: true,
+      debug: false,
+      project: import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
+      org: import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
+    };
+    sentryConfigCache = fallback;
+    return fallback;
+  }
 };
