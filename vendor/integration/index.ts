@@ -52,6 +52,22 @@ export default ({ config: _themeConfig = 'src/config.yaml' } = {}): AstroIntegra
                     export const APP_BLOG = ${JSON.stringify(APP_BLOG)};
                     export const UI = ${JSON.stringify(UI)};
                     export const ANALYTICS = ${JSON.stringify(ANALYTICS)};
+                    export const AUTH = ${JSON.stringify(rawJsonConfig.auth || {})};
+                    export const SENTRY = ${JSON.stringify(rawJsonConfig.sentry || {})};
+                    export const BUILD = ${JSON.stringify(rawJsonConfig.build || {})};
+                    export const COOKIE_CONSENT = ${JSON.stringify(rawJsonConfig.cookieConsent || {})};
+                    export default {
+                      SITE,
+                      I18N,
+                      METADATA,
+                      APP_BLOG,
+                      UI,
+                      ANALYTICS,
+                      AUTH,
+                      SENTRY,
+                      BUILD,
+                      COOKIE_CONSENT
+                    };
                     `;
                   }
                 },
