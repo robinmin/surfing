@@ -1,15 +1,27 @@
 ---
-title: "不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端"
-description: "> **系列回顾**：前两篇我们掌握了 Plugins 的核心概念和实战开发技能。本篇将深入企业级应用场景，探讨如何在保障安全的前提下，将 Plugins 融入真实的研发工作流。"
-tags: ["javascript", "typescript", "angular", "python", "ai"]
-readingTime: 11
+title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端(3/4)'
+description: '> **系列回顾**：前两篇我们掌握了 Plugins 的核心概念和实战开发技能。本篇将深入企业级应用场景，探讨如何在保障安全的前提下，将 Plugins 融入真实的研发工作流。'
+tags:
+  [
+    'agi',
+    'claude-code',
+    'cli',
+    'plugins',
+    'mcp',
+    'subagent',
+    'agent',
+    'slash-command',
+    'hook',
+    'AI Coding',
+    'AI原生开发',
+    'Vibe Coding',
+  ]
+author: 'Robin Min'
 wordCount: 2049
 publishDate: 2025-10-13
-draft: false
+draft: true
 featured: false
 ---
-
-# 不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端
 
 ## 第三篇：应用篇 - 企业级场景与安全实践
 

@@ -1,15 +1,27 @@
 ---
-title: "不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端"
-description: "> **系列回顾**：在第一篇中，我们探讨了 Claude Code Plugins 的核心概念、四大组件和工作原理。本篇将进入实战阶段，手把手带你构建一个真实可用的插件。"
-tags: ["javascript", "typescript", "react", "angular", "css"]
-readingTime: 23
+title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端(2/4)'
+description: '> **系列回顾**：在第一篇中，我们探讨了 Claude Code Plugins 的核心概念、四大组件和工作原理。本篇将进入实战阶段，手把手带你构建一个真实可用的插件。'
+tags:
+  [
+    'agi',
+    'claude-code',
+    'cli',
+    'plugins',
+    'mcp',
+    'subagent',
+    'agent',
+    'slash-command',
+    'hook',
+    'AI Coding',
+    'AI原生开发',
+    'Vibe Coding',
+  ]
+author: 'Robin Min'
 wordCount: 4473
 publishDate: 2025-10-13
-draft: false
+draft: true
 featured: false
 ---
-
-# 不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端
 
 ## 第二篇：实战篇 - 从零构建第一个插件
 
@@ -149,8 +161,8 @@ pre-commit-checker/
 graph TD
     A[开发者修改代码] --> B{如何触发?}
 
-    B -->|手动| C[输入 /pre-commit]
-    B -->|自动| D[执行 git commit]
+    B -->|manual| C[输入 /pre-commit]
+    B -->|auto| D[执行 git commit]
 
     C --> E[调用 pre-commit.md]
     D --> F[触发 PreToolUse Hook]
@@ -159,16 +171,16 @@ graph TD
     F --> G
 
     G --> H{ESLint 通过?}
-    H -->|否| I[显示错误<br/>建议 /fix-lint]
-    H -->|是| J[运行 commit_msg_validator.py]
+    H -->|no| I[显示错误<br/>建议 /fix-lint]
+    H -->|yes| J[运行 commit_msg_validator.py]
 
     J --> K{消息格式正确?}
-    K -->|否| L[提示格式要求<br/>给出示例]
-    K -->|是| M[运行 doc_sync_checker.sh]
+    K -->|no| L[提示格式要求<br/>给出示例]
+    K -->|yes| M[运行 doc_sync_checker.sh]
 
     M --> N{文档已更新?}
-    N -->|否| O[警告需更新文档<br/>列出受影响文件]
-    N -->|是| P[✅ 所有检查通过]
+    N -->|no| O[警告需更新文档<br/>列出受影响文件]
+    N -->|yes| P[✅ 所有检查通过]
 
     I --> Q[阻止提交]
     L --> Q
@@ -1245,20 +1257,20 @@ bash scripts/doc_sync_checker.sh
 graph TD
     A[插件异常] --> B{插件是否安装?}
 
-    B -->|否| C[/plugin install]
-    B -->|是| D{命令是否存在?}
+    B -->|no| C[/plugin install]
+    B -->|yes| D{命令是否存在?}
 
-    D -->|否| E[检查 plugin.json<br/>commands 路径配置]
-    D -->|是| F{命令能否执行?}
+    D -->|no| E[检查 plugin.json<br/>commands 路径配置]
+    D -->|yes| F{命令能否执行?}
 
-    F -->|否| G[检查脚本权限<br/>chmod +x scripts/*]
-    F -->|是| H{Hook 是否触发?}
+    F -->|no| G[检查脚本权限<br/>chmod +x scripts/*]
+    F -->|yes| H{Hook 是否触发?}
 
-    H -->|否| I[简化 matcher 测试<br/>"git commit"]
-    H -->|是| J{脚本执行失败?}
+    H -->|no| I[简化 matcher 测试<br/>"git commit"]
+    H -->|yes| J{脚本执行失败?}
 
-    J -->|是| K[查看日志<br/>/plugin logs]
-    J -->|否| L[检查退出码<br/>和输出格式]
+    J -->|yes| K[查看日志<br/>/plugin logs]
+    J -->|no| L[检查退出码<br/>和输出格式]
 
     E --> M[修复配置]
     G --> M

@@ -1,15 +1,27 @@
 ---
-title: "不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端"
-description: "> **系列回顾**：前三篇我们系统学习了 Plugins 的概念、实战开发和企业应用。本篇将展望未来，探讨 AI 原生开发时代的技术演进和开发者机遇。"
-tags: ["javascript", "typescript", "angular", "python", "ai"]
-readingTime: 14
+title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端(4/4)'
+description: '> **系列回顾**：前三篇我们系统学习了 Plugins 的概念、实战开发和企业应用。本篇将展望未来，探讨 AI 原生开发时代的技术演进和开发者机遇。'
+tags:
+  [
+    'agi',
+    'claude-code',
+    'cli',
+    'plugins',
+    'mcp',
+    'subagent',
+    'agent',
+    'slash-command',
+    'hook',
+    'AI Coding',
+    'AI原生开发',
+    'Vibe Coding',
+  ]
+author: 'Robin Min'
 wordCount: 2756
 publishDate: 2025-10-13
-draft: false
+draft: true
 featured: false
 ---
-
-# 不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端
 
 ## 第四篇：展望篇 - AI 原生开发的未来
 
