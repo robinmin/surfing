@@ -1,20 +1,60 @@
 ---
-title: 'Super Color Generator'
-description: 'Interactive color gradient generator with live preview and CSS export. Create smooth color transitions with customizable segments.'
+title: 'Advanced Color Gradient Generator & Palette Creator - Free Online Tool'
+description: 'Professional color gradient generator and palette creator with RGB, HSL, HSV, CMYK support. Create stunning gradients, color harmonies, and data visualization palettes with instant CSS export. Perfect for designers and developers.'
 image: '@assets/images/gradient-gen-logo-og.png'
 publishDate: 2025-10-05
-tags: ['showcase', 'tools', 'web', 'programming']
-readingTime: 1
-wordCount: 16
+tags: ['color-generator', 'gradient-tool', 'palette-creator', 'web-design', 'css-tools', 'color-theory', 'ui-design', 'frontend', 'design-tools', 'color-palettes']
+readingTime: 3
+wordCount: 485
 draft: false
-featured: false
+featured: true
 metadata:
-  title: 'Color Gradient Generator'
-  description: 'Free online color gradient generator with live preview. Create smooth color transitions, export to CSS, and customize gradient segments. Perfect for web designers and developers.'
+  title: 'Free Color Gradient Generator & Palette Creator | RGB HSL HSV CMYK'
+  description: 'Create beautiful color gradients and palettes with our advanced generator. Supports RGB, HSL, HSV, CMYK, color harmonies, and data visualization palettes. Export to CSS instantly. Free online tool for web designers and developers.'
+  keywords: 'color gradient generator, palette creator, RGB HSL HSV CMYK, color harmonies, data visualization palettes, CSS gradient generator, online color tool, web design colors, frontend color palette, color scheme generator'
   openGraph:
     siteName: 'Surfing'
+    type: 'website'
+    locale: 'en_US'
+    url: 'https://surfing.dev/showcase/en/color-gradient-gen'
   twitter:
     cardType: 'summary_large_image'
+    site: '@surfing_dev'
+    creator: '@surfing_dev'
+  robots: 'index, follow'
+  canonical: 'https://surfing.dev/showcase/en/color-gradient-gen'
+  author: 'Surfing Team'
+  category: 'Design Tools'
+  language: 'en'
+  alternate:
+    - hreflang: 'en'
+      href: 'https://surfing.dev/showcase/en/color-gradient-gen'
+  schema:
+    '@context': 'https://schema.org'
+    '@type': 'WebApplication'
+    name: 'Advanced Color Gradient Generator'
+    description: 'Professional color gradient generator and palette creator with multiple color modes'
+    url: 'https://surfing.dev/showcase/en/color-gradient-gen'
+    applicationCategory: 'DesignApplication'
+    operatingSystem: 'Any'
+    offers:
+      '@type': 'Offer'
+      price: '0'
+      priceCurrency: 'USD'
+    creator:
+      '@type': 'Organization'
+      name: 'Surfing'
+    featureList:
+      - 'RGB gradient generation'
+      - 'HSL color palettes'
+      - 'HSV color schemes'
+      - 'CMYK print-ready colors'
+      - 'Color harmonies (analogous, complementary, triadic, tetradic)'
+      - 'Data visualization palettes (sequential, diverging, qualitative)'
+      - 'Live preview'
+      - 'CSS export'
+      - 'Custom class prefixes'
+      - 'Color blindness simulation'
 customCSS: |
   * {
       margin: 0;
