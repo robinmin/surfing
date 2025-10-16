@@ -65,7 +65,8 @@
       "Bash(mdls:*)",
       "mcp__Deep_Graph_MCP__folder-tree-structure",
       "mcp__morphllm-fast-apply__edit_file",
-      "mcp__playwright__browser_type"
+      "mcp__playwright__browser_type",
+      "mcp__ultra-mcp__ultra-review"
     ],
     "deny": [],
     "ask": []
