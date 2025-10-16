@@ -1,5 +1,5 @@
 ---
-title: 'Color Gradient Generator'
+title: 'Super Color Generator'
 description: 'Interactive color gradient generator with live preview and CSS export. Create smooth color transitions with customizable segments.'
 image: '@assets/images/gradient-gen-logo-og.png'
 publishDate: 2025-10-05
@@ -54,9 +54,6 @@ customCSS: |
   }
 
   .tab-container {
-      background: #ffffff;
-      border-radius: 18px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
       padding: 24px 18px;
   }
 
@@ -77,7 +74,6 @@ customCSS: |
       display: flex;
       flex-direction: column;
       gap: 6px;
-      align-self: start;
   }
 
   .prefix-control label {
@@ -86,21 +82,9 @@ customCSS: |
       font-weight: 600;
   }
 
-  .prefix-control input {
-      width: 100%;
-      max-width: 200px;
-      padding: 8px 10px;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 13px;
+  .prefix-control .field-input {
+      max-width: 220px;
       font-family: 'Courier New', monospace;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .prefix-control input:focus {
-      border-color: #4338ca;
-      box-shadow: 0 0 0 2px rgba(67, 56, 202, 0.2);
-      outline: none;
   }
 
   .tab-button {
@@ -136,44 +120,15 @@ customCSS: |
       display: block;
   }
 
-  .controls {
-      background: #f8f9fa;
-      padding: 18px;
-      border-radius: 12px;
+  .controls.grid-auto {
       margin-bottom: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-  }
-
-  .rgb-controls,
-  .hsv-controls,
-  .cmyk-controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      align-items: end;
-  }
-
-  .hsl-controls,
-  .harmony-controls,
-  .data-viz-controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      align-items: end;
-  }
-
-  .controls .generate-btn {
-      justify-self: start;
-  }
-
-  .controls.compact-grid,
-  .controls.tone-controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      align-items: end;
-      gap: 18px;
+      display: flex !important;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: flex-start;
+      align-items: flex-end;
+      align-content: flex-start;
+      padding: 24px;
   }
 
   .controls.tone-controls .preview-control,
@@ -182,7 +137,7 @@ customCSS: |
   .controls.tone-controls .select-control {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
   }
 
   .color-input-group,
@@ -191,7 +146,48 @@ customCSS: |
   .preview-control,
   .cmyk-control,
   .select-control {
-      min-width: 220px;
+      min-width: 280px;
+      flex: 0 0 auto;
+      align-items: flex-start;
+  }
+
+  @media (min-width: 768px) {
+      .color-input-group,
+      .segments-control,
+      .slider-control,
+      .preview-control,
+      .cmyk-control,
+      .select-control {
+          flex: 0 0 auto;
+      }
+  }
+
+  @media (max-width: 767px) {
+      .color-input-group,
+      .segments-control,
+      .slider-control,
+      .preview-control,
+      .cmyk-control,
+      .select-control {
+          min-width: 100%;
+          flex: 1 1 100%;
+      }
+  }
+
+  .segments-control {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+  }
+
+  .prefix-control {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+  }
+
+  .prefix-control .field-input {
+      width: 100%;
   }
 
   .color-input-group label,
@@ -203,26 +199,58 @@ customCSS: |
       font-size: 13px;
       color: #374151;
       font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      text-align: left;
   }
 
   .color-picker-row,
   .slider-row {
       display: grid;
-      grid-template-columns: minmax(150px, 1fr) auto;
       gap: 12px;
       align-items: center;
   }
 
   .color-picker-row {
-      grid-template-columns: auto minmax(160px, 1fr);
+      grid-template-columns: auto 1fr;
   }
 
   .color-picker-row.with-rgb {
-      grid-template-columns: auto minmax(140px, 1fr) minmax(140px, 1fr);
+      grid-template-columns: auto 1fr 1fr;
   }
 
   .color-picker-row.with-rgb.no-hex {
-      grid-template-columns: auto minmax(160px, 1fr);
+      grid-template-columns: auto 1fr;
+  }
+
+  .slider-row {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+  }
+
+  .slider-control {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+  }
+
+  .slider-control .slider-row {
+      display: grid;
+      grid-template-columns: 1fr 65px;
+      gap: 12px;
+      align-items: center;
+  }
+
+  .preview-control .color-picker-row {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      align-items: center;
+  }
+
+  .preview-control .hex-input,
+  .preview-control .rgb-input {
+      display: block;
   }
 
   .cmyk-row {
@@ -232,7 +260,11 @@ customCSS: |
       align-items: center;
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
+      .controls {
+          gap: 24px;
+      }
+
       .color-picker-row {
           grid-template-columns: auto minmax(200px, 1fr);
       }
@@ -254,6 +286,16 @@ customCSS: |
       }
   }
 
+  @media (min-width: 1024px) {
+      .controls {
+          gap: 30px;
+      }
+
+      .color-picker-row.with-rgb {
+          grid-template-columns: auto minmax(180px, 1fr) minmax(180px, 1fr);
+      }
+  }
+
   input[type="color"] {
       width: 40px;
       height: 40px;
@@ -268,30 +310,6 @@ customCSS: |
       justify-content: flex-start;
   }
 
-  .hex-input input,
-  .rgb-input input,
-  .slider-row input[type="number"],
-  .segments-control input[type="number"],
-  .cmyk-row input[type="number"] {
-      width: 100%;
-      max-width: 130px;
-      padding: 8px 10px;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: 'Courier New', monospace;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .slider-row input[type="number"],
-  .segments-control input[type="number"],
-  .cmyk-row input[type="number"] {
-      font-family: inherit;
-      text-transform: none;
-      justify-self: end;
-  }
-
   .select-control select {
       width: 100%;
       padding: 10px 12px;
@@ -304,27 +322,13 @@ customCSS: |
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .select-control select:focus,
-  .hex-input input:focus,
-  .rgb-input input:focus,
-  .slider-row input[type="number"]:focus,
-  .segments-control input[type="number"]:focus,
-  .cmyk-row input[type="number"]:focus {
+  .select-control select:focus {
       border-color: #4338ca;
       box-shadow: 0 0 0 2px rgba(67, 56, 202, 0.2);
   }
 
-  .slider-row input[type="range"],
-  .cmyk-row input[type="range"] {
-      width: 100%;
-      accent-color: #4338ca;
-      height: 6px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(67, 56, 202, 0.25), rgba(67, 56, 202, 0.65));
-  }
-
-  .hsl-controls .slider-row input[type="range"] {
-      max-width: 280px;
+  .hsl-controls .field-range {
+      max-width: none;
   }
 
   .preview-picker {
@@ -351,27 +355,6 @@ customCSS: |
       inset: 0;
       opacity: 0;
       cursor: pointer;
-  }
-
-  .generate-btn {
-      width: 100%;
-      padding: 12px 24px;
-      background: #4338ca;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-      justify-self: start;
-      max-width: 200px;
-  }
-
-  .generate-btn:hover {
-      background: #3730a3;
-      box-shadow: 0 10px 18px rgba(67, 56, 202, 0.25);
-      transform: translateY(-1px);
   }
 
   .results {
@@ -482,10 +465,10 @@ customCSS: |
       position: absolute;
       top: 15px;
       right: 15px;
-      padding: 6px;
-      background: transparent;
-      color: #d4d4d4;
-      border: 1px solid #555;
+      padding: 6px !important;
+      background: rgba(0, 0, 0, 0.6);
+      color: #8f8f8f;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -494,6 +477,7 @@ customCSS: |
       display: flex;
       align-items: center;
       justify-content: center;
+      opacity: 0.9;
   }
 
   @media (min-width: 768px) {
@@ -506,8 +490,10 @@ customCSS: |
   }
 
   .copy-btn:hover {
-      background: #2d2d2d;
-      border-color: #777;
+      background: rgba(0, 0, 0, 0.8);
+      border-color: rgba(255, 255, 255, 0.4);
+      opacity: 1;
+      transform: scale(1.05);
   }
 
   .copy-btn.copied {
@@ -743,14 +729,27 @@ customCSS: |
           min-width: 0;
       }
 
-      .controls.compact-grid,
-      .controls.tone-controls {
-          grid-template-columns: 1fr;
-      }
-
       .controls {
           padding: 20px 18px;
-          gap: 20px;
+          gap: 16px;
+          flex-direction: column;
+      }
+
+      .controls.compact-grid,
+      .controls.tone-controls {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+      }
+
+      .color-input-group,
+      .segments-control,
+      .slider-control,
+      .preview-control,
+      .cmyk-control,
+      .select-control {
+          min-width: auto;
+          flex: none;
       }
 
       .color-picker-row,
@@ -759,6 +758,7 @@ customCSS: |
           grid-template-columns: 1fr;
           justify-items: stretch;
           row-gap: 14px;
+          gap: 14px;
       }
 
       .color-picker-row input[type="color"] {
@@ -792,22 +792,1075 @@ customCSS: |
           transform: translateY(0);
       }
   }
+  .surface-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  }
+
+  .stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--stack-gap, 18px);
+  }
+
+  .grid-auto {
+      display: grid;
+      gap: var(--grid-gap, 18px);
+      grid-template-columns: repeat(auto-fit, minmax(var(--grid-min, 220px), 1fr));
+      align-items: var(--grid-align, start);
+  }
+
+  .field-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .field-input:focus {
+      border-color: #4338ca;
+      box-shadow: 0 0 0 2px rgba(67, 56, 202, 0.2);
+      outline: none;
+  }
+
+  .field-input.is-error {
+      border-color: #f87171;
+      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.2);
+  }
+
+  .field-range {
+      width: 100%;
+      accent-color: #4338ca;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(67, 56, 202, 0.25), rgba(67, 56, 202, 0.65));
+  }
+
+  .hex-input .field-input,
+  .rgb-input .field-input,
+  .segments-control .field-input,
+  .slider-row .field-input,
+  .cmyk-row .field-input {
+      min-width: 65px;
+      width: 100%;
+  }
+
+  .slider-control input[type="range"] {
+      width: 240px !important;
+      max-width: none;
+  }
+
+  .cmyk-control input[type="range"] {
+      width: 240px !important;
+      max-width: none;
+  }
+
+  .slider-control input[type="number"] {
+      width: 65px;
+      flex-shrink: 0;
+  }
+
+  @media (min-width: 768px) {
+      .hex-input .field-input,
+      .rgb-input .field-input,
+      .segments-control .field-input,
+      .slider-row .field-input,
+      .cmyk-row .field-input {
+          max-width: 160px;
+      }
+
+      .slider-control input[type="range"] {
+          width: 240px !important;
+      }
+
+      .cmyk-control input[type="range"] {
+          width: 240px !important;
+      }
+  }
+
+  @media (max-width: 767px) {
+      .slider-control input[type="range"] {
+          width: 220px !important;
+      }
+
+      .cmyk-control input[type="range"] {
+          width: 220px !important;
+      }
+  }
+
+  .hex-input .field-input,
+  .rgb-input .field-input,
+  .prefix-control .field-input {
+      font-family: 'Courier New', monospace;
+  }
+
+  .slider-row .field-input,
+  .segments-control .field-input,
+  .cmyk-row .field-input {
+      font-family: inherit;
+      justify-self: end;
+  }
+
+  .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.35);
+  }
+
+  .button--primary {
+      background: #4338ca;
+      color: #ffffff;
+      box-shadow: 0 10px 18px rgba(67, 56, 202, 0.25);
+      padding-left: 30px;
+      padding-right: 30px;
+  }
+
+  .button--primary:hover {
+      background: #3730a3;
+      transform: translateY(-1px);
+  }
+
+  .button--ghost {
+      background: transparent;
+      color: #4338ca;
+      border-color: rgba(67, 56, 202, 0.35);
+  }
+
+  .button--ghost:hover {
+      background: rgba(67, 56, 202, 0.08);
+      border-color: rgba(67, 56, 202, 0.55);
+  }
 customJS: |
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabPanels = document.querySelectorAll('.tab-panel');
-  
-  tabButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-          const target = button.getAttribute('data-tab');
-  
-          tabButtons.forEach((btn) => btn.classList.toggle('active', btn === button));
-          tabPanels.forEach((panel) => panel.classList.toggle('active', panel.id === target));
-      });
-  });
-  
   const clipboardSvg = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
   const checkSvg = '<polyline points="20 6 9 17 4 12"></polyline>';
-  
+
+  // Define ColorUtilities, UiHelpers, and PaletteLogic BEFORE they're used
+  const ColorUtilities = (() => {
+      const clampValue = (value, min, max) => {
+          if (!Number.isFinite(value)) {
+              return Number.isFinite(min) ? min : 0;
+          }
+          const lower = Number.isFinite(min) ? min : value;
+          const upper = Number.isFinite(max) ? max : value;
+          return Math.min(upper, Math.max(lower, value));
+      };
+
+      const normalizeHex = (hex, fallback = '#000000') => {
+          if (typeof hex !== 'string' || !hex.trim()) {
+              return fallback.toUpperCase();
+          }
+          const trimmed = hex.trim();
+          const prefixed = trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
+          const upper = prefixed.toUpperCase();
+          return /^#?[0-9A-F]{6}$/i.test(upper) ? upper : fallback.toUpperCase();
+      };
+
+      const isValidHex = (hex) => /^#?[0-9A-Fa-f]{6}$/.test(hex || '');
+
+      const hexToRgb = (hex) => {
+          if (!isValidHex(hex)) {
+              return null;
+          }
+          const normalised = normalizeHex(hex).replace('#', '');
+          const r = parseInt(normalised.slice(0, 2), 16);
+          const g = parseInt(normalised.slice(2, 4), 16);
+          const b = parseInt(normalised.slice(4, 6), 16);
+          return { r, g, b };
+      };
+
+      const rgbToHex = (r, g, b) => {
+          const toChannel = (channel) => {
+              const value = clampValue(Math.round(channel), 0, 255);
+              return value.toString(16).padStart(2, '0');
+          };
+          return `#${toChannel(r)}${toChannel(g)}${toChannel(b)}`.toUpperCase();
+      };
+
+      const rgbToHsl = (r, g, b) => {
+          const red = r / 255;
+          const green = g / 255;
+          const blue = b / 255;
+          const max = Math.max(red, green, blue);
+          const min = Math.min(red, green, blue);
+          const delta = max - min;
+          let hue = 0;
+          let saturation = 0;
+          const lightness = (max + min) / 2;
+
+          if (delta !== 0) {
+              saturation = delta / (1 - Math.abs(2 * lightness - 1));
+              switch (max) {
+                  case red:
+                      hue = ((green - blue) / delta) % 6;
+                      break;
+                  case green:
+                      hue = (blue - red) / delta + 2;
+                      break;
+                  default:
+                      hue = (red - green) / delta + 4;
+              }
+              hue *= 60;
+              if (hue < 0) {
+                  hue += 360;
+              }
+          }
+
+          return {
+              h: Math.round(hue),
+              s: Math.round((saturation || 0) * 100),
+              l: Math.round(lightness * 100)
+          };
+      };
+
+      const rgbToHsv = (r, g, b) => {
+          const red = r / 255;
+          const green = g / 255;
+          const blue = b / 255;
+          const max = Math.max(red, green, blue);
+          const min = Math.min(red, green, blue);
+          const delta = max - min;
+          let hue = 0;
+          let saturation = max === 0 ? 0 : delta / max;
+
+          if (delta !== 0) {
+              switch (max) {
+                  case red:
+                      hue = ((green - blue) / delta) % 6;
+                      break;
+                  case green:
+                      hue = (blue - red) / delta + 2;
+                      break;
+                  default:
+                      hue = (red - green) / delta + 4;
+              }
+              hue *= 60;
+              if (hue < 0) {
+                  hue += 360;
+              }
+          }
+
+          return {
+              h: Math.round(hue),
+              s: Math.round((saturation || 0) * 100),
+              v: Math.round(max * 100)
+          };
+      };
+
+      const rgbToCmyk = (r, g, b) => {
+          const red = r / 255;
+          const green = g / 255;
+          const blue = b / 255;
+          const k = 1 - Math.max(red, green, blue);
+          if (k === 1) {
+              return { c: 0, m: 0, y: 0, k: 100 };
+          }
+          return {
+              c: Math.round(((1 - red - k) / (1 - k)) * 100),
+              m: Math.round(((1 - green - k) / (1 - k)) * 100),
+              y: Math.round(((1 - blue - k) / (1 - k)) * 100),
+              k: Math.round(k * 100)
+          };
+      };
+
+      const hslToRgb = (h, s, l) => {
+          const sat = s / 100;
+          const light = l / 100;
+          const chroma = (1 - Math.abs(2 * light - 1)) * sat;
+          const huePrime = h / 60;
+          const x = chroma * (1 - Math.abs((huePrime % 2) - 1));
+          let r1 = 0;
+          let g1 = 0;
+          let b1 = 0;
+
+          if (Number.isNaN(huePrime)) {
+              r1 = g1 = b1 = 0;
+          } else if (huePrime >= 0 && huePrime < 1) {
+              r1 = chroma;
+              g1 = x;
+          } else if (huePrime < 2) {
+              r1 = x;
+              g1 = chroma;
+          } else if (huePrime < 3) {
+              g1 = chroma;
+              b1 = x;
+          } else if (huePrime < 4) {
+              g1 = x;
+              b1 = chroma;
+          } else if (huePrime < 5) {
+              r1 = x;
+              b1 = chroma;
+          } else {
+              r1 = chroma;
+              b1 = x;
+          }
+
+          const m = light - chroma / 2;
+          return {
+              r: Math.round((r1 + m) * 255),
+              g: Math.round((g1 + m) * 255),
+              b: Math.round((b1 + m) * 255)
+          };
+      };
+
+      const hsvToRgb = (h, s, v) => {
+          const sat = s / 100;
+          const val = v / 100;
+          const chroma = val * sat;
+          const huePrime = h / 60;
+          const x = chroma * (1 - Math.abs((huePrime % 2) - 1));
+          let r1 = 0;
+          let g1 = 0;
+          let b1 = 0;
+
+          if (Number.isNaN(huePrime)) {
+              r1 = g1 = b1 = 0;
+          } else if (huePrime >= 0 && huePrime < 1) {
+              r1 = chroma;
+              g1 = x;
+          } else if (huePrime < 2) {
+              r1 = x;
+              g1 = chroma;
+          } else if (huePrime < 3) {
+              g1 = chroma;
+              b1 = x;
+          } else if (huePrime < 4) {
+              g1 = x;
+              b1 = chroma;
+          } else if (huePrime < 5) {
+              r1 = x;
+              b1 = chroma;
+          } else {
+              r1 = chroma;
+              b1 = x;
+          }
+
+          const m = val - chroma;
+          return {
+              r: Math.round((r1 + m) * 255),
+              g: Math.round((g1 + m) * 255),
+              b: Math.round((b1 + m) * 255)
+          };
+      };
+
+      const cmykToRgb = (c, m, y, k) => {
+          const cyan = c / 100;
+          const magenta = m / 100;
+          const yellow = y / 100;
+          const key = k / 100;
+          return {
+              r: Math.round(255 * (1 - cyan) * (1 - key)),
+              g: Math.round(255 * (1 - magenta) * (1 - key)),
+              b: Math.round(255 * (1 - yellow) * (1 - key))
+          };
+      };
+
+      const rotateHue = (hue, delta) => {
+          const value = (hue + delta) % 360;
+          return value < 0 ? value + 360 : value;
+      };
+
+      const mixHexColors = (firstHex, secondHex, amount) => {
+          const start = hexToRgb(firstHex);
+          const end = hexToRgb(secondHex);
+          if (!start || !end) {
+              return normalizeHex(firstHex);
+          }
+          const mix = {
+              r: start.r + (end.r - start.r) * amount,
+              g: start.g + (end.g - start.g) * amount,
+              b: start.b + (end.b - start.b) * amount
+          };
+          return rgbToHex(mix.r, mix.g, mix.b);
+      };
+
+      const relativeLuminance = (r, g, b) => {
+          const linearise = (value) => {
+              const channel = value / 255;
+              return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+          };
+          return (
+              0.2126 * linearise(r)
+              + 0.7152 * linearise(g)
+              + 0.0722 * linearise(b)
+          );
+      };
+
+      const calculateContrastRatio = (firstHex, secondHex) => {
+          const first = hexToRgb(firstHex);
+          const second = hexToRgb(secondHex);
+          if (!first || !second) {
+              return 1;
+          }
+          const luminanceA = relativeLuminance(first.r, first.g, first.b);
+          const luminanceB = relativeLuminance(second.r, second.g, second.b);
+          const lighter = Math.max(luminanceA, luminanceB);
+          const darker = Math.min(luminanceA, luminanceB);
+          return (lighter + 0.05) / (darker + 0.05);
+      };
+
+      const simulateColorBlindness = (hex, type) => {
+          const rgb = hexToRgb(hex);
+          if (!rgb) {
+              return normalizeHex(hex);
+          }
+          const matrices = {
+              deuteranopia: [
+                  [0.625, 0.375, 0],
+                  [0.7, 0.3, 0],
+                  [0, 0.3, 0.7]
+              ],
+              protanopia: [
+                  [0.56667, 0.43333, 0],
+                  [0.55833, 0.44167, 0],
+                  [0, 0.24167, 0.75833]
+              ],
+              tritanopia: [
+                  [0.95, 0.05, 0],
+                  [0, 0.43333, 0.56667],
+                  [0, 0.475, 0.525]
+              ]
+          };
+          const matrix = matrices[type];
+          if (!matrix) {
+              return rgbToHex(rgb.r, rgb.g, rgb.b);
+          }
+          const r = clampValue(matrix[0][0] * rgb.r + matrix[0][1] * rgb.g + matrix[0][2] * rgb.b, 0, 255);
+          const g = clampValue(matrix[1][0] * rgb.r + matrix[1][1] * rgb.g + matrix[1][2] * rgb.b, 0, 255);
+          const b = clampValue(matrix[2][0] * rgb.r + matrix[2][1] * rgb.g + matrix[2][2] * rgb.b, 0, 255);
+          return rgbToHex(r, g, b);
+      };
+
+      const roundTripRgbDelta = (source, reproduced) => (
+          Math.abs(source.r - reproduced.r)
+          + Math.abs(source.g - reproduced.g)
+          + Math.abs(source.b - reproduced.b)
+      );
+
+      const isOutOfPrintGamut = (hex) => {
+          const rgb = hexToRgb(hex);
+          if (!rgb) {
+              return false;
+          }
+          const converted = rgbToCmyk(rgb.r, rgb.g, rgb.b);
+          const roundTripped = cmykToRgb(converted.c, converted.m, converted.y, converted.k);
+          return roundTripRgbDelta(rgb, roundTripped) > 24;
+      };
+
+      const sanitizeClassPrefix = (value, fallback = 'palette') => {
+          const safeFallback = fallback && fallback.trim() ? fallback.trim() : 'palette';
+          if (typeof value !== 'string') {
+              return safeFallback;
+          }
+          const trimmed = value.trim();
+          if (!trimmed) {
+              return safeFallback;
+          }
+          const normalised = trimmed
+              .replace(/\s+/g, '-')
+              .replace(/[^a-zA-Z0-9_-]/g, '')
+              .replace(/-+/g, '-')
+              .replace(/^-+/, '')
+              .replace(/-+$/, '')
+              .toLowerCase();
+          return normalised || safeFallback;
+      };
+
+      const parseNumericTuple = (value, size, { clampRange } = {}) => {
+          if (typeof value !== 'string') {
+              return null;
+          }
+          const parts = value.split(/[\s,]+/).filter(Boolean);
+          if (parts.length !== size) {
+              return null;
+          }
+          const numbers = parts.map((part) => Number(part));
+          if (numbers.some((num) => !Number.isFinite(num))) {
+              return null;
+          }
+          if (clampRange && Array.isArray(clampRange)) {
+              const [min, max] = clampRange;
+              return numbers.map((num) => clampValue(Math.round(num), min, max));
+          }
+          return numbers;
+      };
+
+      const copyTextToClipboard = (text) => {
+          if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+              return navigator.clipboard.writeText(text);
+          }
+          return new Promise((resolve, reject) => {
+              const textarea = document.createElement('textarea');
+              textarea.value = text;
+              textarea.setAttribute('readonly', '');
+              textarea.style.position = 'absolute';
+              textarea.style.opacity = '0';
+              textarea.style.pointerEvents = 'none';
+              document.body.appendChild(textarea);
+              textarea.select();
+              textarea.setSelectionRange(0, textarea.value.length);
+              try {
+                  const successful = document.execCommand('copy');
+                  document.body.removeChild(textarea);
+                  if (successful) {
+                      resolve();
+                  } else {
+                      reject(new Error('Copy command unsuccessful.'));
+                  }
+              } catch (error) {
+                  document.body.removeChild(textarea);
+                  reject(error);
+              }
+          });
+      };
+
+      return {
+          clampValue,
+          normalizeHex,
+          isValidHex,
+          hexToRgb,
+          rgbToHex,
+          rgbToHsl,
+          rgbToHsv,
+          rgbToCmyk,
+          hslToRgb,
+          hsvToRgb,
+          cmykToRgb,
+          rotateHue,
+          mixHexColors,
+          relativeLuminance,
+          calculateContrastRatio,
+          simulateColorBlindness,
+          isOutOfPrintGamut,
+          sanitizeClassPrefix,
+          parseNumericTuple,
+          copyTextToClipboard
+      };
+  })();
+
+  const UiHelpers = (() => {
+      const initTabs = (root, {
+          buttonSelector = '[data-tab]',
+          panelSelector = '[data-tab-panel]',
+          activeClass = 'active'
+      } = {}) => {
+          if (!root) {
+              return;
+          }
+          const buttons = Array.from(root.querySelectorAll(buttonSelector));
+          const panels = Array.from(root.querySelectorAll(panelSelector));
+          const activate = (id) => {
+              buttons.forEach((button) => {
+                  const matches = button.getAttribute('data-tab') === id;
+                  button.classList.toggle(activeClass, matches);
+                  button.setAttribute('aria-selected', matches ? 'true' : 'false');
+                  button.setAttribute('tabindex', matches ? '0' : '-1');
+              });
+              panels.forEach((panel) => {
+                  const matches = panel.id === id;
+                  panel.classList.toggle(activeClass, matches);
+                  panel.hidden = !matches;
+              });
+          };
+          buttons.forEach((button) => {
+              button.addEventListener('click', () => {
+                  const target = button.getAttribute('data-tab');
+                  if (target) {
+                      activate(target);
+                  }
+              });
+          });
+          const initial = buttons.find((button) => button.classList.contains(activeClass))
+              || buttons[0];
+          if (initial) {
+              activate(initial.getAttribute('data-tab'));
+          }
+      };
+
+      const bindColorInputGroup = ({ picker, hexInput, preview, onChange }) => {
+          if (!picker || !hexInput) {
+              return;
+          }
+          const emitChange = (hex) => {
+              if (preview) {
+                  preview.style.backgroundColor = hex;
+              }
+              if (typeof onChange === 'function') {
+                  onChange(hex);
+              }
+          };
+
+          picker.addEventListener('input', (event) => {
+              const value = ColorUtilities.normalizeHex(event.target.value);
+              hexInput.value = value;
+              emitChange(value);
+          });
+
+          hexInput.addEventListener('input', (event) => {
+              const raw = event.target.value;
+              if (ColorUtilities.isValidHex(raw)) {
+                  const normalised = ColorUtilities.normalizeHex(raw);
+                  picker.value = normalised;
+                  hexInput.classList.remove('is-error');
+                  emitChange(normalised);
+              } else {
+                  hexInput.classList.add('is-error');
+              }
+          });
+
+          hexInput.addEventListener('blur', () => {
+              const normalised = ColorUtilities.normalizeHex(hexInput.value);
+              hexInput.value = normalised;
+              picker.value = normalised;
+              hexInput.classList.remove('is-error');
+              emitChange(normalised);
+          });
+      };
+
+      const bindRgbInput = ({ input, onValid, onInvalid }) => {
+          if (!input) {
+              return;
+          }
+          const parse = (value) => {
+              const tuple = ColorUtilities.parseNumericTuple(value, 3, { clampRange: [0, 255] });
+              if (!tuple) {
+                  input.classList.add('is-error');
+                  if (typeof onInvalid === 'function') {
+                      onInvalid();
+                  }
+                  return;
+              }
+              input.value = tuple.join(', ');
+              input.classList.remove('is-error');
+              if (typeof onValid === 'function') {
+                  onValid({ r: tuple[0], g: tuple[1], b: tuple[2] });
+              }
+          };
+          input.addEventListener('blur', () => parse(input.value));
+          input.addEventListener('input', (event) => {
+              const value = event.target.value;
+              if (/[,\s]{2,}/.test(value)) {
+                  parse(value);
+              }
+          });
+      };
+
+      const bindSliderWithInput = ({ slider, input, min = 0, max = 100, step = 1, onChange }) => {
+          if (!slider || !input) {
+              return;
+          }
+          const sync = (value) => {
+              const clamped = ColorUtilities.clampValue(value, min, max);
+              slider.value = clamped;
+              input.value = clamped;
+              if (typeof onChange === 'function') {
+                  onChange(clamped);
+              }
+          };
+          slider.min = min;
+          slider.max = max;
+          slider.step = step;
+          input.min = min;
+          input.max = max;
+          input.step = step;
+
+          slider.addEventListener('input', () => {
+              sync(Number(slider.value));
+          });
+
+          input.addEventListener('input', () => {
+              const numeric = Number(input.value);
+              if (Number.isFinite(numeric)) {
+                  sync(numeric);
+              }
+          });
+
+          input.addEventListener('blur', () => {
+              const numeric = Number(input.value);
+              sync(Number.isFinite(numeric) ? numeric : min);
+          });
+      };
+
+      const renderColorSwatches = (container, swatches = []) => {
+          if (!container) {
+              return [];
+          }
+          container.innerHTML = '';
+          return swatches.map((swatch) => {
+              const wrapper = document.createElement('div');
+              wrapper.className = 'color-block-wrapper';
+
+              const block = document.createElement('div');
+              block.className = 'color-block';
+              block.style.backgroundColor = swatch.bg;
+              block.title = swatch.title || `Copy ${swatch.copyValue || swatch.label}`;
+              block.dataset.copyValue = swatch.copyValue || swatch.label;
+
+              const label = document.createElement('div');
+              label.className = 'color-label';
+              label.textContent = swatch.label;
+              label.dataset.copyValue = swatch.copyValue || swatch.label;
+
+              wrapper.appendChild(block);
+              wrapper.appendChild(label);
+
+              if (swatch.note) {
+                  const note = document.createElement('div');
+                  note.className = 'color-note';
+                  note.textContent = swatch.note;
+                  wrapper.appendChild(note);
+              }
+
+              container.appendChild(wrapper);
+
+              return { wrapper, block, label };
+          });
+      };
+
+      const attachCopyInteraction = ({ target, getText, onSuccess, onError }) => {
+          if (!target || typeof getText !== 'function') {
+              return;
+          }
+          target.addEventListener('click', () => {
+              const value = getText();
+              if (!value) {
+                  if (typeof onError === 'function') {
+                      onError(new Error('Nothing to copy.'));
+                  }
+                  return;
+              }
+              ColorUtilities.copyTextToClipboard(value)
+                  .then(() => {
+                      if (typeof onSuccess === 'function') {
+                          onSuccess(target, value);
+                      }
+                  })
+                  .catch((error) => {
+                      if (typeof onError === 'function') {
+                          onError(error);
+                      }
+                  });
+          });
+      };
+
+      const renderAccordionSection = ({
+          container,
+          id,
+          header,
+          content
+      }) => {
+          if (!container) {
+              return null;
+          }
+          const section = document.createElement('div');
+          section.className = 'simulation-row';
+          section.dataset.collapsed = 'true';
+          const toggle = document.createElement('button');
+          toggle.type = 'button';
+          toggle.className = 'simulation-toggle';
+          toggle.setAttribute('aria-controls', `${id}-content`);
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.innerHTML = `<span>${header}</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+          const body = document.createElement('div');
+          body.className = 'simulation-content';
+          body.id = `${id}-content`;
+          if (content instanceof Node) {
+              body.appendChild(content);
+          } else if (typeof content === 'string') {
+              body.innerHTML = content;
+          }
+          toggle.addEventListener('click', () => {
+              const collapsed = section.dataset.collapsed === 'true';
+              section.dataset.collapsed = collapsed ? 'false' : 'true';
+              toggle.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
+          });
+          section.appendChild(toggle);
+          section.appendChild(body);
+          container.appendChild(section);
+          return section;
+      };
+
+      const handleCopyFeedback = (target, {
+          successClass = 'copied',
+          duration = 1600
+      } = {}) => {
+          if (!target) {
+              return;
+          }
+          target.classList.add(successClass);
+          window.setTimeout(() => {
+              target.classList.remove(successClass);
+          }, duration);
+      };
+
+      return {
+          initTabs,
+          bindColorInputGroup,
+          bindRgbInput,
+          bindSliderWithInput,
+          renderColorSwatches,
+          attachCopyInteraction,
+          renderAccordionSection,
+          handleCopyFeedback
+      };
+  })();
+
+  const PaletteLogic = (() => {
+      const getClassPrefix = (prefixInputs, key, fallback = 'palette') => {
+          const entry = prefixInputs[key];
+          if (!entry) {
+              return fallback;
+          }
+          if (entry.element) {
+              entry.element.value = ColorUtilities.sanitizeClassPrefix(entry.element.value || entry.fallback || fallback, entry.fallback || fallback);
+              return entry.element.value;
+          }
+          return ColorUtilities.sanitizeClassPrefix(entry.fallback || fallback, fallback);
+      };
+
+      const buildClassSelector = (prefix, token) => `.${prefix}-${token}`;
+
+      const createRgbGradientPalette = ({ fromHex, toHex, count }) => {
+          const start = ColorUtilities.hexToRgb(fromHex);
+          const end = ColorUtilities.hexToRgb(toHex);
+          const length = ColorUtilities.clampValue(count, 2, 64);
+          if (!start || !end) {
+              return [];
+          }
+          const swatches = [];
+          for (let index = 0; index < length; index += 1) {
+              const t = length === 1 ? 0 : index / (length - 1);
+              const r = start.r + (end.r - start.r) * t;
+              const g = start.g + (end.g - start.g) * t;
+              const b = start.b + (end.b - start.b) * t;
+              const hex = ColorUtilities.rgbToHex(r, g, b);
+              swatches.push({
+                  hex,
+                  declaration: `background-color: ${hex};`
+              });
+          }
+          return swatches;
+      };
+
+      const createHslGradientPalette = ({
+          baseHex,
+          hue,
+          saturation,
+          lightness,
+          count
+      }) => {
+          const base = ColorUtilities.hexToRgb(baseHex);
+          if (!base) {
+              return [];
+          }
+          const length = ColorUtilities.clampValue(count, 1, 36);
+          const step = length === 1 ? 0 : 360 / length;
+          const swatches = [];
+          for (let index = 0; index < length; index += 1) {
+              const hueValue = (hue + step * index) % 360;
+              const rgb = ColorUtilities.hslToRgb(hueValue, saturation, lightness);
+              const hex = ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+              swatches.push({
+                  hex,
+                  hsl: `hsl(${Math.round(hueValue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`,
+                  declaration: `background-color: hsl(${Math.round(hueValue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%);`
+              });
+          }
+          return swatches;
+      };
+
+      const createHsvGradientPalette = ({ baseHex, hue, saturation, value, count }) => {
+          const base = ColorUtilities.hexToRgb(baseHex);
+          if (!base) {
+              return [];
+          }
+          const length = ColorUtilities.clampValue(count, 1, 36);
+          const step = length === 1 ? 0 : 360 / length;
+          const swatches = [];
+          for (let index = 0; index < length; index += 1) {
+              const hueValue = (hue + step * index) % 360;
+              const rgb = ColorUtilities.hsvToRgb(hueValue, saturation, value);
+              const hex = ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+              swatches.push({
+                  hex,
+                  declaration: `background-color: ${hex};`
+              });
+          }
+          return swatches;
+      };
+
+      const createCmykGradientPalette = ({ c, m, y, k, count }) => {
+          const length = ColorUtilities.clampValue(count, 1, 36);
+          const keyRangeStart = ColorUtilities.clampValue(k - 40, 0, 100);
+          const keyRangeEnd = ColorUtilities.clampValue(k + 40, 0, 100);
+          const range = keyRangeEnd === keyRangeStart
+              ? { start: ColorUtilities.clampValue(k - 10, 0, 100), end: ColorUtilities.clampValue(k + 10, 0, 100) }
+              : { start: keyRangeStart, end: keyRangeEnd };
+          const step = length === 1 ? 0 : (range.end - range.start) / (length - 1 || 1);
+          const swatches = [];
+          for (let index = 0; index < length; index += 1) {
+              const keyValue = ColorUtilities.clampValue(Math.round(range.start + step * index), 0, 100);
+              const rgb = ColorUtilities.cmykToRgb(c, m, y, keyValue);
+              const hex = ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+              swatches.push({ hex, declaration: `background-color: ${hex};`, key: keyValue });
+          }
+          return swatches;
+      };
+
+      const createHarmonyPalettes = ({ baseHex, spread, variance, schemes }) => {
+          const baseRgb = ColorUtilities.hexToRgb(baseHex);
+          if (!baseRgb) {
+              return {};
+          }
+          const baseHsl = ColorUtilities.rgbToHsl(baseRgb.r, baseRgb.g, baseRgb.b);
+          const entries = {};
+          const configFactory = {
+              analogous: () => [
+                  { offset: -spread * 1.5, note: `Analogous −${Math.round(spread * 1.5)}°`, lightness: -variance },
+                  { offset: -spread, note: `Analogous −${spread}°`, lightness: -variance / 2 },
+                  { offset: 0, note: 'Base', lightness: 0 },
+                  { offset: spread, note: `Analogous +${spread}°`, lightness: variance / 2 },
+                  { offset: spread * 1.5, note: `Analogous +${Math.round(spread * 1.5)}°`, lightness: variance }
+              ],
+              complementary: () => [
+                  { offset: 0, note: 'Base (shade)', lightness: -variance / 1.2 },
+                  { offset: 0, note: 'Base', lightness: 0 },
+                  { offset: 180, note: 'Complement', lightness: 0 },
+                  { offset: 180, note: 'Complement (highlight)', lightness: variance / 1.2 }
+              ],
+              'split-complementary': () => [
+                  { offset: -spread, note: `Split −${spread}°`, lightness: -variance / 2 },
+                  { offset: 0, note: 'Base', lightness: 0 },
+                  { offset: spread, note: `Split +${spread}°`, lightness: variance / 2 },
+                  { offset: 180, note: 'Anchor complement', lightness: 0 }
+              ],
+              triadic: () => [
+                  { offset: -120, note: '−120° accent', lightness: -variance / 2 },
+                  { offset: 0, note: 'Base', lightness: 0 },
+                  { offset: 120, note: '+120° accent', lightness: variance / 2 }
+              ],
+              tetradic: () => [
+                  { offset: -90, note: '−90°', lightness: -variance / 2 },
+                  { offset: 0, note: 'Base', lightness: 0 },
+                  { offset: 90, note: '+90°', lightness: variance / 2 },
+                  { offset: 180, note: 'Opposite', lightness: 0 }
+              ]
+          };
+
+          Object.keys(schemes || configFactory).forEach((scheme) => {
+              const factory = configFactory[scheme] || configFactory.analogous;
+              const config = factory();
+              const colors = config.map((entry) => {
+                  const hue = ColorUtilities.rotateHue(baseHsl.h, entry.offset);
+                  const saturation = ColorUtilities.clampValue(baseHsl.s, 5, 100);
+                  const lightness = ColorUtilities.clampValue(baseHsl.l + entry.lightness, 5, 95);
+                  const rgb = ColorUtilities.hslToRgb(hue, saturation, lightness);
+                  const hex = ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+                  return { hex, note: entry.note, offset: entry.offset };
+              });
+              entries[scheme] = colors;
+          });
+          return entries;
+      };
+
+      const createDataVizPalettes = ({ baseHex, count }) => {
+          const baseRgb = ColorUtilities.hexToRgb(baseHex);
+          if (!baseRgb) {
+              return { sequential: [], diverging: [], qualitative: [] };
+          }
+          const baseHsl = ColorUtilities.rgbToHsl(baseRgb.r, baseRgb.g, baseRgb.b);
+          const size = ColorUtilities.clampValue(count, 3, 12);
+
+          const sequential = Array.from({ length: size }, (_, index) => {
+              const t = size === 1 ? 0 : index / (size - 1);
+              const startLight = ColorUtilities.clampValue(baseHsl.l + 40, 30, 96);
+              const endLight = ColorUtilities.clampValue(baseHsl.l - 30, 10, 70);
+              const lightness = startLight - (startLight - endLight) * t;
+              const saturation = ColorUtilities.clampValue(baseHsl.s * (0.9 - t * 0.2), 25, 100);
+              const rgb = ColorUtilities.hslToRgb(baseHsl.h, saturation, lightness);
+              return ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+          });
+
+          const complementHex = (() => {
+              const hue = ColorUtilities.rotateHue(baseHsl.h, 180);
+              const rgb = ColorUtilities.hslToRgb(hue, baseHsl.s, baseHsl.l);
+              return ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+          })();
+
+          const neutralHex = (() => {
+              const rgb = ColorUtilities.hslToRgb(baseHsl.h, ColorUtilities.clampValue(baseHsl.s * 0.25, 5, 35), 52);
+              return ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+          })();
+
+          const diverging = Array.from({ length: size }, (_, index) => {
+              const t = size <= 1 ? 0 : index / (size - 1);
+              const signed = t * 2 - 1;
+              if (signed < 0) {
+                  return ColorUtilities.mixHexColors(complementHex, neutralHex, 1 - Math.abs(signed));
+              }
+              return ColorUtilities.mixHexColors(neutralHex, ColorUtilities.rgbToHex(baseRgb.r, baseRgb.g, baseRgb.b), signed);
+          });
+
+          const qualitative = Array.from({ length: size }, (_, index) => {
+              const hue = ColorUtilities.rotateHue(baseHsl.h, (360 / size) * index);
+              const saturation = ColorUtilities.clampValue(baseHsl.s, 50, 90);
+              const lightness = ColorUtilities.clampValue(baseHsl.l, 35, 65);
+              const rgb = ColorUtilities.hslToRgb(hue, saturation, lightness);
+              return ColorUtilities.rgbToHex(rgb.r, rgb.g, rgb.b);
+          });
+
+          return { sequential, diverging, qualitative };
+      };
+
+      const createColorblindSimulations = (colors, types = ['deuteranopia', 'protanopia']) => {
+          return types.reduce((acc, type) => {
+              acc[type] = colors.map((hex) => ColorUtilities.simulateColorBlindness(hex, type));
+              return acc;
+          }, {});
+      };
+
+      const evaluateCmykWarning = ({ baseHex, paletteHexes }) => {
+          const warnings = [];
+          if (baseHex && ColorUtilities.isOutOfPrintGamut(baseHex)) {
+              warnings.push('Base selection may print duller than preview.');
+          }
+          if (Array.isArray(paletteHexes) && paletteHexes.some((hex) => ColorUtilities.isOutOfPrintGamut(hex))) {
+              warnings.push('Generated swatches include tones outside common CMYK press gamut.');
+          }
+          return warnings.join(' ');
+      };
+
+      return {
+          getClassPrefix,
+          buildClassSelector,
+          createRgbGradientPalette,
+          createHslGradientPalette,
+          createHsvGradientPalette,
+          createCmykGradientPalette,
+          createHarmonyPalettes,
+          createDataVizPalettes,
+          createColorblindSimulations,
+          evaluateCmykWarning
+      };
+  })();
+
   const classPrefixInputs = {
       rgb: { element: document.getElementById('rgbClassPrefix'), fallback: 'palette-rgb' },
       hsl: { element: document.getElementById('hslClassPrefix'), fallback: 'palette-hsl' },
@@ -817,21 +1870,25 @@ customJS: |
       dataViz: { element: document.getElementById('dataVizClassPrefix'), fallback: 'palette-dataviz' }
   };
 
-  Object.values(classPrefixInputs).forEach((entry) => {
-      if (!entry.element) {
-          return;
-      }
-      entry.element.value = sanitiseClassPrefix(entry.element.value || entry.fallback, entry.fallback);
-      entry.element.addEventListener('blur', () => {
-          entry.element.value = sanitiseClassPrefix(entry.element.value, entry.fallback);
+  function initClassPrefixInputs() {
+      Object.values(classPrefixInputs).forEach((entry) => {
+          if (!entry.element) {
+              return;
+          }
+          entry.element.value = sanitiseClassPrefix(entry.element.value || entry.fallback, entry.fallback);
+          entry.element.addEventListener('blur', () => {
+              entry.element.value = sanitiseClassPrefix(entry.element.value, entry.fallback);
+          });
       });
-  });
-  
+  }
+
   const hexElements = {
       fromPicker: document.getElementById('fromColorPicker'),
       toPicker: document.getElementById('toColorPicker'),
       fromHex: document.getElementById('fromHex'),
       toHex: document.getElementById('toHex'),
+      fromPreview: document.getElementById('fromPreview'),
+      toPreview: document.getElementById('toPreview'),
       segments: document.getElementById('segments'),
       results: document.getElementById('hexResults'),
       colorBlocks: document.getElementById('hexColorBlocks'),
@@ -839,7 +1896,7 @@ customJS: |
       copyBtn: document.getElementById('hexCopyBtn'),
       copyIcon: document.getElementById('hexCopyIcon')
   };
-  
+
   const hslElements = {
       colorPicker: document.getElementById('hslColorPicker'),
       rgbInput: document.getElementById('hslRgb'),
@@ -858,7 +1915,7 @@ customJS: |
       copyIcon: document.getElementById('hslCopyIcon'),
       preview: document.getElementById('hslPreview')
   };
-  
+
   const hsvElements = {
       colorPicker: document.getElementById('hsvColorPicker'),
       rgbInput: document.getElementById('hsvRgb'),
@@ -877,7 +1934,7 @@ customJS: |
       copyIcon: document.getElementById('hsvCopyIcon'),
       preview: document.getElementById('hsvPreview')
   };
-  
+
   const cmykElements = {
       colorPicker: document.getElementById('cmykColorPicker'),
       valuesInput: document.getElementById('cmykValues'),
@@ -899,7 +1956,7 @@ customJS: |
       preview: document.getElementById('cmykPreview'),
       warning: document.getElementById('cmykGamutWarning')
   };
-  
+
   const harmonyElements = {
       colorPicker: document.getElementById('harmonyColorPicker'),
       hexInput: document.getElementById('harmonyHex'),
@@ -952,7 +2009,7 @@ customJS: |
           }
       }
   };
-  
+
   const dataVizElements = {
       colorPicker: document.getElementById('dataVizColorPicker'),
       hexInput: document.getElementById('dataVizHex'),
@@ -990,218 +2047,23 @@ customJS: |
           }
       }
   };
-  
-  function hexToRgb(hex) {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result
-          ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            }
-          : null;
-  }
-  
-  function rgbToHex(r, g, b) {
-      return `#${[r, g, b]
-          .map((value) => Math.round(value).toString(16).padStart(2, '0'))
-          .join('').toUpperCase()}`;
-  }
-  
-  function hslToRgb(h, s, l) {
-      const sat = s / 100;
-      const light = l / 100;
-      const chroma = (1 - Math.abs(2 * light - 1)) * sat;
-      const huePrime = h / 60;
-      const x = chroma * (1 - Math.abs((huePrime % 2) - 1));
-  
-      let r1 = 0;
-      let g1 = 0;
-      let b1 = 0;
-  
-      if (Number.isNaN(huePrime)) {
-          r1 = g1 = b1 = 0;
-      } else if (huePrime >= 0 && huePrime < 1) {
-          r1 = chroma;
-          g1 = x;
-      } else if (huePrime < 2) {
-          r1 = x;
-          g1 = chroma;
-      } else if (huePrime < 3) {
-          g1 = chroma;
-          b1 = x;
-      } else if (huePrime < 4) {
-          g1 = x;
-          b1 = chroma;
-      } else if (huePrime < 5) {
-          r1 = x;
-          b1 = chroma;
-      } else {
-          r1 = chroma;
-          b1 = x;
-      }
-  
-      const m = light - chroma / 2;
-  
-      return {
-          r: Math.round((r1 + m) * 255),
-          g: Math.round((g1 + m) * 255),
-          b: Math.round((b1 + m) * 255)
-      };
-  }
-  
-  function hsvToRgb(h, s, v) {
-      const sat = s / 100;
-      const val = v / 100;
-      const chroma = val * sat;
-      const huePrime = h / 60;
-      const x = chroma * (1 - Math.abs((huePrime % 2) - 1));
-  
-      let r1 = 0;
-      let g1 = 0;
-      let b1 = 0;
-  
-      if (Number.isNaN(huePrime)) {
-          r1 = g1 = b1 = 0;
-      } else if (huePrime >= 0 && huePrime < 1) {
-          r1 = chroma;
-          g1 = x;
-      } else if (huePrime < 2) {
-          r1 = x;
-          g1 = chroma;
-      } else if (huePrime < 3) {
-          g1 = chroma;
-          b1 = x;
-      } else if (huePrime < 4) {
-          g1 = x;
-          b1 = chroma;
-      } else if (huePrime < 5) {
-          r1 = x;
-          b1 = chroma;
-      } else {
-          r1 = chroma;
-          b1 = x;
-      }
-  
-      const m = val - chroma;
-  
-      return {
-          r: Math.round((r1 + m) * 255),
-          g: Math.round((g1 + m) * 255),
-          b: Math.round((b1 + m) * 255)
-      };
-  }
-  
-  function cmykToRgb(c, m, y, k) {
-      const cyan = c / 100;
-      const magenta = m / 100;
-      const yellow = y / 100;
-      const key = k / 100;
-  
-      return {
-          r: Math.round(255 * (1 - cyan) * (1 - key)),
-          g: Math.round(255 * (1 - magenta) * (1 - key)),
-          b: Math.round(255 * (1 - yellow) * (1 - key))
-      };
-  }
-  
-  function rgbToHsl(r, g, b) {
-      const red = r / 255;
-      const green = g / 255;
-      const blue = b / 255;
-  
-      const max = Math.max(red, green, blue);
-      const min = Math.min(red, green, blue);
-      const delta = max - min;
-  
-      let hue = 0;
-      let saturation = 0;
-      const lightness = (max + min) / 2;
-  
-      if (delta !== 0) {
-          saturation = delta / (1 - Math.abs(2 * lightness - 1));
-  
-          switch (max) {
-              case red:
-                  hue = ((green - blue) / delta) % 6;
-                  break;
-              case green:
-                  hue = (blue - red) / delta + 2;
-                  break;
-              default:
-                  hue = (red - green) / delta + 4;
-          }
-  
-          hue *= 60;
-          if (hue < 0) {
-              hue += 360;
-          }
-      }
-  
-      return {
-          h: Math.round(hue),
-          s: Math.round(saturation * 100 || 0),
-          l: Math.round(lightness * 100)
-      };
-  }
-  
-  function rgbToHsv(r, g, b) {
-      const red = r / 255;
-      const green = g / 255;
-      const blue = b / 255;
-  
-      const max = Math.max(red, green, blue);
-      const min = Math.min(red, green, blue);
-      const delta = max - min;
-  
-      let hue = 0;
-      let saturation = max === 0 ? 0 : delta / max;
-      const value = max;
-  
-      if (delta !== 0) {
-          switch (max) {
-              case red:
-                  hue = ((green - blue) / delta) % 6;
-                  break;
-              case green:
-                  hue = (blue - red) / delta + 2;
-                  break;
-              default:
-                  hue = (red - green) / delta + 4;
-          }
-  
-          hue *= 60;
-          if (hue < 0) {
-              hue += 360;
-          }
-      }
-  
-      return {
-          h: Math.round(hue),
-          s: Math.round(saturation * 100 || 0),
-          v: Math.round(value * 100)
-      };
-  }
-  
-  function rgbToCmyk(r, g, b) {
-      const red = r / 255;
-      const green = g / 255;
-      const blue = b / 255;
-  
-      const k = 1 - Math.max(red, green, blue);
-  
-      if (k === 1) {
-          return { c: 0, m: 0, y: 0, k: 100 };
-      }
-  
-      return {
-          c: Math.round(((1 - red - k) / (1 - k)) * 100),
-          m: Math.round(((1 - green - k) / (1 - k)) * 100),
-          y: Math.round(((1 - blue - k) / (1 - k)) * 100),
-          k: Math.round(k * 100)
-      };
-  }
-  
+
+  const hexToRgb = (...args) => ColorUtilities.hexToRgb(...args);
+
+  const rgbToHex = (...args) => ColorUtilities.rgbToHex(...args);
+
+  const hslToRgb = (...args) => ColorUtilities.hslToRgb(...args);
+
+  const hsvToRgb = (...args) => ColorUtilities.hsvToRgb(...args);
+
+  const cmykToRgb = (...args) => ColorUtilities.cmykToRgb(...args);
+
+  const rgbToHsl = (...args) => ColorUtilities.rgbToHsl(...args);
+
+  const rgbToHsv = (...args) => ColorUtilities.rgbToHsv(...args);
+
+  const rgbToCmyk = (...args) => ColorUtilities.rgbToCmyk(...args);
+
   function roundTripRgbDelta(source, reproduced) {
       return (
           Math.abs(source.r - reproduced.r)
@@ -1209,13 +2071,13 @@ customJS: |
           + Math.abs(source.b - reproduced.b)
       );
   }
-  
+
   function isRgbOutOfPrintGamut(rgb) {
       const converted = rgbToCmyk(rgb.r, rgb.g, rgb.b);
       const roundTripped = cmykToRgb(converted.c, converted.m, converted.y, converted.k);
       return roundTripRgbDelta(rgb, roundTripped) > 24;
   }
-  
+
   function isHexOutOfPrintGamut(hex) {
       const rgb = hexToRgb(hex);
       if (!rgb) {
@@ -1223,63 +2085,30 @@ customJS: |
       }
       return isRgbOutOfPrintGamut(rgb);
   }
-  
-  function isValidHex(hex) {
-      return /^#?[0-9A-Fa-f]{6}$/.test(hex);
-  }
-  
-  function normalizeHex(hex) {
-      const value = hex.trim().toUpperCase();
-      return value.startsWith('#') ? value : `#${value}`;
-  }
-  
-  function clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-  }
-  
-  function sanitiseClassPrefix(value, fallback = 'palette') {
-      const safeFallback = fallback && fallback.trim() ? fallback.trim() : 'palette';
-      if (!value) {
-          return safeFallback;
-      }
-      const trimmed = value.trim();
-      if (!trimmed) {
-          return safeFallback;
-      }
-      const normalised = trimmed
-          .replace(/\s+/g, '-')
-          .replace(/[^a-zA-Z0-9_-]/g, '')
-          .replace(/-+/g, '-')
-          .replace(/^-+/, '')
-          .replace(/-+$/, '')
-          .toLowerCase();
-      return normalised || safeFallback;
-  }
-  
-  function getClassPrefix(key) {
-      const entry = classPrefixInputs[key];
-      if (!entry) {
-          return 'palette';
-      }
-      if (!entry.element) {
-          return entry.fallback;
-      }
-      const value = sanitiseClassPrefix(entry.element.value, entry.fallback);
-      entry.element.value = value;
-      return value;
-  }
-  
-  function buildClassSelector(prefix, token) {
-      return `.${prefix}-${token}`;
-  }
-  
+
+  const isValidHex = (...args) => ColorUtilities.isValidHex(...args);
+
+  const normalizeHex = (...args) => ColorUtilities.normalizeHex(...args);
+
+  const clamp = (...args) => ColorUtilities.clampValue(...args);
+
+  const sanitiseClassPrefix = (value, fallback = 'palette') => (
+      ColorUtilities.sanitizeClassPrefix(value, fallback)
+  );
+
+  const getClassPrefix = (key) => (
+      PaletteLogic.getClassPrefix(classPrefixInputs, key, classPrefixInputs[key]?.fallback || 'palette')
+  );
+
+  const buildClassSelector = (...args) => PaletteLogic.buildClassSelector(...args);
+
   function formatRgbValue(rgb) {
       if (!rgb) {
           return '';
       }
       return `${rgb.r}, ${rgb.g}, ${rgb.b}`;
   }
-  
+
   function parseRgbValue(value) {
       if (!value) {
           return null;
@@ -1294,7 +2123,7 @@ customJS: |
       }
       return { r: numbers[0], g: numbers[1], b: numbers[2] };
   }
-  
+
   function updateRgbInputValue(input, hex) {
       if (!input) {
           return;
@@ -1361,12 +2190,12 @@ customJS: |
           k: normalized[3]
       };
   }
-  
+
   function syncRgbToPicker(rgbInput, picker, hexInput, callback) {
       if (!rgbInput || !picker) {
           return;
       }
-  
+
       const applyRgb = (raw) => {
           const parsed = parseRgbValue(raw);
           if (!parsed) {
@@ -1385,73 +2214,73 @@ customJS: |
               callback(hex);
           }
       };
-  
+
       rgbInput.addEventListener('input', (event) => {
           applyRgb(event.target.value);
       });
-  
+
       rgbInput.addEventListener('blur', (event) => {
           applyRgb(event.target.value);
       });
   }
-  
+
   function rotateHue(hue, delta) {
     const result = (hue + delta) % 360;
     return result < 0 ? result + 360 : result;
   }
-  
+
   function mixHexColors(firstHex, secondHex, amount) {
     const start = hexToRgb(firstHex);
     const end = hexToRgb(secondHex);
     if (!start || !end) {
         return firstHex;
     }
-  
+
     const mix = {
         r: start.r + (end.r - start.r) * amount,
         g: start.g + (end.g - start.g) * amount,
         b: start.b + (end.b - start.b) * amount
     };
-  
+
     return rgbToHex(mix.r, mix.g, mix.b);
   }
-  
+
   function relativeLuminanceFromRgb(r, g, b) {
     const linearise = (value) => {
         const channel = value / 255;
         return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
     };
-  
+
     const red = linearise(r);
     const green = linearise(g);
     const blue = linearise(b);
-  
+
     return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
   }
-  
+
   function contrastRatio(firstHex, secondHex) {
     const first = hexToRgb(firstHex);
     const second = hexToRgb(secondHex);
     if (!first || !second) {
         return 1;
     }
-  
+
     const luminanceA = relativeLuminanceFromRgb(first.r, first.g, first.b);
     const luminanceB = relativeLuminanceFromRgb(second.r, second.g, second.b);
     const lighter = Math.max(luminanceA, luminanceB);
     const darker = Math.min(luminanceA, luminanceB);
-  
+
     return (lighter + 0.05) / (darker + 0.05);
   }
-  
+
   function simulateColorBlindness(hex, type) {
     const rgb = hexToRgb(hex);
     if (!rgb) {
         return hex;
     }
-  
+
     let matrix;
-  
+
     if (type === 'deuteranopia') {
         matrix = [
             [0.625, 0.375, 0],
@@ -1473,19 +2302,19 @@ customJS: |
     } else {
         return hex;
     }
-  
+
     const r = clamp(matrix[0][0] * rgb.r + matrix[0][1] * rgb.g + matrix[0][2] * rgb.b, 0, 255);
     const g = clamp(matrix[1][0] * rgb.r + matrix[1][1] * rgb.g + matrix[1][2] * rgb.b, 0, 255);
     const b = clamp(matrix[2][0] * rgb.r + matrix[2][1] * rgb.g + matrix[2][2] * rgb.b, 0, 255);
-  
+
     return rgbToHex(r, g, b);
   }
-  
+
   function isOutOfPrintGamut(c, m, y, k) {
       const rgb = cmykToRgb(c, m, y, k);
       return isRgbOutOfPrintGamut(rgb);
   }
-  
+
   function syncPickerToHex(picker, hexInput, callback) {
     picker.addEventListener('input', (event) => {
         const value = event.target.value.toUpperCase();
@@ -1495,7 +2324,7 @@ customJS: |
         }
     });
   }
-  
+
   function syncHexToPicker(hexInput, picker, callback) {
     hexInput.addEventListener('input', (event) => {
         const value = normalizeHex(event.target.value);
@@ -1509,7 +2338,7 @@ customJS: |
             event.target.style.borderColor = '#f87171';
         }
     });
-  
+
     hexInput.addEventListener('blur', (event) => {
         const normalized = normalizeHex(event.target.value || '#000000');
         if (!isValidHex(normalized)) {
@@ -1529,11 +2358,36 @@ customJS: |
         }
     });
   }
-  
-  syncPickerToHex(hexElements.fromPicker, hexElements.fromHex);
-  syncPickerToHex(hexElements.toPicker, hexElements.toHex);
-  syncHexToPicker(hexElements.fromHex, hexElements.fromPicker);
-  syncHexToPicker(hexElements.toHex, hexElements.toPicker);
+
+  syncPickerToHex(hexElements.fromPicker, hexElements.fromHex, (value) => {
+      if (hexElements.fromPreview) {
+          hexElements.fromPreview.style.backgroundColor = value;
+      }
+  });
+  syncPickerToHex(hexElements.toPicker, hexElements.toHex, (value) => {
+      if (hexElements.toPreview) {
+          hexElements.toPreview.style.backgroundColor = value;
+      }
+  });
+  syncHexToPicker(hexElements.fromHex, hexElements.fromPicker, (value) => {
+      if (hexElements.fromPreview) {
+          hexElements.fromPreview.style.backgroundColor = value;
+      }
+  });
+  syncHexToPicker(hexElements.toHex, hexElements.toPicker, (value) => {
+      if (hexElements.toPreview) {
+          hexElements.toPreview.style.backgroundColor = value;
+      }
+  });
+
+  // Initialize preview chips with current values
+  if (hexElements.fromPreview) {
+      hexElements.fromPreview.style.backgroundColor = hexElements.fromPicker.value;
+  }
+  if (hexElements.toPreview) {
+      hexElements.toPreview.style.backgroundColor = hexElements.toPicker.value;
+  }
+
   syncPickerToHex(harmonyElements.colorPicker, harmonyElements.hexInput, (value) => {
       updateHarmonyPreview();
       updateRgbInputValue(harmonyElements.rgbInput, value);
@@ -1556,7 +2410,7 @@ customJS: |
   syncRgbToPicker(dataVizElements.rgbInput, dataVizElements.colorPicker, dataVizElements.hexInput, () => {
       updateDataVizPreview();
   });
-  
+
   function setupSliderPair(slider, input, { min, max, onChange }) {
       slider.addEventListener('input', () => {
           input.value = slider.value;
@@ -1564,7 +2418,7 @@ customJS: |
               onChange(parseFloat(slider.value));
           }
       });
-  
+
       input.addEventListener('input', () => {
           const numeric = Number(input.value);
           if (!Number.isFinite(numeric)) {
@@ -1579,7 +2433,7 @@ customJS: |
               onChange(clamped);
           }
       });
-  
+
       input.addEventListener('blur', () => {
           let numeric = Number(input.value);
           if (!Number.isFinite(numeric)) {
@@ -1593,7 +2447,7 @@ customJS: |
           }
       });
   }
-  
+
   function applyHslFromHex(hex) {
       const normalized = normalizeHex(hex || '#000000');
       if (!isValidHex(normalized)) {
@@ -1614,7 +2468,7 @@ customJS: |
       hslElements.colorPicker.value = normalized;
       updateHslPreview();
   }
-  
+
   function applyHsvFromHex(hex) {
       const normalized = normalizeHex(hex || '#000000');
       if (!isValidHex(normalized)) {
@@ -1635,7 +2489,7 @@ customJS: |
       hsvElements.colorPicker.value = normalized;
       updateHsvPreview();
   }
-  
+
   function applyCmykFromHex(hex) {
       const normalized = normalizeHex(hex || '#000000');
       if (!isValidHex(normalized)) {
@@ -1650,12 +2504,12 @@ customJS: |
       cmykElements.colorPicker.value = normalized;
       updateCmykPreview();
   }
-  
+
   function updateHslPreview() {
       const hue = Number(hslElements.hueInput.value);
       const saturation = Number(hslElements.saturationInput.value);
       const lightness = Number(hslElements.lightnessInput.value);
-  
+
       if (
           Number.isFinite(hue)
           && Number.isFinite(saturation)
@@ -1670,12 +2524,12 @@ customJS: |
           }
       }
   }
-  
+
   function updateHsvPreview() {
       const hue = Number(hsvElements.hueInput.value);
       const saturation = Number(hsvElements.saturationInput.value);
       const value = Number(hsvElements.valueInput.value);
-  
+
       if (
           Number.isFinite(hue)
           && Number.isFinite(saturation)
@@ -1690,13 +2544,13 @@ customJS: |
           }
       }
   }
-  
+
   function updateCmykPreview() {
       const cyan = Number(cmykElements.cyanInput.value);
       const magenta = Number(cmykElements.magentaInput.value);
       const yellow = Number(cmykElements.yellowInput.value);
       const key = Number(cmykElements.keyInput.value);
-  
+
       if (
           Number.isFinite(cyan)
           && Number.isFinite(magenta)
@@ -1711,7 +2565,7 @@ customJS: |
           evaluateCmykWarning();
       }
   }
-  
+
   function updateHarmonyPreview() {
     if (!harmonyElements.preview || !harmonyElements.hexInput) {
         return;
@@ -1727,7 +2581,7 @@ customJS: |
         updateRgbInputValue(harmonyElements.rgbInput, value);
     }
   }
-  
+
   function updateDataVizPreview() {
     if (!dataVizElements.preview || !dataVizElements.hexInput) {
         return;
@@ -1743,40 +2597,20 @@ customJS: |
         updateRgbInputValue(dataVizElements.rgbInput, value);
     }
   }
-  
+
   function evaluateCmykWarning(generatedHexes = []) {
     if (!cmykElements.warning) {
         return;
     }
-  
-    const cyan = Number(cmykElements.cyanInput.value);
-    const magenta = Number(cmykElements.magentaInput.value);
-    const yellow = Number(cmykElements.yellowInput.value);
-    const key = Number(cmykElements.keyInput.value);
-  
-    if ([cyan, magenta, yellow, key].some((value) => !Number.isFinite(value))) {
-        cmykElements.warning.style.display = 'none';
-        cmykElements.warning.removeAttribute('data-active');
-        return;
-    }
-  
-    const baseHex = cmykElements.colorPicker.value || '#000000';
-    const baseRgb = hexToRgb(baseHex);
-    const baseOutOfGamut = baseRgb ? isRgbOutOfPrintGamut(baseRgb) : false;
-  
-    const paletteOutOfGamut = generatedHexes.some((hex) => isHexOutOfPrintGamut(hex));
-  
-    if (baseOutOfGamut || paletteOutOfGamut) {
-        const segments = [];
-        if (baseOutOfGamut) {
-            segments.push('Base selection may print duller than preview.');
-        }
-        if (paletteOutOfGamut) {
-            segments.push('Generated swatches include tones outside common CMYK press gamut.');
-        }
-  
+
+    const warningText = PaletteLogic.evaluateCmykWarning({
+        baseHex: normalizeHex(cmykElements.colorPicker.value || '#000000'),
+        paletteHexes: generatedHexes
+    });
+
+    if (warningText) {
         cmykElements.warning.style.display = 'block';
-        cmykElements.warning.textContent = `⚠️ ${segments.join(' ')}`;
+        cmykElements.warning.textContent = `⚠️ ${warningText}`;
         cmykElements.warning.setAttribute('data-active', 'true');
     } else {
         cmykElements.warning.style.display = 'none';
@@ -1784,7 +2618,7 @@ customJS: |
         cmykElements.warning.textContent = '';
     }
   }
-  
+
   setupSliderPair(hslElements.hueSlider, hslElements.hueInput, {
       min: 0,
       max: 360,
@@ -1805,7 +2639,7 @@ customJS: |
       max: 36,
       onChange: undefined
   });
-  
+
   setupSliderPair(hsvElements.hueSlider, hsvElements.hueInput, {
       min: 0,
       max: 360,
@@ -1826,7 +2660,7 @@ customJS: |
       max: 36,
       onChange: undefined
   });
-  
+
   setupSliderPair(cmykElements.cyanSlider, cmykElements.cyanInput, {
       min: 0,
       max: 100,
@@ -1852,7 +2686,7 @@ customJS: |
       max: 36,
       onChange: undefined
   });
-  
+
   setupSliderPair(harmonyElements.spreadSlider, harmonyElements.spreadInput, {
     min: 10,
     max: 90,
@@ -1863,23 +2697,23 @@ customJS: |
     max: 30,
     onChange: undefined
   });
-  
+
   setupSliderPair(dataVizElements.countSlider, dataVizElements.countInput, {
     min: 3,
     max: 12,
     onChange: undefined
   });
-  
+
   hslElements.colorPicker.addEventListener('input', (event) => {
       applyHslFromHex(event.target.value);
   });
   syncRgbToPicker(hslElements.rgbInput, hslElements.colorPicker, null, applyHslFromHex);
-  
+
   hsvElements.colorPicker.addEventListener('input', (event) => {
       applyHsvFromHex(event.target.value);
   });
   syncRgbToPicker(hsvElements.rgbInput, hsvElements.colorPicker, null, applyHsvFromHex);
-  
+
   cmykElements.colorPicker.addEventListener('input', (event) => {
       applyCmykFromHex(event.target.value);
   });
@@ -1910,40 +2744,40 @@ customJS: |
           commitCmykValues(parsed);
       });
   }
-  
+
   updateHslPreview();
   updateHsvPreview();
   updateCmykPreview();
   updateHarmonyPreview();
   updateDataVizPreview();
   evaluateCmykWarning();
-  
+
   function copyTextToClipboard(text) {
       return navigator.clipboard.writeText(text).catch(() => {
           alert('Unable to copy value. Please copy it manually.');
           return Promise.reject();
       });
   }
-  
+
   function copyCss(text, button, icon) {
       const trimmed = text.trim();
       if (!trimmed) {
           alert('Generate a palette before copying the CSS classes.');
           return;
       }
-  
+
       copyTextToClipboard(trimmed)
           .then(() => {
               button.classList.add('copied');
               icon.innerHTML = checkSvg;
-  
+
               setTimeout(() => {
                   button.classList.remove('copied');
                   icon.innerHTML = clipboardSvg;
               }, 2000);
           });
   }
-  
+
   function attachColorCopy(element, hex, { showTick = false } = {}) {
       element.addEventListener('click', () => {
           copyTextToClipboard(hex)
@@ -1965,90 +2799,60 @@ customJS: |
               });
       });
   }
-  
+
   function renderBlocks(container, colors) {
-    container.innerHTML = '';
-  
-    colors.forEach((color) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'color-block-wrapper';
-  
-        const block = document.createElement('div');
-        block.className = 'color-block';
-        block.style.backgroundColor = color.bg;
-        block.textContent = '';
-  
-        const copyValue = color.copyValue ?? color.label;
-        block.setAttribute('title', `Click to copy ${copyValue}`);
-  
-        const label = document.createElement('div');
-        label.className = 'color-label';
-        label.textContent = color.label;
-  
-        attachColorCopy(block, copyValue, { showTick: true });
-        attachColorCopy(label, copyValue, { showTick: false });
-  
-        wrapper.appendChild(block);
-        wrapper.appendChild(label);
-  
-        if (color.note) {
-            const note = document.createElement('div');
-            note.className = 'color-note';
-            note.textContent = color.note;
-            wrapper.appendChild(note);
-        }
-  
-        container.appendChild(wrapper);
-    });
+      if (!container) {
+          return;
+      }
+      const nodes = UiHelpers.renderColorSwatches(container, colors);
+      nodes.forEach((node, index) => {
+          const source = colors[index];
+          const copyValue = source.copyValue ?? source.label;
+          if (node && node.block) {
+              attachColorCopy(node.block, copyValue, { showTick: true });
+          }
+          if (node && node.label) {
+              attachColorCopy(node.label, copyValue, { showTick: false });
+          }
+      });
   }
-  
+
   function generateRgbGradient() {
       const classPrefix = getClassPrefix('rgb');
       const startHex = normalizeHex(hexElements.fromHex.value);
       const endHex = normalizeHex(hexElements.toHex.value);
-  
+
       if (!isValidHex(startHex) || !isValidHex(endHex)) {
           alert('Please enter valid hex color codes (e.g., #FF0000 or FF0000).');
           return;
       }
-  
-      const fromRgb = hexToRgb(startHex);
-      const toRgb = hexToRgb(endHex);
+
       const requested = parseInt(hexElements.segments.value, 10);
       const count = clamp(Number.isFinite(requested) ? requested : 12, 2, 64);
       hexElements.segments.value = count;
-  
-      const colors = [];
-  
-      for (let index = 0; index < count; index += 1) {
-          const t = count === 1 ? 0 : index / (count - 1);
-          const r = fromRgb.r + (toRgb.r - fromRgb.r) * t;
-          const g = fromRgb.g + (toRgb.g - fromRgb.g) * t;
-          const b = fromRgb.b + (toRgb.b - fromRgb.b) * t;
-          const hex = rgbToHex(r, g, b);
-  
-          colors.push({
-              bg: hex,
-              label: hex,
-              selector: buildClassSelector(classPrefix, `gradient-color-${index + 1}`),
-              declaration: `background-color: ${hex};`
-          });
-      }
-  
+      const palette = PaletteLogic.createRgbGradientPalette({ fromHex: startHex, toHex: endHex, count });
+      const colors = palette.map((entry, index) => ({
+          bg: entry.hex,
+          label: entry.hex,
+          copyValue: entry.hex,
+          selector: buildClassSelector(classPrefix, `gradient-color-${index + 1}`),
+          declaration: entry.declaration
+      }));
+
       hexElements.results.style.display = 'block';
       renderBlocks(hexElements.colorBlocks, colors);
-  
+
       const cssText = colors
           .map((color) => `${color.selector} { ${color.declaration} }`)
           .join('\n');
-  
+
       hexElements.cssOutput.textContent = cssText;
   }
-  
+
   function copyRgbCss() {
       copyCss(hexElements.cssOutput.textContent, hexElements.copyBtn, hexElements.copyIcon);
   }
-  
+
   function generateHslGradient() {
       const classPrefix = getClassPrefix('hsl');
       const hue = clamp(Number(hslElements.hueInput.value), 0, 360);
@@ -2064,44 +2868,44 @@ customJS: |
       hslElements.lightnessSlider.value = lightness;
       hslElements.countInput.value = count;
       hslElements.countSlider.value = count;
-  
+
       if ([hue, saturation, lightness].some((value) => !Number.isFinite(value))) {
           alert('Please provide numeric values for hue, saturation, and lightness.');
           return;
       }
-  
-      const step = count === 1 ? 0 : 360 / count;
-      const colors = [];
-  
-      for (let index = 0; index < count; index += 1) {
-          const hueValue = (hue + step * index) % 360;
-          const hslString = `hsl(${Math.round(hueValue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`;
-          const rgb = hslToRgb(hueValue, saturation, lightness);
-          const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-  
-          colors.push({
-              bg: hslString,
-              label: hex,
-              selector: buildClassSelector(classPrefix, `hsl-gradient-color-${index + 1}`),
-              declaration: `background-color: ${hslString};`
-          });
-      }
-  
+
+      const baseHex = normalizeHex(hslElements.colorPicker.value);
+      const palette = PaletteLogic.createHslGradientPalette({
+          baseHex,
+          hue,
+          saturation,
+          lightness,
+          count
+      });
+
+      const colors = palette.map((entry, index) => ({
+          bg: entry.hsl || entry.hex,
+          label: entry.hex,
+          copyValue: entry.hex,
+          selector: buildClassSelector(classPrefix, `hsl-gradient-color-${index + 1}`),
+          declaration: entry.declaration
+      }));
+
       hslElements.results.style.display = 'block';
       renderBlocks(hslElements.colorBlocks, colors);
       updateHslPreview();
-  
+
       const cssText = colors
           .map((color) => `${color.selector} { ${color.declaration} }`)
           .join('\n');
-  
+
       hslElements.cssOutput.textContent = cssText;
   }
-  
+
   function copyHslCss() {
       copyCss(hslElements.cssOutput.textContent, hslElements.copyBtn, hslElements.copyIcon);
   }
-  
+
   function generateHsvGradient() {
       const classPrefix = getClassPrefix('hsv');
       const hue = clamp(Number(hsvElements.hueInput.value), 0, 360);
@@ -2117,43 +2921,44 @@ customJS: |
       hsvElements.valueSlider.value = value;
       hsvElements.countInput.value = count;
       hsvElements.countSlider.value = count;
-  
+
       if ([hue, saturation, value].some((entry) => !Number.isFinite(entry))) {
           alert('Please provide numeric values for hue, saturation, and value.');
           return;
       }
-  
-      const step = count === 1 ? 0 : 360 / count;
-      const colors = [];
-  
-      for (let index = 0; index < count; index += 1) {
-          const hueValue = (hue + step * index) % 360;
-          const rgb = hsvToRgb(hueValue, saturation, value);
-          const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-  
-          colors.push({
-              bg: hex,
-              label: hex,
-              selector: buildClassSelector(classPrefix, `hsv-gradient-color-${index + 1}`),
-              declaration: `background-color: ${hex};`
-          });
-      }
-  
+
+      const baseHex = normalizeHex(hsvElements.colorPicker.value);
+      const palette = PaletteLogic.createHsvGradientPalette({
+          baseHex,
+          hue,
+          saturation,
+          value,
+          count
+      });
+
+      const colors = palette.map((entry, index) => ({
+          bg: entry.hex,
+          label: entry.hex,
+          copyValue: entry.hex,
+          selector: buildClassSelector(classPrefix, `hsv-gradient-color-${index + 1}`),
+          declaration: entry.declaration
+      }));
+
       hsvElements.results.style.display = 'block';
       renderBlocks(hsvElements.colorBlocks, colors);
       updateHsvPreview();
-  
+
       const cssText = colors
           .map((color) => `${color.selector} { ${color.declaration} }`)
           .join('\n');
-  
+
       hsvElements.cssOutput.textContent = cssText;
   }
-  
+
   function copyHsvCss() {
       copyCss(hsvElements.cssOutput.textContent, hsvElements.copyBtn, hsvElements.copyIcon);
   }
-  
+
   function generateCmykGradient() {
       const classPrefix = getClassPrefix('cmyk');
       const cyan = clamp(Number(cmykElements.cyanInput.value), 0, 100);
@@ -2162,93 +2967,49 @@ customJS: |
       const key = clamp(Number(cmykElements.keyInput.value), 0, 100);
       let count = parseInt(cmykElements.countInput.value, 10);
       count = clamp(Number.isFinite(count) ? count : 12, 1, 36);
-  
+
       setCmykComponentValues(cyan, magenta, yellow, key);
       cmykElements.countInput.value = count;
       cmykElements.countSlider.value = count;
-  
+
       if ([cyan, magenta, yellow, key].some((entry) => !Number.isFinite(entry))) {
           alert('Please provide numeric values for CMYK.');
           return;
       }
-  
-      const rangeStart = clamp(key - 40, 0, 100);
-      const rangeEnd = clamp(key + 40, 0, 100);
-      const actualRange = rangeEnd === rangeStart
-          ? { start: Math.max(0, key - 10), end: Math.min(100, key + 10) }
-          : { start: rangeStart, end: rangeEnd };
-      const step = count === 1 ? 0 : (actualRange.end - actualRange.start) / (count - 1 || 1);
-  
-      const colors = [];
-  
-      for (let index = 0; index < count; index += 1) {
-          const currentKey = clamp(Math.round(actualRange.start + step * index), 0, 100);
-          const rgb = cmykToRgb(cyan, magenta, yellow, currentKey);
-          const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-  
-          colors.push({
-              bg: hex,
-          label: hex,
-          copyValue: hex,
-              selector: buildClassSelector(classPrefix, `cmyk-gradient-color-${index + 1}`),
-              declaration: `background-color: ${hex};`
-          });
-      }
-  
+
+      const palette = PaletteLogic.createCmykGradientPalette({
+          c: cyan,
+          m: magenta,
+          y: yellow,
+          k: key,
+          count
+      });
+
+      const colors = palette.map((entry, index) => ({
+          bg: entry.hex,
+          label: entry.hex,
+          copyValue: entry.hex,
+          selector: buildClassSelector(classPrefix, `cmyk-gradient-color-${index + 1}`),
+          declaration: entry.declaration
+      }));
+
       cmykElements.results.style.display = 'block';
       renderBlocks(cmykElements.colorBlocks, colors);
       updateCmykPreview();
-  evaluateCmykWarning(colors.map((color) => color.copyValue ?? color.label));
-  
+      evaluateCmykWarning(colors.map((color) => color.copyValue ?? color.label));
+
       const cssText = colors
           .map((color) => `${color.selector} { ${color.declaration} }`)
           .join('\n');
-  
+
       cmykElements.cssOutput.textContent = cssText;
   }
-  
+
   function copyCmykCss() {
       copyCss(cmykElements.cssOutput.textContent, cmykElements.copyBtn, cmykElements.copyIcon);
   }
-  
-  function buildHarmonyConfig(baseHsl, scheme, spread, variance) {
-    const extendedSpread = Math.round(spread * 1.5);
-    const configs = {
-        analogous: [
-            { offset: -spread * 1.5, sortAngle: -spread * 1.5, note: `Analogous −${extendedSpread}°`, lightness: -variance },
-            { offset: -spread, sortAngle: -spread, note: `Analogous −${spread}°`, lightness: -variance / 2 },
-            { offset: 0, sortAngle: 0, note: 'Base', lightness: 0 },
-            { offset: spread, sortAngle: spread, note: `Analogous +${spread}°`, lightness: variance / 2 },
-            { offset: spread * 1.5, sortAngle: spread * 1.5, note: `Analogous +${extendedSpread}°`, lightness: variance }
-        ],
-        complementary: [
-            { offset: 0, sortAngle: -0.1, note: 'Base (shade)', lightness: -variance / 1.2 },
-            { offset: 0, sortAngle: 0, note: 'Base', lightness: 0 },
-            { offset: 180, sortAngle: 180, note: 'Complement', lightness: 0 },
-            { offset: 180, sortAngle: 180.1, note: 'Complement (highlight)', lightness: variance / 1.2 }
-        ],
-        'split-complementary': [
-            { offset: -spread, sortAngle: -spread, note: `Split −${spread}°`, lightness: -variance / 2 },
-            { offset: 0, sortAngle: 0, note: 'Base', lightness: 0 },
-            { offset: spread, sortAngle: spread, note: `Split +${spread}°`, lightness: variance / 2 },
-            { offset: 180, sortAngle: 180, note: 'Anchor complement', lightness: 0 }
-        ],
-        triadic: [
-            { offset: -120, sortAngle: -120, note: '−120° accent', lightness: -variance / 2 },
-            { offset: 0, sortAngle: 0, note: 'Base', lightness: 0 },
-            { offset: 120, sortAngle: 120, note: '+120° accent', lightness: variance / 2 }
-        ],
-        tetradic: [
-            { offset: -90, sortAngle: -90, note: '−90°', lightness: -variance / 2 },
-            { offset: 0, sortAngle: 0, note: 'Base', lightness: 0 },
-            { offset: 90, sortAngle: 90, note: '+90°', lightness: variance / 2 },
-            { offset: 180, sortAngle: 180, note: 'Opposite', lightness: 0 }
-        ]
-    };
-  
-    return configs[scheme] ?? configs.analogous;
-  }
-  
+
+
   const harmonySchemeOrder = [
     { key: 'analogous', label: 'Analogous' },
     { key: 'complementary', label: 'Complementary' },
@@ -2256,13 +3017,13 @@ customJS: |
     { key: 'triadic', label: 'Triadic' },
     { key: 'tetradic', label: 'Tetradic' }
   ];
-  
+
   const dataVizTooltipContent = {
       sequential: 'Sequential palettes progress from low to high intensity, ideal for indicating ordered or magnitude-driven data.',
       diverging: 'Diverging palettes highlight deviations on either side of a midpoint, useful for visualizing change around a neutral value.',
       qualitative: 'Qualitative palettes assign distinct hues to categories without implying order, keeping each series equally weighted.'
   };
-  
+
   function applyHarmonyTooltip(target, colors, baseHex, schemeLabel) {
     if (!target) {
         return;
@@ -2293,7 +3054,7 @@ customJS: |
     target.setAttribute('data-tooltip', items.join('\n'));
     target.setAttribute('tabindex', '0');
   }
-  
+
   function applyDataVizTooltip(target, description) {
     if (!target) {
         return;
@@ -2311,28 +3072,28 @@ customJS: |
         target.setAttribute('tabindex', '0');
     }
   }
-  
+
   let simulationIdCounter = 0;
-  
+
   function renderSimulations(container, colors) {
     if (!container) {
         return;
     }
-  
+
     container.innerHTML = '';
-  
+
     if (!colors.length) {
         container.style.display = 'none';
         return;
     }
-  
+
     const scenarios = [
         { type: 'deuteranopia', label: 'Deuteranopia simulation', transform: (hex) => simulateColorBlindness(hex, 'deuteranopia') },
         { type: 'protanopia', label: 'Protanopia simulation', transform: (hex) => simulateColorBlindness(hex, 'protanopia') }
     ];
-  
+
     container.style.display = 'grid';
-  
+
     scenarios.forEach((scenario) => {
         const row = document.createElement('div');
         row.className = 'simulation-row';
@@ -2352,7 +3113,7 @@ customJS: |
 
         const blocksWrapper = document.createElement('div');
         blocksWrapper.className = 'color-blocks simulation-blocks';
-  
+
         const simulated = colors.map((color, index) => {
             const hex = scenario.transform(color.copyValue ?? color.label);
             return {
@@ -2363,7 +3124,7 @@ customJS: |
                 declaration: `background-color: ${hex};`
             };
         });
-  
+
         renderBlocks(blocksWrapper, simulated);
         content.appendChild(blocksWrapper);
         row.appendChild(toggle);
@@ -2374,11 +3135,11 @@ customJS: |
             row.dataset.collapsed = collapsed ? 'false' : 'true';
             toggle.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
         });
-  
+
         container.appendChild(row);
     });
   }
-  
+
   function generateHarmonyPalette() {
     const classPrefix = getClassPrefix('harmony');
     const baseHex = normalizeHex(harmonyElements.hexInput.value || '#5B21B6');
@@ -2386,49 +3147,39 @@ customJS: |
         alert('Please provide a valid hex color for the harmony base.');
         return;
     }
-  
+
     const spread = clamp(Number(harmonyElements.spreadInput.value), 10, 90);
     const variance = clamp(Number(harmonyElements.lightnessInput.value), 0, 30);
-  
+
     harmonyElements.spreadInput.value = spread;
     harmonyElements.spreadSlider.value = spread;
     harmonyElements.lightnessInput.value = variance;
     harmonyElements.lightnessSlider.value = variance;
-  
-    const baseRgb = hexToRgb(baseHex);
-    if (!baseRgb) {
-        return;
-    }
-  
-    const baseHsl = rgbToHsl(baseRgb.r, baseRgb.g, baseRgb.b);
-  
+
+    const palette = PaletteLogic.createHarmonyPalettes({
+        baseHex,
+        spread,
+        variance
+    });
+
     harmonySchemeOrder.forEach(({ key, label }) => {
         const column = harmonyElements.columns[key];
         if (!column) {
             return;
         }
-  
-        const config = buildHarmonyConfig(baseHsl, key, spread, variance);
-  
-        const colors = config.map((entry, index) => {
-            const hue = rotateHue(baseHsl.h, entry.offset);
-            const saturation = clamp(baseHsl.s, 5, 100);
-            const lightness = clamp(baseHsl.l + entry.lightness, 5, 95);
-            const rgb = hslToRgb(hue, saturation, lightness);
-            const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+        const source = palette[key] || [];
 
-            const sortAngle = Number.isFinite(entry.sortAngle) ? entry.sortAngle : entry.offset ?? 0;
-
-            return {
-                bg: hex,
-                label: hex,
-                copyValue: hex,
-                note: entry.note,
-                offset: entry.offset ?? 0,
-                sortAngle,
-                originalIndex: index
-            };
-        });
+        const colors = source.map((entry, index) => ({
+            bg: entry.hex,
+            label: entry.hex,
+            copyValue: entry.hex,
+            note: entry.note,
+            offset: entry.offset ?? 0,
+            sortAngle: entry.offset ?? 0,
+            originalIndex: index,
+            selector: buildClassSelector(classPrefix, `harmony-${key}-color-${index + 1}`),
+            declaration: `background-color: ${entry.hex};`
+        }));
 
         const sortedColors = colors
             .slice()
@@ -2463,7 +3214,7 @@ customJS: |
             baseHex,
             label
         );
-  
+
         const cssText = sortedColors
             .map((color) => `${color.selector} { ${color.declaration} }`)
             .join('\n');
@@ -2473,7 +3224,7 @@ customJS: |
         column.cssOutput.textContent = cssText;
     });
   }
-  
+
   function copyHarmonyCss(scheme) {
     const column = harmonyElements.columns[scheme];
     if (!column) {
@@ -2481,78 +3232,6 @@ customJS: |
     }
     copyCss(column.cssOutput.textContent, column.copyBtn, column.copyIcon);
   }
-  function generateSequentialPalette(baseHex, count) {
-    const rgb = hexToRgb(baseHex);
-    if (!rgb) {
-        return [];
-    }
-    const baseHsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    const startLight = clamp(baseHsl.l + 40, 30, 96);
-    const endLight = clamp(baseHsl.l - 30, 10, 70);
-    const colours = [];
-  
-    for (let index = 0; index < count; index += 1) {
-        const t = count === 1 ? 0 : index / (count - 1);
-        const lightness = startLight - (startLight - endLight) * t;
-        const saturation = clamp(baseHsl.s * (0.9 - t * 0.2), 25, 100);
-        const rgbColor = hslToRgb(baseHsl.h, saturation, lightness);
-        colours.push(rgbToHex(rgbColor.r, rgbColor.g, rgbColor.b));
-    }
-  
-    return colours;
-  }
-  
-  function generateDivergingPalette(baseHex, count) {
-    const rgb = hexToRgb(baseHex);
-    if (!rgb) {
-        return [];
-    }
-    const baseHsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    const complementHue = rotateHue(baseHsl.h, 180);
-    const complementRgb = hslToRgb(complementHue, baseHsl.s, baseHsl.l);
-    const neutralRgb = hslToRgb(baseHsl.h, clamp(baseHsl.s * 0.25, 5, 35), 52);
-  
-    const baseHexNormalized = rgbToHex(rgb.r, rgb.g, rgb.b);
-    const complementHex = rgbToHex(complementRgb.r, complementRgb.g, complementRgb.b);
-    const neutralHex = rgbToHex(neutralRgb.r, neutralRgb.g, neutralRgb.b);
-  
-    const colours = [];
-    const maxIndex = Math.max(count - 1, 1);
-  
-    for (let index = 0; index < count; index += 1) {
-        const t = maxIndex === 0 ? 0 : index / maxIndex;
-        const signed = t * 2 - 1;
-        if (signed < 0) {
-            const mixAmount = 1 - Math.abs(signed);
-            colours.push(mixHexColors(complementHex, neutralHex, mixAmount));
-        } else {
-            const mixAmount = signed;
-            colours.push(mixHexColors(neutralHex, baseHexNormalized, mixAmount));
-        }
-    }
-  
-    return colours;
-  }
-  
-  function generateQualitativePalette(baseHex, count) {
-    const rgb = hexToRgb(baseHex);
-    if (!rgb) {
-        return [];
-    }
-    const baseHsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    const colours = [];
-  
-    for (let index = 0; index < count; index += 1) {
-        const hue = rotateHue(baseHsl.h, (360 / count) * index);
-        const saturation = clamp(baseHsl.s, 50, 90);
-        const lightness = clamp(baseHsl.l, 35, 65);
-        const rgbColor = hslToRgb(hue, saturation, lightness);
-        colours.push(rgbToHex(rgbColor.r, rgbColor.g, rgbColor.b));
-    }
-  
-    return colours;
-  }
-  
   function generateDataVizPalette() {
     const classPrefix = getClassPrefix('dataViz');
     const baseHex = normalizeHex(dataVizElements.hexInput.value || '#2563EB');
@@ -2560,25 +3239,20 @@ customJS: |
         alert('Please enter a valid hex color for the base brand tone.');
         return;
     }
-  
+
     let count = clamp(Number(dataVizElements.countInput.value), 3, 12);
     dataVizElements.countInput.value = count;
     dataVizElements.countSlider.value = count;
-  
-    const generators = {
-        sequential: generateSequentialPalette,
-        diverging: generateDivergingPalette,
-        qualitative: generateQualitativePalette
-    };
-  
-    Object.entries(generators).forEach(([type, generator]) => {
+
+    const palette = PaletteLogic.createDataVizPalettes({ baseHex, count });
+
+    Object.entries(palette).forEach(([type, hexes]) => {
         const column = dataVizElements.columns[type];
         if (!column) {
             return;
         }
         applyDataVizTooltip(column.heading, dataVizTooltipContent[type]);
-  
-        const hexes = generator(baseHex, count);
+
         const colors = hexes.map((hex, index) => ({
             bg: hex,
             label: hex,
@@ -2586,10 +3260,10 @@ customJS: |
             selector: buildClassSelector(classPrefix, `dataviz-${type}-color-${index + 1}`),
             declaration: `background-color: ${hex};`
         }));
-  
+
         renderBlocks(column.blocks, colors);
         renderSimulations(column.simulations, colors);
-  
+
         const cssText = colors
             .map((color) => `${color.selector} { ${color.declaration} }`)
             .join('\n');
@@ -2599,7 +3273,7 @@ customJS: |
         column.cssOutput.textContent = cssText;
     });
   }
-  
+
   function copyDataVizCss(type) {
     const column = dataVizElements.columns[type];
     if (!column) {
@@ -2607,13 +3281,93 @@ customJS: |
     }
     copyCss(column.cssOutput.textContent, column.copyBtn, column.copyIcon);
   }
-  
+
+  // Bridge legacy helpers to shared modular utilities
+  if (typeof window !== 'undefined') {
+      window.clamp = ColorUtilities.clampValue;
+      window.normalizeHex = ColorUtilities.normalizeHex;
+      window.isValidHex = ColorUtilities.isValidHex;
+      window.sanitiseClassPrefix = (value, fallback = 'palette') => (
+          ColorUtilities.sanitizeClassPrefix(value, fallback)
+      );
+      window.hexToRgb = ColorUtilities.hexToRgb;
+      window.rgbToHex = ColorUtilities.rgbToHex;
+      window.hslToRgb = ColorUtilities.hslToRgb;
+      window.hsvToRgb = ColorUtilities.hsvToRgb;
+      window.cmykToRgb = ColorUtilities.cmykToRgb;
+      window.rgbToHsl = ColorUtilities.rgbToHsl;
+      window.rgbToHsv = ColorUtilities.rgbToHsv;
+      window.rgbToCmyk = ColorUtilities.rgbToCmyk;
+      window.mixHexColors = ColorUtilities.mixHexColors;
+      window.simulateColorBlindness = ColorUtilities.simulateColorBlindness;
+      window.copyTextToClipboard = ColorUtilities.copyTextToClipboard;
+  }
+
+  initClassPrefixInputs();
+
+  UiHelpers.initTabs(document.querySelector('.tab-container'), {
+      buttonSelector: '.tab-button',
+      panelSelector: '.tab-panel',
+      activeClass: 'active'
+  });
+
+  const generatorHandlers = {
+      rgb: generateRgbGradient,
+      hsl: generateHslGradient,
+      hsv: generateHsvGradient,
+      cmyk: generateCmykGradient,
+      harmony: generateHarmonyPalette,
+      dataviz: generateDataVizPalette
+  };
+
+  document.querySelectorAll('[data-generator]').forEach((button) => {
+      const key = button.getAttribute('data-generator');
+      const handler = generatorHandlers[key];
+      if (typeof handler === 'function') {
+          button.addEventListener('click', handler);
+      }
+  });
+
+  const copyHandlers = {
+      rgb: copyRgbCss,
+      hsl: copyHslCss,
+      hsv: copyHsvCss,
+      cmyk: copyCmykCss,
+      'harmony-analogous': () => copyHarmonyCss('analogous'),
+      'harmony-complementary': () => copyHarmonyCss('complementary'),
+      'harmony-split-complementary': () => copyHarmonyCss('split-complementary'),
+      'harmony-triadic': () => copyHarmonyCss('triadic'),
+      'harmony-tetradic': () => copyHarmonyCss('tetradic'),
+      'dataviz-sequential': () => copyDataVizCss('sequential'),
+      'dataviz-diverging': () => copyDataVizCss('diverging'),
+      'dataviz-qualitative': () => copyDataVizCss('qualitative')
+  };
+
+  document.querySelectorAll('[data-copy]').forEach((button) => {
+      const key = button.getAttribute('data-copy');
+      const handler = copyHandlers[key];
+      if (typeof handler === 'function') {
+          button.addEventListener('click', handler);
+      }
+  });
+
+  // Main execution context
+  (function() {
+      // Initialize tabs
+      const tabContainer = document.querySelector('.tab-container');
+      if (tabContainer) {
+          UiHelpers.initTabs(tabContainer);
+      }
+
+      // Initialize other components
+      initClassPrefixInputs();
+  })();
 ---
 
 <div class="container">
-    <h1>🎨 Color Generator</h1>
+    <h1>🎨 Super Color Generator</h1>
 
-    <div class="tab-container">
+    <div class="tab-container surface-card stack" style="--stack-gap: 24px;">
         <div class="tab-buttons">
             <button class="tab-button active" data-tab="rgbGenerator" type="button">RGB</button>
             <button class="tab-button" data-tab="hslGenerator" type="button">HSL</button>
@@ -2624,15 +3378,19 @@ customJS: |
         </div>
 
         <div class="tab-panel active" id="rgbGenerator">
-            <div class="controls compact-grid rgb-controls">
-                <div class="color-input-group">
+            <div class="controls surface-card grid-auto rgb-controls" style="--grid-min: 220px;">
+                <div class="preview-control stack" style="--stack-gap: 10px;">
                     <label for="fromColorPicker">From Color</label>
-                    <div class="color-picker-row">
-                        <input type="color" id="fromColorPicker" value="#000000" aria-label="From color picker">
+                    <div class="color-picker-row with-hex">
+                        <div class="preview-picker" title="Pick from color">
+                            <div class="preview-chip" id="fromPreview"></div>
+                            <input type="color" id="fromColorPicker" value="#000000" aria-label="From color picker">
+                        </div>
                         <div class="hex-input">
                             <input
                                 type="text"
                                 id="fromHex"
+                                class="field-input"
                                 value="#000000"
                                 placeholder="#000000"
                                 maxlength="7"
@@ -2647,14 +3405,18 @@ customJS: |
                     </div>
                 </div>
 
-                <div class="color-input-group">
+                <div class="preview-control stack" style="--stack-gap: 10px;">
                     <label for="toColorPicker">To Color</label>
-                    <div class="color-picker-row">
-                        <input type="color" id="toColorPicker" value="#ffffff" aria-label="To color picker">
+                    <div class="color-picker-row with-hex">
+                        <div class="preview-picker" title="Pick to color">
+                            <div class="preview-chip" id="toPreview"></div>
+                            <input type="color" id="toColorPicker" value="#ffffff" aria-label="To color picker">
+                        </div>
                         <div class="hex-input">
                             <input
                                 type="text"
                                 id="toHex"
+                                class="field-input"
                                 value="#FFFFFF"
                                 placeholder="#FFFFFF"
                                 maxlength="7"
@@ -2671,7 +3433,7 @@ customJS: |
 
                 <div class="segments-control">
                     <label for="segments">Colors in Gradient (2 – 64)</label>
-                    <input type="number" id="segments" min="2" max="64" step="1" value="12" required>
+                    <input type="number" id="segments" class="field-input" min="2" max="64" step="1" value="12" required>
                 </div>
 
                 <div class="prefix-control">
@@ -2679,6 +3441,7 @@ customJS: |
                     <input
                         type="text"
                         id="rgbClassPrefix"
+                        class="field-input"
                         value="palette-rgb"
                         placeholder="palette-rgb"
                         maxlength="24"
@@ -2687,7 +3450,7 @@ customJS: |
                     >
                 </div>
 
-                <button class="generate-btn" type="button" onclick="generateRgbGradient()">Generate</button>
+                <button class="button button--primary" type="button" data-generator="rgb">Generate</button>
             </div>
 
             <div class="results" id="hexResults" style="display:none;">
@@ -2695,7 +3458,7 @@ customJS: |
 
                 <div class="css-output">
                     <h3>CSS Classes</h3>
-                    <button class="copy-btn" id="hexCopyBtn" type="button" onclick="copyRgbCss()" title="Copy CSS">
+                    <button class="button copy-btn" id="hexCopyBtn" type="button" data-copy="rgb" title="Copy CSS">
                         <svg id="hexCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -2707,8 +3470,8 @@ customJS: |
         </div>
 
         <div class="tab-panel" id="hslGenerator">
-            <div class="controls tone-controls hsl-controls">
-                <div class="preview-control">
+            <div class="controls surface-card tone-controls hsl-controls grid-auto" style="--grid-min: 220px;">
+                <div class="preview-control stack" style="--stack-gap: 10px;">
                     <label for="hslColorPicker">Color Picker</label>
                     <div class="color-picker-row with-rgb no-hex">
                         <div class="preview-picker" title="Pick a base color">
@@ -2719,6 +3482,7 @@ customJS: |
                             <input
                                 type="text"
                                 id="hslRgb"
+                                class="field-input"
                                 value="31, 123, 234"
                                 placeholder="R, G, B"
                                 aria-label="HSL RGB value"
@@ -2731,32 +3495,32 @@ customJS: |
                 <div class="slider-control">
                     <label for="hslHueSlider">Starting Hue (0 – 360)</label>
                     <div class="slider-row">
-                        <input type="range" id="hslHueSlider" min="0" max="360" step="1" value="200">
-                        <input type="number" id="hslHueInput" min="0" max="360" step="1" value="200" aria-label="Hue value">
+                        <input type="range" id="hslHueSlider" class="field-range" min="0" max="360" step="1" value="200">
+                        <input type="number" id="hslHueInput" class="field-input" min="0" max="360" step="1" value="200" aria-label="Hue value">
                     </div>
                 </div>
 
                 <div class="slider-control">
                     <label for="hslSaturationSlider">Saturation (%)</label>
                     <div class="slider-row">
-                        <input type="range" id="hslSaturationSlider" min="0" max="100" step="1" value="80">
-                        <input type="number" id="hslSaturationInput" min="0" max="100" step="1" value="80" aria-label="Saturation value">
+                        <input type="range" id="hslSaturationSlider" class="field-range" min="0" max="100" step="1" value="80">
+                        <input type="number" id="hslSaturationInput" class="field-input" min="0" max="100" step="1" value="80" aria-label="Saturation value">
                     </div>
                 </div>
 
                 <div class="slider-control">
                     <label for="hslLightnessSlider">Lightness (%)</label>
                     <div class="slider-row">
-                        <input type="range" id="hslLightnessSlider" min="0" max="100" step="1" value="50">
-                        <input type="number" id="hslLightnessInput" min="0" max="100" step="1" value="50" aria-label="Lightness value">
+                        <input type="range" id="hslLightnessSlider" class="field-range" min="0" max="100" step="1" value="50">
+                        <input type="number" id="hslLightnessInput" class="field-input" min="0" max="100" step="1" value="50" aria-label="Lightness value">
                     </div>
                 </div>
 
                 <div class="slider-control">
                     <label for="hslCountSlider">Colors in Palette (1 – 36)</label>
                     <div class="slider-row">
-                        <input type="range" id="hslCountSlider" min="1" max="36" step="1" value="12">
-                        <input type="number" id="hslCount" min="1" max="36" step="1" value="12" required aria-label="HSL colors count">
+                        <input type="range" id="hslCountSlider" class="field-range" min="1" max="36" step="1" value="12">
+                        <input type="number" id="hslCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="HSL colors count">
                     </div>
                 </div>
 
@@ -2765,6 +3529,7 @@ customJS: |
                     <input
                         type="text"
                         id="hslClassPrefix"
+                        class="field-input"
                         value="palette-hsl"
                         placeholder="palette-hsl"
                         maxlength="24"
@@ -2773,7 +3538,7 @@ customJS: |
                     >
                 </div>
 
-                <button class="generate-btn" type="button" onclick="generateHslGradient()">Generate</button>
+                <button class="button button--primary" type="button" data-generator="hsl">Generate</button>
             </div>
 
             <div class="results" id="hslResults" style="display:none;">
@@ -2781,7 +3546,7 @@ customJS: |
 
                 <div class="css-output">
                     <h3>CSS Classes</h3>
-                    <button class="copy-btn" id="hslCopyBtn" type="button" onclick="copyHslCss()" title="Copy CSS">
+                    <button class="button copy-btn" id="hslCopyBtn" type="button" data-copy="hsl" title="Copy CSS">
                         <svg id="hslCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -2793,8 +3558,8 @@ customJS: |
         </div>
 
         <div class="tab-panel" id="hsvGenerator">
-            <div class="controls tone-controls hsv-controls">
-                <div class="preview-control">
+            <div class="controls surface-card tone-controls hsv-controls grid-auto" style="--grid-min: 220px;">
+                <div class="preview-control stack" style="--stack-gap: 10px;">
                     <label for="hsvColorPicker">Color Picker</label>
                     <div class="color-picker-row with-rgb no-hex">
                         <div class="preview-picker" title="Pick a base color">
@@ -2805,6 +3570,7 @@ customJS: |
                             <input
                                 type="text"
                                 id="hsvRgb"
+                                class="field-input"
                                 value="51, 160, 255"
                                 placeholder="R, G, B"
                                 aria-label="HSV RGB value"
@@ -2817,32 +3583,32 @@ customJS: |
                 <div class="slider-control">
                     <label for="hsvHueSlider">Starting Hue (0 – 360)</label>
                     <div class="slider-row">
-                        <input type="range" id="hsvHueSlider" min="0" max="360" step="1" value="200">
-                        <input type="number" id="hsvHueInput" min="0" max="360" step="1" value="200" aria-label="Hue value">
+                        <input type="range" id="hsvHueSlider" class="field-range" min="0" max="360" step="1" value="200">
+                        <input type="number" id="hsvHueInput" class="field-input" min="0" max="360" step="1" value="200" aria-label="Hue value">
                     </div>
                 </div>
 
                 <div class="slider-control">
                     <label for="hsvSaturationSlider">Saturation (%)</label>
                     <div class="slider-row">
-                        <input type="range" id="hsvSaturationSlider" min="0" max="100" step="1" value="80">
-                        <input type="number" id="hsvSaturationInput" min="0" max="100" step="1" value="80" aria-label="Saturation value">
+                        <input type="range" id="hsvSaturationSlider" class="field-range" min="0" max="100" step="1" value="80">
+                        <input type="number" id="hsvSaturationInput" class="field-input" min="0" max="100" step="1" value="80" aria-label="Saturation value">
                     </div>
                 </div>
 
                 <div class="slider-control">
                     <label for="hsvValueSlider">Value (Brightness %)</label>
                     <div class="slider-row">
-                        <input type="range" id="hsvValueSlider" min="0" max="100" step="1" value="75">
-                        <input type="number" id="hsvValueInput" min="0" max="100" step="1" value="75" aria-label="Value brightness">
+                        <input type="range" id="hsvValueSlider" class="field-range" min="0" max="100" step="1" value="75">
+                        <input type="number" id="hsvValueInput" class="field-input" min="0" max="100" step="1" value="75" aria-label="Value brightness">
                     </div>
                 </div>
 
                 <div class="slider-control">
                     <label for="hsvCountSlider">Colors in Palette (1 – 36)</label>
                     <div class="slider-row">
-                        <input type="range" id="hsvCountSlider" min="1" max="36" step="1" value="12">
-                        <input type="number" id="hsvCount" min="1" max="36" step="1" value="12" required aria-label="HSV colors count">
+                        <input type="range" id="hsvCountSlider" class="field-range" min="1" max="36" step="1" value="12">
+                        <input type="number" id="hsvCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="HSV colors count">
                     </div>
                 </div>
 
@@ -2851,6 +3617,7 @@ customJS: |
                     <input
                         type="text"
                         id="hsvClassPrefix"
+                        class="field-input"
                         value="palette-hsv"
                         placeholder="palette-hsv"
                         maxlength="24"
@@ -2859,7 +3626,7 @@ customJS: |
                     >
                 </div>
 
-                <button class="generate-btn" type="button" onclick="generateHsvGradient()">Generate</button>
+                <button class="button button--primary" type="button" data-generator="hsv">Generate</button>
             </div>
 
             <div class="results" id="hsvResults" style="display:none;">
@@ -2867,7 +3634,7 @@ customJS: |
 
                 <div class="css-output">
                     <h3>CSS Classes</h3>
-                    <button class="copy-btn" id="hsvCopyBtn" type="button" onclick="copyHsvCss()" title="Copy CSS">
+                    <button class="button copy-btn" id="hsvCopyBtn" type="button" data-copy="hsv" title="Copy CSS">
                         <svg id="hsvCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -2879,8 +3646,8 @@ customJS: |
         </div>
 
         <div class="tab-panel" id="cmykGenerator">
-            <div class="controls tone-controls cmyk-controls">
-                <div class="preview-control">
+            <div class="controls surface-card tone-controls cmyk-controls grid-auto" style="--grid-min: 220px;">
+                <div class="preview-control stack" style="--stack-gap: 10px;">
                     <label for="cmykColorPicker">Color Picker</label>
                     <div class="color-picker-row with-rgb no-hex">
                         <div class="preview-picker" title="Pick a base color">
@@ -2891,6 +3658,7 @@ customJS: |
                             <input
                                 type="text"
                                 id="cmykValues"
+                                class="field-input"
                                 value="60, 30, 0, 10"
                                 placeholder="C, M, Y, K"
                                 aria-label="CMYK values"
@@ -2903,40 +3671,40 @@ customJS: |
                 <div class="cmyk-control">
                     <label for="cmykCyanSlider">Cyan (%)</label>
                     <div class="cmyk-row">
-                        <input type="range" id="cmykCyanSlider" min="0" max="100" step="1" value="60">
-                        <input type="number" id="cmykCyanInput" min="0" max="100" step="1" value="60" aria-label="Cyan value">
+                        <input type="range" id="cmykCyanSlider" class="field-range" min="0" max="100" step="1" value="60">
+                        <input type="number" id="cmykCyanInput" class="field-input" min="0" max="100" step="1" value="60" aria-label="Cyan value">
                     </div>
                 </div>
 
                 <div class="cmyk-control">
                     <label for="cmykMagentaSlider">Magenta (%)</label>
                     <div class="cmyk-row">
-                        <input type="range" id="cmykMagentaSlider" min="0" max="100" step="1" value="30">
-                        <input type="number" id="cmykMagentaInput" min="0" max="100" step="1" value="30" aria-label="Magenta value">
+                        <input type="range" id="cmykMagentaSlider" class="field-range" min="0" max="100" step="1" value="30">
+                        <input type="number" id="cmykMagentaInput" class="field-input" min="0" max="100" step="1" value="30" aria-label="Magenta value">
                     </div>
                 </div>
 
                 <div class="cmyk-control">
                     <label for="cmykYellowSlider">Yellow (%)</label>
                     <div class="cmyk-row">
-                        <input type="range" id="cmykYellowSlider" min="0" max="100" step="1" value="0">
-                        <input type="number" id="cmykYellowInput" min="0" max="100" step="1" value="0" aria-label="Yellow value">
+                        <input type="range" id="cmykYellowSlider" class="field-range" min="0" max="100" step="1" value="0">
+                        <input type="number" id="cmykYellowInput" class="field-input" min="0" max="100" step="1" value="0" aria-label="Yellow value">
                     </div>
                 </div>
 
                 <div class="cmyk-control">
                     <label for="cmykKeySlider">Key (Black %)</label>
                     <div class="cmyk-row">
-                        <input type="range" id="cmykKeySlider" min="0" max="100" step="1" value="10">
-                        <input type="number" id="cmykKeyInput" min="0" max="100" step="1" value="10" aria-label="Black value">
+                        <input type="range" id="cmykKeySlider" class="field-range" min="0" max="100" step="1" value="10">
+                        <input type="number" id="cmykKeyInput" class="field-input" min="0" max="100" step="1" value="10" aria-label="Black value">
                     </div>
                 </div>
 
                 <div class="cmyk-control">
                     <label for="cmykCountSlider">Colors in Palette (1 – 36)</label>
                     <div class="cmyk-row">
-                        <input type="range" id="cmykCountSlider" min="1" max="36" step="1" value="12">
-                        <input type="number" id="cmykCount" min="1" max="36" step="1" value="12" required aria-label="CMYK colors count">
+                        <input type="range" id="cmykCountSlider" class="field-range" min="1" max="36" step="1" value="12">
+                        <input type="number" id="cmykCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="CMYK colors count">
                     </div>
                 </div>
 
@@ -2945,6 +3713,7 @@ customJS: |
                     <input
                         type="text"
                         id="cmykClassPrefix"
+                        class="field-input"
                         value="palette-cmyk"
                         placeholder="palette-cmyk"
                         maxlength="24"
@@ -2953,7 +3722,7 @@ customJS: |
                     >
                 </div>
 
-                <button class="generate-btn" type="button" onclick="generateCmykGradient()">Generate</button>
+                <button class="button button--primary" type="button" data-generator="cmyk">Generate</button>
             </div>
 
             <div class="gamut-warning" id="cmykGamutWarning" role="alert" aria-live="polite"></div>
@@ -2963,7 +3732,7 @@ customJS: |
 
                 <div class="css-output">
                     <h3>CSS Classes</h3>
-                    <button class="copy-btn" id="cmykCopyBtn" type="button" onclick="copyCmykCss()" title="Copy CSS">
+                    <button class="button copy-btn" id="cmykCopyBtn" type="button" data-copy="cmyk" title="Copy CSS">
                         <svg id="cmykCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -2975,8 +3744,8 @@ customJS: |
         </div>
 
         <div class="tab-panel" id="harmonyGenerator">
-            <div class="controls tone-controls harmony-controls">
-                <div class="preview-control">
+            <div class="controls surface-card tone-controls harmony-controls grid-auto" style="--grid-min: 220px;">
+                <div class="preview-control stack" style="--stack-gap: 10px;">
                     <label for="harmonyColorPicker">Base Color</label>
                     <div class="color-picker-row with-rgb no-hex">
                         <div class="preview-picker" title="Pick a harmony base color">
@@ -2987,6 +3756,7 @@ customJS: |
                             <input
                                 type="text"
                                 id="harmonyRgb"
+                                class="field-input"
                                 value="91, 33, 182"
                                 placeholder="R, G, B"
                                 aria-label="Harmony RGB value"
@@ -2999,16 +3769,16 @@ customJS: |
                 <div class="slider-control">
                     <label for="harmonySpreadSlider">Hue Spread (10 – 90°)</label>
                     <div class="slider-row">
-                        <input type="range" id="harmonySpreadSlider" min="10" max="90" step="1" value="30">
-                        <input type="number" id="harmonySpread" min="10" max="90" step="1" value="30" aria-label="Hue spread degrees">
+                        <input type="range" id="harmonySpreadSlider" class="field-range" min="10" max="90" step="1" value="30">
+                        <input type="number" id="harmonySpread" class="field-input" min="10" max="90" step="1" value="30" aria-label="Hue spread degrees">
                     </div>
                 </div>
 
                 <div class="slider-control">
                     <label for="harmonyLightnessSlider">Lightness Variance (0 – 30)</label>
                     <div class="slider-row">
-                        <input type="range" id="harmonyLightnessSlider" min="0" max="30" step="1" value="8">
-                        <input type="number" id="harmonyLightness" min="0" max="30" step="1" value="8" aria-label="Lightness variance">
+                        <input type="range" id="harmonyLightnessSlider" class="field-range" min="0" max="30" step="1" value="8">
+                        <input type="number" id="harmonyLightness" class="field-input" min="0" max="30" step="1" value="8" aria-label="Lightness variance">
                     </div>
                 </div>
 
@@ -3017,6 +3787,7 @@ customJS: |
                     <input
                         type="text"
                         id="harmonyClassPrefix"
+                        class="field-input"
                         value="palette-harmony"
                         placeholder="palette-harmony"
                         maxlength="24"
@@ -3025,7 +3796,7 @@ customJS: |
                     >
                 </div>
 
-                <button class="generate-btn" type="button" onclick="generateHarmonyPalette()">Generate</button>
+                <button class="button button--primary" type="button" data-generator="harmony">Generate</button>
             </div>
 
             <div class="harmony-columns" id="harmonyColumns">
@@ -3034,7 +3805,7 @@ customJS: |
                     <div class="color-blocks" id="harmonyAnalogousBlocks"></div>
                     <div class="css-output" id="harmonyAnalogousCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="harmonyAnalogousCopyBtn" type="button" onclick="copyHarmonyCss('analogous')" title="Copy CSS">
+                        <button class="button copy-btn" id="harmonyAnalogousCopyBtn" type="button" data-copy="harmony-analogous" title="Copy CSS">
                             <svg id="harmonyAnalogousCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3049,7 +3820,7 @@ customJS: |
                     <div class="color-blocks" id="harmonyComplementaryBlocks"></div>
                     <div class="css-output" id="harmonyComplementaryCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="harmonyComplementaryCopyBtn" type="button" onclick="copyHarmonyCss('complementary')" title="Copy CSS">
+                        <button class="button copy-btn" id="harmonyComplementaryCopyBtn" type="button" data-copy="harmony-complementary" title="Copy CSS">
                             <svg id="harmonyComplementaryCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3064,7 +3835,7 @@ customJS: |
                     <div class="color-blocks" id="harmonySplitComplementaryBlocks"></div>
                     <div class="css-output" id="harmonySplitComplementaryCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="harmonySplitComplementaryCopyBtn" type="button" onclick="copyHarmonyCss('split-complementary')" title="Copy CSS">
+                        <button class="button copy-btn" id="harmonySplitComplementaryCopyBtn" type="button" data-copy="harmony-split-complementary" title="Copy CSS">
                             <svg id="harmonySplitComplementaryCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3079,7 +3850,7 @@ customJS: |
                     <div class="color-blocks" id="harmonyTriadicBlocks"></div>
                     <div class="css-output" id="harmonyTriadicCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="harmonyTriadicCopyBtn" type="button" onclick="copyHarmonyCss('triadic')" title="Copy CSS">
+                        <button class="button copy-btn" id="harmonyTriadicCopyBtn" type="button" data-copy="harmony-triadic" title="Copy CSS">
                             <svg id="harmonyTriadicCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3094,7 +3865,7 @@ customJS: |
                     <div class="color-blocks" id="harmonyTetradicBlocks"></div>
                     <div class="css-output" id="harmonyTetradicCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="harmonyTetradicCopyBtn" type="button" onclick="copyHarmonyCss('tetradic')" title="Copy CSS">
+                        <button class="button copy-btn" id="harmonyTetradicCopyBtn" type="button" data-copy="harmony-tetradic" title="Copy CSS">
                             <svg id="harmonyTetradicCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3107,8 +3878,8 @@ customJS: |
         </div>
 
         <div class="tab-panel" id="dataVizGenerator">
-            <div class="controls tone-controls data-viz-controls">
-                <div class="preview-control">
+            <div class="controls surface-card tone-controls data-viz-controls grid-auto" style="--grid-min: 220px;">
+                <div class="preview-control stack" style="--stack-gap: 10px;">
                     <label for="dataVizColorPicker">Brand Base Color</label>
                     <div class="color-picker-row with-rgb no-hex">
                         <div class="preview-picker" title="Pick a brand base color">
@@ -3119,6 +3890,7 @@ customJS: |
                             <input
                                 type="text"
                                 id="dataVizRgb"
+                                class="field-input"
                                 value="37, 99, 235"
                                 placeholder="R, G, B"
                                 aria-label="Brand RGB value"
@@ -3131,8 +3903,8 @@ customJS: |
                 <div class="slider-control">
                     <label for="dataVizCountSlider">Series Size (3 – 12)</label>
                     <div class="slider-row">
-                        <input type="range" id="dataVizCountSlider" min="3" max="12" step="1" value="6">
-                        <input type="number" id="dataVizCount" min="3" max="12" step="1" value="6" aria-label="Palette size">
+                        <input type="range" id="dataVizCountSlider" class="field-range" min="3" max="12" step="1" value="6">
+                        <input type="number" id="dataVizCount" class="field-input" min="3" max="12" step="1" value="6" aria-label="Palette size">
                     </div>
                 </div>
 
@@ -3141,6 +3913,7 @@ customJS: |
                     <input
                         type="text"
                         id="dataVizClassPrefix"
+                        class="field-input"
                         value="palette-dataviz"
                         placeholder="palette-dataviz"
                         maxlength="24"
@@ -3149,7 +3922,7 @@ customJS: |
                     >
                 </div>
 
-                <button class="generate-btn" type="button" onclick="generateDataVizPalette()">Generate</button>
+                <button class="button button--primary" type="button" data-generator="dataviz">Generate</button>
             </div>
 
             <div class="data-viz-columns" id="dataVizColumns">
@@ -3159,7 +3932,7 @@ customJS: |
                     <div class="simulations" id="dataVizSequentialSimulations" style="display:none;"></div>
                     <div class="css-output" id="dataVizSequentialCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="dataVizSequentialCopyBtn" type="button" onclick="copyDataVizCss('sequential')" title="Copy CSS">
+                        <button class="button copy-btn" id="dataVizSequentialCopyBtn" type="button" data-copy="dataviz-sequential" title="Copy CSS">
                             <svg id="dataVizSequentialCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3175,7 +3948,7 @@ customJS: |
                     <div class="simulations" id="dataVizDivergingSimulations" style="display:none;"></div>
                     <div class="css-output" id="dataVizDivergingCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="dataVizDivergingCopyBtn" type="button" onclick="copyDataVizCss('diverging')" title="Copy CSS">
+                        <button class="button copy-btn" id="dataVizDivergingCopyBtn" type="button" data-copy="dataviz-diverging" title="Copy CSS">
                             <svg id="dataVizDivergingCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3191,7 +3964,7 @@ customJS: |
                     <div class="simulations" id="dataVizQualitativeSimulations" style="display:none;"></div>
                     <div class="css-output" id="dataVizQualitativeCssContainer" style="display:none;">
                         <h3>CSS Classes</h3>
-                        <button class="copy-btn" id="dataVizQualitativeCopyBtn" type="button" onclick="copyDataVizCss('qualitative')" title="Copy CSS">
+                        <button class="button copy-btn" id="dataVizQualitativeCopyBtn" type="button" data-copy="dataviz-qualitative" title="Copy CSS">
                             <svg id="dataVizQualitativeCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -3203,4 +3976,5 @@ customJS: |
             </div>
         </div>
     </div>
+
 </div>
