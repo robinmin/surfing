@@ -63,7 +63,9 @@
       "mcp__chrome-devtools__list_console_messages",
       "Bash(npm run check:eslint:*)",
       "Bash(mdls:*)",
-      "mcp__Deep_Graph_MCP__folder-tree-structure"
+      "mcp__Deep_Graph_MCP__folder-tree-structure",
+      "mcp__morphllm-fast-apply__edit_file",
+      "mcp__playwright__browser_type"
     ],
     "deny": [],
     "ask": []
