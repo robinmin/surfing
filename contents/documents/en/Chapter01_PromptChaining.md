@@ -1,6 +1,6 @@
 ---
 title: "Chapter 1: Prompt Chaining"
-description: "Prompt chaining, sometimes referred to as Pipeline pattern, represents a powerful paradigm for handling intricate tasks when leveraging large language models (LLMs)."
+description: "Prompt chaining is a divide-and-conquer strategy that transforms complex LLM tasks into sequential workflows, where each step's output becomes the next step's input, significantly improving reliability, control, and the ability to integrate external tools for sophisticated AI agent systems."
 tags: ["LLM", "prompt", "agent"]
 readingTime: 20
 wordCount: 3884
