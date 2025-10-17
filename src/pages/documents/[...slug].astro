@@ -1,6 +1,7 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
+import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
 import ExternalPageLayout from '~/layouts/ExternalPageLayout.astro';
 
 export async function getStaticPaths() {
@@ -14,34 +15,57 @@ export async function getStaticPaths() {
   }));
 }
 
-interface Props {
-  document: CollectionEntry<'documents'>;
-}
+const { document } = Astro.props;
 
-const { document: documentEntry } = Astro.props;
+// Determine file type and layout based on file extension and content characteristics
+const fileExtension = document.id.split('.').pop()?.toLowerCase();
+const isHtmlFile = fileExtension === 'html';
+const hasCustomStyling = document.data.customCSS || document.data.customJS ||
+                        document.data.externalCSS?.length || document.data.externalJS?.length;
 
-// Use the already rendered content
-const renderedContent = documentEntry.rendered?.html || documentEntry.body;
+// Use ExternalPageLayout for HTML files or files with custom styling
+// Use MarkdownLayout for standard markdown files
+const useExternalLayout = isHtmlFile || hasCustomStyling;
+
+// Get content based on layout type
+const { Content } = useExternalLayout ? { Content: () => document.body } : await render(document);
 
 // Merge custom metadata with defaults
 const metadata = {
-  title: documentEntry.data.metadata?.title || documentEntry.data.title,
-  description: documentEntry.data.metadata?.description || documentEntry.data.description,
-  canonical: `${Astro.site}documents/${documentEntry.data.slug || documentEntry.id}`,
+  title: document.data.metadata?.title || document.data.title,
+  description: document.data.metadata?.description || document.data.description,
+  canonical: new URL(`documents/${document.data.slug || document.id}`, Astro.site).href,
   robots: {
     index: true,
     follow: true,
-    ...documentEntry.data.metadata?.robots,
+    ...document.data.metadata?.robots,
   },
-  ...documentEntry.data.metadata,
+  ...document.data.metadata,
   openGraph: {
     type: 'article',
-    ...(documentEntry.data.image && { images: [{ url: documentEntry.data.image }] }),
-    ...documentEntry.data.metadata?.openGraph,
+    ...(document.data.image && { images: [{ url: document.data.image }] }),
+    ...document.data.metadata?.openGraph,
   },
 };
 ---
 
-<ExternalPageLayout metadata={metadata} entry={documentEntry}>
-  <div set:html={renderedContent} />
-</ExternalPageLayout>
+{useExternalLayout ? (
+  <ExternalPageLayout metadata={metadata} entry={document}>
+    <div set:html={document.body} />
+  </ExternalPageLayout>
+) : (
+  <MarkdownLayout
+    frontmatter={{
+      title: document.data.title,
+      description: document.data.description,
+      publishDate: document.data.publishDate,
+      updateDate: document.data.updateDate,
+      readingTime: document.data.readingTime,
+      tags: document.data.tags,
+      author: document.data.author,
+    }}
+    metadata={metadata}
+  >
+    <Content />
+  </MarkdownLayout>
+)}
