@@ -21,7 +21,9 @@ metadata:
     cardType: 'summary_large_image'
     site: '@surfing_dev'
     creator: '@surfing_dev'
-  robots: 'index, follow'
+  robots:
+    index: true
+    follow: true
   canonical: 'https://surfing.dev/showcase/en/color-gradient-gen'
   author: 'Surfing Team'
   category: 'Design Tools'
