@@ -121,7 +121,7 @@ customCSS: |
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
   }
 
   .prefix-control {
@@ -175,14 +175,14 @@ customCSS: |
   }
 
   .controls.grid-auto {
-      margin-bottom: 24px;
-      display: flex !important;
-      flex-wrap: wrap;
-      gap: 24px;
-      justify-content: flex-start;
-      align-items: flex-end;
-      align-content: flex-start;
-      padding: 24px;
+       margin-bottom: 24px;
+       display: flex !important;
+       flex-wrap: wrap;
+       gap: 18px;
+       justify-content: flex-start;
+       align-items: flex-end;
+       align-content: flex-start;
+       padding: 20px;
   }
 
   .controls.tone-controls .preview-control,
@@ -200,7 +200,7 @@ customCSS: |
   .preview-control,
   .cmyk-control,
   .select-control {
-      min-width: 280px;
+      min-width: 240px;
       flex: 0 0 auto;
       align-items: flex-start;
   }
@@ -269,14 +269,6 @@ customCSS: |
       grid-template-columns: auto 1fr;
   }
 
-  .color-picker-row.with-rgb {
-      grid-template-columns: auto 1fr 1fr;
-  }
-
-  .color-picker-row.with-rgb.no-hex {
-      grid-template-columns: auto 1fr;
-  }
-
   .slider-row {
       grid-template-columns: 1fr auto;
       align-items: center;
@@ -323,14 +315,6 @@ customCSS: |
           grid-template-columns: auto minmax(200px, 1fr);
       }
 
-      .color-picker-row.with-rgb {
-          grid-template-columns: auto minmax(160px, 1fr) minmax(160px, 1fr);
-      }
-
-      .color-picker-row.with-rgb.no-hex {
-          grid-template-columns: auto minmax(200px, 1fr);
-      }
-
       .slider-row {
           grid-template-columns: minmax(200px, 1fr) auto;
       }
@@ -343,10 +327,6 @@ customCSS: |
   @media (min-width: 1024px) {
       .controls {
           gap: 30px;
-      }
-
-      .color-picker-row.with-rgb {
-          grid-template-columns: auto minmax(180px, 1fr) minmax(180px, 1fr);
       }
   }
 
@@ -362,6 +342,12 @@ customCSS: |
   .hex-input {
       display: flex;
       justify-content: flex-start;
+      align-items: center;
+  }
+
+  .hex-input .field-input {
+      text-transform: uppercase;
+      padding: 9px 12px;
   }
 
   .select-control select {
@@ -900,7 +886,7 @@ customCSS: |
   .segments-control .field-input,
   .slider-row .field-input,
   .cmyk-row .field-input {
-      min-width: 65px;
+      min-width: 72px;
       width: 100%;
   }
 
@@ -1488,34 +1474,6 @@ customJS: |
           });
       };
 
-      const bindRgbInput = ({ input, onValid, onInvalid }) => {
-          if (!input) {
-              return;
-          }
-          const parse = (value) => {
-              const tuple = ColorUtilities.parseNumericTuple(value, 3, { clampRange: [0, 255] });
-              if (!tuple) {
-                  input.classList.add('is-error');
-                  if (typeof onInvalid === 'function') {
-                      onInvalid();
-                  }
-                  return;
-              }
-              input.value = tuple.join(', ');
-              input.classList.remove('is-error');
-              if (typeof onValid === 'function') {
-                  onValid({ r: tuple[0], g: tuple[1], b: tuple[2] });
-              }
-          };
-          input.addEventListener('blur', () => parse(input.value));
-          input.addEventListener('input', (event) => {
-              const value = event.target.value;
-              if (/[,\s]{2,}/.test(value)) {
-                  parse(value);
-              }
-          });
-      };
-
       const bindSliderWithInput = ({ slider, input, min = 0, max = 100, step = 1, onChange }) => {
           if (!slider || !input) {
               return;
@@ -1667,7 +1625,6 @@ customJS: |
       return {
           initTabs,
           bindColorInputGroup,
-          bindRgbInput,
           bindSliderWithInput,
           renderColorSwatches,
           attachCopyInteraction,
@@ -1953,7 +1910,7 @@ customJS: |
 
   const hslElements = {
       colorPicker: document.getElementById('hslColorPicker'),
-      rgbInput: document.getElementById('hslRgb'),
+      hexDisplay: document.getElementById('hslHexDisplay'),
       hueSlider: document.getElementById('hslHueSlider'),
       hueInput: document.getElementById('hslHueInput'),
       saturationSlider: document.getElementById('hslSaturationSlider'),
@@ -1972,7 +1929,7 @@ customJS: |
 
   const hsvElements = {
       colorPicker: document.getElementById('hsvColorPicker'),
-      rgbInput: document.getElementById('hsvRgb'),
+      hexDisplay: document.getElementById('hsvHexDisplay'),
       hueSlider: document.getElementById('hsvHueSlider'),
       hueInput: document.getElementById('hsvHueInput'),
       saturationSlider: document.getElementById('hsvSaturationSlider'),
@@ -1991,7 +1948,7 @@ customJS: |
 
   const cmykElements = {
       colorPicker: document.getElementById('cmykColorPicker'),
-      valuesInput: document.getElementById('cmykValues'),
+      hexDisplay: document.getElementById('cmykHexDisplay'),
       cyanSlider: document.getElementById('cmykCyanSlider'),
       cyanInput: document.getElementById('cmykCyanInput'),
       magentaSlider: document.getElementById('cmykMagentaSlider'),
@@ -2014,7 +1971,7 @@ customJS: |
   const harmonyElements = {
       colorPicker: document.getElementById('harmonyColorPicker'),
       hexInput: document.getElementById('harmonyHex'),
-      rgbInput: document.getElementById('harmonyRgb'),
+      hexDisplay: document.getElementById('harmonyHexDisplay'),
       spreadSlider: document.getElementById('harmonySpreadSlider'),
       spreadInput: document.getElementById('harmonySpread'),
       lightnessSlider: document.getElementById('harmonyLightnessSlider'),
@@ -2067,7 +2024,7 @@ customJS: |
   const dataVizElements = {
       colorPicker: document.getElementById('dataVizColorPicker'),
       hexInput: document.getElementById('dataVizHex'),
-      rgbInput: document.getElementById('dataVizRgb'),
+      hexDisplay: document.getElementById('dataVizHexDisplay'),
       countSlider: document.getElementById('dataVizCountSlider'),
       countInput: document.getElementById('dataVizCount'),
       preview: document.getElementById('dataVizPreview'),
@@ -2188,6 +2145,20 @@ customJS: |
       }
       input.value = formatRgbValue(rgb);
       input.style.borderColor = '#e5e7eb';
+  }
+
+  function updateHexDisplayValue(display, hex) {
+      if (!display) {
+          return;
+      }
+      const normalized = normalizeHex(hex, '').toUpperCase();
+      if (!isValidHex(normalized)) {
+          display.value = '';
+          display.style.borderColor = '#f87171';
+          return;
+      }
+      display.value = normalized;
+      display.style.borderColor = '#e5e7eb';
   }
 
   function formatCmykValues(c, m, y, k) {
@@ -2445,10 +2416,12 @@ customJS: |
   syncPickerToHex(harmonyElements.colorPicker, harmonyElements.hexInput, (value) => {
       updateHarmonyPreview();
       updateRgbInputValue(harmonyElements.rgbInput, value);
+      updateHexDisplayValue(harmonyElements.hexDisplay, value);
   });
   syncHexToPicker(harmonyElements.hexInput, harmonyElements.colorPicker, (value) => {
       updateHarmonyPreview();
       updateRgbInputValue(harmonyElements.rgbInput, value);
+      updateHexDisplayValue(harmonyElements.hexDisplay, value);
   });
   syncRgbToPicker(harmonyElements.rgbInput, harmonyElements.colorPicker, harmonyElements.hexInput, () => {
       updateHarmonyPreview();
@@ -2456,14 +2429,23 @@ customJS: |
   syncPickerToHex(dataVizElements.colorPicker, dataVizElements.hexInput, (value) => {
       updateDataVizPreview();
       updateRgbInputValue(dataVizElements.rgbInput, value);
+      updateHexDisplayValue(dataVizElements.hexDisplay, value);
   });
   syncHexToPicker(dataVizElements.hexInput, dataVizElements.colorPicker, (value) => {
       updateDataVizPreview();
       updateRgbInputValue(dataVizElements.rgbInput, value);
+      updateHexDisplayValue(dataVizElements.hexDisplay, value);
   });
   syncRgbToPicker(dataVizElements.rgbInput, dataVizElements.colorPicker, dataVizElements.hexInput, () => {
       updateDataVizPreview();
   });
+
+  updateHslPreview();
+  updateHsvPreview();
+  updateCmykPreview();
+  updateHarmonyPreview();
+  updateDataVizPreview();
+  evaluateCmykWarning();
 
   function setupSliderPair(slider, input, { min, max, onChange }) {
       slider.addEventListener('input', () => {
@@ -2519,6 +2501,7 @@ customJS: |
       hslElements.lightnessInput.value = hsl.l;
       hslElements.lightnessSlider.value = hsl.l;
       updateRgbInputValue(hslElements.rgbInput, normalized);
+      updateHexDisplayValue(hslElements.hexDisplay, normalized);
       hslElements.colorPicker.value = normalized;
       updateHslPreview();
   }
@@ -2540,6 +2523,7 @@ customJS: |
       hsvElements.valueInput.value = hsv.v;
       hsvElements.valueSlider.value = hsv.v;
       updateRgbInputValue(hsvElements.rgbInput, normalized);
+      updateHexDisplayValue(hsvElements.hexDisplay, normalized);
       hsvElements.colorPicker.value = normalized;
       updateHsvPreview();
   }
@@ -2555,6 +2539,7 @@ customJS: |
       }
       const cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
       setCmykComponentValues(cmyk.c, cmyk.m, cmyk.y, cmyk.k);
+      updateHexDisplayValue(cmykElements.hexDisplay, normalized);
       cmykElements.colorPicker.value = normalized;
       updateCmykPreview();
   }
@@ -2576,6 +2561,7 @@ customJS: |
           if (hslElements.rgbInput) {
               updateRgbInputValue(hslElements.rgbInput, hex);
           }
+          updateHexDisplayValue(hslElements.hexDisplay, hex);
       }
   }
 
@@ -2596,6 +2582,7 @@ customJS: |
           if (hsvElements.rgbInput) {
               updateRgbInputValue(hsvElements.rgbInput, hex);
           }
+          updateHexDisplayValue(hsvElements.hexDisplay, hex);
       }
   }
 
@@ -2615,6 +2602,7 @@ customJS: |
           const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
           cmykElements.preview.style.backgroundColor = hex;
           cmykElements.colorPicker.value = hex;
+          updateHexDisplayValue(cmykElements.hexDisplay, hex);
           updateCmykValuesInput(cyan, magenta, yellow, key);
           evaluateCmykWarning();
       }
@@ -2634,6 +2622,7 @@ customJS: |
     if (harmonyElements.rgbInput) {
         updateRgbInputValue(harmonyElements.rgbInput, value);
     }
+    updateHexDisplayValue(harmonyElements.hexDisplay, value);
   }
 
   function updateDataVizPreview() {
@@ -2650,6 +2639,7 @@ customJS: |
     if (dataVizElements.rgbInput) {
         updateRgbInputValue(dataVizElements.rgbInput, value);
     }
+    updateHexDisplayValue(dataVizElements.hexDisplay, value);
   }
 
   function evaluateCmykWarning(generatedHexes = []) {
@@ -2768,6 +2758,28 @@ customJS: |
   });
   syncRgbToPicker(hsvElements.rgbInput, hsvElements.colorPicker, null, applyHsvFromHex);
 
+  if (hslElements.hexDisplay) {
+      syncHexToPicker(hslElements.hexDisplay, hslElements.colorPicker, applyHslFromHex);
+  }
+  if (hsvElements.hexDisplay) {
+      syncHexToPicker(hsvElements.hexDisplay, hsvElements.colorPicker, applyHsvFromHex);
+  }
+  if (cmykElements.hexDisplay) {
+      syncHexToPicker(cmykElements.hexDisplay, cmykElements.colorPicker, applyCmykFromHex);
+  }
+  if (harmonyElements.hexDisplay) {
+      syncHexToPicker(harmonyElements.hexDisplay, harmonyElements.colorPicker, (value) => {
+          harmonyElements.hexInput.value = value;
+          updateHarmonyPreview();
+      });
+  }
+  if (dataVizElements.hexDisplay) {
+      syncHexToPicker(dataVizElements.hexDisplay, dataVizElements.colorPicker, (value) => {
+          dataVizElements.hexInput.value = value;
+          updateDataVizPreview();
+      });
+  }
+
   cmykElements.colorPicker.addEventListener('input', (event) => {
       applyCmykFromHex(event.target.value);
   });
@@ -2798,13 +2810,6 @@ customJS: |
           commitCmykValues(parsed);
       });
   }
-
-  updateHslPreview();
-  updateHsvPreview();
-  updateCmykPreview();
-  updateHarmonyPreview();
-  updateDataVizPreview();
-  evaluateCmykWarning();
 
   function copyTextToClipboard(text) {
       return navigator.clipboard.writeText(text).catch(() => {
@@ -3171,10 +3176,7 @@ customJS: |
         const simulated = colors.map((color, index) => {
             const hex = scenario.transform(color.copyValue ?? color.label);
             return {
-                bg: hex,
-                label: hex,
-                copyValue: hex,
-                selector: `${color.selector}-${scenario.type}`,
+                hex,
                 declaration: `background-color: ${hex};`
             };
         });
@@ -3524,511 +3526,532 @@ customJS: |
         </div>
 
         <div class="tab-panel" id="hslGenerator">
-            <div class="controls surface-card tone-controls hsl-controls grid-auto" style="--grid-min: 220px;">
-                <div class="preview-control stack" style="--stack-gap: 10px;">
-                    <label for="hslColorPicker">Color Picker</label>
-                    <div class="color-picker-row with-rgb no-hex">
-                        <div class="preview-picker" title="Pick a base color">
-                            <div class="preview-chip" id="hslPreview"></div>
-                            <input type="color" id="hslColorPicker" value="#1F7BEA" aria-label="Pick base color for HSL palette">
-                        </div>
-                        <div class="rgb-input">
+             <div class="controls surface-card tone-controls hsl-controls grid-auto" style="--grid-min: 220px;">
+                 <div class="preview-control stack" style="--stack-gap: 10px;">
+                     <label for="hslColorPicker">Color Picker</label>
+                     <div class="color-picker-row with-rgb">
+                         <div class="preview-picker" title="Pick a base color">
+                             <div class="preview-chip" id="hslPreview"></div>
+                             <input type="color" id="hslColorPicker" value="#1F7BEA" aria-label="Pick base color for HSL palette">
+                         </div>
+                         <div class="hex-input">
                             <input
                                 type="text"
-                                id="hslRgb"
+                                id="hslHexDisplay"
                                 class="field-input"
-                                value="31, 123, 234"
-                                placeholder="R, G, B"
-                                aria-label="HSL RGB value"
+                                value="#1F7BEA"
+                                placeholder="#1F7BEA"
+                                maxlength="7"
+                                minlength="6"
                                 spellcheck="false"
+                                inputmode="text"
+                                pattern="#?[0-9A-Fa-f]{6}"
+                                aria-label="HSL hex value"
                             >
                         </div>
-                    </div>
-                </div>
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hslHueSlider">Starting Hue (0 – 360)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hslHueSlider" class="field-range" min="0" max="360" step="1" value="200">
-                        <input type="number" id="hslHueInput" class="field-input" min="0" max="360" step="1" value="200" aria-label="Hue value">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hslHueSlider">Starting Hue (0 – 360)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hslHueSlider" class="field-range" min="0" max="360" step="1" value="200">
+                         <input type="number" id="hslHueInput" class="field-input" min="0" max="360" step="1" value="200" aria-label="Hue value">
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hslSaturationSlider">Saturation (%)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hslSaturationSlider" class="field-range" min="0" max="100" step="1" value="80">
-                        <input type="number" id="hslSaturationInput" class="field-input" min="0" max="100" step="1" value="80" aria-label="Saturation value">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hslSaturationSlider">Saturation (%)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hslSaturationSlider" class="field-range" min="0" max="100" step="1" value="80">
+                         <input type="number" id="hslSaturationInput" class="field-input" min="0" max="100" step="1" value="80" aria-label="Saturation value">
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hslLightnessSlider">Lightness (%)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hslLightnessSlider" class="field-range" min="0" max="100" step="1" value="50">
-                        <input type="number" id="hslLightnessInput" class="field-input" min="0" max="100" step="1" value="50" aria-label="Lightness value">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hslLightnessSlider">Lightness (%)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hslLightnessSlider" class="field-range" min="0" max="100" step="1" value="50">
+                         <input type="number" id="hslLightnessInput" class="field-input" min="0" max="100" step="1" value="50" aria-label="Lightness value">
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hslCountSlider">Colors in Palette (1 – 36)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hslCountSlider" class="field-range" min="1" max="36" step="1" value="12">
-                        <input type="number" id="hslCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="HSL colors count">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hslCountSlider">Colors in Palette (1 – 36)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hslCountSlider" class="field-range" min="1" max="36" step="1" value="12">
+                         <input type="number" id="hslCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="HSL colors count">
+                     </div>
+                 </div>
 
-                <div class="prefix-control">
-                    <label for="hslClassPrefix">CSS Class Prefix</label>
-                    <input
-                        type="text"
-                        id="hslClassPrefix"
-                        class="field-input"
-                        value="palette-hsl"
-                        placeholder="palette-hsl"
-                        maxlength="24"
-                        aria-label="HSL CSS class prefix"
-                        spellcheck="false"
-                    >
-                </div>
+                 <div class="prefix-control">
+                     <label for="hslClassPrefix">CSS Class Prefix</label>
+                     <input
+                         type="text"
+                         id="hslClassPrefix"
+                         class="field-input"
+                         value="palette-hsl"
+                         placeholder="palette-hsl"
+                         maxlength="24"
+                         aria-label="HSL CSS class prefix"
+                         spellcheck="false"
+                     >
+                 </div>
 
-                <button class="button button--primary" type="button" data-generator="hsl">Generate</button>
-            </div>
+                 <button class="button button--primary" type="button" data-generator="hsl">Generate</button>
+             </div>
 
-            <div class="results" id="hslResults" style="display:none;">
-                <div class="color-blocks" id="hslColorBlocks"></div>
+             <div class="results" id="hslResults" style="display:none;">
+                 <div class="color-blocks" id="hslColorBlocks"></div>
 
-                <div class="css-output">
-                    <h3>CSS Classes</h3>
-                    <button class="button copy-btn" id="hslCopyBtn" type="button" data-copy="hsl" title="Copy CSS">
-                        <svg id="hslCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                    <pre id="hslCssOutput"></pre>
-                </div>
-            </div>
-        </div>
+                 <div class="css-output">
+                     <h3>CSS Classes</h3>
+                     <button class="button copy-btn" id="hslCopyBtn" type="button" data-copy="hsl" title="Copy CSS">
+                         <svg id="hslCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                         </svg>
+                     </button>
+                     <pre id="hslCssOutput"></pre>
+                 </div>
+             </div>
+         </div>
 
-        <div class="tab-panel" id="hsvGenerator">
-            <div class="controls surface-card tone-controls hsv-controls grid-auto" style="--grid-min: 220px;">
-                <div class="preview-control stack" style="--stack-gap: 10px;">
-                    <label for="hsvColorPicker">Color Picker</label>
-                    <div class="color-picker-row with-rgb no-hex">
-                        <div class="preview-picker" title="Pick a base color">
-                            <div class="preview-chip" id="hsvPreview"></div>
-                            <input type="color" id="hsvColorPicker" value="#33A0FF" aria-label="Pick base color for HSV palette">
-                        </div>
-                        <div class="rgb-input">
+         <div class="tab-panel" id="hsvGenerator">
+             <div class="controls surface-card tone-controls hsv-controls grid-auto" style="--grid-min: 220px;">
+                 <div class="preview-control stack" style="--stack-gap: 10px;">
+                     <label for="hsvColorPicker">Color Picker</label>
+                     <div class="color-picker-row with-rgb">
+                         <div class="preview-picker" title="Pick a base color">
+                             <div class="preview-chip" id="hsvPreview"></div>
+                             <input type="color" id="hsvColorPicker" value="#33A0FF" aria-label="Pick base color for HSV palette">
+                         </div>
+                         <div class="hex-input">
                             <input
                                 type="text"
-                                id="hsvRgb"
+                                id="hsvHexDisplay"
                                 class="field-input"
-                                value="51, 160, 255"
-                                placeholder="R, G, B"
-                                aria-label="HSV RGB value"
+                                value="#33A0FF"
+                                placeholder="#33A0FF"
+                                maxlength="7"
+                                minlength="6"
                                 spellcheck="false"
+                                inputmode="text"
+                                pattern="#?[0-9A-Fa-f]{6}"
+                                aria-label="HSV hex value"
                             >
                         </div>
-                    </div>
-                </div>
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hsvHueSlider">Starting Hue (0 – 360)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hsvHueSlider" class="field-range" min="0" max="360" step="1" value="200">
-                        <input type="number" id="hsvHueInput" class="field-input" min="0" max="360" step="1" value="200" aria-label="Hue value">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hsvHueSlider">Starting Hue (0 – 360)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hsvHueSlider" class="field-range" min="0" max="360" step="1" value="200">
+                         <input type="number" id="hsvHueInput" class="field-input" min="0" max="360" step="1" value="200" aria-label="Hue value">
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hsvSaturationSlider">Saturation (%)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hsvSaturationSlider" class="field-range" min="0" max="100" step="1" value="80">
-                        <input type="number" id="hsvSaturationInput" class="field-input" min="0" max="100" step="1" value="80" aria-label="Saturation value">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hsvSaturationSlider">Saturation (%)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hsvSaturationSlider" class="field-range" min="0" max="100" step="1" value="80">
+                         <input type="number" id="hsvSaturationInput" class="field-input" min="0" max="100" step="1" value="80" aria-label="Saturation value">
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hsvValueSlider">Value (Brightness %)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hsvValueSlider" class="field-range" min="0" max="100" step="1" value="75">
-                        <input type="number" id="hsvValueInput" class="field-input" min="0" max="100" step="1" value="75" aria-label="Value brightness">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hsvValueSlider">Value (Brightness %)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hsvValueSlider" class="field-range" min="0" max="100" step="1" value="75">
+                         <input type="number" id="hsvValueInput" class="field-input" min="0" max="100" step="1" value="75" aria-label="Value brightness">
+                     </div>
+                 </div>
 
-                <div class="slider-control">
-                    <label for="hsvCountSlider">Colors in Palette (1 – 36)</label>
-                    <div class="slider-row">
-                        <input type="range" id="hsvCountSlider" class="field-range" min="1" max="36" step="1" value="12">
-                        <input type="number" id="hsvCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="HSV colors count">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="hsvCountSlider">Colors in Palette (1 – 36)</label>
+                     <div class="slider-row">
+                         <input type="range" id="hsvCountSlider" class="field-range" min="1" max="36" step="1" value="12">
+                         <input type="number" id="hsvCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="HSV colors count">
+                     </div>
+                 </div>
 
-                <div class="prefix-control">
-                    <label for="hsvClassPrefix">CSS Class Prefix</label>
-                    <input
-                        type="text"
-                        id="hsvClassPrefix"
-                        class="field-input"
-                        value="palette-hsv"
-                        placeholder="palette-hsv"
-                        maxlength="24"
-                        aria-label="HSV CSS class prefix"
-                        spellcheck="false"
-                    >
-                </div>
+                 <div class="prefix-control">
+                     <label for="hsvClassPrefix">CSS Class Prefix</label>
+                     <input
+                         type="text"
+                         id="hsvClassPrefix"
+                         class="field-input"
+                         value="palette-hsv"
+                         placeholder="palette-hsv"
+                         maxlength="24"
+                         aria-label="HSV CSS class prefix"
+                         spellcheck="false"
+                     >
+                 </div>
 
-                <button class="button button--primary" type="button" data-generator="hsv">Generate</button>
-            </div>
+                 <button class="button button--primary" type="button" data-generator="hsv">Generate</button>
+             </div>
 
-            <div class="results" id="hsvResults" style="display:none;">
-                <div class="color-blocks" id="hsvColorBlocks"></div>
+             <div class="results" id="hsvResults" style="display:none;">
+                 <div class="color-blocks" id="hsvColorBlocks"></div>
 
-                <div class="css-output">
-                    <h3>CSS Classes</h3>
-                    <button class="button copy-btn" id="hsvCopyBtn" type="button" data-copy="hsv" title="Copy CSS">
-                        <svg id="hsvCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                    <pre id="hsvCssOutput"></pre>
-                </div>
-            </div>
-        </div>
+                 <div class="css-output">
+                     <h3>CSS Classes</h3>
+                     <button class="button copy-btn" id="hsvCopyBtn" type="button" data-copy="hsv" title="Copy CSS">
+                         <svg id="hsvCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                         </svg>
+                     </button>
+                     <pre id="hsvCssOutput"></pre>
+                 </div>
+             </div>
+         </div>
 
-        <div class="tab-panel" id="cmykGenerator">
-            <div class="controls surface-card tone-controls cmyk-controls grid-auto" style="--grid-min: 220px;">
-                <div class="preview-control stack" style="--stack-gap: 10px;">
-                    <label for="cmykColorPicker">Color Picker</label>
-                    <div class="color-picker-row with-rgb no-hex">
-                        <div class="preview-picker" title="Pick a base color">
-                            <div class="preview-chip" id="cmykPreview"></div>
-                            <input type="color" id="cmykColorPicker" value="#4B7CF5" aria-label="Pick base color for CMYK palette">
-                        </div>
-                        <div class="rgb-input">
+         <div class="tab-panel" id="cmykGenerator">
+             <div class="controls surface-card tone-controls cmyk-controls grid-auto" style="--grid-min: 220px;">
+                 <div class="preview-control stack" style="--stack-gap: 10px;">
+                     <label for="cmykColorPicker">Color Picker</label>
+                     <div class="color-picker-row with-rgb">
+                         <div class="preview-picker" title="Pick a base color">
+                             <div class="preview-chip" id="cmykPreview"></div>
+                             <input type="color" id="cmykColorPicker" value="#4B7CF5" aria-label="Pick base color for CMYK palette">
+                         </div>
+                         <div class="hex-input">
                             <input
                                 type="text"
-                                id="cmykValues"
+                                id="cmykHexDisplay"
                                 class="field-input"
-                                value="60, 30, 0, 10"
-                                placeholder="C, M, Y, K"
-                                aria-label="CMYK values"
+                                value="#4B7CF5"
+                                placeholder="#4B7CF5"
+                                maxlength="7"
+                                minlength="6"
                                 spellcheck="false"
+                                inputmode="text"
+                                pattern="#?[0-9A-Fa-f]{6}"
+                                aria-label="CMYK hex value"
                             >
                         </div>
-                    </div>
-                </div>
+                     </div>
+                 </div>
 
-                <div class="cmyk-control">
-                    <label for="cmykCyanSlider">Cyan (%)</label>
-                    <div class="cmyk-row">
-                        <input type="range" id="cmykCyanSlider" class="field-range" min="0" max="100" step="1" value="60">
-                        <input type="number" id="cmykCyanInput" class="field-input" min="0" max="100" step="1" value="60" aria-label="Cyan value">
-                    </div>
-                </div>
+                 <div class="cmyk-control">
+                     <label for="cmykCyanSlider">Cyan (%)</label>
+                     <div class="cmyk-row">
+                         <input type="range" id="cmykCyanSlider" class="field-range" min="0" max="100" step="1" value="60">
+                         <input type="number" id="cmykCyanInput" class="field-input" min="0" max="100" step="1" value="60" aria-label="Cyan value">
+                     </div>
+                 </div>
 
-                <div class="cmyk-control">
-                    <label for="cmykMagentaSlider">Magenta (%)</label>
-                    <div class="cmyk-row">
-                        <input type="range" id="cmykMagentaSlider" class="field-range" min="0" max="100" step="1" value="30">
-                        <input type="number" id="cmykMagentaInput" class="field-input" min="0" max="100" step="1" value="30" aria-label="Magenta value">
-                    </div>
-                </div>
+                 <div class="cmyk-control">
+                     <label for="cmykMagentaSlider">Magenta (%)</label>
+                     <div class="cmyk-row">
+                         <input type="range" id="cmykMagentaSlider" class="field-range" min="0" max="100" step="1" value="30">
+                         <input type="number" id="cmykMagentaInput" class="field-input" min="0" max="100" step="1" value="30" aria-label="Magenta value">
+                     </div>
+                 </div>
 
-                <div class="cmyk-control">
-                    <label for="cmykYellowSlider">Yellow (%)</label>
-                    <div class="cmyk-row">
-                        <input type="range" id="cmykYellowSlider" class="field-range" min="0" max="100" step="1" value="0">
-                        <input type="number" id="cmykYellowInput" class="field-input" min="0" max="100" step="1" value="0" aria-label="Yellow value">
-                    </div>
-                </div>
+                 <div class="cmyk-control">
+                     <label for="cmykYellowSlider">Yellow (%)</label>
+                     <div class="cmyk-row">
+                         <input type="range" id="cmykYellowSlider" class="field-range" min="0" max="100" step="1" value="0">
+                         <input type="number" id="cmykYellowInput" class="field-input" min="0" max="100" step="1" value="0" aria-label="Yellow value">
+                     </div>
+                 </div>
 
-                <div class="cmyk-control">
-                    <label for="cmykKeySlider">Key (Black %)</label>
-                    <div class="cmyk-row">
-                        <input type="range" id="cmykKeySlider" class="field-range" min="0" max="100" step="1" value="10">
-                        <input type="number" id="cmykKeyInput" class="field-input" min="0" max="100" step="1" value="10" aria-label="Black value">
-                    </div>
-                </div>
+                 <div class="cmyk-control">
+                     <label for="cmykKeySlider">Key (Black %)</label>
+                     <div class="cmyk-row">
+                         <input type="range" id="cmykKeySlider" class="field-range" min="0" max="100" step="1" value="10">
+                         <input type="number" id="cmykKeyInput" class="field-input" min="0" max="100" step="1" value="10" aria-label="Black value">
+                     </div>
+                 </div>
 
-                <div class="cmyk-control">
-                    <label for="cmykCountSlider">Colors in Palette (1 – 36)</label>
-                    <div class="cmyk-row">
-                        <input type="range" id="cmykCountSlider" class="field-range" min="1" max="36" step="1" value="12">
-                        <input type="number" id="cmykCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="CMYK colors count">
-                    </div>
-                </div>
+                 <div class="cmyk-control">
+                     <label for="cmykCountSlider">Colors in Palette (1 – 36)</label>
+                     <div class="cmyk-row">
+                         <input type="range" id="cmykCountSlider" class="field-range" min="1" max="36" step="1" value="12">
+                         <input type="number" id="cmykCount" class="field-input" min="1" max="36" step="1" value="12" required aria-label="CMYK colors count">
+                     </div>
+                 </div>
 
-                <div class="prefix-control">
-                    <label for="cmykClassPrefix">CSS Class Prefix</label>
-                    <input
-                        type="text"
-                        id="cmykClassPrefix"
-                        class="field-input"
-                        value="palette-cmyk"
-                        placeholder="palette-cmyk"
-                        maxlength="24"
-                        aria-label="CMYK CSS class prefix"
-                        spellcheck="false"
-                    >
-                </div>
+                 <div class="prefix-control">
+                     <label for="cmykClassPrefix">CSS Class Prefix</label>
+                     <input
+                         type="text"
+                         id="cmykClassPrefix"
+                         class="field-input"
+                         value="palette-cmyk"
+                         placeholder="palette-cmyk"
+                         maxlength="24"
+                         aria-label="CMYK CSS class prefix"
+                         spellcheck="false"
+                     >
+                 </div>
 
-                <button class="button button--primary" type="button" data-generator="cmyk">Generate</button>
-            </div>
+                 <button class="button button--primary" type="button" data-generator="cmyk">Generate</button>
+             </div>
 
-            <div class="gamut-warning" id="cmykGamutWarning" role="alert" aria-live="polite"></div>
+             <div class="gamut-warning" id="cmykGamutWarning" role="alert" aria-live="polite"></div>
 
-            <div class="results" id="cmykResults" style="display:none;">
-                <div class="color-blocks" id="cmykColorBlocks"></div>
+             <div class="results" id="cmykResults" style="display:none;">
+                 <div class="color-blocks" id="cmykColorBlocks"></div>
 
-                <div class="css-output">
-                    <h3>CSS Classes</h3>
-                    <button class="button copy-btn" id="cmykCopyBtn" type="button" data-copy="cmyk" title="Copy CSS">
-                        <svg id="cmykCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                    <pre id="cmykCssOutput"></pre>
-                </div>
-            </div>
-        </div>
+                 <div class="css-output">
+                     <h3>CSS Classes</h3>
+                     <button class="button copy-btn" id="cmykCopyBtn" type="button" data-copy="cmyk" title="Copy CSS">
+                         <svg id="cmykCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                         </svg>
+                     </button>
+                     <pre id="cmykCssOutput"></pre>
+                 </div>
+             </div>
+         </div>
 
-        <div class="tab-panel" id="harmonyGenerator">
-            <div class="controls surface-card tone-controls harmony-controls grid-auto" style="--grid-min: 220px;">
-                <div class="preview-control stack" style="--stack-gap: 10px;">
-                    <label for="harmonyColorPicker">Base Color</label>
-                    <div class="color-picker-row with-rgb no-hex">
-                        <div class="preview-picker" title="Pick a harmony base color">
-                            <div class="preview-chip" id="harmonyPreview"></div>
-                            <input type="color" id="harmonyColorPicker" value="#5B21B6" aria-label="Pick base color for harmony palette">
-                        </div>
-                        <div class="rgb-input">
+         <div class="tab-panel" id="harmonyGenerator">
+             <div class="controls surface-card tone-controls harmony-controls grid-auto" style="--grid-min: 220px;">
+                 <div class="preview-control stack" style="--stack-gap: 10px;">
+                     <label for="harmonyColorPicker">Base Color</label>
+                     <div class="color-picker-row with-rgb">
+                         <div class="preview-picker" title="Pick a harmony base color">
+                             <div class="preview-chip" id="harmonyPreview"></div>
+                             <input type="color" id="harmonyColorPicker" value="#5B21B6" aria-label="Pick base color for harmony palette">
+                         </div>
+                         <div class="hex-input">
                             <input
                                 type="text"
-                                id="harmonyRgb"
+                                id="harmonyHexDisplay"
                                 class="field-input"
-                                value="91, 33, 182"
-                                placeholder="R, G, B"
-                                aria-label="Harmony RGB value"
+                                value="#5B21B6"
+                                placeholder="#5B21B6"
+                                maxlength="7"
+                                minlength="6"
                                 spellcheck="false"
+                                inputmode="text"
+                                pattern="#?[0-9A-Fa-f]{6}"
+                                aria-label="Harmony hex value"
                             >
                         </div>
-                    </div>
-                    <input type="hidden" id="harmonyHex" value="#5B21B6">
-                </div>
-                <div class="slider-control">
-                    <label for="harmonySpreadSlider">Hue Spread (10 – 90°)</label>
-                    <div class="slider-row">
-                        <input type="range" id="harmonySpreadSlider" class="field-range" min="10" max="90" step="1" value="30">
-                        <input type="number" id="harmonySpread" class="field-input" min="10" max="90" step="1" value="30" aria-label="Hue spread degrees">
-                    </div>
-                </div>
+                     </div>
+                     <input type="hidden" id="harmonyHex" value="#5B21B6">
+                 </div>
 
-                <div class="slider-control">
-                    <label for="harmonyLightnessSlider">Lightness Variance (0 – 30)</label>
-                    <div class="slider-row">
-                        <input type="range" id="harmonyLightnessSlider" class="field-range" min="0" max="30" step="1" value="8">
-                        <input type="number" id="harmonyLightness" class="field-input" min="0" max="30" step="1" value="8" aria-label="Lightness variance">
-                    </div>
-                </div>
+                 <div class="slider-control">
+                     <label for="harmonySpreadSlider">Hue Spread (10 – 90°)</label>
+                     <div class="slider-row">
+                         <input type="range" id="harmonySpreadSlider" class="field-range" min="10" max="90" step="1" value="30">
+                         <input type="number" id="harmonySpread" class="field-input" min="10" max="90" step="1" value="30" aria-label="Hue spread degrees">
+                     </div>
+                 </div>
 
-                <div class="prefix-control">
-                    <label for="harmonyClassPrefix">CSS Class Prefix</label>
-                    <input
-                        type="text"
-                        id="harmonyClassPrefix"
-                        class="field-input"
-                        value="palette-harmony"
-                        placeholder="palette-harmony"
-                        maxlength="24"
-                        aria-label="Harmony CSS class prefix"
-                        spellcheck="false"
-                    >
-                </div>
+                 <div class="slider-control">
+                     <label for="harmonyLightnessSlider">Lightness Variance (0 – 30)</label>
+                     <div class="slider-row">
+                         <input type="range" id="harmonyLightnessSlider" class="field-range" min="0" max="30" step="1" value="8">
+                         <input type="number" id="harmonyLightness" class="field-input" min="0" max="30" step="1" value="8" aria-label="Lightness variance">
+                     </div>
+                 </div>
 
-                <button class="button button--primary" type="button" data-generator="harmony">Generate</button>
-            </div>
+                 <div class="prefix-control">
+                     <label for="harmonyClassPrefix">CSS Class Prefix</label>
+                     <input
+                         type="text"
+                         id="harmonyClassPrefix"
+                         class="field-input"
+                         value="palette-harmony"
+                         placeholder="palette-harmony"
+                         maxlength="24"
+                         aria-label="Harmony CSS class prefix"
+                         spellcheck="false"
+                     >
+                 </div>
 
-            <div class="harmony-columns" id="harmonyColumns">
-                <div class="harmony-column" data-scheme="analogous">
-                    <h3>Analogous</h3>
-                    <div class="color-blocks" id="harmonyAnalogousBlocks"></div>
-                    <div class="css-output" id="harmonyAnalogousCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="harmonyAnalogousCopyBtn" type="button" data-copy="harmony-analogous" title="Copy CSS">
-                            <svg id="harmonyAnalogousCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="harmonyAnalogousCss"></pre>
-                    </div>
-                </div>
+                 <button class="button button--primary" type="button" data-generator="harmony">Generate</button>
+             </div>
 
-                <div class="harmony-column" data-scheme="complementary">
-                    <h3>Complementary</h3>
-                    <div class="color-blocks" id="harmonyComplementaryBlocks"></div>
-                    <div class="css-output" id="harmonyComplementaryCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="harmonyComplementaryCopyBtn" type="button" data-copy="harmony-complementary" title="Copy CSS">
-                            <svg id="harmonyComplementaryCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="harmonyComplementaryCss"></pre>
-                    </div>
-                </div>
+             <div class="harmony-columns" id="harmonyColumns">
+                 <div class="harmony-column" data-scheme="analogous">
+                     <h3>Analogous</h3>
+                     <div class="color-blocks" id="harmonyAnalogousBlocks"></div>
+                     <div class="css-output" id="harmonyAnalogousCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="harmonyAnalogousCopyBtn" type="button" data-copy="harmony-analogous" title="Copy CSS">
+                             <svg id="harmonyAnalogousCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="harmonyAnalogousCss"></pre>
+                     </div>
+                 </div>
 
-                <div class="harmony-column" data-scheme="split-complementary">
-                    <h3>Split Complementary</h3>
-                    <div class="color-blocks" id="harmonySplitComplementaryBlocks"></div>
-                    <div class="css-output" id="harmonySplitComplementaryCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="harmonySplitComplementaryCopyBtn" type="button" data-copy="harmony-split-complementary" title="Copy CSS">
-                            <svg id="harmonySplitComplementaryCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="harmonySplitComplementaryCss"></pre>
-                    </div>
-                </div>
+                 <div class="harmony-column" data-scheme="complementary">
+                     <h3>Complementary</h3>
+                     <div class="color-blocks" id="harmonyComplementaryBlocks"></div>
+                     <div class="css-output" id="harmonyComplementaryCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="harmonyComplementaryCopyBtn" type="button" data-copy="harmony-complementary" title="Copy CSS">
+                             <svg id="harmonyComplementaryCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="harmonyComplementaryCss"></pre>
+                     </div>
+                 </div>
 
-                <div class="harmony-column" data-scheme="triadic">
-                    <h3>Triadic</h3>
-                    <div class="color-blocks" id="harmonyTriadicBlocks"></div>
-                    <div class="css-output" id="harmonyTriadicCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="harmonyTriadicCopyBtn" type="button" data-copy="harmony-triadic" title="Copy CSS">
-                            <svg id="harmonyTriadicCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="harmonyTriadicCss"></pre>
-                    </div>
-                </div>
+                 <div class="harmony-column" data-scheme="split-complementary">
+                     <h3>Split Complementary</h3>
+                     <div class="color-blocks" id="harmonySplitComplementaryBlocks"></div>
+                     <div class="css-output" id="harmonySplitComplementaryCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="harmonySplitComplementaryCopyBtn" type="button" data-copy="harmony-split-complementary" title="Copy CSS">
+                             <svg id="harmonySplitComplementaryCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="harmonySplitComplementaryCss"></pre>
+                     </div>
+                 </div>
 
-                <div class="harmony-column" data-scheme="tetradic">
-                    <h3>Tetradic</h3>
-                    <div class="color-blocks" id="harmonyTetradicBlocks"></div>
-                    <div class="css-output" id="harmonyTetradicCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="harmonyTetradicCopyBtn" type="button" data-copy="harmony-tetradic" title="Copy CSS">
-                            <svg id="harmonyTetradicCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="harmonyTetradicCss"></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
+                 <div class="harmony-column" data-scheme="triadic">
+                     <h3>Triadic</h3>
+                     <div class="color-blocks" id="harmonyTriadicBlocks"></div>
+                     <div class="css-output" id="harmonyTriadicCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="harmonyTriadicCopyBtn" type="button" data-copy="harmony-triadic" title="Copy CSS">
+                             <svg id="harmonyTriadicCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="harmonyTriadicCss"></pre>
+                     </div>
+                 </div>
 
-        <div class="tab-panel" id="dataVizGenerator">
-            <div class="controls surface-card tone-controls data-viz-controls grid-auto" style="--grid-min: 220px;">
-                <div class="preview-control stack" style="--stack-gap: 10px;">
-                    <label for="dataVizColorPicker">Brand Base Color</label>
-                    <div class="color-picker-row with-rgb no-hex">
-                        <div class="preview-picker" title="Pick a brand base color">
-                            <div class="preview-chip" id="dataVizPreview"></div>
-                            <input type="color" id="dataVizColorPicker" value="#2563EB" aria-label="Pick brand base color">
-                        </div>
-                        <div class="rgb-input">
+                 <div class="harmony-column" data-scheme="tetradic">
+                     <h3>Tetradic</h3>
+                     <div class="color-blocks" id="harmonyTetradicBlocks"></div>
+                     <div class="css-output" id="harmonyTetradicCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="harmonyTetradicCopyBtn" type="button" data-copy="harmony-tetradic" title="Copy CSS">
+                             <svg id="harmonyTetradicCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="harmonyTetradicCss"></pre>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <div class="tab-panel" id="dataVizGenerator">
+             <div class="controls surface-card tone-controls data-viz-controls grid-auto" style="--grid-min: 220px;">
+                 <div class="preview-control stack" style="--stack-gap: 10px;">
+                     <label for="dataVizColorPicker">Brand Base Color</label>
+                     <div class="color-picker-row with-rgb">
+                         <div class="preview-picker" title="Pick a brand base color">
+                             <div class="preview-chip" id="dataVizPreview"></div>
+                             <input type="color" id="dataVizColorPicker" value="#2563EB" aria-label="Pick brand base color">
+                         </div>
+                         <div class="hex-input">
                             <input
                                 type="text"
-                                id="dataVizRgb"
+                                id="dataVizHexDisplay"
                                 class="field-input"
-                                value="37, 99, 235"
-                                placeholder="R, G, B"
-                                aria-label="Brand RGB value"
+                                value="#2563EB"
+                                placeholder="#2563EB"
+                                maxlength="7"
+                                minlength="6"
                                 spellcheck="false"
+                                inputmode="text"
+                                pattern="#?[0-9A-Fa-f]{6}"
+                                aria-label="Brand hex value"
                             >
                         </div>
-                    </div>
-                    <input type="hidden" id="dataVizHex" value="#2563EB">
-                </div>
-                <div class="slider-control">
-                    <label for="dataVizCountSlider">Series Size (3 – 12)</label>
-                    <div class="slider-row">
-                        <input type="range" id="dataVizCountSlider" class="field-range" min="3" max="12" step="1" value="6">
-                        <input type="number" id="dataVizCount" class="field-input" min="3" max="12" step="1" value="6" aria-label="Palette size">
-                    </div>
-                </div>
+                     </div>
+                     <input type="hidden" id="dataVizHex" value="#2563EB">
+                 </div>
+                 <div class="slider-control">
+                     <label for="dataVizCountSlider">Series Size (3 – 12)</label>
+                     <div class="slider-row">
+                         <input type="range" id="dataVizCountSlider" class="field-range" min="3" max="12" step="1" value="6">
+                         <input type="number" id="dataVizCount" class="field-input" min="3" max="12" step="1" value="6" aria-label="Palette size">
+                     </div>
+                 </div>
 
-                <div class="prefix-control">
-                    <label for="dataVizClassPrefix">CSS Class Prefix</label>
-                    <input
-                        type="text"
-                        id="dataVizClassPrefix"
-                        class="field-input"
-                        value="palette-dataviz"
-                        placeholder="palette-dataviz"
-                        maxlength="24"
-                        aria-label="Data visualization CSS class prefix"
-                        spellcheck="false"
-                    >
-                </div>
+                 <div class="prefix-control">
+                     <label for="dataVizClassPrefix">CSS Class Prefix</label>
+                     <input
+                         type="text"
+                         id="dataVizClassPrefix"
+                         class="field-input"
+                         value="palette-dataviz"
+                         placeholder="palette-dataviz"
+                         maxlength="24"
+                         aria-label="Data visualization CSS class prefix"
+                         spellcheck="false"
+                     >
+                 </div>
 
-                <button class="button button--primary" type="button" data-generator="dataviz">Generate</button>
-            </div>
+                 <button class="button button--primary" type="button" data-generator="dataviz">Generate</button>
+             </div>
 
-            <div class="data-viz-columns" id="dataVizColumns">
-                <div class="data-viz-column" data-type="sequential">
-                    <h3 class="has-tooltip" data-tooltip="Sequential palettes progress from light to dark, ideal for communicating ordered or magnitude data." tabindex="0">Sequential</h3>
-                    <div class="color-blocks" id="dataVizSequentialBlocks"></div>
-                    <div class="simulations" id="dataVizSequentialSimulations" style="display:none;"></div>
-                    <div class="css-output" id="dataVizSequentialCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="dataVizSequentialCopyBtn" type="button" data-copy="dataviz-sequential" title="Copy CSS">
-                            <svg id="dataVizSequentialCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="dataVizSequentialCss"></pre>
-                    </div>
-                </div>
+             <div class="data-viz-columns" id="dataVizColumns">
+                 <div class="data-viz-column" data-type="sequential">
+                     <h3 class="has-tooltip" data-tooltip="Sequential palettes progress from light to dark, ideal for communicating ordered or magnitude data." tabindex="0">Sequential</h3>
+                     <div class="color-blocks" id="dataVizSequentialBlocks"></div>
+                     <div class="simulations" id="dataVizSequentialSimulations" style="display:none;"></div>
+                     <div class="css-output" id="dataVizSequentialCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="dataVizSequentialCopyBtn" type="button" data-copy="dataviz-sequential" title="Copy CSS">
+                             <svg id="dataVizSequentialCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="dataVizSequentialCss"></pre>
+                     </div>
+                 </div>
 
-                <div class="data-viz-column" data-type="diverging">
-                    <h3 class="has-tooltip" data-tooltip="Diverging palettes emphasize deviations on either side of a critical midpoint, such as gain versus loss." tabindex="0">Diverging</h3>
-                    <div class="color-blocks" id="dataVizDivergingBlocks"></div>
-                    <div class="simulations" id="dataVizDivergingSimulations" style="display:none;"></div>
-                    <div class="css-output" id="dataVizDivergingCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="dataVizDivergingCopyBtn" type="button" data-copy="dataviz-diverging" title="Copy CSS">
-                            <svg id="dataVizDivergingCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="dataVizDivergingCss"></pre>
-                    </div>
-                </div>
+                 <div class="data-viz-column" data-type="diverging">
+                     <h3 class="has-tooltip" data-tooltip="Diverging palettes emphasize deviations on either side of a critical midpoint, such as gain versus loss." tabindex="0">Diverging</h3>
+                     <div class="color-blocks" id="dataVizDivergingBlocks"></div>
+                     <div class="simulations" id="dataVizDivergingSimulations" style="display:none;"></div>
+                     <div class="css-output" id="dataVizDivergingCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="dataVizDivergingCopyBtn" type="button" data-copy="dataviz-diverging" title="Copy CSS">
+                             <svg id="dataVizDivergingCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="dataVizDivergingCss"></pre>
+                     </div>
+                 </div>
 
-                <div class="data-viz-column" data-type="qualitative">
-                    <h3 class="has-tooltip" data-tooltip="Qualitative palettes assign distinct hues to categories without implying order, keeping each series equally weighted." tabindex="0">Qualitative</h3>
-                    <div class="color-blocks" id="dataVizQualitativeBlocks"></div>
-                    <div class="simulations" id="dataVizQualitativeSimulations" style="display:none;"></div>
-                    <div class="css-output" id="dataVizQualitativeCssContainer" style="display:none;">
-                        <h3>CSS Classes</h3>
-                        <button class="button copy-btn" id="dataVizQualitativeCopyBtn" type="button" data-copy="dataviz-qualitative" title="Copy CSS">
-                            <svg id="dataVizQualitativeCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <pre id="dataVizQualitativeCss"></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                 <div class="data-viz-column" data-type="qualitative">
+                     <h3 class="has-tooltip" data-tooltip="Qualitative palettes assign distinct hues to categories without implying order, keeping each series equally weighted." tabindex="0">Qualitative</h3>
+                     <div class="color-blocks" id="dataVizQualitativeBlocks"></div>
+                     <div class="simulations" id="dataVizQualitativeSimulations" style="display:none;"></div>
+                     <div class="css-output" id="dataVizQualitativeCssContainer" style="display:none;">
+                         <h3>CSS Classes</h3>
+                         <button class="button copy-btn" id="dataVizQualitativeCopyBtn" type="button" data-copy="dataviz-qualitative" title="Copy CSS">
+                             <svg id="dataVizQualitativeCopyIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                             </svg>
+                         </button>
+                         <pre id="dataVizQualitativeCss"></pre>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
 
-</div>
+ </div>
