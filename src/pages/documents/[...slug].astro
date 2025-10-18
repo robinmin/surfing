@@ -20,8 +20,11 @@ const { document } = Astro.props;
 // Determine file type and layout based on file extension and content characteristics
 const fileExtension = document.id.split('.').pop()?.toLowerCase();
 const isHtmlFile = fileExtension === 'html';
-const hasCustomStyling = document.data.customCSS || document.data.customJS ||
-                        document.data.externalCSS?.length || document.data.externalJS?.length;
+const hasCustomStyling =
+  document.data.customCSS ||
+  document.data.customJS ||
+  document.data.externalCSS?.length ||
+  document.data.externalJS?.length;
 
 // Use ExternalPageLayout for HTML files or files with custom styling
 // Use MarkdownLayout for standard markdown files
@@ -49,23 +52,25 @@ const metadata = {
 };
 ---
 
-{useExternalLayout ? (
-  <ExternalPageLayout metadata={metadata} entry={document}>
-    <div set:html={document.body} />
-  </ExternalPageLayout>
-) : (
-  <MarkdownLayout
-    frontmatter={{
-      title: document.data.title,
-      description: document.data.description,
-      publishDate: document.data.publishDate,
-      updateDate: document.data.updateDate,
-      readingTime: document.data.readingTime,
-      tags: document.data.tags,
-      author: document.data.author,
-    }}
-    metadata={metadata}
-  >
-    <Content />
-  </MarkdownLayout>
-)}
+{
+  useExternalLayout ? (
+    <ExternalPageLayout metadata={metadata} entry={document}>
+      <div set:html={document.body} />
+    </ExternalPageLayout>
+  ) : (
+    <MarkdownLayout
+      frontmatter={{
+        title: document.data.title,
+        description: document.data.description,
+        publishDate: document.data.publishDate,
+        updateDate: document.data.updateDate,
+        readingTime: document.data.readingTime,
+        tags: document.data.tags,
+        author: document.data.author,
+      }}
+      metadata={metadata}
+    >
+      <Content />
+    </MarkdownLayout>
+  )
+}
