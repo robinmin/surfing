@@ -106,7 +106,7 @@ else:
   c_srgb = 1.055 * (c_linear ** (1 / 2.4)) - 0.055
 ```
 
-  *When to use it*: gradient interpolation, Canvas/WebGL lighting, CSS `mix-blend-mode` math, and any animation pipeline that expects linear light.
+_When to use it_: gradient interpolation, Canvas/WebGL lighting, CSS `mix-blend-mode` math, and any animation pipeline that expects linear light.
 
 - **sRGB ↔ Display P3**: Tools convert colors through an intermediate space such as XYZ or LAB, then project onto the destination gamut using primary vectors. Surfing’s tool and most design apps follow this flow, so designers can hand off Display P3 swatches and developers can implement them with `color(display-p3 …)` without guesswork.[4]
 
@@ -124,7 +124,7 @@ else:
 # Apply the Display P3 gamma curve (≈2.4 exponent)
 ```
 
-  *When to use it*: wide-gamut themes for iOS/macOS, HDR-ready marketing assets, slide decks that must shine on modern projectors, or anywhere you combine saturated gradients with sRGB fallbacks.
+_When to use it_: wide-gamut themes for iOS/macOS, HDR-ready marketing assets, slide decks that must shine on modern projectors, or anywhere you combine saturated gradients with sRGB fallbacks.
 
 - **RGB ↔ CMYK**: Print workflows rely on ICC profiles, generate a black (K) channel, and respect total ink limits. Run colors through this step ahead of time to avoid “the brochure came back muted” surprises.[7]
 
@@ -144,7 +144,7 @@ G = (1 - M) * (1 - K)
 B = (1 - Y) * (1 - K)
 ```
 
-  *When to use it*: brand teams switching between on-screen and print collateral, preflight checks for brochures or swag, and presentations that also need printable handouts.
+_When to use it_: brand teams switching between on-screen and print collateral, preflight checks for brochures or swag, and presentations that also need printable handouts.
 
 - **RGB/HSL ↔ LAB/LCH**: Converting through XYZ pays off when you need accessible contrast, palette harmonization, or consistent readability on both projectors and LCDs.[4][7]
 
@@ -162,7 +162,7 @@ C = sqrt(A**2 + B**2)
 H = atan2(B, A)  # degrees, 0°–360°
 ```
 
-  *When to use it*: WCAG contrast audits, dark-mode tuning, cross-device readability checks, and calculating ΔE when aligning color tokens with physical samples.
+_When to use it_: WCAG contrast audits, dark-mode tuning, cross-device readability checks, and calculating ΔE when aligning color tokens with physical samples.
 
 - **HSL ↔ RGB**: HSL maps closely to human intuition about brightness, making it ideal for building tone ladders or dark-mode palettes.
 
@@ -205,7 +205,7 @@ else:
   H = 60 * (((R - G) / delta) + 4)
 ```
 
-  *When to use it*: CSS variable-based theming, generating consistent hover/active/disabled states, and building slide templates with graded emphasis colors.
+_When to use it_: CSS variable-based theming, generating consistent hover/active/disabled states, and building slide templates with graded emphasis colors.
 
 - **HSV ↔ RGB**: HSV is intuitive for color wheels or adjusting base colors plus highlights, since Value directly controls brightness.
 
@@ -248,7 +248,7 @@ else:
   H = 60 * (((R - G) / delta) + 4)
 ```
 
-  *When to use it*: interactive color pickers, gradient editors, highlight/shadow adjustments in JS, and quickly testing alternate highlight colors for slide decks.
+_When to use it_: interactive color pickers, gradient editors, highlight/shadow adjustments in JS, and quickly testing alternate highlight colors for slide decks.
 
 Memorize these patterns and color conversations stop sounding like different species talking past each other. A simple rule of thumb: **whoever understands the target device best owns the conversion.** Designers or teammates closest to the device confirm the gamut and supply swatches; frontend developers retain wide-gamut values with CSS Color Level 4 syntax while offering sRGB fallbacks; the print or brand team handles the CMYK end. Treat these conversions as your cross-medium dictionary.
 
