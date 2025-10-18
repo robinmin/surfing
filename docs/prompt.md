@@ -331,18 +331,22 @@ New I need you act as a senior translator to translate this Chinese version into
 blocks (including code, diagrams, flows, scripts, and etc., unless there are some Chinese comments I already noticed). I will try to
 publish it to https://medium.com/. Try your best to help native speakers understand this articles
 
-
 ### fix claude_code_plugins_02.md
+
 #### Background
-contents/articles/cn/claude_code_plugins_02.md is the second part of the articles based on the outlines defined in draft/大纲草案_final.md. You can also refer to the first part at @contents/articles/cn/claude_code_plugins_01.md.
+
+contents/articles/cn/claude_code_plugins_02.md is the second part of the articles based on the outlines defined in draft/大纲草案\_final.md. You can also refer to the first part at @contents/articles/cn/claude_code_plugins_01.md.
 
 #### Current Status
+
 Due to the nature of the second part, there are so many code blocks in it. But not every code block is well tested or reviewed. Especially so command options or APIs we need to confirm with the offcial documents to avoid potential issues.
 
 Meanwhile, it quick lack of descriptions on the mechanisms and purposes for each section of the article. That made this part more difficult to understand.
 
 And, I did some manual review on this document and add some TODO items within the doc, we need take proper actions to enhance the content.
+
 #### Goals
+
 - Have comprehensive code review for each code block to find potential issues and fix them all.
 - Check with MCP Context7 to ensure the accuracy and completeness of these command lines or APIs if necessary. We need to ensure all these command lines or APIs can run and produce expected results.
 - Act as a senior IT content writer to enhance the contents, make it more readable and understandable, like other normal technical tutorial articles.
