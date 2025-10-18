@@ -3,7 +3,19 @@ title: 'Advanced Color Gradient Generator & Palette Creator - Free Online Tool'
 description: 'Professional color gradient generator and palette creator with RGB, HSL, HSV, CMYK support. Create stunning gradients, color harmonies, and data visualization palettes with instant CSS export. Perfect for designers and developers.'
 image: '@assets/images/gradient-gen-logo-og.png'
 publishDate: 2025-10-05
-tags: ['color-generator', 'gradient-tool', 'palette-creator', 'web-design', 'css-tools', 'color-theory', 'ui-design', 'frontend', 'design-tools', 'color-palettes']
+tags:
+  [
+    'color-generator',
+    'gradient-tool',
+    'palette-creator',
+    'web-design',
+    'css-tools',
+    'color-theory',
+    'ui-design',
+    'frontend',
+    'design-tools',
+    'color-palettes',
+  ]
 readingTime: 3
 wordCount: 485
 draft: false
