@@ -120,6 +120,7 @@ Tech Lead: "你修改了支付 API，但没更新 API 文档..."
 在开始实现前，我们需要明确插件的设计思路：
 
 **核心原则**：
+
 1. **模块化分离**：命令定义、执行脚本、Hook 配置各司其职
 2. **渐进式增强**：从简单的手动命令开始，逐步添加自动化 Hook
 3. **优雅降级**：检查失败时给出明确提示，而非直接报错退出
@@ -133,11 +134,13 @@ Tech Lead: "你修改了支付 API，但没更新 API 文档..."
 > - [**lint-staged**](https://github.com/okonet/lint-staged)：仅对 staged 文件运行 linter，性能优秀
 >
 > 这些工具经过大规模验证，提供了更完善的功能和更好的性能。本文的插件可作为：
+>
 > - **学习 Claude Code Plugins 开发的起点**
 > - **团队内部定制化工具的参考**
 > - **与 Claude 深度集成的工作流扩展**
 
 **我们的插件优势**：
+
 - 与 Claude Code 无缝集成，可在对话中直接调用
 - 失败时 Claude 能理解错误信息并提供修复建议
 - 可扩展为更复杂的 AI辅助工作流
@@ -249,20 +252,22 @@ graph TD
 本节将逐一实现插件的核心文件。这些文件构成了插件的"骨架"：
 
 - **plugin.json**：插件的"身份证"，告诉 Claude Code 这是什么插件、有哪些功能
-- **commands/*.md**：用户可见的命令定义，描述 Claude 该如何执行检查
+- **commands/\*.md**：用户可见的命令定义，描述 Claude 该如何执行检查
 - **hooks/hooks.json**：自动化触发规则，让检查在 Git 操作前自动运行
-- **scripts/***：实际的检查逻辑，可以是 Python、Shell 或任何可执行脚本
+- **scripts/\***：实际的检查逻辑，可以是 Python、Shell 或任何可执行脚本
 
 这种分层设计的好处是：**定义与实现分离**。命令定义文件描述"做什么"，脚本文件负责"怎么做"，便于维护和测试。
 
 ### 3.1 插件清单：plugin.json
 
 **作用**：这是插件的元数据文件，Claude Code 通过它识别插件、加载命令和 Hook。可以类比为：
+
 - Node.js 的 `package.json`
 - Python 的 `setup.py` / `pyproject.toml`
 - Chrome 扩展的 `manifest.json`
 
 **必需字段**：`name`、`version`、`description` 是最基本的三要素。
+
 ```json
 {
   "name": "pre-commit-checker",
@@ -306,6 +311,7 @@ graph TD
 **作用**：定义 `/pre-commit` 命令的行为。当用户在 Claude Code 中输入 `/pre-commit` 时，Claude 会读取这个文件，按照其中的步骤执行检查。
 
 **关键点**：
+
 - **结构化步骤**：使用 `## Step 1/2/3` 清晰标注执行顺序
 - **期望输出**：告诉 Claude 每步成功/失败时应该看到什么
 - **错误处理**：失败时提供可操作的建议（如 "Run /fix-lint"）
@@ -416,7 +422,6 @@ Provide a structured summary:
    - Modified: src/api/payment.py
    - Please update: docs/API.md
 ```
-
 ````
 
 **设计要点**：
@@ -431,6 +436,7 @@ Provide a structured summary:
 **作用**：定义 `/fix-lint` 命令，自动修复可修复的 ESLint 错误。这是对 `/pre-commit` 的补充，提供"一键修复"功能。
 
 **设计思路**：
+
 - 调用同一个脚本 `lint_check.py`，但传入 `--fix` 参数
 - 区分"已修复"和"需手动修复"的问题
 - 修复后提示用户再次运行 `/pre-commit` 确认
@@ -488,6 +494,7 @@ Please fix manually and run /pre-commit again.
 **作用**：配置自动触发规则，让检查在特定事件发生时自动运行，无需用户手动执行命令。
 
 **核心概念**：
+
 - **PreToolUse Hook**：在 Claude 调用工具（如 Bash）前触发
 - **matcher（匹配器）**：正则表达式，决定什么操作会触发 Hook
 - **onFailure 策略**：
@@ -495,6 +502,7 @@ Please fix manually and run /pre-commit again.
   - `warn`：仅警告，不阻止操作
 
 **设计决策**：
+
 - ESLint 和 Commit 消息检查失败时**阻止** commit（保证代码质量）
 - 文档同步检查失败时仅**警告**（避免误伤正常提交）
 
@@ -564,6 +572,7 @@ Please fix manually and run /pre-commit again.
 - **utils.py**：共享的工具函数
 
 **设计原则**：
+
 1. **单一职责**：每个脚本只做一件事，职责明确
 2. **标准退出码**：0=成功，1=失败（符合 Unix 惯例）
 3. **友好输出**：使用 emoji 和结构化信息，便于理解
@@ -574,6 +583,7 @@ Please fix manually and run /pre-commit again.
 **目的**：检查 staged 的 JS/TS 文件是否符合 ESLint 规范，可选自动修复。
 
 **实现思路**：
+
 1. 检查项目是否配置了 ESLint（`.eslintrc.*` 文件）
 2. 获取 staged 的 JS/TS 文件列表（仅检查将要提交的文件）
 3. 运行 `npx eslint`（使用 npx 自动使用项目本地版本）
@@ -581,6 +591,7 @@ Please fix manually and run /pre-commit again.
 5. 返回适当的退出码和友好的提示信息
 
 **关键优化**：
+
 - 仅检查 staged 文件，提升性能
 - 支持 `--fix` 参数一键修复
 - 没有配置时优雅跳过，不影响正常提交
@@ -746,6 +757,7 @@ if __name__ == '__main__':
 **目的**：确保 commit 消息遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范，提升 commit 历史可读性。
 
 **实现思路**：
+
 1. 尝试读取准备好的 commit 消息（从 `.git/COMMIT_EDITMSG` 或最近的 commit）
 2. 使用正则表达式验证格式：`type(scope): description`
 3. 检查 type 是否在预定义列表中（feat、fix、docs 等）
@@ -753,6 +765,7 @@ if __name__ == '__main__':
 5. 失败时展示 5 个正确示例，帮助用户理解规范
 
 **为什么重要**：
+
 - 规范的 commit 消息便于生成 CHANGELOG
 - 清晰的 type 标注便于代码审查和回溯
 - 避免 "update code"、"fix stuff" 等无意义消息
@@ -918,6 +931,7 @@ if __name__ == '__main__':
 **目的**：当 API 代码发生变更时，提醒开发者同步更新相关文档，避免文档过时。
 
 **实现思路**：
+
 1. 定义"代码目录 → 文档文件"的映射规则（如 `src/api/` → `docs/API.md`）
 2. 获取 staged 文件列表
 3. 检查是否有代码目录下的文件被修改
@@ -925,11 +939,13 @@ if __name__ == '__main__':
 5. 列出需要更新的文档文件
 
 **为什么使用 Shell**：
+
 - 任务简单，无需复杂逻辑
 - bash 在 Git 操作上更简洁（`git diff`、`grep`）
 - 执行效率高
 
 **设计亮点**：
+
 - 使用关联数组（`declare -A`）灵活配置规则
 - 仅警告不阻止，避免误杀正常提交（文档有时滞后于代码）
 
@@ -1020,11 +1036,13 @@ fi
 **目的**：提供可复用的工具函数，避免在多个脚本中重复代码。
 
 **包含的函数**：
+
 - `run_command()`：统一的命令执行接口，处理超时和错误
 - `is_git_repository()`：检查当前目录是否为 Git 仓库
 - `get_git_root()`：获取 Git 仓库根目录
 
 **设计原则**：
+
 - 单一职责，每个函数只做一件事
 - 统一的错误处理和异常信息
 - 类型提示（Type Hints），便于维护
@@ -1095,6 +1113,7 @@ def get_git_root() -> str:
 在将插件发布到团队或公开市场前，完整的本地测试至关重要。本节将带你完成从环境准备到功能验证的全流程，确保插件在各种场景下都能稳定工作。
 
 **测试目标**：
+
 1. **结构验证**：确认插件文件结构完整，配置格式正确
 2. **命令可用性**：验证所有 slash 命令能被正确识别和执行
 3. **Hook 触发**：测试自动化 Hook 是否在预期时机触发
@@ -1102,6 +1121,7 @@ def get_git_root() -> str:
 5. **错误处理**：验证各种异常情况下的降级和提示逻辑
 
 **测试流程概览**：
+
 ```
 环境准备 → 创建测试市场 → 安装激活插件 → 功能测试 → 调试优化
    ↓            ↓              ↓             ↓           ↓
@@ -1261,6 +1281,7 @@ claude
 5. **激活插件**：加载插件配置到当前会话
 
 **故障排查**：
+
 - 如果插件安装失败，检查 marketplace.json 格式是否正确
 - 如果命令不可见，确认 commands 目录中的文件格式正确
 - 如果 Hook 未触发，验证 hooks.json 中的 matcher 表达式
@@ -1417,6 +1438,7 @@ git commit -m "bad code"
 ```
 
 **如何判断问题**:
+
 - 如果 `/plugin` 中看不到插件 → 安装或启用失败
 - 如果 `/help` 中看不到命令 → 命令配置错误
 - 如果状态显示 "Disabled" → 需要手动启用
@@ -1441,6 +1463,7 @@ bash scripts/doc_sync_checker.sh
 ```
 
 **调试要点**:
+
 - 检查脚本是否有执行权限 (`ls -l scripts/`)
 - 观察退出码 (`echo $?`,0=成功)
 - 查看详细错误栈,定位具体问题行
@@ -1467,6 +1490,7 @@ cat .claude-plugin/plugin.json | python -m json.tool  # 验证 JSON 格式
 ```
 
 **常见问题排查**:
+
 - Python/Node 版本不符合要求 → 升级或使用虚拟环境
 - ESLint 未安装 → `npm install --save-dev eslint`
 - JSON 格式错误 → 使用 `python -m json.tool` 验证
@@ -1500,6 +1524,7 @@ cat .claude-plugin/plugin.json | python -m json.tool  # 验证 JSON 格式
 ```
 
 **Hook 调试流程**:
+
 1. 确认插件已启用 (`/plugin` 菜单)
 2. 简化 matcher,确保能触发
 3. 检查脚本是否有输出
@@ -1592,7 +1617,7 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py
 
 ```json
 {
-  "command": '${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py'
+  "command": "${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py"
 }
 ```
 
@@ -1791,6 +1816,7 @@ check_git_repo()
 ---
 
 ## 七、插件组合与高级技巧
+
 ### 7.1 多插件协同工作
 
 #### 场景:同时使用代码检查和安全扫描
@@ -1818,12 +1844,14 @@ check_git_repo()
 ```
 
 **配置说明**:
+
 - `enabledPlugins`:明确声明项目使用哪些插件,团队成员克隆代码后自动同步
 - `pluginSettings`:为每个插件提供定制化参数,覆盖默认行为
 - `autoFix`:允许 pre-commit-checker 自动修复问题
 - `excludePaths`:让 security-scanner 跳过第三方依赖目录,减少误报
 
 **使用效果**:
+
 - 新成员克隆项目后,Claude Code 会提示安装配置的插件
 - 所有人使用相同的检查规则和严格程度
 - 避免"本地能过,CI 失败"的问题
@@ -1833,6 +1861,7 @@ check_git_repo()
 **问题**:多个插件都定义了 `PreToolUse` Hook 监听 `git commit`,默认执行顺序不确定,可能导致安全检查在代码检查之后运行(不合理),或者关键检查被跳过。
 
 **解决方案**:使用 `order` 参数明确指定 Hook 的执行顺序,数字越小越先执行。
+
 ```json
 {
   "PreToolUse": [
@@ -1891,6 +1920,7 @@ git commit
 **问题描述**:当安装多个插件时,它们可能定义了相同名称的命令。例如 `pre-commit-checker` 和 `security-scanner` 都提供 `/check` 命令。用户输入 `/check` 时,Claude Code 不知道应该执行哪个插件的命令,导致歧义。
 
 **影响**:
+
 - 用户体验混乱,不确定会触发哪个功能
 - 可能错误执行了不符合预期的命令
 - 命令提示中出现重复项
@@ -1945,6 +1975,7 @@ git commit
 **问题**:某些检查(如严格的代码审查、性能测试)只需要在特定分支(如 main、release)上运行,在 feature 分支频繁触发会严重拖慢开发速度。
 
 **影响**:
+
 - 开发分支每次 commit 等待时间过长(20-30秒)
 - 开发者为避免等待,跳过本地测试直接推送到 CI
 - CI 失败率上升,浪费更多时间
@@ -1962,6 +1993,7 @@ git commit
 ```
 
 **效果**:
+
 - feature 分支提交时跳过耗时检查,秒级完成
 - main 分支保持完整检查,确保质量
 - 减少 70% 的开发等待时间
@@ -1971,6 +2003,7 @@ git commit
 **问题**:默认检查所有 staged 文件,但很多检查只针对特定文件类型(如 ESLint 只检查 JS/TS 文件)。未过滤时会浪费时间尝试检查不相关文件,还可能产生误报。
 
 **解决方案**:在脚本开头过滤出目标文件类型,仅处理相关文件。
+
 ```python
 def get_staged_files(extensions: List[str]) -> List[str]:
     """仅获取指定扩展名的文件"""
@@ -2040,6 +2073,7 @@ print(f"检查完成，共处理 {len(results)} 个文件")
 ```
 
 **性能提升**：
+
 - 串行处理：20 文件 × 2 秒 = 40 秒
 - 并行处理（4 线程）：20 文件 ÷ 4 × 2 秒 = 10 秒
 - **提升 75% 的处理速度**
@@ -2133,11 +2167,13 @@ if __name__ == "__main__":
 ```
 
 **性能提升示例**：
+
 - 文件 `app.js` 首次检查：3 秒
 - 文件 `app.js` 第二次检查（缓存命中）：0.1 秒
 - **提升 97% 的响应速度**
 
 **缓存策略**：
+
 - 缓存文件保存在项目根目录的 `.claude-cache/` 文件夹
 - 使用文件内容 hash 作为缓存键，确保内容变化时缓存失效
 - 可以定期清理过期缓存（例如：`find .claude-cache -mtime +7 -delete`）
@@ -2145,6 +2181,7 @@ if __name__ == "__main__":
 ### 7.4 团队配置同步
 
 **问题描述**：在团队协作中，确保所有成员使用相同的插件配置是一个挑战。如果每个开发者手动安装插件，可能会出现：
+
 - 使用不同版本的插件
 - 配置参数不一致
 - 某些成员忘记安装必要插件
@@ -2210,6 +2247,7 @@ sequenceDiagram
 插件系统的魅力在于其可扩展性。一个基础的预提交检查插件可以根据团队需求不断演进，添加更多功能。本章将展示如何扩展插件功能，使其更好地适应不同的开发场景。
 
 **当前能力范围**：
+
 - ✅ 代码质量检查（ESLint、Prettier、TypeScript）
 - ✅ Git 提交规范验证（Conventional Commits）
 - ✅ 文档同步检查
@@ -2218,11 +2256,13 @@ sequenceDiagram
 - ✅ 自定义报告格式（JSON、HTML、Markdown）
 
 **扩展方向**：
+
 1. **深度集成 CI/CD**：将检查结果推送到 CI 系统
 2. **智能修复建议**：基于错误类型提供具体的修复方案
 3. **性能监控**：跟踪检查耗时，识别性能瓶颈
 4. **多语言支持**：添加对 Python、Go、Java 等语言的支持
 5. **团队协作功能**：将检查结果同步到代码审查平台
+
 ### 8.1 添加新的检查规则
 
 #### 示例：TypeScript 类型检查
@@ -2271,10 +2311,10 @@ if __name__ == '__main__':
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/type_check.py
 ```
-
 ````
 
 2. 更新 `hooks/hooks.json`：
+
 ```json
 {
   "hooks": [
@@ -2387,11 +2427,13 @@ print(f"📊 Report saved: {report_file}")
 通过本篇的实战演练，我们完成了一个完整的预提交检查插件开发：
 
 **技术收获**：
+
 - 掌握了插件的四大组件：Slash Commands、Hooks、Scripts、Configuration
 - 学会了从需求分析到实现测试的完整开发流程
 - 理解了插件与 Claude Code 的集成机制
 
 **实践成果**：
+
 - 构建了可用的代码质量检查工具
 - 实现了自动化的工作流集成
 - 建立了可扩展的插件架构
@@ -2401,6 +2443,7 @@ print(f"📊 Report saved: {report_file}")
 **第三篇：应用篇 - 企业级场景与安全实践**
 
 内容预告：
+
 - 企业私有市场搭建与管理
 - 大规模团队的插件分发策略
 - 安全最佳实践与权限控制
@@ -2408,6 +2451,7 @@ print(f"📊 Report saved: {report_file}")
 - 故障排查与维护指南
 
 **你将学会**：
+
 - 如何构建企业级插件生态
 - 如何保障插件的安全性
 - 如何优化插件性能
@@ -2425,10 +2469,10 @@ print(f"📊 Report saved: {report_file}")
 ---
 
 ## 本系列文章
+
 - 📖 [基础篇 - 基本概念与开发环境搭建](https://surfing.salty.vip/articles/cn/claude_code_plugins_01/)
 - 📖 [实战篇 - 从零构建第一个插件](https://surfing.salty.vip/articles/cn/claude_code_plugins_02/)
 - 📖 **下篇预告**：应用篇 - 企业级场景与安全实践（即将发布）
-
 
 ---
 
@@ -2443,7 +2487,6 @@ print(f"📊 Report saved: {report_file}")
 - [📚 **Claude Code Settings**](https://docs.anthropic.com/claude/docs/claude-code/settings) - Configuration options for plugins
 - 💻 **官方GitHub 示例**：https://github.com/anthropics/claude-code-plugins
 - [💠 **OpenAPI Specification**](https://swagger.io/specification/)
-
 
 ---
 
