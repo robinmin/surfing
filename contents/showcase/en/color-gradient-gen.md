@@ -109,6 +109,9 @@ customCSS: |
 
   .tab-container {
       padding: 24px 18px;
+      width: 100%;
+      max-width: 1050px;
+      margin: 0 auto;
   }
 
   @media (min-width: 768px) {
