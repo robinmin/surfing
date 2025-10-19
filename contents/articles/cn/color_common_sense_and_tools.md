@@ -54,7 +54,9 @@ metadata:
 由此可见，这里面比较核心的还是色域、色彩空间以及色彩模型。关于色域与色彩空间的关系，MDN 的色彩章节里有一张经典的 CIE 1931 色度（如下图），展示了人眼可见的马蹄形色域与各个三角形色域之间的关系；此图也直观告诉我们“设备只能呈现其中一小块”这一事实。而《Chrome开发者文档 - 高清CSS色彩指南》中提到，三角形区域（即传统 sRGB）对比人眼可见色域约只覆盖人眼约 30% 的色彩。[1]
 
 <div align="center">
-  <img src="/assets/images/CIE1931xy_gamut_comparison.svg.png" alt="CIE 1931 色度图" style="width: 60%; max-width: 480px;">
+
+  ![CIE 1931 色度图](@assets/images/CIE1931xy_gamut_comparison.svg.png)
+
 </div>
 
 人类对于色彩的感知是先天的，但是对于色彩的认知是逐步建立起来的。通过建立各种色彩空间概念，它给我们提供了一种抽象的数学模型，用于描述颜色的属性和关系。色彩空间的定义和选择取决于具体的应用场景和需求，例如，对于网页设计，我们通常使用 sRGB 色彩空间，而对于印刷品，则可能需要使用 CMYK 色彩空间，而对于视频，则可能需要使用 Rec.709 或 Rec.2020 色彩空间等等。
@@ -77,11 +79,29 @@ metadata:
 
 通常，我们会见到使用色环、色带等来代表色彩空间。但更多的场合，我们会基于不同的色彩空间与色彩模型，使用不同的形状来模拟表示色彩空间。如下图，我们常见的RGB模型对应的立方体、HSL、HSV对于的圆柱体等。这些形状一般跟色彩空间的定义，以及大家的习惯表达有关。比如，此处我也专门找了一个不常见的孟塞尔色彩系统对应的复杂结构。
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr);">
-  <img src="/assets/images/RGB_Cube.png" width="420" style="margin: 2px 0 2px 0;" />
-  <img src="/assets/images/HSL_cylinder.png" width="420" style="margin: 2px 0 2px 0;" />
-  <img src="/assets/images/HSV_cylinder.png" width="420" style="margin: 2px 0 2px 0;" />
-  <img src="/assets/images/Munsell_cylindrical.png" width="420" style="margin: 2px 0 2px 0;" />
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+  <div>
+  
+  ![RGB Cube](@assets/images/RGB_Cube.png)
+
+  </div>
+  <div>
+
+  ![HSL Cylinder](@assets/images/HSL_cylinder.png)
+
+  </div>
+  
+  <div>
+
+  ![HSV Cylinder](@assets/images/HSV_cylinder.png)
+
+  </div>
+  
+  <div>
+
+  ![Munsell Cylindrical](@assets/images/Munsell_cylindrical.png)
+
+  </div>
 </div>
 
 ### 常见色彩空间转换关系
