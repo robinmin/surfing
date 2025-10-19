@@ -54,7 +54,9 @@ metadata:
 要点は、ガマット・色空間・色モデルが柱であるということです。MDN の色ドキュメントには、下図のような CIE 1931 色度図が掲載されています。馬蹄形の領域が人間の可視領域で、各デバイスが再現可能な三角形はその一部に過ぎません。Chrome の High-Definition CSS Color Guide でも、従来の sRGB 三角形は人間が見える色域の約 30% しかカバーしないと指摘されています。[1]
 
 <div align="center">
-  <img src="/assets/images/CIE1931xy_gamut_comparison.svg.png" alt="CIE 1931 色度図（人間の可視域とデバイス色域の比較）" style="width: 60%; max-width: 480px;">
+
+  ![CIE 1931 色度图](@assets/images/CIE1931xy_gamut_comparison.svg.png)
+
 </div>
 
 色の知覚は生まれ持ったものですが、知識は学習によって身につきます。色空間は色の属性と関係を数学的に記述するモデルで、用途に応じて選択が変わります。ウェブなら sRGB、印刷なら CMYK、動画なら Rec.709 や Rec.2020 といった具合です。
@@ -77,11 +79,29 @@ metadata:
 
 色空間を図で表すとき、色相環やグラデーションバーが使われることが多いですが、モデルの幾何を反映した立体図を用いることもできます。RGB の立方体、HSL/HSV の円柱、さらに複雑なマンセル表色系などです。
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr);">
-  <img src="/assets/images/RGB_Cube.png" width="420" style="margin: 2px 0 2px 0;" alt="RGB カラーキューブ" />
-  <img src="/assets/images/HSL_cylinder.png" width="420" style="margin: 2px 0 2px 0;" alt="HSL シリンダー" />
-  <img src="/assets/images/HSV_cylinder.png" width="420" style="margin: 2px 0 2px 0;" alt="HSV シリンダー" />
-  <img src="/assets/images/Munsell_cylindrical.png" width="420" style="margin: 2px 0 2px 0;" alt="マンセル色体系" />
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+  <div>
+  
+  ![RGB Cube](@assets/images/RGB_Cube.png)
+
+  </div>
+  <div>
+
+  ![HSL Cylinder](@assets/images/HSL_cylinder.png)
+
+  </div>
+  
+  <div>
+
+  ![HSV Cylinder](@assets/images/HSV_cylinder.png)
+
+  </div>
+  
+  <div>
+
+  ![Munsell Cylindrical](@assets/images/Munsell_cylindrical.png)
+
+  </div>
 </div>
 
 ### 代表的な色空間変換
