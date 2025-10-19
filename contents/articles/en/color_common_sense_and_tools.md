@@ -54,7 +54,9 @@ Human understanding of color has two layers: the sensory layer of how the cones,
 These all point to gamut, color space, and color model as the core trio. MDN’s color documentation includes the classic CIE 1931 chromaticity diagram (below), showing the horseshoe-shaped gamut of human vision versus the triangles devices can render. Chrome’s High-Definition CSS Color Guide notes that the traditional sRGB triangle covers only about 30% of what we can see.[1]
 
 <div align="center">
-  <img src="/assets/images/CIE1931xy_gamut_comparison.svg.png" alt="CIE 1931 chromaticity diagram illustrating human-visible gamut versus device coverage" style="width: 60%; max-width: 480px;">
+
+  ![CIE 1931 色度图](@assets/images/CIE1931xy_gamut_comparison.svg.png)
+
 </div>
 
 Perception may be innate, but knowledge is built. Color spaces give us mathematical models for describing the attributes and relationships of color. Which space you pick depends on the application: sRGB for the web, CMYK for print, Rec.709 or Rec.2020 for video, and so on.
@@ -77,11 +79,29 @@ This timeline mirrors how collaboration practices have evolved. UI designers cho
 
 We often depict color spaces as rings or bars, but we can also pick solid shapes that reflect a model’s geometry: RGB’s cube, HSL/HSV’s cylinders, and the more complex forms of the Munsell system.
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr);">
-  <img src="/assets/images/RGB_Cube.png" width="420" style="margin: 2px 0 2px 0;" alt="RGB color cube" />
-  <img src="/assets/images/HSL_cylinder.png" width="420" style="margin: 2px 0 2px 0;" alt="HSL cylinder" />
-  <img src="/assets/images/HSV_cylinder.png" width="420" style="margin: 2px 0 2px 0;" alt="HSV cylinder" />
-  <img src="/assets/images/Munsell_cylindrical.png" width="420" style="margin: 2px 0 2px 0;" alt="Munsell color system structure" />
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+  <div>
+  
+  ![RGB Cube](@assets/images/RGB_Cube.png)
+
+  </div>
+  <div>
+
+  ![HSL Cylinder](@assets/images/HSL_cylinder.png)
+
+  </div>
+  
+  <div>
+
+  ![HSV Cylinder](@assets/images/HSV_cylinder.png)
+
+  </div>
+  
+  <div>
+
+  ![Munsell Cylindrical](@assets/images/Munsell_cylindrical.png)
+
+  </div>
 </div>
 
 ### Common Color-Space Conversions
