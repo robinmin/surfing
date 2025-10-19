@@ -110,7 +110,7 @@ customCSS: |
   .tab-container {
       padding: 24px 18px;
       width: 100%;
-      max-width: 1050px;
+      max-width: 1400px;
       margin: 0 auto;
   }
 
