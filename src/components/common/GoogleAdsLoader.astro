@@ -1,0 +1,39 @@
+<script is:inline>
+  if (typeof window !== 'undefined') {
+    const loadAdsenseScript = () => {
+      if (document.querySelector('script[data-googleads="true"]')) {
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX';
+      script.async = true;
+      script.setAttribute('crossorigin', 'anonymous');
+      script.dataset.googleads = 'true';
+      document.head.appendChild(script);
+    };
+
+    const hasConsent = () => Boolean(window && window.__googleAdsConsentGranted);
+
+    const init = () => {
+      if (document.querySelector('script[data-googleads="true"]')) {
+        return;
+      }
+      loadAdsenseScript();
+    };
+
+    if (hasConsent()) {
+      init();
+    } else {
+      const handler = (event) => {
+        const detail = event?.detail;
+        if (detail && detail.granted) {
+          init();
+          window.removeEventListener('googleads:consent', handler);
+        }
+      };
+
+      window.addEventListener('googleads:consent', handler);
+    }
+  }
+</script>

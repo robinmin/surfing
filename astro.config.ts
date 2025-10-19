@@ -173,23 +173,45 @@ export default defineConfig({
                 onAccept: () => {
                   console.log('Google Ads accepted');
                   // Trigger consent update for marketing/ads
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('consent', 'update', {
-                      ad_storage: 'granted',
-                      ad_user_data: 'granted',
-                      ad_personalization: 'granted',
-                    });
+                  if (typeof window !== 'undefined') {
+                    if ((window as any).gtag) {
+                      (window as any).gtag('consent', 'update', {
+                        ad_storage: 'granted',
+                        ad_user_data: 'granted',
+                        ad_personalization: 'granted',
+                      });
+                    }
+
+                    (window as any).__googleAdsConsentGranted = true;
+                    window.dispatchEvent(
+                      new CustomEvent('googleads:consent', {
+                        detail: {
+                          granted: true,
+                        },
+                      })
+                    );
                   }
                 },
                 onReject: () => {
                   console.log('Google Ads rejected');
                   // Ensure marketing storage remains denied
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('consent', 'update', {
-                      ad_storage: 'denied',
-                      ad_user_data: 'denied',
-                      ad_personalization: 'denied',
-                    });
+                  if (typeof window !== 'undefined') {
+                    if ((window as any).gtag) {
+                      (window as any).gtag('consent', 'update', {
+                        ad_storage: 'denied',
+                        ad_user_data: 'denied',
+                        ad_personalization: 'denied',
+                      });
+                    }
+
+                    (window as any).__googleAdsConsentGranted = false;
+                    window.dispatchEvent(
+                      new CustomEvent('googleads:consent', {
+                        detail: {
+                          granted: false,
+                        },
+                      })
+                    );
                   }
                 },
               },

@@ -55,7 +55,7 @@ metadata:
 
 <div align="center">
 
-  ![CIE 1931 色度图](@assets/images/CIE1931xy_gamut_comparison.svg.png)
+![CIE 1931 色度图](@assets/images/CIE1931xy_gamut_comparison.svg.png)
 
 </div>
 
@@ -87,21 +87,30 @@ metadata:
   </div>
   <div>
 
-  ![HSL Cylinder](@assets/images/HSL_cylinder.png)
+![HSL Cylinder](@assets/images/HSL_cylinder.png)
 
   </div>
   
   <div>
 
-  ![HSV Cylinder](@assets/images/HSV_cylinder.png)
+![HSV Cylinder](@assets/images/HSV_cylinder.png)
 
   </div>
   
   <div>
 
-  ![Munsell Cylindrical](@assets/images/Munsell_cylindrical.png)
+![Munsell Cylindrical](@assets/images/Munsell_cylindrical.png)
 
   </div>
+</div>
+
+<div class="google-ad">
+  <ins class="adsbygoogle"
+      style="display:block;width:100%;min-height:250px;"
+      data-ad-client="ca-pub-3873561367659942"
+      data-ad-slot="1234567890"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
 </div>
 
 ### 常见色彩空间转换关系

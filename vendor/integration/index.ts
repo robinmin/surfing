@@ -27,6 +27,7 @@ export default ({ config: _themeConfig = 'src/config.yaml' } = {}): AstroIntegra
 
         const rawJsonConfig = (await loadConfig(_themeConfig)) as Config;
         const { SITE, I18N, METADATA, APP_BLOG, UI, ANALYTICS } = configBuilder(rawJsonConfig);
+        const { ADS } = configBuilder(rawJsonConfig);
 
         updateConfig({
           site: SITE.site,
@@ -52,6 +53,7 @@ export default ({ config: _themeConfig = 'src/config.yaml' } = {}): AstroIntegra
                     export const APP_BLOG = ${JSON.stringify(APP_BLOG)};
                     export const UI = ${JSON.stringify(UI)};
                     export const ANALYTICS = ${JSON.stringify(ANALYTICS)};
+                    export const ADS = ${JSON.stringify(ADS)};
                     export const AUTH = ${JSON.stringify(rawJsonConfig.auth || {})};
                     export const SENTRY = ${JSON.stringify(rawJsonConfig.sentry || {})};
                     export const BUILD = ${JSON.stringify(rawJsonConfig.build || {})};
@@ -63,6 +65,7 @@ export default ({ config: _themeConfig = 'src/config.yaml' } = {}): AstroIntegra
                       APP_BLOG,
                       UI,
                       ANALYTICS,
+                      ADS,
                       AUTH,
                       SENTRY,
                       BUILD,

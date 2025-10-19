@@ -1,0 +1,115 @@
+---
+import { ADS } from 'astrowind:config';
+
+interface Props {
+  client?: string;
+  slot?: string;
+  layout?: 'display' | 'in-article' | 'fluid';
+  format?: string;
+  responsive?: 'true' | 'false';
+  style?: string;
+}
+
+const {
+  client: clientProp,
+  slot: slotProp,
+  layout = 'display',
+  format = 'auto',
+  responsive = 'false',
+  style = 'display:block; width:100%; min-height:250px;',
+} = Astro.props;
+
+const client = clientProp || ADS.google?.client || '';
+const slot = slotProp || ADS.google?.slots?.default || '';
+
+if (!client) {
+  throw new Error('GoogleAd component requires a valid `client` id.');
+}
+
+if (!slot) {
+  throw new Error('GoogleAd component requires a valid `slot` id.');
+}
+---
+
+<div class="google-ad" data-ad-slot={slot}>
+  <ins
+    class="adsbygoogle"
+    style={style}
+    data-ad-client={client}
+    data-ad-slot={slot}
+    data-ad-format={format}
+    data-full-width-responsive={responsive}
+    data-ad-layout={layout === 'display' ? undefined : layout}></ins>
+</div>
+
+<script is:inline define:vars={{ client, slot }}>
+  if (typeof window !== 'undefined') {
+    const ADS_SCRIPT_ATTRIBUTE = 'data-google-ads-client';
+
+    const getWindow = () => window;
+
+    const pushAd = () => {
+      try {
+        const w = getWindow();
+        w.adsbygoogle = w.adsbygoogle || [];
+        w.adsbygoogle.push({});
+      } catch (err) {
+        console.warn('Failed to render Google Ad slot', slot, err);
+      }
+    };
+
+    const loadAdsScript = () => {
+      const attrSelector = `script[${ADS_SCRIPT_ATTRIBUTE}="${client}"]`;
+      const existingScript = document.querySelector(attrSelector);
+
+      if (existingScript) {
+        const w = getWindow();
+        if (w.__googleAdsScriptLoaded) {
+          pushAd();
+        } else {
+          existingScript.addEventListener('load', pushAd, { once: true });
+        }
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      script.setAttribute(ADS_SCRIPT_ATTRIBUTE, client);
+      script.dataset.googleAds = 'true';
+      script.addEventListener('load', () => {
+        const w = getWindow();
+        w.__googleAdsScriptLoaded = true;
+        pushAd();
+      });
+      document.head.appendChild(script);
+    };
+
+    const initAd = () => {
+      if (!client || !slot) {
+        console.warn('GoogleAd component is missing client or slot configuration.');
+        return;
+      }
+      loadAdsScript();
+    };
+
+    const hasConsent = () => {
+      const w = getWindow();
+      return Boolean(w.__googleAdsConsentGranted);
+    };
+
+    if (hasConsent()) {
+      initAd();
+    } else {
+      const handleConsent = (event) => {
+        if (event && event.detail && event.detail.granted) {
+          initAd();
+          window.removeEventListener('googleads:consent', handleConsent);
+        }
+      };
+
+      window.addEventListener('googleads:consent', handleConsent);
+    }
+  }
+</script>

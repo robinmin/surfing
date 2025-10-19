@@ -10,7 +10,8 @@ export type Config = {
     blog?: AppBlogConfig;
   };
   ui?: unknown;
-  analytics?: unknown;
+  analytics?: AnalyticsConfig;
+  ads?: AdsConfig;
   auth?: AuthConfig;
   sentry?: SentryConfig;
   build?: BuildConfig;
@@ -79,6 +80,13 @@ export interface AnalyticsConfig {
       id?: string;
       partytown?: boolean;
     };
+  };
+}
+
+export interface AdsConfig {
+  google?: {
+    client?: string;
+    slots?: Record<string, string>;
   };
 }
 
@@ -222,6 +230,19 @@ const getAnalytics = (config: Config) => {
   return merge({}, _default, config?.analytics ?? {}) as AnalyticsConfig;
 };
 
+const getAds = (config: Config) => {
+  const _default: AdsConfig = {
+    google: {
+      client: '',
+      slots: {
+        default: '',
+      },
+    },
+  };
+
+  return merge({}, _default, config?.ads ?? {}) as AdsConfig;
+};
+
 const getAuth = (config: Config) => {
   const _default = {
     google_one_tap: {
@@ -270,6 +291,7 @@ export default (config: Config) => ({
   APP_BLOG: getAppBlog(config),
   UI: getUI(config),
   ANALYTICS: getAnalytics(config),
+  ADS: getAds(config),
   AUTH: getAuth(config),
   SENTRY: getSentry(config),
   BUILD: getBuild(config),

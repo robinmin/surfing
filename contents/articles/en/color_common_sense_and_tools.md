@@ -55,7 +55,7 @@ These all point to gamut, color space, and color model as the core trio. MDN’s
 
 <div align="center">
 
-  ![CIE 1931 色度图](@assets/images/CIE1931xy_gamut_comparison.svg.png)
+![CIE 1931 色度图](@assets/images/CIE1931xy_gamut_comparison.svg.png)
 
 </div>
 
@@ -87,19 +87,19 @@ We often depict color spaces as rings or bars, but we can also pick solid shapes
   </div>
   <div>
 
-  ![HSL Cylinder](@assets/images/HSL_cylinder.png)
+![HSL Cylinder](@assets/images/HSL_cylinder.png)
 
   </div>
   
   <div>
 
-  ![HSV Cylinder](@assets/images/HSV_cylinder.png)
+![HSV Cylinder](@assets/images/HSV_cylinder.png)
 
   </div>
   
   <div>
 
-  ![Munsell Cylindrical](@assets/images/Munsell_cylindrical.png)
+![Munsell Cylindrical](@assets/images/Munsell_cylindrical.png)
 
   </div>
 </div>

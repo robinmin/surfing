@@ -9,6 +9,7 @@ import CustomStyles from '~/components/CustomStyles.astro';
 import ApplyColorMode from '~/components/common/ApplyColorMode.astro';
 import Metadata from '~/components/common/Metadata.astro';
 import SiteVerification from '~/components/common/SiteVerification.astro';
+import GoogleAdsMeta from '~/components/common/GoogleAdsMeta.astro';
 import Analytics from '~/components/common/Analytics.astro';
 import Schema from '~/components/common/Schema.astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
@@ -37,6 +38,7 @@ const { language, textDirection } = I18N;
     <ApplyColorMode />
     <Metadata {...metadata} dontUseTitleTemplate={!!metadata?.title} />
     <SiteVerification />
+    <GoogleAdsMeta />
     <Analytics />
     <Schema {metadata} />
     <slot name="head" />
