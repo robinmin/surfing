@@ -43,39 +43,53 @@ const consentScript = `
   // Wait for CookieConsent to be available
   window.addEventListener('cc:onFirstConsent', function () {
     const acceptedCategories = (window.CC?.getCookieData?.()?.categories) || [];
-    updateGoogleConsent(acceptedCategories);
+    updateConsent(acceptedCategories);
   });
 
   window.addEventListener('cc:onConsent', function (event) {
     const acceptedCategories = (event.detail?.cookie?.categories) || [];
-    updateGoogleConsent(acceptedCategories);
+    updateConsent(acceptedCategories);
   });
 
-  function updateGoogleConsent(categories) {
-    if (!window.gtag) return;
+  function updateConsent(categories) {
+    // Google Analytics consent
+    if (window.gtag) {
+      const consentUpdate = {
+        functionality_storage: 'granted',
+        security_storage: 'granted',
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      };
 
-    const consentUpdate = {
-      functionality_storage: 'granted',
-      security_storage: 'granted',
-      analytics_storage: 'denied',
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      ad_personalization: 'denied'
-    };
+      // Analytics consent
+      if (categories.includes('analytics')) {
+        consentUpdate.analytics_storage = 'granted';
+      }
 
-    // Analytics consent
-    if (categories.includes('analytics')) {
-      consentUpdate.analytics_storage = 'granted';
+      // Marketing consent
+      if (categories.includes('marketing')) {
+        consentUpdate.ad_storage = 'granted';
+        consentUpdate.ad_user_data = 'granted';
+        consentUpdate.ad_personalization = 'granted';
+      }
+
+      window.gtag('consent', 'update', consentUpdate);
     }
 
-    // Marketing consent
+    // Google Ads consent
     if (categories.includes('marketing')) {
-      consentUpdate.ad_storage = 'granted';
-      consentUpdate.ad_user_data = 'granted';
-      consentUpdate.ad_personalization = 'granted';
+      window.__googleAdsConsentGranted = true;
+      window.dispatchEvent(new CustomEvent('googleads:consent', {
+        detail: { granted: true }
+      }));
+    } else {
+      window.__googleAdsConsentGranted = false;
+      window.dispatchEvent(new CustomEvent('googleads:consent', {
+        detail: { granted: false }
+      }));
     }
-
-    window.gtag('consent', 'update', consentUpdate);
   }
 `;
 

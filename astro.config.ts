@@ -141,82 +141,8 @@ export default defineConfig({
           necessary: {
             readOnly: true,
           },
-          analytics: {
-            services: {
-              ga4: {
-                label: 'Google Analytics 4',
-                onAccept: () => {
-                  console.log('Google Analytics 4 accepted');
-                  // Trigger consent update for Google Analytics
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('consent', 'update', {
-                      analytics_storage: 'granted',
-                    });
-                  }
-                },
-                onReject: () => {
-                  console.log('Google Analytics 4 rejected');
-                  // Ensure analytics storage remains denied
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('consent', 'update', {
-                      analytics_storage: 'denied',
-                    });
-                  }
-                },
-              },
-            },
-          },
-          marketing: {
-            services: {
-              google_ads: {
-                label: 'Google Ads',
-                onAccept: () => {
-                  console.log('Google Ads accepted');
-                  // Trigger consent update for marketing/ads
-                  if (typeof window !== 'undefined') {
-                    if ((window as any).gtag) {
-                      (window as any).gtag('consent', 'update', {
-                        ad_storage: 'granted',
-                        ad_user_data: 'granted',
-                        ad_personalization: 'granted',
-                      });
-                    }
-
-                    (window as any).__googleAdsConsentGranted = true;
-                    window.dispatchEvent(
-                      new CustomEvent('googleads:consent', {
-                        detail: {
-                          granted: true,
-                        },
-                      })
-                    );
-                  }
-                },
-                onReject: () => {
-                  console.log('Google Ads rejected');
-                  // Ensure marketing storage remains denied
-                  if (typeof window !== 'undefined') {
-                    if ((window as any).gtag) {
-                      (window as any).gtag('consent', 'update', {
-                        ad_storage: 'denied',
-                        ad_user_data: 'denied',
-                        ad_personalization: 'denied',
-                      });
-                    }
-
-                    (window as any).__googleAdsConsentGranted = false;
-                    window.dispatchEvent(
-                      new CustomEvent('googleads:consent', {
-                        detail: {
-                          granted: false,
-                        },
-                      })
-                    );
-                  }
-                },
-              },
-            },
-          },
+          analytics: {},
+          marketing: {},
         },
         language: {
           default: 'en',
