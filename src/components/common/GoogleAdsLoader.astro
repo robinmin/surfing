@@ -2,71 +2,79 @@
 import { ADS } from 'astrowind:config';
 
 const client = ADS.google?.client;
----
 
-<script is:inline define:vars={{ client }}>
-  if (typeof window !== 'undefined') {
-    if (!client) {
+// Generate the inline script content at build time
+const scriptContent = client
+  ? `
+(function() {
+  if (typeof window === 'undefined') return;
+
+  const client = ${JSON.stringify(client)};
+  if (!client) return;
+
+  const ADS_SCRIPT_SELECTOR = 'script[data-googleads="true"][data-google-ads-client="' + client + '"]';
+  const SLOT_SELECTOR = 'ins.adsbygoogle';
+  const PUSHED_ATTR = 'data-google-ads-pushed';
+
+  const pushExistingSlots = function() {
+    const adsQueue = (window.adsbygoogle = window.adsbygoogle || []);
+    document.querySelectorAll(SLOT_SELECTOR + ':not([' + PUSHED_ATTR + '="true"])').forEach(function(slot) {
+      slot.setAttribute(PUSHED_ATTR, 'true');
+      adsQueue.push({});
+    });
+  };
+
+  const loadAdsenseScript = function() {
+    const existingScript = document.querySelector(ADS_SCRIPT_SELECTOR);
+    if (existingScript) {
+      if (window.__googleAdsScriptLoaded) {
+        pushExistingSlots();
+      } else {
+        existingScript.addEventListener('load', pushExistingSlots, { once: true });
+      }
       return;
     }
 
-    const ADS_SCRIPT_SELECTOR = `script[data-googleads="true"][data-google-ads-client="${client}"]`;
-    const SLOT_SELECTOR = 'ins.adsbygoogle';
-    const PUSHED_ATTR = 'data-google-ads-pushed';
-
-    const pushExistingSlots = () => {
-      const adsQueue = (window.adsbygoogle = window.adsbygoogle || []);
-      document.querySelectorAll(`${SLOT_SELECTOR}:not([${PUSHED_ATTR}="true"])`).forEach((slot) => {
-        slot.setAttribute(PUSHED_ATTR, 'true');
-        adsQueue.push({});
-      });
-    };
-
-    const loadAdsenseScript = () => {
-      const existingScript = document.querySelector(ADS_SCRIPT_SELECTOR);
-      if (existingScript) {
-        if (window.__googleAdsScriptLoaded) {
-          pushExistingSlots();
-        } else {
-          existingScript.addEventListener('load', pushExistingSlots, { once: true });
-        }
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
-      script.async = true;
-      script.setAttribute('crossorigin', 'anonymous');
-      script.dataset.googleads = 'true';
-      script.dataset.googleAdsClient = client;
-      script.addEventListener('load', () => {
-        window.__googleAdsScriptLoaded = true;
-        pushExistingSlots();
-      });
-      document.head.appendChild(script);
+    const script = document.createElement('script');
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + client;
+    script.async = true;
+    script.setAttribute('crossorigin', 'anonymous');
+    script.dataset.googleads = 'true';
+    script.dataset.googleAdsClient = client;
+    script.addEventListener('load', function() {
+      window.__googleAdsScriptLoaded = true;
       pushExistingSlots();
-    };
-
-    const hasConsent = () => Boolean(window && window.__googleAdsConsentGranted);
-
-    const init = () => {
-      loadAdsenseScript();
-    };
-
+    });
+    document.head.appendChild(script);
     pushExistingSlots();
+  };
 
-    if (hasConsent()) {
-      init();
-    } else {
-      const handler = (event) => {
-        const detail = event?.detail;
-        if (detail && detail.granted) {
-          init();
-          window.removeEventListener('googleads:consent', handler);
-        }
-      };
+  const hasConsent = function() {
+    return Boolean(window && window.__googleAdsConsentGranted);
+  };
 
-      window.addEventListener('googleads:consent', handler);
-    }
+  const init = function() {
+    loadAdsenseScript();
+  };
+
+  pushExistingSlots();
+
+  if (hasConsent()) {
+    init();
+  } else {
+    const handler = function(event) {
+      const detail = event && event.detail;
+      if (detail && detail.granted) {
+        init();
+        window.removeEventListener('googleads:consent', handler);
+      }
+    };
+
+    window.addEventListener('googleads:consent', handler);
   }
-</script>
+})();
+`.trim()
+  : '';
+---
+
+{client && <script is:inline set:html={scriptContent} />}

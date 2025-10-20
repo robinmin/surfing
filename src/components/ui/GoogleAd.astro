@@ -42,74 +42,81 @@ if (!slot) {
     data-ad-layout={layout === 'display' ? undefined : layout}></ins>
 </div>
 
-<script is:inline define:vars={{ client, slot }}>
-  if (typeof window !== 'undefined') {
-    const ADS_SCRIPT_ATTRIBUTE = 'data-google-ads-client';
+<script
+  is:inline
+  set:html={`
+(function() {
+  if (typeof window === 'undefined') return;
 
-    const getWindow = () => window;
+  const client = ${JSON.stringify(client)};
+  const slot = ${JSON.stringify(slot)};
+  const ADS_SCRIPT_ATTRIBUTE = 'data-google-ads-client';
 
-    const pushAd = () => {
-      try {
-        const w = getWindow();
-        w.adsbygoogle = w.adsbygoogle || [];
-        w.adsbygoogle.push({});
-      } catch (err) {
-        console.warn('Failed to render Google Ad slot', slot, err);
-      }
-    };
+  const getWindow = function() { return window; };
 
-    const loadAdsScript = () => {
-      const attrSelector = `script[${ADS_SCRIPT_ATTRIBUTE}="${client}"]`;
-      const existingScript = document.querySelector(attrSelector);
-
-      if (existingScript) {
-        const w = getWindow();
-        if (w.__googleAdsScriptLoaded) {
-          pushAd();
-        } else {
-          existingScript.addEventListener('load', pushAd, { once: true });
-        }
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
-      script.async = true;
-      script.crossOrigin = 'anonymous';
-      script.setAttribute(ADS_SCRIPT_ATTRIBUTE, client);
-      script.dataset.googleAds = 'true';
-      script.addEventListener('load', () => {
-        const w = getWindow();
-        w.__googleAdsScriptLoaded = true;
-        pushAd();
-      });
-      document.head.appendChild(script);
-    };
-
-    const initAd = () => {
-      if (!client || !slot) {
-        console.warn('GoogleAd component is missing client or slot configuration.');
-        return;
-      }
-      loadAdsScript();
-    };
-
-    const hasConsent = () => {
+  const pushAd = function() {
+    try {
       const w = getWindow();
-      return Boolean(w.__googleAdsConsentGranted);
+      w.adsbygoogle = w.adsbygoogle || [];
+      w.adsbygoogle.push({});
+    } catch (err) {
+      console.warn('Failed to render Google Ad slot', slot, err);
+    }
+  };
+
+  const loadAdsScript = function() {
+    const attrSelector = 'script[' + ADS_SCRIPT_ATTRIBUTE + '="' + client + '"]';
+    const existingScript = document.querySelector(attrSelector);
+
+    if (existingScript) {
+      const w = getWindow();
+      if (w.__googleAdsScriptLoaded) {
+        pushAd();
+      } else {
+        existingScript.addEventListener('load', pushAd, { once: true });
+      }
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + client;
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.setAttribute(ADS_SCRIPT_ATTRIBUTE, client);
+    script.dataset.googleAds = 'true';
+    script.addEventListener('load', function() {
+      const w = getWindow();
+      w.__googleAdsScriptLoaded = true;
+      pushAd();
+    });
+    document.head.appendChild(script);
+  };
+
+  const initAd = function() {
+    if (!client || !slot) {
+      console.warn('GoogleAd component is missing client or slot configuration.');
+      return;
+    }
+    loadAdsScript();
+  };
+
+  const hasConsent = function() {
+    const w = getWindow();
+    return Boolean(w.__googleAdsConsentGranted);
+  };
+
+  if (hasConsent()) {
+    initAd();
+  } else {
+    const handleConsent = function(event) {
+      if (event && event.detail && event.detail.granted) {
+        initAd();
+        window.removeEventListener('googleads:consent', handleConsent);
+      }
     };
 
-    if (hasConsent()) {
-      initAd();
-    } else {
-      const handleConsent = (event) => {
-        if (event && event.detail && event.detail.granted) {
-          initAd();
-          window.removeEventListener('googleads:consent', handleConsent);
-        }
-      };
-
-      window.addEventListener('googleads:consent', handleConsent);
-    }
+    window.addEventListener('googleads:consent', handleConsent);
   }
-</script>
+})();
+`}
+/>
