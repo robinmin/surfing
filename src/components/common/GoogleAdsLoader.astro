@@ -1,17 +1,10 @@
----
 import { ADS } from 'astrowind:config';
 
 const client = ADS.google?.client;
 
-if (!client) {
-  console.warn('GoogleAdsLoader: missing Google Ads client ID.');
-}
----
-
 <script is:inline define:vars={{ client }}>
   if (typeof window !== 'undefined') {
     if (!client) {
-      console.warn('GoogleAdsLoader: skipping script injection; client ID missing.');
       return;
     }
 

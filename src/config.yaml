@@ -74,8 +74,7 @@ ads:
   google:
     client: 'ca-pub-3873561367659942'
     slots:
-      default: '1234567890' # replace with your default ad unit ID
-      sidebar: '0987654321' # optional extra slots
+      default: '2395850238' # replace with your default ad unit ID
 
 cookieConsent:
   enabled: true
