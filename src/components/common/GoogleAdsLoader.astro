@@ -15,8 +15,46 @@ if (!client) {
       return;
     }
 
+    const ADS_SELECTOR = 'ins.adsbygoogle';
+    const PUSHED_ATTR = 'data-google-ads-pushed';
+
+    const pushPendingSlots = () => {
+      const pendingSlots = document.querySelectorAll(`${ADS_SELECTOR}:not([${PUSHED_ATTR}="true"])`);
+      if (!pendingSlots.length) {
+        return;
+      }
+
+      const adsQueue = (window.adsbygoogle = window.adsbygoogle || []);
+      pendingSlots.forEach((slot) => {
+        slot.setAttribute(PUSHED_ATTR, 'true');
+        adsQueue.push({});
+      });
+    };
+
+    const observeNewSlots = () => {
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (!mutation.addedNodes || !mutation.addedNodes.length) continue;
+
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof HTMLElement && node.matches?.(ADS_SELECTOR)) {
+              pushPendingSlots();
+            } else if (node instanceof HTMLElement && node.querySelector) {
+              const hasSlot = node.querySelector(ADS_SELECTOR);
+              if (hasSlot) {
+                pushPendingSlots();
+              }
+            }
+          });
+        }
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+    };
+
     const loadAdsenseScript = () => {
       if (document.querySelector('script[data-googleads="true"]')) {
+        pushPendingSlots();
         return;
       }
 
@@ -25,17 +63,27 @@ if (!client) {
       script.async = true;
       script.setAttribute('crossorigin', 'anonymous');
       script.dataset.googleads = 'true';
+      script.dataset.googleAdsClient = client;
+      script.addEventListener('load', () => {
+        window.__googleAdsScriptLoaded = true;
+        pushPendingSlots();
+      });
       document.head.appendChild(script);
+      pushPendingSlots();
     };
 
     const hasConsent = () => Boolean(window && window.__googleAdsConsentGranted);
 
     const init = () => {
       if (document.querySelector('script[data-googleads="true"]')) {
+        pushPendingSlots();
         return;
       }
       loadAdsenseScript();
     };
+
+    observeNewSlots();
+    pushPendingSlots();
 
     if (hasConsent()) {
       init();
