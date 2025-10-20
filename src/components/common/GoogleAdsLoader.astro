@@ -8,8 +8,13 @@ if (!client) {
 }
 ---
 
-<script is:inline>
-  if (typeof window !== 'undefined' && client) {
+<script is:inline define:vars={{ client }}>
+  if (typeof window !== 'undefined') {
+    if (!client) {
+      console.warn('GoogleAdsLoader: skipping script injection; client ID missing.');
+      return;
+    }
+
     const loadAdsenseScript = () => {
       if (document.querySelector('script[data-googleads="true"]')) {
         return;
