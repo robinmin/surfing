@@ -108,7 +108,7 @@ metadata:
   <ins class="adsbygoogle"
       style="display:block;width:100%;min-height:250px;"
       data-ad-client="ca-pub-3873561367659942"
-      data-ad-slot="1234567890"
+      data-ad-slot="2395850238"
       data-ad-format="auto"
       data-full-width-responsive="true"></ins>
 </div>
