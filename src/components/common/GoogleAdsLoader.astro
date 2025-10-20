@@ -1,6 +1,8 @@
+---
 import { ADS } from 'astrowind:config';
 
 const client = ADS.google?.client;
+---
 
 <script is:inline define:vars={{ client }}>
   if (typeof window !== 'undefined') {
