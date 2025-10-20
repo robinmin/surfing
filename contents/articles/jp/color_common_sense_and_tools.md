@@ -9,13 +9,13 @@ publishDate: 2025-10-17
 draft: false
 image: '@assets/images/color-tool-rgb-1200.png'
 metadata:
-  title: '色空間と Super Color Generator 完全ガイド | Surfing'
+  title: '色彩サバイバルガイドと Super Color Generator'
   description: 'RGB・HSL・CMYK・Display P3・LAB などの色空間を理解し、Surfing Super Color Generator でグラデーションや配色、マルチプラットフォームのカラースウォッチを素早く生成する方法を学びます。'
   canonical: 'https://surfing.salty.vip/articles/jp/color-common-sense-and-tools'
   openGraph:
     url: 'https://surfing.salty.vip/articles/jp/color-common-sense-and-tools'
     siteName: 'Surfing'
-    title: '色空間と Super Color Generator 完全ガイド'
+    title: '色彩サバイバルガイドと Super Color Generator'
     description: 'RGB・HSL から Display P3・LAB まで、基礎理論と変換テクニックを網羅し、Surfing Super Color Generator を活用してスピーディに実装へ落とし込む方法を解説。'
     images:
       - url: '@assets/images/color-tool-rgb-1200.png'

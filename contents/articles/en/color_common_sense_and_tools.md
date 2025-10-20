@@ -9,13 +9,13 @@ publishDate: 2025-10-17
 draft: false
 image: '@assets/images/color-tool-rgb-1200.png'
 metadata:
-  title: 'Complete Guide to Color Spaces and the Super Color Generator | Surfing'
+  title: 'Color Survival Guide and the Super Color Generator'
   description: 'Master RGB, HSL, CMYK, Display P3, LAB, and more, then use the Surfing Super Color Generator to generate gradients, palettes, and multi-platform swatches in minutes.'
   canonical: 'https://surfing.salty.vip/articles/en/color-common-sense-and-tools'
   openGraph:
     url: 'https://surfing.salty.vip/articles/en/color-common-sense-and-tools'
     siteName: 'Surfing'
-    title: 'Complete Guide to Color Spaces and the Super Color Generator'
+    title: 'Color Survival Guide and the Super Color Generator'
     description: 'From RGB and HSL to Display P3 and LAB—learn the underlying models and conversion techniques, supported by the Surfing Super Color Generator for faster delivery.'
     images:
       - url: '@assets/images/color-tool-rgb-1200.png'

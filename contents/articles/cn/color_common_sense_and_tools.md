@@ -9,13 +9,13 @@ publishDate: 2025-10-17
 draft: false
 image: '@assets/images/color-tool-rgb-1200.png'
 metadata:
-  title: '色彩空间与 Super Color Generator 完整指南 | Surfing'
+  title: '色彩救急入门及Super Color Generator工具推荐 | Surfing'
   description: '掌握 RGB、HSL、CMYK、Display P3、LAB 等色彩空间的原理与转换技巧，并用 Surfing Super Color Generator 快速生成渐变、配色与多端色票。'
   canonical: 'https://surfing.salty.vip/articles/cn/color-common-sense-and-tools'
   openGraph:
     url: 'https://surfing.salty.vip/articles/cn/color-common-sense-and-tools'
     siteName: 'Surfing'
-    title: '色彩空间与 Super Color Generator 完整指南'
+    title: '色彩救急入门及Super Color Generator工具推荐'
     description: '从 RGB、HSL 到 Display P3、LAB 的色彩模型全解析，搭配 Surfing Super Color Generator 提升前端与设计协作效率。'
     images:
       - url: '@assets/images/color-tool-rgb-1200.png'
