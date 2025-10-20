@@ -1,12 +1,22 @@
+---
+import { ADS } from 'astrowind:config';
+
+const client = ADS.google?.client;
+
+if (!client) {
+  console.warn('GoogleAdsLoader: missing Google Ads client ID.');
+}
+---
+
 <script is:inline>
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && client) {
     const loadAdsenseScript = () => {
       if (document.querySelector('script[data-googleads="true"]')) {
         return;
       }
 
       const script = document.createElement('script');
-      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX';
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
       script.async = true;
       script.setAttribute('crossorigin', 'anonymous');
       script.dataset.googleads = 'true';
