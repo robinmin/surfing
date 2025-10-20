@@ -42,81 +42,12 @@ if (!slot) {
     data-ad-layout={layout === 'display' ? undefined : layout}></ins>
 </div>
 
-<script
-  is:inline
-  set:html={`
-(function() {
-  if (typeof window === 'undefined') return;
+<!--
+  Note: GoogleAdsLoader component in the layout handles ALL Google Ads initialization:
+  - Loading the AdSense script
+  - Pushing all ad slots to the queue
+  - Managing consent
 
-  const client = ${JSON.stringify(client)};
-  const slot = ${JSON.stringify(slot)};
-  const ADS_SCRIPT_ATTRIBUTE = 'data-google-ads-client';
-
-  const getWindow = function() { return window; };
-
-  const pushAd = function() {
-    try {
-      const w = getWindow();
-      w.adsbygoogle = w.adsbygoogle || [];
-      w.adsbygoogle.push({});
-    } catch (err) {
-      console.warn('Failed to render Google Ad slot', slot, err);
-    }
-  };
-
-  const loadAdsScript = function() {
-    const attrSelector = 'script[' + ADS_SCRIPT_ATTRIBUTE + '="' + client + '"]';
-    const existingScript = document.querySelector(attrSelector);
-
-    if (existingScript) {
-      const w = getWindow();
-      if (w.__googleAdsScriptLoaded) {
-        pushAd();
-      } else {
-        existingScript.addEventListener('load', pushAd, { once: true });
-      }
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + client;
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    script.setAttribute(ADS_SCRIPT_ATTRIBUTE, client);
-    script.dataset.googleAds = 'true';
-    script.addEventListener('load', function() {
-      const w = getWindow();
-      w.__googleAdsScriptLoaded = true;
-      pushAd();
-    });
-    document.head.appendChild(script);
-  };
-
-  const initAd = function() {
-    if (!client || !slot) {
-      console.warn('GoogleAd component is missing client or slot configuration.');
-      return;
-    }
-    loadAdsScript();
-  };
-
-  const hasConsent = function() {
-    const w = getWindow();
-    return Boolean(w.__googleAdsConsentGranted);
-  };
-
-  if (hasConsent()) {
-    initAd();
-  } else {
-    const handleConsent = function(event) {
-      if (event && event.detail && event.detail.granted) {
-        initAd();
-        window.removeEventListener('googleads:consent', handleConsent);
-      }
-    };
-
-    window.addEventListener('googleads:consent', handleConsent);
-  }
-})();
-`}
-/>
+  This component only renders the HTML structure for this specific ad slot.
+  No additional JavaScript is needed here.
+-->

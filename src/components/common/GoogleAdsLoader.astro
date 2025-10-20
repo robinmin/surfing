@@ -12,20 +12,21 @@ const scriptContent = client
   const client = ${JSON.stringify(client)};
   if (!client) return;
 
-  const ADS_SCRIPT_SELECTOR = 'script[data-googleads="true"][data-google-ads-client="' + client + '"]';
+  const ADS_SCRIPT_URL = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + client;
   const SLOT_SELECTOR = 'ins.adsbygoogle';
-  const PUSHED_ATTR = 'data-google-ads-pushed';
+  const PUSHED_ATTR = 'data-adsbygoogle-status';
 
   const pushExistingSlots = function() {
     const adsQueue = (window.adsbygoogle = window.adsbygoogle || []);
-    document.querySelectorAll(SLOT_SELECTOR + ':not([' + PUSHED_ATTR + '="true"])').forEach(function(slot) {
-      slot.setAttribute(PUSHED_ATTR, 'true');
+    document.querySelectorAll(SLOT_SELECTOR + ':not([' + PUSHED_ATTR + '])').forEach(function(slot) {
+      slot.setAttribute(PUSHED_ATTR, '');
       adsQueue.push({});
     });
   };
 
   const loadAdsenseScript = function() {
-    const existingScript = document.querySelector(ADS_SCRIPT_SELECTOR);
+    // Check if script already exists by URL
+    const existingScript = document.querySelector('script[src^="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]');
     if (existingScript) {
       if (window.__googleAdsScriptLoaded) {
         pushExistingSlots();
@@ -36,17 +37,14 @@ const scriptContent = client
     }
 
     const script = document.createElement('script');
-    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + client;
+    script.src = ADS_SCRIPT_URL;
     script.async = true;
-    script.setAttribute('crossorigin', 'anonymous');
-    script.dataset.googleads = 'true';
-    script.dataset.googleAdsClient = client;
+    script.crossOrigin = 'anonymous';
     script.addEventListener('load', function() {
       window.__googleAdsScriptLoaded = true;
       pushExistingSlots();
     });
     document.head.appendChild(script);
-    pushExistingSlots();
   };
 
   const hasConsent = function() {
