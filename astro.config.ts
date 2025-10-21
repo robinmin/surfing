@@ -217,13 +217,19 @@ export default defineConfig({
         },
       })
     ),
-    sentry({
-      sourceMapsUploadOptions: {
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        project: config.sentry.project,
-        org: config.sentry.org,
-      },
-    }),
+    // Only enable Sentry in production with proper auth token
+    ...(process.env.NODE_ENV === 'production' && process.env.SENTRY_AUTH_TOKEN
+      ? [
+          sentry({
+            sourceMapsUploadOptions: {
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+              project: config.sentry.project,
+              org: config.sentry.org,
+              telemetry: false,
+            },
+          }),
+        ]
+      : []),
   ],
 
   image: {
