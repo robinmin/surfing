@@ -67,7 +67,8 @@
       "mcp__morphllm-fast-apply__edit_file",
       "mcp__playwright__browser_type",
       "mcp__ultra-mcp__ultra-review",
-      "Bash(sips -Z:*)"
+      "Bash(sips -Z:*)",
+      "mcp__sequential-thinking__sequentialthinking"
     ],
     "deny": [],
     "ask": []
