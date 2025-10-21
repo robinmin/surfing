@@ -1,6 +1,6 @@
 ---
 title: 'Droid CLI Review: Hands-On Experience After Free Trial'
-description: 'Comprehensive Droid CLI review covering TUI design, model agnosticism, MCP configuration, and permission management. Compare with Claude Code, opencode, and other CLI coding agents.'
+description: 'Non-Comprehensive Droid CLI review covering TUI design, model agnosticism, MCP configuration, and permission management. Compare with Claude Code, opencode, and other CLI coding agents.'
 tags:
   [
     'LLM',
@@ -38,7 +38,7 @@ metadata:
     siteName: 'surfing.salty.vip'
     url: 'https://surfing.salty.vip/articles/en/quick_review_on_droid_cli_after_free_trial'
     images:
-      - url: 'https://surfing.salty.vip/assets/images/droid_cli_02.png'
+      - url: '@assets/images/droid_cli_02.png'
         width: 1200
         height: 630
         alt: 'Droid CLI Terminal User Interface with Status Bar'
@@ -95,7 +95,7 @@ Due to a recent upgrade or some other unknown reason, I can't reproduce that err
 Normally, it looks like this:
 ![Droid CLI Status Bar with Normal Status](@assets/images/droid_cli_02.png)
 
-Everyone is developing CLI coding agents these days. Some are doing well, others not so much. The industry is still in its early stages. We'd better to remember some old-school best practices and solid designs before we move into the GUI era.
+Everyone is developing CLI coding agents these days. Some are doing well, others not so much. The industry is still in its early stages. We'd better to revisit some of the best practices and solid designs we adopted in the pre-GUI era.
 
 This brings me to my love-hate relationship with opencode. Opencode takes a different approach from other CLI coding agents. The opencode team uses Go to implement their TUI directly instead of leveraging terminal emulators on the end user's side—a good choice if they want to build something unique. Unfortunately, they're still working on refinements, and the user experience isn't always smooth. This is especially noticeable when working with IDE-embedded terminals like under VSCode, Cursor, or Zed, where opencode doesn't always render correctly.
 
@@ -105,7 +105,7 @@ One thing I appreciate about opencode is its well-designed sections, which help 
 
 #### Model Agnosticism
 
-This feature is incredibly useful to me because it allows me to switch between different models and CLI tools without dealing with model-specific configuration details. With its BYOK mode, you can use your own API key to access your models, ensuring maximum flexibility and control over your data.
+This feature is incredibly useful to me because it allows me to switch between different models without dealing with model-specific configuration details. With its BYOK mode, you can use your own API key to access your models, ensuring maximum flexibility and control over your data.
 
 #### Restraint and Simplicity of Design philosophy
 
