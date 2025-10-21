@@ -87,6 +87,7 @@ const iconSizeClasses = {
 <script>
   import { initializeGoogleOneTap, signInWithGoogle, signOut, getCurrentSession } from '~/lib/google-auth';
   import { supabase } from '~/lib/supabase';
+  import { getEnabledAuthMethods } from '~/lib/config';
 
   let isLoggedIn = false;
 
@@ -318,7 +319,7 @@ const iconSizeClasses = {
       }
 
       // 🚀 Only proceed if Google is the only enabled auth method
-      const authMethods = await import('~/lib/config').then(({ getEnabledAuthMethods }) => getEnabledAuthMethods());
+      const authMethods = await getEnabledAuthMethods();
       if (!authMethods.google || authMethods.apple) {
         console.debug('Google One Tap not needed - either disabled or multiple auth methods available');
         isGoogleInitialized = true;
