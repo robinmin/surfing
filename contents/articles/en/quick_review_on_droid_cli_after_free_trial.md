@@ -1,29 +1,72 @@
 ---
-title: "Navigate to your project"
-description: "A few days ago, I noticed someone introduced Droid CLI on twitter. It looks like a great tool I just want to have. Besides, it's providing some kind of free tri"
-tags: ["javascript", "typescript", "angular", "python", "ai"]
+title: 'Droid CLI Review: Hands-On Experience After Free Trial'
+description: 'Comprehensive Droid CLI review covering TUI design, model agnosticism, MCP configuration, and permission management. Compare with Claude Code, opencode, and other CLI coding agents.'
+tags:
+  [
+    'LLM',
+    'vibe coding',
+    'coding agent',
+    'droid',
+    'factory.ai',
+    'reviews',
+    'CLI tools',
+    'AI assistant',
+    'developer productivity',
+    'TUI',
+  ]
 readingTime: 9
 wordCount: 1734
 publishDate: 2025-10-21
 draft: false
-featured: false
+featured: true
+image: '@assets/images/droid_cli_02.png'
+author: 'Robin'
+
+metadata:
+  title: 'Droid CLI Review: Hands-On Experience After Free Trial'
+  description: 'In-depth Droid CLI review after free trial. Explore TUI design, model agnosticism, MCP configuration challenges, and comparisons with Claude Code, opencode, and Gemini CLI. Learn about strengths, limitations, and improvement areas.'
+
+  canonical: 'https://surfing.salty.vip/articles/en/quick_review_on_droid_cli_after_free_trial'
+
+  robots:
+    index: true
+    follow: true
+
+  openGraph:
+    type: 'article'
+    locale: 'en_US'
+    siteName: 'surfing.salty.vip'
+    url: 'https://surfing.salty.vip/articles/en/quick_review_on_droid_cli_after_free_trial'
+    images:
+      - url: 'https://surfing.salty.vip/assets/images/droid_cli_02.png'
+        width: 1200
+        height: 630
+        alt: 'Droid CLI Terminal User Interface with Status Bar'
+
+  twitter:
+    cardType: 'summary_large_image'
+    site: '@salty.vip'
+    handle: '@tangmian'
 ---
 
-## Quick Review on Droid CLI After a Few Days Free Trail
+## Quick Review on Droid CLI After a Few Days Free Trial
 
-A few days ago, I noticed someone introduced Droid CLI on twitter. It looks like a great tool I just want to have. Besides, it's providing some kind of free trial so far. I decided to give it a try and it was a great decision.
+A few days ago, I noticed someone introduce Droid CLI on Twitter. It looked like a great tool worth trying, and since it's offering a free trial, I decided to give it a shot. It turned out to be a great decision.
 
-I majorly just used Droid CLI part only so far, all my comments based on own experience on it. It may be wrong or some kind of misunderstanding. But that's what my thoughts after the free trial on these days.
+I've primarily used only the Droid CLI component so far, so all my comments are based on my personal experience with it. My observations may contain some misunderstandings, but these are my genuine thoughts after several days with the free trial.
 
-I also use other alternatives tools to do the job, so my comparison is based on these tools, it's not a full review with the major competitors in the market. So far, I used:
+I also use other alternative tools for similar tasks, so my comparisons are based on these tools rather than a comprehensive review of all major competitors in the market. For context, I've used:
+
 - Claude Code
 - Claude Code + z.ai's GLM 4.6
 - opencode
 - Gemini CLI
-- cursor-agent  ## only a few times
+- cursor-agent ## only a few times
 
 ### How to Use Droid CLI
-You can install Droid CLI and run it by the following commands:
+
+You can install and run Droid CLI with the following commands:
+
 ```bash
 ## install droid cli on macOS
 curl -fsSL https://app.factory.ai/cli | sh
@@ -34,119 +77,102 @@ cd /path/to/your/project
 # Start interactive session
 droid
 ```
-Once you installed Droid CLI, it will create a new directory `~/.factory` under your home directory. This directory will store all the configuration files and data related to droid cli.
+
+Once you've installed Droid CLI, it creates a new directory `~/.factory` in your home directory. This directory stores all configuration files and operation history data related to Droid CLI.
 
 ### What I Liked About Droid CLI
-#### Concise and neat TUI
-Droid CLI provides a concise and neat TUI (Terminal User Interface) that makes it easy to interact with the tool. It has a clean and intuitive layout, making it easy to navigate and use. Especially, the status bar at the bottom of the screen is very useful, better than other tools I used.
 
-The reason I noticed its status bar is quite simple. I just copied some MCP related configuration items from others into its config file `~/.factory/mcp.json`. Unfortunately, for some incompatible reason / issue, it caused to show a MCP with a cross emoji all in red. It alerts me to check the configuration file and fix the issue.
+#### Concise and Clean TUI
 
-Due to some new upgrade or other unknown reason, I can not reproduce it with the same configuration now. I just capture another screenshot to demostrate what it looks like. Here comes the screenshoot when Droid CLI is checking the MCPs status after the launch. In case of any MCP issue, it will be shown in red.
+Droid CLI provides a concise and clean TUI (Terminal User Interface) that makes interaction straightforward. It has an intuitive layout that's easy to navigate. The status bar at the bottom of the screen is particularly useful—better than other tools I've used.
 
-![Droid CLI Status Bar with Initializing Status](/Users/robin/projects/surfing/assets/images/droid_cli_01.png)
+I first noticed the status bar when I copied some MCP-related configuration items from another source into Droid CLI's config file `~/.factory/mcp.json`. Unfortunately, due to some compatibility issue, it displayed an MCP entry with a red cross emoji, immediately alerting me to check and fix the configuration.
 
-Normally, it looks like this one:
-![Droid CLI Status Bar with Normal Status](/Users/robin/projects/surfing/assets/images/droid_cli_02.png)
+Due to a recent upgrade or some other unknown reason, I can't reproduce that error with the same configuration now. I've captured another screenshot to demonstrate what it looks like. Here's the screenshot showing Droid CLI checking MCP status after launch. Any MCP issues appear in red.
 
-Everybody is developing the CLI coding agent today. Some of them goes well, some of them goes not that well. Obviously, the industry is still in its early stages, and needs to flashback some best practices and good designs before we enter the GUI era.
+![Droid CLI Status Bar with Initializing Status](@assets/images/droid_cli_01.png)
 
-Also, that's the reason I like opencodes, and that's the reason I hate it. Opencode goes a different way to build its CLI coding agent like others. Opencode team uses golang to implement their TUI directly instead of leveraging the terminal simulators on enduser's side, which is a good choice if they want to build something special. But, Unfortunately, they are still on the way, as sometimes we always found that it's still not very user-friendly. Especially, if you are working with some IDE embedded terminal, say vscode, cursor and zed, you will find that opncode is not always rendered correctly.
+Normally, it looks like this:
+![Droid CLI Status Bar with Normal Status](@assets/images/droid_cli_02.png)
 
-One thing I like about opencode is its well-designed sections, it helps me to identify the context of the action easily. When you are working tons of commands and interactions, You will find that it's very helpful. If I can make wish on Droid CLI, I hope the development team can inspire by opencode and make it more user-friendly.
+Everyone is developing CLI coding agents these days. Some are doing well, others not so much. The industry is still in its early stages. We'd better to remember some old-school best practices and solid designs before we move into the GUI era.
 
-![opencode](https://github.com/sst/opencode/raw/dev/packages/web/src/assets/lander/screenshot.png)
+This brings me to my love-hate relationship with opencode. Opencode takes a different approach from other CLI coding agents. The opencode team uses Go to implement their TUI directly instead of leveraging terminal emulators on the end user's side—a good choice if they want to build something unique. Unfortunately, they're still working on refinements, and the user experience isn't always smooth. This is especially noticeable when working with IDE-embedded terminals like under VSCode, Cursor, or Zed, where opencode doesn't always render correctly.
 
-#### Model agnosticism
-This feature is very useful to me, because it allows me to switch between different models and CLI tools without having to encounter any different details for each model and tools. 
+One thing I appreciate about opencode is its well-designed sections, which help me quickly identify the context of each action. When you're juggling tons of commands and interactions, this becomes invaluable. If I could make one wish for Droid CLI, I'd hope the development team takes inspiration from opencode to make their interface even more user-friendly.
 
-#### Keep restraint
-And, Someone dealing with this potential issue with OpenRouter. But for me, I tend to use Claude Code with some tools support recently. For example, Claude Code Router or Setting environment variables and etc. it helps me to use Claude Code consistently with different models, meanwhile I can leverage the powerful ecosystem of Claude Code. It looks more mature than other ways so far, in my opinion.
+![opencode](@assets/images/opencode_screenshot.png)
 
-Before this practice(using CC-router with Claude Code), I tried so many CLI equivalents coding agents. That caused me to spend a lot of time and effort to learn and use them. Meanwhile, each tool has its own project setting folder, that really matters to me, it caused so many dot subfolders in my project root folder.
+#### Model Agnosticism
 
-That's another reason I like Droid CLI. I used it in my project, but Droid CLI doesn't create any dot subfolders in my project root folder. Restraint is a virtue.
+This feature is incredibly useful to me because it allows me to switch between different models and CLI tools without dealing with model-specific configuration details. With its BYOK mode, you can use your own API key to access your models, ensuring maximum flexibility and control over your data.
 
-That's also the reason I hate one tool named as task-master-ai, despite I use it very frequently. It intervened too much for my project.
+#### Restraint and Simplicity of Design philosophy
 
-### What I think Droid CLI can be better
+Some developers address this flexibility through OpenRouter integration. However, I've been using Claude Code with various tool support mechanisms recently—such as Claude Code Router or environment variable configurations. This approach lets me use Claude Code consistently across different models while leveraging Claude Code's powerful ecosystem. In my opinion, this solution appears more mature than other alternatives.
 
-#### Inconsistency issue in MCP configuration with environment variables
-Actually, it's a tiny issue, but I still want to point it out to avoid someone else's frustration like I did. As I mentioned before, Droid CLI uses `~/.factory/mcp.json` to store MCP configuration. Most of the configuration is the same with others. But when I copied my configuration from another tool, I encountered some issues. Here comes the problematic configuration(Already been simplified):
+Before adopting this practice (using CC-router with Claude Code), I experimented with many CLI coding agents. This consumed considerable time and effort learning each one. What frustrated me most was that each tool created its own project settings folder, cluttering my project root with numerous dot-folders.
+
+This is another reason I appreciate Droid CLI. Despite using it in my projects, Droid CLI doesn't create any dot-folders in my project root. Restraint is a virtue.
+
+This is also why I have mixed feelings about task-master-ai, despite using it frequently. It intervenes too heavily in project structure. I will figure out a new tools to make it work better recently, I hope.
+
+### Where Droid CLI Could Improve
+
+#### Inconsistent Environment Variable Handling in MCP Configuration
+
+This is a minor issue, but I want to highlight it to save others from the frustration I experienced. As mentioned earlier, Droid CLI uses `~/.factory/mcp.json` to store MCP configuration. Most of the configuration syntax matches other tools. However, when I copied my configuration from another tool, I encountered some issues. Here's the problematic configuration (simplified):
 
 ```json
 {
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp",
-        "--api-key",
-        "$CONTEXT7_API_KEY"
-      ]
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "$CONTEXT7_API_KEY"]
     },
     "deep-graph-mcp": {
       "command": "npx",
-      "args": [
-        "-y",
-        "mcp-code-graph@latest",
-        "$CODEGPT_API_KEY",
-        "$CODEGPT_GRAPH_ID"
-      ]
+      "args": ["-y", "mcp-code-graph@latest", "$CODEGPT_API_KEY", "$CODEGPT_GRAPH_ID"]
     }
   }
 }
 ```
 
-After a series of frustration, I figured out a way to work with:
+After some trial and error, I figured out a working configuration:
+
 ```json
 {
   "mcpServers": {
     "context7": {
       "type": "stdio",
       "command": "sh",
-      "args": [
-        "-c",
-        "npx -y @upstash/context7-mcp --api-key \"$CONTEXT7_API_KEY\""
-      ]
+      "args": ["-c", "npx -y @upstash/context7-mcp --api-key \"$CONTEXT7_API_KEY\""]
     },
     "deep-graph-mcp": {
       "type": "stdio",
       "command": "npx",
-      "args": [
-        "-y",
-        "mcp-code-graph@latest",
-        "$CODEGPT_API_KEY",
-        "$CODEGPT_GRAPH_ID"
-      ]
+      "args": ["-y", "mcp-code-graph@latest", "$CODEGPT_API_KEY", "$CODEGPT_GRAPH_ID"]
     }
   }
 }
 ```
 
-The same configuration is used for other coding agents and works well, so I think there must be some issue when parsing the configuration. The reason I put the configuration of deep-graph-mcp here is to show another inconsistent behavior. If someone says Drod CLI's mcp configuration does not support environment variables, it's not true. My deep-graph-mcp works well with environment variables. That's the reason I believe there must be some potential issue caused the inconsistency.
+The same configuration works perfectly with other coding agents, suggesting a parsing issue in Droid CLI. I included the deep-graph-mcp configuration to illustrate another inconsistency. If someone claims that Droid CLI's MCP configuration doesn't support environment variables, that's not entirely true—my deep-graph-mcp works fine with environment variables. It looks like a bash variable escaping issue, but a little bit weird only effects on the configuration on Context7. Anyway, this suggests an inconsistent implementation rather than a fundamental limitation.
 
-#### Lacking of Hook support mechanism
-So far, I can not see any hook mechanism both in local config file and the official documentation. Obviously, it's a missing feature. It will limit the end user to do some automation tasks as well with Droid CLI.
+#### Lack of Hook Support
 
-#### Crispy Permission Management
-Here comes the configuration for permission control in my config file:
+I haven't found any hook mechanism in either the local config file or the official documentation. This is clearly a missing feature that limits end users' ability to automate tasks with Droid CLI.
+
+#### Weak Permission Management
+
+Here's the configuration for permission control in my config file:
+
 ```json
 {
   // Commands that will be automatically allowed without confirmation.
   // Add commands here that you trust and use frequently.
   // Examples: "npm test", "git commit", "yarn build"
-  "commandAllowlist": [
-    "ls",
-    "pwd",
-    "dir",
-    "tree",
-    "git diff",
-    "git log",
-    "git status",
-    "git show"
-  ],
+  "commandAllowlist": ["ls", "pwd", "dir", "tree", "git diff", "git log", "git status", "git show"],
 
   // Commands that will ALWAYS require confirmation, regardless of autonomy level.
   // These are dangerous commands that could cause data loss or system damage.
@@ -182,23 +208,25 @@ Here comes the configuration for permission control in my config file:
     "chown -R",
     "format",
     "powershell Remove-Item -Recurse -Force"
-  ]}
-
+  ]
+}
 ```
 
-I am not sure what your thoughts on this configuration. When I saw it at my first glance, I thought I have so many ways to bypass it. Actually, I guess that every programmer has 101 ways to bypass it, if Droid CLI controls the permissions by simple checking these string-arrays defined in the configuration file.
+When I first saw this configuration, I immediately thought of numerous ways to bypass it. I suspect every programmer could find 101 ways around it if Droid CLI controls permissions by simply checking these string arrays in the configuration file.
 
-Despite the development team already predefined a set of commands maybe harmful, but it's still far away from enough, and can not protect end users to prevent these kinds of harmful operations. I understand that maybe it's not the development team's first priority right now to implement a full functional permission control mechanism, but we still have some quick wins. 
+While the development team has predefined some potentially harmful commands, this approach is far from sufficient and doesn't adequately protect end users from dangerous operations. I understand that implementing a full-featured permission control mechanism may not be the team's current priority, but there are some quick wins available.
 
-It's not easy to implement a perfect permission control mechanism. Even today, I am not satisfied with most of the current coding agents' solution, including the industry leading product like Claude Code. But we can at least have some kind of sandbox with a quick way.
+Implementing a perfect permission control mechanism isn't easy. Even today, I'm not satisfied with most current coding agents' solutions, including industry-leading products like Claude Code. However, we could at least implement some form of sandboxing relatively quickly.
 
-Again, If you look back a few steps on the computer science history, you will find that we already encountered the same issue several times. And more importantly, there are so many mature solutions for this kind of issue. For example, there is a thing named as chroot. It's a simple mechanism that allows a process to have a different root directory than the one it was started in. This can be used to create a sandbox environment for any process rapidly. It's very mature and widely used in Linux systems.I guess one or two days we can attach this new feature to Droid CLI with Droid CLI's help. This tiny enhancement can help us to prevent some harmful operations and no longer need to predefine these tedious harmful commands in the configuration file as we just saw.
+Again, looking back at computer science history, we've encountered similar issues multiple times—and more importantly, there are mature solutions available. For example, chroot is a simple mechanism that allows a process to have a different root directory than the one it started in. This can rapidly create a sandbox environment for any process and is mature and widely used in Linux systems. I estimate that this feature could be added to Droid CLI in a day or two, especially with the support of Droid CLI itself. This enhancement would help prevent harmful operations without needing to predefine tedious command lists in the configuration file.
 
 #### Integration with Claude Agent SDK
-If I had the privilege of offering the development team one and only one suggestion, it would be integration with Claude Agent SDK as soon as possible and never ever to reinvent the wheel again. From the official website, I can see Droid CLI already supports to define slash commands now, and still one the way to support subagents(Custom Droids). It's make sense.
 
-I don't know how they will implement these kinds of features, but if I were the development team leader, I would consider using a mature solution like Claude Agent SDK. It not only can help us to save time and effort, but also we can leverage the whole ecosystem of Claude already built up, including provide seamless migration efforts for Claude Code's existing users.
+If I could offer the development team just one suggestion, it would be to integrate with Claude Agent SDK as soon as possible rather than reinventing the wheel. According to the official website, Droid CLI already supports custom slash commands and is working on subagent support (Custom Droids), which makes sense.
+
+I don't know their implementation plans, but if I were leading the development team, I'd seriously consider using a mature solution like Claude Agent SDK. This would not only save time and effort but also leverage Claude's established ecosystem, including providing seamless migration paths for existing Claude Code users. It would benefit both the development team and the business.
 
 ### Reference
+
 - [opencode](https://github.com/sst/opencode)
 - [chroot](https://en.wikipedia.org/wiki/Chroot)

@@ -28,7 +28,7 @@ metadata:
     siteName: 'Surfing'
     type: 'website'
     locale: 'en_US'
-    url: 'https://surfing.dev/showcase/en/color-gradient-gen'
+    url: 'https://surfing.salty.vip/showcase/en/color-gradient-gen'
   twitter:
     cardType: 'summary_large_image'
     site: '@surfing_dev'
@@ -36,19 +36,19 @@ metadata:
   robots:
     index: true
     follow: true
-  canonical: 'https://surfing.dev/showcase/en/color-gradient-gen'
+  canonical: 'https://surfing.salty.vip/showcase/en/color-gradient-gen'
   author: 'Surfing Team'
   category: 'Design Tools'
   language: 'en'
   alternate:
     - hreflang: 'en'
-      href: 'https://surfing.dev/showcase/en/color-gradient-gen'
+      href: 'https://surfing.salty.vip/showcase/en/color-gradient-gen'
   schema:
     '@context': 'https://schema.org'
     '@type': 'WebApplication'
     name: 'Advanced Color Gradient Generator'
     description: 'Professional color gradient generator and palette creator with multiple color modes'
-    url: 'https://surfing.dev/showcase/en/color-gradient-gen'
+    url: 'https://surfing.salty.vip/showcase/en/color-gradient-gen'
     applicationCategory: 'DesignApplication'
     operatingSystem: 'Any'
     offers:

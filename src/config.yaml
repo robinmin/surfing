@@ -24,8 +24,8 @@ metadata:
         alt: 'Surfing - AI-Powered Content Showcase Platform'
     type: website
   twitter:
+    site: '@salty.vip'
     handle: '@tangmian'
-    site: '@tangmian'
     cardType: summary_large_image
 
 i18n:

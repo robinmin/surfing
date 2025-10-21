@@ -23,8 +23,8 @@ metadata:
         height: 842
     type: 'article'
   twitter:
-    handle: '@surfing_dev'
-    site: '@surfing_dev'
+    site: '@salty.vip'
+    handle: '@tangmian'
     cardType: 'summary_large_image'
 ---
 
