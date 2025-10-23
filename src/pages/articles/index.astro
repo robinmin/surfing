@@ -1,13 +1,17 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import { getCollection } from 'astro:content';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
-import Image from '~/components/common/Image.astro';
-import { extractLanguageFromId } from '~/utils/language';
+import { getServerTranslation } from '~/i18n';
 
-// Use default language for initial render (client JS will update based on cookies)
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+function extractLanguageFromId(id: string): string {
+  const match = id.match(/^([a-z]{2})\//);
+  return match ? match[1] : 'en';
+}
+
+// Static site: use default language
+const lang = 'en';
+const t = getServerTranslation(lang);
 
 // Get all articles (NO server-side filtering for static build - client will filter)
 const articles = await getCollection('articles', ({ data }) => !data.draft);
@@ -59,15 +63,10 @@ const metadata = {
               data-lang={extractLanguageFromId(article.id)}
             >
               {article.data.image && (
-                <Image
-                  src={article.data.image}
+                <img
+                  src={article.data.image.replace('@assets', '/assets')}
                   alt={article.data.title}
                   class="w-full h-64 object-cover"
-                  widths={[400, 800]}
-                  width={400}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  aspectRatio="16:9"
-                  layout="cover"
                   loading="lazy"
                   decoding="async"
                 />
@@ -154,15 +153,10 @@ const metadata = {
             data-lang={extractLanguageFromId(article.id)}
           >
             {article.data.image && (
-              <Image
-                src={article.data.image}
+              <img
+                src={article.data.image.replace('@assets', '/assets')}
                 alt={article.data.title}
                 class="w-full h-48 object-cover"
-                widths={[300, 600]}
-                width={300}
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                aspectRatio="16:9"
-                layout="cover"
                 loading="lazy"
                 decoding="async"
               />
