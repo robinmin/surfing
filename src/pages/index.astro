@@ -4,7 +4,7 @@ import Hero from '~/components/widgets/Hero.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
 
-// Use default language for SSG, will be updated on client
+// Use default language for initial render (client JS will update based on cookies)
 const t = getServerTranslation(DEFAULT_LANGUAGE);
 
 const metadata = {
