@@ -1,13 +1,18 @@
 ---
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import { getCollection } from 'astro:content';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
-import { Icon } from 'astro-icon/components';
-import { extractLanguageFromId } from '~/utils/language';
+import { getServerTranslation } from '~/i18n';
 
-// Use default language for initial render (client JS will update based on cookies)
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+function extractLanguageFromId(id: string): string {
+  const match = id.match(/^([a-z]{2})\//);
+  return match ? match[1] : 'en';
+}
+
+// Static site: use default language
+const lang = 'en';
+const t = getServerTranslation(lang);
 
 // Get all cheatsheets (NO server-side filtering for static build - client will filter)
 const cheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
