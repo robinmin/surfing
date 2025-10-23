@@ -14,8 +14,8 @@ import GoogleAdsLoader from '~/components/common/GoogleAdsLoader.astro';
 import Analytics from '~/components/common/Analytics.astro';
 import Schema from '~/components/common/Schema.astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
-import TranslationUpdater from '~/components/common/TranslationUpdater.astro';
 import CodeBlockCopyFix from '~/components/common/CodeBlockCopyFix.astro';
+import ContentFilter from '~/components/common/ContentFilter.astro';
 
 // Comment the line below to disable View Transitions
 import { ClientRouter } from 'astro:transitions';
@@ -59,7 +59,9 @@ const { language, textDirection } = I18N;
     <slot />
 
     <BasicScripts />
-    <TranslationUpdater />
+    <!-- TranslationUpdater disabled: SSR mechanism (ContentFilter) reloads page with correct language -->
+    <!-- <TranslationUpdater /> -->
     <CodeBlockCopyFix />
+    <ContentFilter />
   </body>
 </html>
