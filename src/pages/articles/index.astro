@@ -4,11 +4,14 @@ import Hero from '~/components/widgets/Hero.astro';
 import { getCollection } from 'astro:content';
 import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
 import Image from '~/components/common/Image.astro';
+import { extractLanguageFromId } from '~/utils/language';
 
-// Use default language for SSG, will be updated on client
+// Use default language for initial render (client JS will update based on cookies)
 const t = getServerTranslation(DEFAULT_LANGUAGE);
 
+// Get all articles (NO server-side filtering for static build - client will filter)
 const articles = await getCollection('articles', ({ data }) => !data.draft);
+
 const featuredArticles = articles.filter((item) => item.data.featured);
 const sortedArticles = articles.sort(
   (a, b) =>
@@ -51,7 +54,10 @@ const metadata = {
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {featuredArticles.slice(0, 2).map((article) => (
-            <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <article
+              class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+              data-lang={extractLanguageFromId(article.id)}
+            >
               {article.data.image && (
                 <Image
                   src={article.data.image}
@@ -143,7 +149,10 @@ const metadata = {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {
         sortedArticles.map((article) => (
-          <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+          <article
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden"
+            data-lang={extractLanguageFromId(article.id)}
+          >
             {article.data.image && (
               <Image
                 src={article.data.image}
