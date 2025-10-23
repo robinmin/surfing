@@ -351,3 +351,61 @@ And, I did some manual review on this document and add some TODO items within th
 - Check with MCP Context7 to ensure the accuracy and completeness of these command lines or APIs if necessary. We need to ensure all these command lines or APIs can run and produce expected results.
 - Act as a senior IT content writer to enhance the contents, make it more readable and understandable, like other normal technical tutorial articles.
 - Understand the TODO items and provide proper actions for each item.
+
+### Add content filter by language
+
+#### Background
+
+So far we already enabled i18n for the website. However, there are still some issues that need to be addressed such as:
+
+- The content language is independent with the page language.
+- When we provide multilingual contents(Actually the same content in different languages and in different files), in the index page of each collection and the home page, all of this different languages files are treated as different contents. That means, if we have a collection with 3 articles in English and 3 articles in Chinese, the index page will show 6 articles instead of 3 articles. And, if a user prefers in English, he or she will still see 3 English articles and 3 Chinese articles.
+- When user selected a new preferred language, the list of current collection will not change.
+
+#### Solutions
+
+- Implement a content filter in @src/components/common/ContentFilter.astro.
+- Add ContentFilter into @src/layouts/layout.astro to enable the content filter.
+- When to activate the content filter(during the build time):
+  - In the homepage, we always show the content in the preferred language only.
+  - In each index page of each collection, if current collection enabled the content filter(check whether current collection name is in the list of enabled collections: `i18n.support_translation` in file `@src/config.yaml`), then we show the content in the preferred language only. if current collection disabled the content filter, then we show all contents for allowed languages. This is a build time check, so we need to pass the value to the generated index page.
+
+I need you refine this requirements and get any unclear or ambiguous things confirmed with me, then work out a solid task plan with task list.
+
+> I need you use playwright to access the dev server via http://localhost:4322/. Access it and verify whether all functionalities are working as expected. Especially, please take special care of the errors in web console. In case of any, find the root cause and fix all of them.
+
+###
+
+- De-coupled the event trigger and event handler on language switcher:
+  - Define a new user defined event to update the language settings: `surfing_event_switch_language`. We user changed the language switcher, fire the event.
+  - At the website wise, add a new event listener to handle the `surfing_event_switch_language` event at the website framework wise: `on_event_switch_language`. The functions should equal to current function, including change the i18n string at the website framework wise. and store the language settings in local storage.
+  - Define a new event listener to handle the `surfing_event_switch_language` event at page wise: `on_event_switch_translation`. If we prepared the new URL based on current page's metadata information, and navigate the end user to the translated page.
+  - Add a new function `init_content`, which will be called when the page is loaded. This function will accept a few content metadata as arguments during the build process(These arguments are injected by build process). For example, whether current page enabled the translation feature, and how many languages are supported(Both of them coming from the metadata defined in @src/config.yaml or the frontmatter of current page). It also need to hide/show the options of the language switcher based on the this arguments dynamically.
+- Add a string array type new key `i18n.support_translation` in file @src/config.yaml to config which collection support content translation. For example:
+
+```yaml
+i18n:
+  language: en
+  textDirection: ltr
+  support_translation:
+    - articles
+    - cheatsheetss
+    - documents
+    - others
+```
+
+This config means that the website supports translation for articles, cheatsheets, documents, and others(showcase only so far) does not support this new feature.
+
+- Add a new field `translations` to each collection(including articles, cheatsheets, documents and showcase and etc) `src/content.config.ts`. It's also a string array, which contains the language codes of the available translations for the current content. For example, if the current content is in English and we have translations in Chinese and Japanese, the `translations` field should be `['en', 'cn', 'ja']` --- including itself, so that we will have consistent metadata for different languages.
+
+- Enhance the build process to enable to inject these meta information into the generated HTML files to call `init_content`.
+- Add utility functions:
+  - get_current_language: During the build process, we can use the folder to detect which language is currently being processed. Default file path for each content is composed of the following format: `contents/<collection_name>/<language_code>/<content_id>.md`. For example, if the current language is English, the collection name is `articles`, and the content ID is `1`, the default file path will be `en/articles/1.md`. During the run time, we use the URL to detect the current language. The URL format is `https://example.com/<collection_name>/<language_code>/<content_id>`, aligned with the default file path. For example, if the URL is `https://example.com/articles/en/1`, the current language is English.
+  - compose_url: Based on current URL and language code, compose the new URL for a content. For example, if the current URL is `https://example.com/articles/en/1` and the language code is `cn`, the new URL will be `https://example.com/articles/cn/1`.
+
+- For home page(always be treated as enabled support translation) and the index page of each collection which enabled support translation, add content filter function:
+  - In home page, we only to show the relevant contents for current language.
+  - In index page if current collection enabled support translations, we only to show the relevant contents for current language. As a store each folder contains only one language content, that means we only need to show the content with the same language code as the current language.
+  - In index page if current collection disabled support translations, we keep to show all contents.
+
+Help to refine this requirements and work out a solid task list first.

@@ -4,6 +4,7 @@ import type { CollectionEntry } from 'astro:content';
 import type { Post } from '~/types';
 import { APP_BLOG } from 'astrowind:config';
 import { cleanSlug, trimSlash, BLOG_BASE, POST_PERMALINK_PATTERN, CATEGORY_BASE, TAG_BASE } from './permalinks';
+import { filterAndDeduplicateContent } from './language';
 
 const generatePermalink = async ({
   id,
@@ -103,8 +104,14 @@ const getNormalizedPost = async (post: CollectionEntry<'articles'>): Promise<Pos
   };
 };
 
-const load = async function (): Promise<Array<Post>> {
-  const posts = await getCollection('articles');
+const load = async function (options?: { language?: string }): Promise<Array<Post>> {
+  let posts = await getCollection('articles');
+
+  // Apply language filtering if specified
+  if (options?.language) {
+    posts = filterAndDeduplicateContent(posts, options.language);
+  }
+
   const normalizedPosts = posts.map(async (post) => await getNormalizedPost(post));
 
   const results = (await Promise.all(normalizedPosts))
@@ -132,7 +139,14 @@ export const blogTagRobots = APP_BLOG.tag.robots;
 export const blogPostsPerPage = APP_BLOG?.postsPerPage;
 
 /** */
-export const fetchPosts = async (): Promise<Array<Post>> => {
+export const fetchPosts = async (options?: { language?: string }): Promise<Array<Post>> => {
+  // When language filtering is requested, don't use cache
+  // This ensures each language gets its own filtered results
+  if (options?.language) {
+    return await load(options);
+  }
+
+  // Use cache for non-filtered requests
   if (!_posts) {
     _posts = await load();
   }
@@ -169,9 +183,15 @@ export const findPostsByIds = async (ids: Array<string>): Promise<Array<Post>> =
 };
 
 /** */
-export const findLatestPosts = async ({ count }: { count?: number }): Promise<Array<Post>> => {
+export const findLatestPosts = async ({
+  count,
+  language,
+}: {
+  count?: number;
+  language?: string;
+}): Promise<Array<Post>> => {
   const _count = count || 4;
-  const posts = await fetchPosts();
+  const posts = await fetchPosts({ language });
 
   return posts ? posts.slice(0, _count) : [];
 };
@@ -284,8 +304,10 @@ export async function getRelatedPosts(originalPost: Post, maxResults: number = 4
 }
 
 /** Get featured posts */
-export const findFeaturedPosts = async ({ count }: { count?: number } = {}): Promise<Array<Post>> => {
-  const posts = await fetchPosts();
+export const findFeaturedPosts = async ({ count, language }: { count?: number; language?: string } = {}): Promise<
+  Array<Post>
+> => {
+  const posts = await fetchPosts({ language });
   const featuredPosts = posts.filter((post) => post.featured === true);
   return count ? featuredPosts.slice(0, count) : featuredPosts;
 };
