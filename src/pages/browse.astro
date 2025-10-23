@@ -1,13 +1,14 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { getAllContent, filterContent, sortContent, extractTags, extractCategories } from '~/utils/content';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
 import { findImage } from '~/utils/images';
-import { Image } from 'astro:assets';
+import { getServerTranslation } from '~/i18n';
 
-// Use default language for SSG, will be updated on client
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+// Static site: use default language
+const lang = 'en';
+const t = getServerTranslation(lang);
 
 // Get all content for the browser
 const allContent = await getAllContent();
