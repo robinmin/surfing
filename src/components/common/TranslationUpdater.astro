@@ -1,101 +1,13 @@
 ---
-// This component updates content on the client when language changes
+import { initializei18n } from '~/lib/i18n';
+
+initializei18n();
 ---
 
 <script>
-  import { t, getCurrentLanguage } from '~/i18n';
+  import { initializei18n } from '~/lib/i18n';
 
-  class TranslationUpdater {
-    private currentLanguage: string;
-
-    constructor() {
-      this.currentLanguage = getCurrentLanguage();
-      this.updateContent();
-      this.setupLanguageListener();
-    }
-
-    private setupLanguageListener(): void {
-      window.addEventListener('languageChange', ((e: CustomEvent) => {
-        console.log('Language change detected:', e.detail.language);
-        this.currentLanguage = e.detail.language;
-        this.updateContent();
-      }) as EventListener);
-    }
-
-    private updateContent(): void {
-      // Page titles are now handled during static generation in Metadata.astro
-      // No runtime title manipulation needed
-
-      // Update all translatable elements with data-i18n
-      this.updateTranslatableElements();
-    }
-
-    private updateTranslatableElements(): void {
-      // Update elements with data-i18n attribute
-      const translatableElements = document.querySelectorAll('[data-i18n]');
-      translatableElements.forEach((element) => {
-        const key = (element as HTMLElement).dataset.i18n;
-        if (key) {
-          // Check if element has SVG icons that need to be preserved
-          const icon = element.querySelector('svg');
-
-          if (icon && (key.startsWith('nav.') || key.includes('explore'))) {
-            // Preserve icon for navigation and button elements
-            element.innerHTML = `${t(key, this.currentLanguage as any)} ${icon.outerHTML}`;
-          } else {
-            // Simple text replacement for most elements
-            element.textContent = t(key, this.currentLanguage as any);
-          }
-        }
-      });
-
-      // Update elements with data-i18n-* attributes (like data-i18n-placeholder)
-      const allElements = document.querySelectorAll(
-        '[data-i18n-placeholder], [data-i18n-alt], [data-i18n-title], [data-i18n-label]'
-      );
-      allElements.forEach((element) => {
-        const dataset = (element as HTMLElement).dataset;
-        const i18nAttributes = Object.keys(dataset).filter((key) => key.startsWith('i18n'));
-
-        i18nAttributes.forEach((attr) => {
-          const key = dataset[attr];
-          if (key) {
-            const htmlAttr = attr.replace('i18n', '').toLowerCase(); // Remove 'i18n' prefix and convert to lowercase
-            if (htmlAttr === 'placeholder') {
-              (element as HTMLInputElement).placeholder = t(key, this.currentLanguage as any);
-            } else if (htmlAttr === 'alt') {
-              (element as HTMLImageElement).alt = t(key, this.currentLanguage as any);
-            } else if (htmlAttr === 'title') {
-              element.setAttribute('title', t(key, this.currentLanguage as any));
-            } else if (htmlAttr === 'label') {
-              element.setAttribute('aria-label', t(key, this.currentLanguage as any));
-            }
-          }
-        });
-      });
-
-      // Update translatable elements with HTML content (deprecated)
-      const translatableHtmlElements = document.querySelectorAll('[data-i18n-html]');
-      translatableHtmlElements.forEach((element) => {
-        const key = (element as HTMLElement).dataset.i18nHtml;
-        if (key) {
-          element.innerHTML = t(key, this.currentLanguage as any);
-        }
-      });
-    }
-  }
-
-  // Initialize when DOM is ready
-  function initTranslationUpdater() {
-    new TranslationUpdater();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTranslationUpdater);
-  } else {
-    initTranslationUpdater();
-  }
-
-  // Re-initialize after Astro page navigation (View Transitions)
-  document.addEventListener('astro:page-load', initTranslationUpdater);
+  document.addEventListener('astro:page-load', () => {
+    initializei18n();
+  });
 </script>
