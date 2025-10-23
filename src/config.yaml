@@ -31,6 +31,10 @@ metadata:
 i18n:
   language: en
   textDirection: ltr
+  support_translation:
+    - articles
+    - cheatsheets
+    - documents
 
 apps:
   blog:
