@@ -118,12 +118,6 @@ const currentLangInfo = LANGUAGES[currentLanguage];
         }
       });
 
-      // Listen for language change events from other components
-      window.addEventListener('languageChange', ((e: CustomEvent) => {
-        this.currentLanguage = e.detail.language;
-        this.updateUI();
-      }) as EventListener);
-
       // Keyboard navigation
       this.button.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -194,17 +188,6 @@ const currentLangInfo = LANGUAGES[currentLanguage];
       this.currentLanguage = newLanguage;
       this.updateUI();
       this.closeDropdown();
-
-      // Dispatch language change event for other components to react
-      this.dispatchLanguageChange(newLanguage);
-    }
-
-    private dispatchLanguageChange(newLanguage: SupportedLanguage): void {
-      window.dispatchEvent(
-        new CustomEvent('languageChange', {
-          detail: { language: newLanguage },
-        })
-      );
     }
   }
 
