@@ -1,33 +1,27 @@
 ---
-import { APP_BLOG } from 'astrowind:config';
-
-import { getRelatedPosts } from '~/utils/blog';
-import BlogHighlightedPosts from '../widgets/BlogHighlightedPosts.astro';
-import type { Post } from '~/types';
+import { getLanguageFromRequest, getServerTranslation } from '~/i18n';
 import { getBlogPermalink } from '~/utils/permalinks';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+import { getRelatedPosts } from '~/utils/blog';
+import type { Post } from '~/types';
+import Grid from '~/components/blog/Grid.astro';
+import Headline from '~/components/blog/Headline.astro';
 
 export interface Props {
   post: Post;
 }
 
 const { post } = Astro.props;
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+const lang = getLanguageFromRequest(Astro.request);
+const t = getServerTranslation(lang);
 
 const relatedPosts = post.tags ? await getRelatedPosts(post, 4) : [];
 ---
 
 {
-  APP_BLOG.isRelatedPostsEnabled ? (
-    <BlogHighlightedPosts
-      classes={{
-        container:
-          'pt-0 lg:pt-0 md:pt-0 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade',
-      }}
-      title={t('blog.relatedPosts')}
-      linkText={t('blog.viewAllPosts')}
-      linkUrl={getBlogPermalink()}
-      postIds={relatedPosts.map((post) => post.id)}
-    />
-  ) : null
+  relatedPosts.length > 0 && (
+    <section class="pt-0 lg:pt-0 md:pt-0">
+      <Headline title={t('blog.relatedPosts')} linkText={t('blog.viewAllPosts')} linkUrl={getBlogPermalink()} />
+      <Grid posts={relatedPosts} />
+    </section>
+  )
 }
