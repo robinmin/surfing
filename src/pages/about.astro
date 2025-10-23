@@ -1,11 +1,12 @@
 ---
-import Features3 from '~/components/widgets/Features3.astro';
-import Hero from '~/components/widgets/Hero.astro';
 import Layout from '~/layouts/PageLayout.astro';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+import Hero from '~/components/widgets/Hero.astro';
+import Features3 from '~/components/widgets/Features3.astro';
+import { getServerTranslation } from '~/i18n';
 
-// Use default language for SSG, will be updated on client
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+// Static site: use default language
+const lang = 'en';
+const t = getServerTranslation(lang);
 
 const metadata = {
   title: t('pages.about.title'),
