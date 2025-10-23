@@ -1,12 +1,17 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
+import { getServerTranslation } from '~/i18n';
 import { getCollection } from 'astro:content';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
-import { extractLanguageFromId } from '~/utils/language';
 
-// Use default language for initial render (client JS will update based on cookies)
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+function extractLanguageFromId(id: string): string {
+  const match = id.match(/^([a-z]{2})\//);
+  return match ? match[1] : 'en';
+}
+
+// Static site: use default language
+const lang = 'en';
+const t = getServerTranslation(lang);
 
 // Get all documents (NO server-side filtering for static build - client will filter)
 const documents = await getCollection('documents', ({ data }) => !data.draft);
