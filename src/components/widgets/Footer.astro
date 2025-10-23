@@ -34,15 +34,15 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
     <div class="grid grid-cols-12 gap-4 gap-y-8 sm:gap-8 py-8 md:py-12">
       <div class="col-span-12 lg:col-span-4">
         <div class="mb-2">
-          <a class="inline-block font-bold text-xl" href={getHomePermalink()}>{SITE?.name}</a>
+          <a class="inline-block font-bold text-xl" href={getHomePermalink()} data-i18n-key="site.name">{SITE?.name}</a>
         </div>
         <div class="text-sm text-muted flex gap-1">
           {
             secondaryLinks.map(({ text, href }, index) => {
               // Map based on href for secondary links
-              let dataI18n = '';
-              if (href?.includes('/terms')) dataI18n = 'common.terms';
-              else if (href?.includes('/privacy')) dataI18n = 'common.privacyPolicy';
+              let navKey = '';
+              if (href?.includes('/terms')) navKey = 'common.terms';
+              else if (href?.includes('/privacy')) navKey = 'common.privacyPolicy';
 
               return (
                 <>
@@ -50,9 +50,10 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
                   <a
                     class="text-muted hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out"
                     href={href}
-                    set:html={text}
-                    data-i18n={dataI18n}
-                  />
+                    data-i18n-key={navKey}
+                  >
+                    {text}
+                  </a>
                 </>
               );
             })
@@ -62,51 +63,51 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
       {
         links.map(({ title, links }) => {
           // Map section titles to i18n keys
-          let titleI18n = '';
+          let titleKey = '';
           if (title?.includes('Content') || title?.includes('内容') || title?.includes('コンテンツ'))
-            titleI18n = 'footer.sections.content';
+            titleKey = 'footer.sections.content';
           else if (title?.includes('Platform') || title?.includes('平台') || title?.includes('プラットフォーム'))
-            titleI18n = 'footer.sections.platform';
+            titleKey = 'footer.sections.platform';
           else if (title?.includes('Resources') || title?.includes('资源') || title?.includes('リソース'))
-            titleI18n = 'footer.sections.resources';
+            titleKey = 'footer.sections.resources';
           else if (title?.includes('Community') || title?.includes('社区') || title?.includes('コミュニティ'))
-            titleI18n = 'footer.sections.community';
+            titleKey = 'footer.sections.community';
 
           return (
             <div class="col-span-6 md:col-span-3 lg:col-span-2">
-              <div class="dark:text-gray-300 font-medium mb-2" data-i18n={titleI18n}>
+              <div class="dark:text-gray-300 font-medium mb-2" data-i18n-key={titleKey}>
                 {title}
               </div>
               {links && Array.isArray(links) && links.length > 0 && (
                 <ul class="text-sm">
                   {links.map(({ text, href, ariaLabel }) => {
                     // Map footer links to i18n keys based on text content or href
-                    let linkI18n = '';
-                    if (href?.includes('/browse')) linkI18n = 'nav.browse';
-                    else if (href?.includes('/articles')) linkI18n = 'nav.articles';
-                    else if (href?.includes('/showcase')) linkI18n = 'nav.showcase';
-                    else if (href?.includes('/documents')) linkI18n = 'nav.documents';
-                    else if (href?.includes('/about')) linkI18n = 'nav.about';
+                    let linkKey = '';
+                    if (href?.includes('/browse')) linkKey = 'nav.browse';
+                    else if (href?.includes('/articles')) linkKey = 'nav.articles';
+                    else if (href?.includes('/showcase')) linkKey = 'nav.showcase';
+                    else if (href?.includes('/documents')) linkKey = 'nav.documents';
+                    else if (href?.includes('/about')) linkKey = 'nav.about';
                     else if (text?.includes('AI Integration') || text?.includes('AI 集成') || text?.includes('AI統合'))
-                      linkI18n = 'footer.links.aiIntegration';
-                    else if (text?.includes('Obsidian')) linkI18n = 'footer.links.obsidianSupport';
-                    else if (text?.includes('RSS')) linkI18n = 'footer.links.rssFeeds';
+                      linkKey = 'footer.links.aiIntegration';
+                    else if (text?.includes('Obsidian')) linkKey = 'footer.links.obsidianSupport';
+                    else if (text?.includes('RSS')) linkKey = 'footer.links.rssFeeds';
                     else if (
                       text?.includes('Documentation') ||
                       text?.includes('文档') ||
                       text?.includes('ドキュメント')
                     )
-                      linkI18n = 'footer.links.documentation';
+                      linkKey = 'footer.links.documentation';
                     else if (text?.includes('Guidelines') || text?.includes('指南') || text?.includes('ガイドライン'))
-                      linkI18n = 'footer.links.contentGuidelines';
-                    else if (text?.includes('API')) linkI18n = 'footer.links.apiReference';
+                      linkKey = 'footer.links.contentGuidelines';
+                    else if (text?.includes('API')) linkKey = 'footer.links.apiReference';
                     else if (text?.includes('Status') || text?.includes('状态') || text?.includes('ステータス'))
-                      linkI18n = 'footer.links.status';
+                      linkKey = 'footer.links.status';
                     else if (text?.includes('Contributors') || text?.includes('贡献') || text?.includes('貢献'))
-                      linkI18n = 'footer.links.contributors';
-                    else if (text?.includes('GitHub')) linkI18n = 'footer.links.github';
+                      linkKey = 'footer.links.contributors';
+                    else if (text?.includes('GitHub')) linkKey = 'footer.links.github';
                     else if (text?.includes('Support') || text?.includes('支持') || text?.includes('サポート'))
-                      linkI18n = 'footer.links.support';
+                      linkKey = 'footer.links.support';
 
                     return (
                       <li class="mb-2">
@@ -114,9 +115,9 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
                           class="text-muted hover:text-gray-700 hover:underline dark:text-gray-400 transition duration-150 ease-in-out"
                           href={href}
                           aria-label={ariaLabel}
-                          data-i18n={linkI18n}
+                          data-i18n-key={linkKey}
                         >
-                          <Fragment set:html={text} />
+                          {text}
                         </a>
                       </li>
                     );
@@ -150,7 +151,7 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         )
       }
 
-      <div class="text-sm mr-4 dark:text-muted" data-i18n="footer.tagline">
+      <div class="text-sm mr-4 dark:text-muted" data-i18n-key="footer.tagline">
         <Fragment set:html={footNote} />
       </div>
     </div>
