@@ -4,11 +4,14 @@ import Hero from '~/components/widgets/Hero.astro';
 import { getCollection } from 'astro:content';
 import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
 import { Icon } from 'astro-icon/components';
+import { extractLanguageFromId } from '~/utils/language';
 
-// Use default language for SSG, will be updated on client
+// Use default language for initial render (client JS will update based on cookies)
 const t = getServerTranslation(DEFAULT_LANGUAGE);
 
+// Get all cheatsheets (NO server-side filtering for static build - client will filter)
 const cheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
+
 const featuredCheatsheets = cheatsheets.filter((item) => item.data.featured);
 const sortedCheatsheets = cheatsheets.sort(
   (a, b) =>
@@ -51,7 +54,7 @@ const metadata = {
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredCheatsheets.slice(0, 6).map((cheatsheet) => (
-            <article class="group">
+            <article class="group" data-lang={extractLanguageFromId(cheatsheet.id)}>
               <div class="overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-900 h-full flex flex-col">
                 <div class="p-6 flex-1 flex flex-col">
                   {/* Difficulty Badge */}
@@ -171,7 +174,7 @@ const metadata = {
       ) : (
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedCheatsheets.map((cheatsheet) => (
-            <article class="group">
+            <article class="group" data-lang={extractLanguageFromId(cheatsheet.id)}>
               <div class="p-6 bg-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-900 h-full flex flex-col">
                 <div class="flex-1">
                   {/* Header */}
