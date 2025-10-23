@@ -30,8 +30,8 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-// Get latest posts when blog is enabled
-const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
+// Get latest posts when blog is enabled (NO language filtering - client will filter)
+const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count: count * 3 }) : [];
 const resolvedPosts = posts;
 ---
 
