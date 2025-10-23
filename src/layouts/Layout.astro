@@ -16,6 +16,7 @@ import Schema from '~/components/common/Schema.astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
 import CodeBlockCopyFix from '~/components/common/CodeBlockCopyFix.astro';
 import ContentFilter from '~/components/common/ContentFilter.astro';
+import TranslationUpdater from '~/components/common/TranslationUpdater.astro';
 
 // Comment the line below to disable View Transitions
 import { ClientRouter } from 'astro:transitions';
@@ -60,7 +61,7 @@ const { language, textDirection } = I18N;
 
     <BasicScripts />
     <!-- TranslationUpdater disabled: SSR mechanism (ContentFilter) reloads page with correct language -->
-    <!-- <TranslationUpdater /> -->
+    <TranslationUpdater />
     <CodeBlockCopyFix />
     <ContentFilter />
   </body>
