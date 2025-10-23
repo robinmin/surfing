@@ -98,13 +98,13 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                   <button
                     type="button"
                     class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap main-nav-item"
-                    data-i18n="nav.content"
+                    data-i18n-key="nav.content"
                   >
-                    {text}{' '}
+                    {t('nav.content')}{' '}
                     <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
                   </button>
                   <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
-                    {links.map(({ text: text2, href: href2 }) => {
+                    {links.map(({ href: href2 }) => {
                       // Map dropdown link text to nav keys based on href
                       let navKey = '';
                       if (href2?.includes('/browse')) navKey = 'nav.browse';
@@ -121,9 +121,9 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                               { 'aw-link-active': href2 === currentPath },
                             ]}
                             href={href2}
-                            data-i18n={navKey}
+                            data-i18n-key={navKey}
                           >
-                            {text2}
+                            {t(navKey)}
                           </a>
                         </li>
                       );
@@ -137,7 +137,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                     { 'aw-link-active': href === currentPath },
                   ]}
                   href={href}
-                  data-i18n={
+                  data-i18n-key={
                     href?.includes('/about') ? 'nav.about' : href?.includes('/cheatsheets') ? 'nav.cheatsheets' : ''
                   }
                 >
@@ -184,7 +184,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                   <Button
                     {...btnProps}
                     class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto"
-                    data-i18n="nav.explore"
+                    data-i18n-key="nav.explore"
                   />
                 ))}
               </span>
