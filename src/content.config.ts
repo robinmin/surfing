@@ -73,6 +73,9 @@ const articlesCollection = defineCollection({
     image: z.string().optional(),
     excerpt: z.string().optional(),
 
+    // Translation support
+    translations: z.array(z.string()).default(['en']), // Available language codes for this content
+
     // Auto-generated fields
     readingTime: z.number().optional(),
     wordCount: z.number().optional(),
@@ -104,6 +107,9 @@ const documentsCollection = defineCollection({
     contentType: z.enum(['page', 'snippet', 'template', 'legacy']).default('page'),
     author: z.string().optional(),
     image: z.string().optional(),
+
+    // Translation support
+    translations: z.array(z.string()).default(['en']), // Available language codes for this content
 
     // Custom styling support
     externalCSS: z.array(z.string()).optional(), // External CSS URLs (CDN, etc.)
@@ -141,6 +147,9 @@ const showcaseCollection = defineCollection({
     draft: z.boolean().default(false),
     category: z.string().optional(),
     tags: z.array(z.string()).default([]),
+
+    // Translation support
+    translations: z.array(z.string()).default(['en']), // Available language codes for this content
 
     // Custom styling support (for interactive showcases)
     externalCSS: z.array(z.string()).optional(), // External CSS URLs (CDN, etc.)
@@ -180,6 +189,9 @@ const cheatsheetsCollection = defineCollection({
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
     format: z.enum(['html', 'markdown']).default('html'),
     contentType: z.enum(['page', 'snippet', 'template', 'legacy']).optional(), // For backwards compatibility
+
+    // Translation support
+    translations: z.array(z.string()).default(['en']), // Available language codes for this content
 
     // File attachments
     pdfUrl: z.string().optional(), // Generated PDF version
