@@ -26,9 +26,10 @@ function getNestedValue(obj: any, path: string): any {
 }
 
 // Get user's preferred language with priority:
-// 1. User preference (stored in localStorage/cookie)
-// 2. Browser preference
-// 3. Default language
+// 1. User preference (localStorage)
+// 2. Cookie (set by SSR)
+// 3. Browser preference
+// 4. Default language
 export function getPreferredLanguage(): SupportedLanguage {
   if (typeof window === 'undefined') {
     return DEFAULT_LANGUAGE;
@@ -40,13 +41,22 @@ export function getPreferredLanguage(): SupportedLanguage {
     return storedLang;
   }
 
-  // 2. Check browser preference
+  // 2. Check cookie (set by SSR or previous session)
+  const cookieMatch = document.cookie.match(new RegExp(`(?:^|;\\s*)${LANGUAGE_STORAGE_KEY}=([^;]+)`));
+  if (cookieMatch) {
+    const cookieLang = cookieMatch[1] as SupportedLanguage;
+    if (Object.keys(LANGUAGES).includes(cookieLang)) {
+      return cookieLang;
+    }
+  }
+
+  // 3. Check browser preference
   const browserLang = navigator.language.split('-')[0] as SupportedLanguage;
   if (Object.keys(LANGUAGES).includes(browserLang)) {
     return browserLang;
   }
 
-  // 3. Fall back to default
+  // 4. Fall back to default
   return DEFAULT_LANGUAGE;
 }
 
