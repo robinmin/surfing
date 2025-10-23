@@ -3,11 +3,14 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { getCollection } from 'astro:content';
 import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+import { extractLanguageFromId } from '~/utils/language';
 
-// Use default language for SSG, will be updated on client
+// Use default language for initial render (client JS will update based on cookies)
 const t = getServerTranslation(DEFAULT_LANGUAGE);
 
+// Get all documents (NO server-side filtering for static build - client will filter)
 const documents = await getCollection('documents', ({ data }) => !data.draft);
+
 const featuredDocuments = documents.filter((item) => item.data.featured);
 const sortedDocuments = documents.sort(
   (a, b) =>
@@ -47,7 +50,10 @@ const metadata = {
           </h2>
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredDocuments.map((document) => (
-              <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <article
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                data-lang={extractLanguageFromId(document.id)}
+              >
                 <div class="p-6">
                   {/* Content Type Badge */}
                   <span
@@ -132,7 +138,10 @@ const metadata = {
         sortedDocuments.length > 0 ? (
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {sortedDocuments.map((document) => (
-              <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <article
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                data-lang={extractLanguageFromId(document.id)}
+              >
                 <div class="p-6">
                   {/* Content Type Badge */}
                   <span
