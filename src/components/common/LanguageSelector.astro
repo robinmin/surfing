@@ -44,6 +44,9 @@ const currentLangInfo = LANGUAGES[currentLanguage];
 <script>
   import { getCurrentLanguage, setLanguagePreference, LANGUAGES, type SupportedLanguage } from '~/i18n';
 
+  // Global singleton instance tracker
+  const LANGUAGE_SELECTOR_INSTANCE_KEY = '__languageSelectorInstance__';
+
   class LanguageSelector {
     private button: HTMLElement | null;
     private dropdown: HTMLElement | null;
@@ -205,9 +208,15 @@ const currentLangInfo = LANGUAGES[currentLanguage];
     }
   }
 
-  // Initialize when DOM is ready
+  // Initialize with singleton pattern
   function initLanguageSelector() {
-    new LanguageSelector();
+    // Check if instance already exists
+    if (!(window as any)[LANGUAGE_SELECTOR_INSTANCE_KEY]) {
+      (window as any)[LANGUAGE_SELECTOR_INSTANCE_KEY] = new LanguageSelector();
+      console.log('[LanguageSelector] Singleton instance created');
+    } else {
+      console.log('[LanguageSelector] Singleton instance already exists, skipping initialization');
+    }
   }
 
   if (document.readyState === 'loading') {
