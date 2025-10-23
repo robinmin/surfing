@@ -1,0 +1,112 @@
+---
+/**
+ * ContentFilter component
+ *
+ * This component handles language-based content filtering logic for static builds.
+ * Since we use static generation (not SSR), this component:
+ * 1. Listens for language change events from LanguageSelector
+ * 2. Shows/hides content items based on their data-lang attribute
+ * 3. No page reload needed - purely client-side filtering
+ *
+ * Note: Uses singleton pattern to prevent duplicate handlers.
+ */
+---
+
+<script>
+  import type { SupportedLanguage } from '~/i18n';
+  import { getCurrentLanguage } from '~/i18n';
+
+  // Global singleton instance tracker
+  const CONTENT_FILTER_INSTANCE_KEY = '__contentFilterInstance__';
+
+  // Map i18n language codes to content directory codes
+  const LANG_CODE_MAP: Record<SupportedLanguage, string> = {
+    en: 'en',
+    zh: 'cn',
+    ja: 'jp',
+  };
+
+  function toContentCode(i18nLang: SupportedLanguage): string {
+    return LANG_CODE_MAP[i18nLang] || i18nLang;
+  }
+
+  class ContentFilter {
+    private currentLanguage: SupportedLanguage;
+
+    constructor() {
+      // Initialize with current language to detect changes
+      this.currentLanguage = getCurrentLanguage();
+      this.init();
+      // Apply initial filter
+      this.filterContent(this.currentLanguage);
+    }
+
+    private init(): void {
+      // Listen for language change events from LanguageSelector
+      window.addEventListener('languageChange', ((e: CustomEvent) => {
+        this.handleLanguageChange(e.detail.language);
+      }) as EventListener);
+    }
+
+    private handleLanguageChange(newLanguage: SupportedLanguage): void {
+      // If language actually changed, filter content
+      if (this.currentLanguage !== newLanguage) {
+        // console.log(
+        //   `[ContentFilter] Language changed from ${this.currentLanguage} to ${newLanguage}, filtering content...`
+        // );
+
+        this.filterContent(newLanguage);
+        this.currentLanguage = newLanguage;
+      }
+    }
+
+    private filterContent(language: SupportedLanguage): void {
+      // Convert i18n language code to content directory code
+      const contentLang = toContentCode(language);
+
+      // console.log(`[ContentFilter] Filtering content for language: ${contentLang}`);
+
+      // Find all content items with data-lang attribute
+      const allItems = document.querySelectorAll<HTMLElement>('[data-lang]');
+
+      allItems.forEach((item) => {
+        const itemLang = item.getAttribute('data-lang');
+
+        if (itemLang === contentLang) {
+          // Show items in the selected language
+          item.style.display = '';
+          item.classList.remove('hidden');
+        } else {
+          // Hide items in other languages
+          item.style.display = 'none';
+          item.classList.add('hidden');
+        }
+      });
+
+      // console.log(
+      //   `[ContentFilter] Filtered ${allItems.length} items, showing language: ${contentLang}`
+      // );
+    }
+  }
+
+  // Initialize ContentFilter with singleton pattern
+  function initContentFilter() {
+    // Check if instance already exists
+    if (!(window as any)[CONTENT_FILTER_INSTANCE_KEY]) {
+      (window as any)[CONTENT_FILTER_INSTANCE_KEY] = new ContentFilter();
+      console.log('[ContentFilter] Singleton instance created');
+      // } else {
+      //   console.log('[ContentFilter] Singleton instance already exists, skipping initialization');
+    }
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initContentFilter);
+  } else {
+    initContentFilter();
+  }
+
+  // Re-initialize after Astro page navigation (View Transitions)
+  document.addEventListener('astro:page-load', initContentFilter);
+</script>
