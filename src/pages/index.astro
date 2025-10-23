@@ -2,10 +2,11 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+import { getServerTranslation } from '~/i18n';
 
-// Use default language for initial render (client JS will update based on cookies)
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+// Static site: use default language
+const lang = 'en';
+const t = getServerTranslation(lang);
 
 const metadata = {
   title: `Surfing — ${t('site.description')}`,
