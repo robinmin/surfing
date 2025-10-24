@@ -73,7 +73,7 @@ export const footerData = {
       links: [
         { text: 'About', href: '/about' },
         { text: 'Contributors', href: '#' },
-        { text: 'GitHub', href: 'https://github.com/robin/surfing' },
+        { text: 'GitHub', href: 'https://github.com/robinmin/surfing' },
         { text: 'Support', href: '#' },
       ],
     },
@@ -84,7 +84,7 @@ export const footerData = {
   ],
   socialLinks: [
     { ariaLabel: 'RSS All Content', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robin/surfing' },
+    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robinmin/surfing' },
   ],
   footNote: `
   Surfing - AI-Powered Content Platform for Creators

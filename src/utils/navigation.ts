@@ -76,7 +76,7 @@ export function getLocalizedFooterData() {
         links: [
           { textKey: 'nav.about', href: '/about' },
           { textKey: 'footer.links.contributors', href: '#' },
-          { textKey: 'footer.links.github', href: 'https://github.com/robin/surfing' },
+          { textKey: 'footer.links.github', href: 'https://github.com/robinmin/surfing' },
           { textKey: 'footer.links.support', href: '#' },
         ],
       },
@@ -87,7 +87,7 @@ export function getLocalizedFooterData() {
     ],
     socialLinks: [
       { ariaLabel: 'RSS All Content', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-      { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robin/surfing' },
+      { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robinmin/surfing' },
     ],
     footNoteKey: 'footer.tagline',
   };
