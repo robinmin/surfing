@@ -5,7 +5,6 @@ import Footer from '~/components/widgets/Footer.astro';
 import Announcement from '~/components/widgets/Announcement.astro';
 
 import { getLocalizedHeaderData, getLocalizedFooterData } from '~/utils/navigation';
-import { DEFAULT_LANGUAGE } from '~/i18n';
 
 import type { MetaData } from '~/types';
 
@@ -15,9 +14,9 @@ export interface Props {
 
 const { metadata } = Astro.props;
 
-// Get localized navigation data with default language (client JS will update based on cookies)
-const headerData = getLocalizedHeaderData(DEFAULT_LANGUAGE);
-const footerData = getLocalizedFooterData(DEFAULT_LANGUAGE);
+// Get localized navigation data
+const headerData = getLocalizedHeaderData();
+const footerData = getLocalizedFooterData();
 ---
 
 <Layout metadata={metadata}>
