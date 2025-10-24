@@ -3,12 +3,32 @@ import { t, getCurrentLanguage } from '~/i18n';
 import { Icon } from 'astro-icon/components';
 import { LANGUAGES } from '~/i18n';
 
+export interface Props {
+  // Available translations for this content (e.g., ['en', 'zh', 'ja'])
+  // If not provided, all languages are available
+  translations?: string[];
+  // Whether this is a detail page (for URL-based routing)
+  isDetailPage?: boolean;
+  // Current collection name (e.g., 'articles', 'documents')
+  collectionName?: string;
+}
+
+const { translations = Object.keys(LANGUAGES), isDetailPage = false, collectionName = '' } = Astro.props;
+
 // Get current language (for SSG, will be 'en', then updated on client)
 const currentLanguage = getCurrentLanguage();
 const currentLangInfo = LANGUAGES[currentLanguage];
+
+// Filter available languages based on translations prop
+const availableLanguages = Object.entries(LANGUAGES).filter(([code]) => translations.includes(code));
 ---
 
-<div class="language-selector relative">
+<div
+  class="language-selector relative"
+  data-is-detail-page={isDetailPage}
+  data-collection-name={collectionName}
+  data-available-translations={JSON.stringify(translations)}
+>
   <button
     type="button"
     class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
@@ -18,31 +38,49 @@ const currentLangInfo = LANGUAGES[currentLanguage];
     <span class="w-5 h-5 flex items-center justify-center text-base" id="current-flag">
       {currentLangInfo.flag}
     </span>
-    <Icon name="tabler:chevron-down" class="w-3 h-3 ml-1" />
+    {availableLanguages.length > 1 && <Icon name="tabler:chevron-down" class="w-3 h-3 ml-1" />}
   </button>
 
+  {
+    availableLanguages.length > 1 && (
+      <div
+        id="language-dropdown"
+        class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg min-w-[60px] z-50 hidden"
+      >
+        <div class="py-1">
+          {availableLanguages.map(([code, info]) => (
+            <button
+              type="button"
+              class="language-option w-full text-center px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center"
+              data-language={code}
+            >
+              <span class="text-lg">{info.flag}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <!-- Notification for single-language content -->
   <div
-    id="language-dropdown"
-    class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg min-w-[60px] z-50 hidden"
+    id="language-notification"
+    class="absolute right-0 top-full mt-1 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-50 hidden whitespace-nowrap"
   >
-    <div class="py-1">
-      {
-        Object.entries(LANGUAGES).map(([code, info]) => (
-          <button
-            type="button"
-            class="language-option w-full text-center px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center"
-            data-language={code}
-          >
-            <span class="text-lg">{info.flag}</span>
-          </button>
-        ))
-      }
-    </div>
+    <!-- Text will be set dynamically client-side -->
   </div>
 </div>
 
 <script>
-  import { getCurrentLanguage, setLanguagePreference, LANGUAGES, type SupportedLanguage } from '~/i18n';
+  import {
+    getCurrentLanguage,
+    setLanguagePreference,
+    LANGUAGES,
+    toI18nLang,
+    toContentLang,
+    t,
+    type SupportedLanguage,
+  } from '~/i18n';
 
   // Global singleton instance tracker
   const LANGUAGE_SELECTOR_INSTANCE_KEY = '__languageSelectorInstance__';
@@ -50,23 +88,68 @@ const currentLangInfo = LANGUAGES[currentLanguage];
   class LanguageSelector {
     private button: HTMLElement | null;
     private dropdown: HTMLElement | null;
+    private notification: HTMLElement | null;
     private flagElement: HTMLElement | null;
+    private container: HTMLElement | null;
     private currentLanguage: SupportedLanguage;
+    private isDetailPage: boolean;
+    private collectionName: string;
+    private availableTranslations: string[];
 
     constructor() {
       this.button = document.getElementById('language-selector-button');
       this.dropdown = document.getElementById('language-dropdown');
+      this.notification = document.getElementById('language-notification');
       this.flagElement = document.getElementById('current-flag');
-      this.currentLanguage = getCurrentLanguage();
+      this.container = document.querySelector('.language-selector');
+
+      // Read configuration from data attributes
+      this.isDetailPage = this.container?.dataset.isDetailPage === 'true';
+      this.collectionName = this.container?.dataset.collectionName || '';
+      this.availableTranslations = JSON.parse(this.container?.dataset.availableTranslations || '["en","zh","ja"]');
+
+      // Determine current language from URL if on detail page
+      this.currentLanguage = this.isDetailPage ? this.getLanguageFromURL() : getCurrentLanguage();
 
       this.init();
     }
 
+    private getLanguageFromURL(): SupportedLanguage {
+      const path = window.location.pathname;
+      const pathParts = path.split('/').filter(Boolean);
+
+      // URL pattern: /articles/cn/slug or /articles/en/slug
+      if (pathParts.length >= 2 && this.collectionName) {
+        const contentLang = pathParts[1]; // e.g., 'cn', 'en', 'jp'
+        const i18nLang = toI18nLang(contentLang); // Convert to 'zh', 'en', 'ja'
+
+        // Update localStorage to match URL
+        if (i18nLang && Object.keys(LANGUAGES).includes(i18nLang)) {
+          setLanguagePreference(i18nLang);
+          return i18nLang;
+        }
+      }
+
+      return getCurrentLanguage();
+    }
+
     private init(): void {
-      if (!this.button || !this.dropdown) return;
+      if (!this.button) return;
 
       // Update UI to current language
       this.updateUI();
+
+      // If only one language available, show notification on click
+      if (this.availableTranslations.length === 1) {
+        this.button.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.showNotification();
+        });
+        return;
+      }
+
+      // Multiple languages available - show dropdown
+      if (!this.dropdown) return;
 
       // Toggle dropdown on button click
       this.button.addEventListener('click', (e) => {
@@ -138,6 +221,11 @@ const currentLangInfo = LANGUAGES[currentLanguage];
         this.button.setAttribute('aria-label', `Current language: ${langInfo.nativeName}`);
       }
 
+      // Update notification text with current language
+      if (this.notification) {
+        this.notification.textContent = t('language.onlyAvailable', this.currentLanguage);
+      }
+
       // Update selected state in dropdown
       const options = this.dropdown?.querySelectorAll('.language-option');
       options?.forEach((option) => {
@@ -176,6 +264,18 @@ const currentLangInfo = LANGUAGES[currentLanguage];
       this.button?.setAttribute('aria-expanded', 'false');
     }
 
+    private showNotification(): void {
+      if (!this.notification) return;
+
+      // Show notification
+      this.notification.classList.remove('hidden');
+
+      // Hide after 2 seconds
+      setTimeout(() => {
+        this.notification?.classList.add('hidden');
+      }, 2000);
+    }
+
     private changeLanguage(newLanguage: SupportedLanguage): void {
       if (newLanguage === this.currentLanguage) {
         this.closeDropdown();
@@ -185,9 +285,25 @@ const currentLangInfo = LANGUAGES[currentLanguage];
       // Store preference
       setLanguagePreference(newLanguage);
 
-      this.currentLanguage = newLanguage;
-      this.updateUI();
-      this.closeDropdown();
+      // If on detail page, redirect to new URL
+      if (this.isDetailPage && this.collectionName) {
+        const path = window.location.pathname;
+        const pathParts = path.split('/').filter(Boolean);
+
+        // URL pattern: /articles/cn/slug -> /articles/en/slug
+        if (pathParts.length >= 2) {
+          const newContentLang = toContentLang(newLanguage); // Convert 'zh' -> 'cn'
+          pathParts[1] = newContentLang; // Replace language code
+
+          const newPath = '/' + pathParts.join('/');
+          window.location.href = newPath;
+        }
+      } else {
+        // Not on detail page, just update UI
+        this.currentLanguage = newLanguage;
+        this.updateUI();
+        this.closeDropdown();
+      }
     }
   }
 
