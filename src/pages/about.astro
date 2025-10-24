@@ -2,15 +2,13 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Features3 from '~/components/widgets/Features3.astro';
-import { getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 
-// Static site: use default language
-const lang = 'en';
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 const metadata = {
-  title: t('pages.about.title'),
-  description: t('pages.about.description'),
+  title: t('pages.about.title', lang),
+  description: t('pages.about.description', lang),
 };
 ---
 
@@ -19,22 +17,22 @@ const metadata = {
 
   <Hero>
     <Fragment slot="title">
-      <span data-i18n="pages.about.title">{t('pages.about.title')}</span>
-      <span class="text-accent dark:text-white" data-i18n="site.name">{t('site.name')}</span>
+      <span data-i18n-key="pages.about.title">{t('pages.about.title', lang)}</span>
+      <span class="text-accent dark:text-white" data-i18n-key="site.name">{t('site.name', lang)}</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      <span data-i18n="pages.about.description">{t('pages.about.description')}</span>
+      <span data-i18n-key="pages.about.description">{t('pages.about.description', lang)}</span>
     </Fragment>
   </Hero>
 
   <Features3
-    title={t('pages.about.whatsHere')}
+    title={t('pages.about.whatsHere', lang)}
     titleI18n="pages.about.whatsHere"
     items={[
       {
-        title: t('nav.articles'),
-        description: t('pages.about.articlesDesc'),
+        title: t('nav.articles', lang),
+        description: t('pages.about.articlesDesc', lang),
         icon: 'tabler:notes',
         classes: {
           titleI18n: 'nav.articles',
@@ -42,8 +40,8 @@ const metadata = {
         },
       },
       {
-        title: t('nav.showcase'),
-        description: t('pages.about.showcaseDesc'),
+        title: t('nav.showcase', lang),
+        description: t('pages.about.showcaseDesc', lang),
         icon: 'tabler:apps',
         classes: {
           titleI18n: 'nav.showcase',
@@ -51,8 +49,8 @@ const metadata = {
         },
       },
       {
-        title: t('pages.about.collectedContent'),
-        description: t('pages.about.collectedContentDesc'),
+        title: t('pages.about.collectedContent', lang),
+        description: t('pages.about.collectedContentDesc', lang),
         icon: 'tabler:bookmarks',
         classes: {
           titleI18n: 'pages.about.collectedContent',
