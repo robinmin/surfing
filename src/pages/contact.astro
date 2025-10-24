@@ -3,76 +3,74 @@ import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import ContactForm from '~/components/widgets/Contact.astro';
 import Features2 from '~/components/widgets/Features2.astro';
-import { getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 
-// Static site: use default language
-const lang = 'en';
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 const metadata = {
-  title: t('contact.title'),
+  title: t('contact.title', lang),
 };
 ---
 
 <Layout metadata={metadata}>
   <!-- HeroText Widget ******************* -->
 
-  <HeroText tagline={t('contact.tagline')} title={t('contact.subtitle')} />
+  <HeroText tagline={t('contact.tagline', lang)} title={t('contact.subtitle', lang)} />
 
   <ContactForm
     id="form"
-    title={t('contact.dropMessage')}
-    subtitle={t('contact.dropMessageSubtitle')}
+    title={t('contact.dropMessage', lang)}
+    subtitle={t('contact.dropMessageSubtitle', lang)}
     inputs={[
       {
         type: 'text',
         name: 'name',
-        label: t('contact.name'),
+        label: t('contact.name', lang),
       },
       {
         type: 'email',
         name: 'email',
-        label: t('contact.email'),
+        label: t('contact.email', lang),
       },
     ]}
     textarea={{
-      label: t('contact.message'),
+      label: t('contact.message', lang),
     }}
     disclaimer={{
-      label: t('contact.disclaimer'),
+      label: t('contact.disclaimer', lang),
     }}
-    description={t('contact.responseTime')}
+    description={t('contact.responseTime', lang)}
   />
 
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title={t('contact.weAreHere')}
+    title={t('contact.weAreHere', lang)}
     items={[
       {
-        title: t('contact.generalSupport'),
-        description: t('contact.generalSupportDesc'),
+        title: t('contact.generalSupport', lang),
+        description: t('contact.generalSupportDesc', lang),
       },
       {
-        title: t('contact.contactSales'),
-        description: t('contact.contactSalesDesc'),
+        title: t('contact.contactSales', lang),
+        description: t('contact.contactSalesDesc', lang),
       },
       {
-        title: t('contact.technicalSupport'),
-        description: t('contact.technicalSupportDesc'),
+        title: t('contact.technicalSupport', lang),
+        description: t('contact.technicalSupportDesc', lang),
       },
       {
-        title: t('contact.phone'),
+        title: t('contact.phone', lang),
         description: '+1 (234) 567-890',
         icon: 'tabler:headset',
       },
       {
-        title: t('contact.emailContact'),
+        title: t('contact.emailContact', lang),
         description: 'contact@support.com',
         icon: 'tabler:mail',
       },
       {
-        title: t('contact.location'),
+        title: t('contact.location', lang),
         description: '1234 Lorem Ipsum St, 12345, Miami, EEUU',
         icon: 'tabler:map-pin',
       },
