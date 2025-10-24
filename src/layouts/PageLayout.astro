@@ -10,9 +10,14 @@ import type { MetaData } from '~/types';
 
 export interface Props {
   metadata?: MetaData;
+  languageSelectorConfig?: {
+    translations?: string[];
+    isDetailPage?: boolean;
+    collectionName?: string;
+  };
 }
 
-const { metadata } = Astro.props;
+const { metadata, languageSelectorConfig } = Astro.props;
 
 // Get localized navigation data
 const headerData = getLocalizedHeaderData();
@@ -24,7 +29,7 @@ const footerData = getLocalizedFooterData();
     <Announcement />
   </slot>
   <slot name="header">
-    <Header {...headerData} isSticky showRssFeed showToggleTheme />
+    <Header {...headerData} isSticky showRssFeed showToggleTheme languageSelectorConfig={languageSelectorConfig} />
   </slot>
   <main id="main-content">
     <slot />
