@@ -20,8 +20,8 @@ publishDate: 2025-10-21
 draft: false
 featured: true
 image: '@assets/images/droid_cli_02.png'
-author: 'Robin'
-
+author: 'Robin Min'
+translations: ['en', 'zh', 'ja']
 metadata:
   title: 'Droid CLI Review: Hands-On Experience After Free Trial'
   description: 'In-depth Droid CLI review after free trial. Explore TUI design, model agnosticism, MCP configuration challenges, and comparisons with Claude Code, opencode, and Gemini CLI. Learn about strengths, limitations, and improvement areas.'

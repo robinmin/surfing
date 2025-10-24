@@ -8,6 +8,7 @@ wordCount: 1800
 publishDate: 2025-10-17
 draft: false
 image: '@assets/images/color-tool-rgb-1200.png'
+translations: ['en', 'zh', 'ja']
 metadata:
   title: 'Color Survival Guide and the Super Color Generator'
   description: 'Master RGB, HSL, CMYK, Display P3, LAB, and more, then use the Surfing Super Color Generator to generate gradients, palettes, and multi-platform swatches in minutes.'

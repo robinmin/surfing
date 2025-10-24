@@ -8,6 +8,7 @@ wordCount: 1800
 publishDate: 2025-10-17
 draft: false
 image: '@assets/images/color-tool-rgb-1200.png'
+translations: ['en', 'zh', 'ja']
 metadata:
   title: '色彩救急入门及Super Color Generator工具推荐 | Surfing'
   description: '掌握 RGB、HSL、CMYK、Display P3、LAB 等色彩空间的原理与转换技巧，并用 Surfing Super Color Generator 快速生成渐变、配色与多端色票。'

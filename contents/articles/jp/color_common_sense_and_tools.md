@@ -8,6 +8,7 @@ wordCount: 1800
 publishDate: 2025-10-17
 draft: false
 image: '@assets/images/color-tool-rgb-1200.png'
+translations: ['en', 'zh', 'ja']
 metadata:
   title: '色彩サバイバルガイドと Super Color Generator'
   description: 'RGB・HSL・CMYK・Display P3・LAB などの色空間を理解し、Surfing Super Color Generator でグラデーションや配色、マルチプラットフォームのカラースウォッチを素早く生成する方法を学びます。'

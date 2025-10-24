@@ -20,8 +20,8 @@ publishDate: 2025-10-21
 draft: false
 featured: true
 image: '@assets/images/droid_cli_02.png'
-author: 'Robin'
-
+author: 'Robin Min'
+translations: ['en', 'zh', 'ja']
 metadata:
   title: 'Droid CLI 试用体验'
   description: '深度 Droid CLI 评测。探索 TUI 设计、模型无关性、MCP 配置挑战，以及与 Claude Code、opencode 和 Gemini CLI 的对比。了解优势、局限性和改进方向。'
