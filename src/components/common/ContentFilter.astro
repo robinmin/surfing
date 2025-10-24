@@ -14,21 +14,10 @@
 
 <script>
   import type { SupportedLanguage } from '~/i18n';
-  import { getCurrentLanguage } from '~/i18n';
+  import { getCurrentLanguage, toContentLang } from '~/i18n';
 
   // Global singleton instance tracker
   const CONTENT_FILTER_INSTANCE_KEY = '__contentFilterInstance__';
-
-  // Map i18n language codes to content directory codes
-  const LANG_CODE_MAP: Record<SupportedLanguage, string> = {
-    en: 'en',
-    zh: 'cn',
-    ja: 'jp',
-  };
-
-  function toContentCode(i18nLang: SupportedLanguage): string {
-    return LANG_CODE_MAP[i18nLang] || i18nLang;
-  }
 
   class ContentFilter {
     private currentLanguage: SupportedLanguage;
@@ -62,7 +51,7 @@
 
     private filterContent(language: SupportedLanguage): void {
       // Convert i18n language code to content directory code
-      const contentLang = toContentCode(language);
+      const contentLang = toContentLang(language);
 
       // console.log(`[ContentFilter] Filtering content for language: ${contentLang}`);
 
