@@ -2,16 +2,17 @@
 import { Icon } from 'astro-icon/components';
 import { SITE } from 'astrowind:config';
 import { getHomePermalink } from '~/utils/permalinks';
+import { t, getCurrentLanguage } from '~/i18n';
 
 interface Link {
-  text?: string;
+  textKey?: string;
   href?: string;
   ariaLabel?: string;
   icon?: string;
 }
 
 interface Links {
-  title?: string;
+  titleKey?: string;
   links: Array<Link>;
 }
 
@@ -19,11 +20,12 @@ export interface Props {
   links: Array<Links>;
   secondaryLinks: Array<Link>;
   socialLinks: Array<Link>;
-  footNote?: string;
+  footNoteKey?: string;
   theme?: string;
 }
 
-const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme = 'light' } = Astro.props;
+const { socialLinks = [], secondaryLinks = [], links = [], footNoteKey = '', theme = 'light' } = Astro.props;
+const lang = getCurrentLanguage();
 ---
 
 <footer class:list={[{ dark: theme === 'dark' }, 'relative border-t border-gray-200 dark:border-slate-800 not-prose']}>
@@ -38,102 +40,52 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         </div>
         <div class="text-sm text-muted flex gap-1">
           {
-            secondaryLinks.map(({ text, href }, index) => {
-              // Map based on href for secondary links
-              let navKey = '';
-              if (href?.includes('/terms')) navKey = 'common.terms';
-              else if (href?.includes('/privacy')) navKey = 'common.privacyPolicy';
-
-              return (
-                <>
-                  {index !== 0 ? ' · ' : ''}
-                  <a
-                    class="text-muted hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out"
-                    href={href}
-                    data-i18n-key={navKey}
-                  >
-                    {text}
-                  </a>
-                </>
-              );
-            })
+            secondaryLinks.map(({ textKey, href }, index) => (
+              <>
+                {index !== 0 ? ' · ' : ''}
+                <a
+                  class="text-muted hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out"
+                  href={href}
+                  data-i18n-key={textKey}
+                >
+                  {t(textKey, lang)}
+                </a>
+              </>
+            ))
           }
         </div>
       </div>
       {
-        links.map(({ title, links }) => {
-          // Map section titles to i18n keys
-          let titleKey = '';
-          if (title?.includes('Content') || title?.includes('内容') || title?.includes('コンテンツ'))
-            titleKey = 'footer.sections.content';
-          else if (title?.includes('Platform') || title?.includes('平台') || title?.includes('プラットフォーム'))
-            titleKey = 'footer.sections.platform';
-          else if (title?.includes('Resources') || title?.includes('资源') || title?.includes('リソース'))
-            titleKey = 'footer.sections.resources';
-          else if (title?.includes('Community') || title?.includes('社区') || title?.includes('コミュニティ'))
-            titleKey = 'footer.sections.community';
-
-          return (
-            <div class="col-span-6 md:col-span-3 lg:col-span-2">
-              <div class="dark:text-gray-300 font-medium mb-2" data-i18n-key={titleKey}>
-                {title}
-              </div>
-              {links && Array.isArray(links) && links.length > 0 && (
-                <ul class="text-sm">
-                  {links.map(({ text, href, ariaLabel }) => {
-                    // Map footer links to i18n keys based on text content or href
-                    let linkKey = '';
-                    if (href?.includes('/browse')) linkKey = 'nav.browse';
-                    else if (href?.includes('/articles')) linkKey = 'nav.articles';
-                    else if (href?.includes('/showcase')) linkKey = 'nav.showcase';
-                    else if (href?.includes('/documents')) linkKey = 'nav.documents';
-                    else if (href?.includes('/about')) linkKey = 'nav.about';
-                    else if (text?.includes('AI Integration') || text?.includes('AI 集成') || text?.includes('AI統合'))
-                      linkKey = 'footer.links.aiIntegration';
-                    else if (text?.includes('Obsidian')) linkKey = 'footer.links.obsidianSupport';
-                    else if (text?.includes('RSS')) linkKey = 'footer.links.rssFeeds';
-                    else if (
-                      text?.includes('Documentation') ||
-                      text?.includes('文档') ||
-                      text?.includes('ドキュメント')
-                    )
-                      linkKey = 'footer.links.documentation';
-                    else if (text?.includes('Guidelines') || text?.includes('指南') || text?.includes('ガイドライン'))
-                      linkKey = 'footer.links.contentGuidelines';
-                    else if (text?.includes('API')) linkKey = 'footer.links.apiReference';
-                    else if (text?.includes('Status') || text?.includes('状态') || text?.includes('ステータス'))
-                      linkKey = 'footer.links.status';
-                    else if (text?.includes('Contributors') || text?.includes('贡献') || text?.includes('貢献'))
-                      linkKey = 'footer.links.contributors';
-                    else if (text?.includes('GitHub')) linkKey = 'footer.links.github';
-                    else if (text?.includes('Support') || text?.includes('支持') || text?.includes('サポート'))
-                      linkKey = 'footer.links.support';
-
-                    return (
-                      <li class="mb-2">
-                        <a
-                          class="text-muted hover:text-gray-700 hover:underline dark:text-gray-400 transition duration-150 ease-in-out"
-                          href={href}
-                          aria-label={ariaLabel}
-                          data-i18n-key={linkKey}
-                        >
-                          {text}
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
+        links.map(({ titleKey, links }) => (
+          <div class="col-span-6 md:col-span-3 lg:col-span-2">
+            <div class="dark:text-gray-300 font-medium mb-2" data-i18n-key={titleKey}>
+              {t(titleKey, lang)}
             </div>
-          );
-        })
+            {links && Array.isArray(links) && links.length > 0 && (
+              <ul class="text-sm">
+                {links.map(({ textKey, href, ariaLabel }) => (
+                  <li class="mb-2">
+                    <a
+                      class="text-muted hover:text-gray-700 hover:underline dark:text-gray-400 transition duration-150 ease-in-out"
+                      href={href}
+                      aria-label={ariaLabel}
+                      data-i18n-key={textKey}
+                    >
+                      {t(textKey, lang)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))
       }
     </div>
     <div class="md:flex md:items-center md:justify-between py-6 md:py-8">
       {
         socialLinks?.length ? (
           <ul class="flex mb-4 md:order-1 -ml-2 md:ml-4 md:mb-0 rtl:ml-0 rtl:-mr-2 rtl:md:ml-0 rtl:md:mr-4">
-            {socialLinks.map(({ ariaLabel, href, text, icon }) => (
+            {socialLinks.map(({ ariaLabel, href, icon }) => (
               <li>
                 <a
                   class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
@@ -141,7 +93,6 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
                   href={href}
                 >
                   {icon && <Icon name={icon} class="w-5 h-5" />}
-                  <Fragment set:html={text} />
                 </a>
               </li>
             ))}
@@ -151,8 +102,8 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         )
       }
 
-      <div class="text-sm mr-4 dark:text-muted" data-i18n-key="footer.tagline">
-        <Fragment set:html={footNote} />
+      <div class="text-sm mr-4 dark:text-muted" data-i18n-key={footNoteKey}>
+        <Fragment set:html={t(footNoteKey, lang)} />
       </div>
     </div>
   </div>
