@@ -409,3 +409,65 @@ This config means that the website supports translation for articles, cheatsheet
   - In index page if current collection disabled support translations, we keep to show all contents.
 
 Help to refine this requirements and work out a solid task list first.
+
+### Fix i18n issues:
+
+#### Background
+
+I temporarily accepted your code right now. But we need to fix them all based on the current code base for i18n related things. One thing I noticed that there are so many constants, variables, and functions defined for SSR in previous steps inappropriately.
+
+But we are still using them, despite we are building a static website. For example, getServerTranslation and getLanguageFromRequest in file @src/i18n/index.ts, both of them are defined for SSR. But so many places use them inappropriately. We need to use the `t` function directly which is defined in the same file, and keep the second argument with a default value, we will get the right string for i18n. If you want a better performance, you can call `getCurrentLanguage` to get current language code, and then pass it to `t` function. This will avoid to call `getCurrentLanguage` internally for each `t` function call.
+
+Another and more important things are:
+
+- `t` + `getCurrentLanguage` is the only right way to implement i18n. We should not use any other solution.
+- `getCurrentLanguage` is the only right way to get preferred language code. We should not use any other solution.
+
+#### Tasks
+
+- I already commented out the unnecessary `getServerTranslation` and `getLanguageFromRequest` functions. I need your help to fix all places where they are used, and make sure that we are using the `t` function directly with the right second argument set for the current language code.
+- Have a comprehensive code review to ensure that all i18n are implemented in the right way. No other ways and no missing with directly magic strings. And no alternatives for `t` function and `getCurrentLanguage`.
+
+First understand the requirements, and then work out a solid plan with todo list. And then implement the plan.
+Before the plan finished, make sure all the following command lines all go well(no errors and critical warnings):
+
+- npm run fix
+- npm run check
+- npm run build
+
+### Fix i18n issues(2nd):
+
+Another issue is DEFAULT_LANGUAGE. It's be defined for the default value only if all ways failed to get current language code. That means no one can use it outside of @src/i18n/index.ts . I saw so many places to use it as the default language code. Here comes a wrong sample:
+
+```typescript
+import { t } from '~/i18n';
+import { Icon } from 'astro-icon/components';
+import { LANGUAGES, DEFAULT_LANGUAGE } from '~/i18n';
+
+// For SSG, use default language initially (will be updated on client)
+const currentLanguage = DEFAULT_LANGUAGE;
+const currentLangInfo = LANGUAGES[currentLanguage];
+```
+
+then they will use `currentLangInfo` to render the web page. That's totally wrong. They should use `t` function directly with the right second argument set for the current language code also(with `getCurrentLanguage`).
+
+For file `~/components/widgets/Header.astro` and `~/components/widgets/Footer.astro`, you can skip them for now, as we will conduct some special fix on them next round.
+
+### Fix i18n issues(3rd):
+
+For file `~/components/widgets/Header.astro` and `~/components/widgets/Footer.astro`, not only the wrong usage of `DEFAULT_LANGUAGE` or `t` function or any other functions we just mentioned.
+The bigger problem is that they not apply i18n, they redefine all these UI strings directly with a lot of magic strings and if-else statements. This is a serious issue that against our DRY principle.
+It needs to be fixed as soon as possible.
+
+### Fix i18n issues(4th):
+
+To make it more clear, let's move the following from file @src/utils/language.ts to @src/i18n/index.ts:
+
+- LANG_CODE_MAP
+- CONTENT_LANG_MAP
+- toContentLang
+- toI18nLang
+
+I found there still another duplicated definition in file @src/components/common/ContentFilter.astro, reduce them all and replace them with the ones in @src/i18n/index.ts.
+
+Keep things simple and consistent. It's important principle for this project. Have a comprehensive core review to avoid the simular isssues.
