@@ -23,6 +23,7 @@ publishDate: 2025-10-10
 draft: false
 featured: true
 image: '@assets/images/claude_code_plugins.webp'
+translations: ['en', 'zh', 'ja']
 ---
 
 ## 第1部:概念編 - AIアシスタントの「次元の壁」を打ち破る
