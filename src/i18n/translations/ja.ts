@@ -191,6 +191,7 @@ export const ja: Translation = {
   language: {
     selector: '言語',
     current: '現在の言語',
+    onlyAvailable: '現在の言語のみ利用可能',
   },
   social: {
     share: '共有',
