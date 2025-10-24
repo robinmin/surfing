@@ -471,3 +471,33 @@ To make it more clear, let's move the following from file @src/utils/language.ts
 I found there still another duplicated definition in file @src/components/common/ContentFilter.astro, reduce them all and replace them with the ones in @src/i18n/index.ts.
 
 Keep things simple and consistent. It's important principle for this project. Have a comprehensive core review to avoid the simular isssues.
+
+### Fix language switcher toggle issue
+
+#### Background and current issue
+
+After fixing the i18n issues for home page and the index page for each collection, we almost get the i18n ready for the whole website. But for the detail page of each collection, we still need to fix the language switcher toggle issue.
+
+Currently, the issues are:
+
+- The default option for language switcher toggle is not working properly. It always be `en` no matter which language is preferred by end users. but the UI is already be shown in the proper i18n language. Once use refresh the page, it will be fixed.
+
+Actually, this option stored in `localStorage` 's LANGUAGE_STORAGE_KEY. We need to figure out how to fix it at its initialization stage.
+
+- Static option vs dynamic option for language switcher toggle. Currently, the language switcher toggle is static, only `zh`, `en` and `ja`. But according to our previous enhancements for each collection's frontmatter definition in @src/content.config.ts, there is a new attribute `translations` has been added to support dynamic language switcher toggle. This new attribute means what kind of translations for current details are available. So the rule is quite simple:
+  - If `translations` is empty or this attribute is missing, that means only current language is available -- only current language is available for the language switcher toggle.
+  - If `translations` is not empty, the language switcher toggle is dynamic, only the languages in `translations` are available.
+
+- Enhance user click event to update the language switcher toggle. Currently, once user clicks on the language switcher toggle, we will store user preference and in localStorage. Then the language will be updated. It's lack of multilingual translation support.
+
+#### Solution and Implementation
+
+- Fix the default option for language switcher toggle.
+- Implement dynamic language switcher toggle based on the `translations` attribute in @src/content.config.ts.
+- Enhance user click event to update the language switcher toggle. We changed the mechanism to:
+  - If only current language is available, show a tooltips or notification to inform user that only current language is available.
+  - If multiple languages are available, show a dropdown menu with the available languages.
+  - Once user selects a language, update the language switcher toggle and store user preference in localStorage. Then prepare the new URL and redirect to the new URL, instead of trigger i18n update UIs directly.
+- Rule to compose new URL based on the selected language. For the details page, the URL of current page always be /{collection_name}/{language_code}/{slug}. When you prepare new URL, you should use the selected language code to replace the current language code in the URL. That's all. For example, if the current URL is /articles/cn/color_common_sense_and_tools and the user selects `ja` as the language, the new URL should be /articles/ja/color_common_sense_and_tools.
+
+This implementation will help end users to switch between different languages seamlessly for the same contents' details pages.
