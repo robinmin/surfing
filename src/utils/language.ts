@@ -1,22 +1,14 @@
-import type { SupportedLanguage } from '~/i18n';
-import { DEFAULT_LANGUAGE, getPreferredLanguage, getLanguageFromRequest } from '~/i18n';
+import {
+  DEFAULT_LANGUAGE,
+  getPreferredLanguage,
+  LANG_CODE_MAP,
+  CONTENT_LANG_MAP,
+  toContentLang,
+  toI18nLang,
+} from '~/i18n';
 
-/**
- * Language code mapping between i18n codes and content directory names
- * i18n: 'en' | 'zh' | 'ja'
- * content: 'en' | 'cn' | 'jp'
- */
-export const LANG_CODE_MAP: Record<SupportedLanguage, string> = {
-  en: 'en',
-  zh: 'cn',
-  ja: 'jp',
-};
-
-export const CONTENT_LANG_MAP: Record<string, SupportedLanguage> = {
-  en: 'en',
-  cn: 'zh',
-  jp: 'ja',
-};
+// Re-export for backward compatibility
+export { LANG_CODE_MAP, CONTENT_LANG_MAP, toContentLang, toI18nLang };
 
 /**
  * Extract language code from content ID
@@ -38,34 +30,10 @@ export function extractSlugFromId(id: string): string {
 }
 
 /**
- * Convert i18n language code to content directory name
- * Example: 'zh' -> 'cn', 'ja' -> 'jp'
+ * Get preferred language for content filtering
+ * For static sites, this uses client-side preferences (localStorage/cookies/browser)
  */
-export function toContentLang(i18nLang: SupportedLanguage): string {
-  return LANG_CODE_MAP[i18nLang] || i18nLang;
-}
-
-/**
- * Convert content directory name to i18n language code
- * Example: 'cn' -> 'zh', 'jp' -> 'ja'
- */
-export function toI18nLang(contentLang: string): SupportedLanguage {
-  return CONTENT_LANG_MAP[contentLang] || (contentLang as SupportedLanguage);
-}
-
-/**
- * Get preferred language from various sources with priority:
- * 1. URL path (if exists)
- * 2. localStorage/cookie (user preference)
- * 3. Accept-Language header
- * 4. Default language
- */
-export function getPreferredLanguageForContent(request?: Request): string {
-  if (request) {
-    const i18nLang = getLanguageFromRequest(request);
-    return toContentLang(i18nLang);
-  }
-
+export function getPreferredLanguageForContent(): string {
   const i18nLang = getPreferredLanguage();
   return toContentLang(i18nLang);
 }
