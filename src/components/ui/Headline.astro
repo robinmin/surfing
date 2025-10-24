@@ -25,19 +25,21 @@ const {
       {tagline && (
         <p
           class="text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase"
-          data-i18n={taglineI18n}
+          data-i18n-key={taglineI18n}
           set:html={tagline}
         />
       )}
       {title && (
         <h2
           class={twMerge('font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl', titleClass)}
-          data-i18n={titleI18n}
+          data-i18n-key={titleI18n}
           set:html={title}
         />
       )}
 
-      {subtitle && <p class={twMerge('mt-4 text-muted', subtitleClass)} data-i18n={subtitleI18n} set:html={subtitle} />}
+      {subtitle && (
+        <p class={twMerge('mt-4 text-muted', subtitleClass)} data-i18n-key={subtitleI18n} set:html={subtitle} />
+      )}
     </div>
   )
 }
