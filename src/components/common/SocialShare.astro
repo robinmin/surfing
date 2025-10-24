@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { DEFAULT_LANGUAGE, getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 
 export interface Props {
   text: string;
@@ -9,16 +9,16 @@ export interface Props {
 }
 
 const { text, url, class: className = 'inline-block' } = Astro.props;
-const t = getServerTranslation(DEFAULT_LANGUAGE);
+const lang = getCurrentLanguage();
 ---
 
 <div class={className}>
-  <span class="align-super font-bold text-slate-500 dark:text-slate-400" data-i18n="social.share"
-    >{t('social.share')}:</span
+  <span class="align-super font-bold text-slate-500 dark:text-slate-400" data-i18n-key="social.share"
+    >{t('social.share', lang)}:</span
   >
   <button
     class="ml-2 rtl:ml-0 rtl:mr-2"
-    title={t('social.twitterShare')}
+    title={t('social.twitterShare', lang)}
     data-aw-social-share="twitter"
     data-aw-url={url}
     data-aw-text={text}
@@ -29,7 +29,7 @@ const t = getServerTranslation(DEFAULT_LANGUAGE);
   </button>
   <button
     class="ml-2 rtl:ml-0 rtl:mr-2"
-    title={t('social.facebookShare')}
+    title={t('social.facebookShare', lang)}
     data-aw-social-share="facebook"
     data-aw-url={url}
     ><Icon
@@ -39,7 +39,7 @@ const t = getServerTranslation(DEFAULT_LANGUAGE);
   </button>
   <button
     class="ml-2 rtl:ml-0 rtl:mr-2"
-    title={t('social.linkedinShare')}
+    title={t('social.linkedinShare', lang)}
     data-aw-social-share="linkedin"
     data-aw-url={url}
     data-aw-text={text}
@@ -50,7 +50,7 @@ const t = getServerTranslation(DEFAULT_LANGUAGE);
   </button>
   <button
     class="ml-2 rtl:ml-0 rtl:mr-2"
-    title={t('social.whatsappShare')}
+    title={t('social.whatsappShare', lang)}
     data-aw-social-share="whatsapp"
     data-aw-url={url}
     data-aw-text={text}
@@ -61,7 +61,7 @@ const t = getServerTranslation(DEFAULT_LANGUAGE);
   </button>
   <button
     class="ml-2 rtl:ml-0 rtl:mr-2"
-    title={t('social.emailShare')}
+    title={t('social.emailShare', lang)}
     data-aw-social-share="mail"
     data-aw-url={url}
     data-aw-text={text}
