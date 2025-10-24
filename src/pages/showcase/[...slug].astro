@@ -41,9 +41,16 @@ const metadata = {
     ...showcase.data.metadata?.openGraph,
   },
 };
+
+// Language selector configuration for detail pages
+const languageSelectorConfig = {
+  translations: showcase.data.translations || ['en'],
+  isDetailPage: true,
+  collectionName: 'showcase',
+};
 ---
 
-<ShowcaseLayout metadata={metadata}>
+<ShowcaseLayout metadata={metadata} languageSelectorConfig={languageSelectorConfig}>
   <!-- Custom External Styles -->
   <Fragment slot="head">
     {showcase.data.externalCSS && showcase.data.externalCSS.map((url: string) => <link rel="stylesheet" href={url} />)}
