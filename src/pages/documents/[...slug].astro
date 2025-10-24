@@ -50,11 +50,18 @@ const metadata = {
     ...document.data.metadata?.openGraph,
   },
 };
+
+// Language selector configuration for detail pages
+const languageSelectorConfig = {
+  translations: document.data.translations || ['en'],
+  isDetailPage: true,
+  collectionName: 'documents',
+};
 ---
 
 {
   useExternalLayout ? (
-    <ExternalPageLayout metadata={metadata} entry={document}>
+    <ExternalPageLayout metadata={metadata} entry={document} languageSelectorConfig={languageSelectorConfig}>
       <div set:html={document.body} />
     </ExternalPageLayout>
   ) : (
@@ -69,6 +76,7 @@ const metadata = {
         author: document.data.author,
       }}
       metadata={metadata}
+      languageSelectorConfig={languageSelectorConfig}
     >
       <Content />
     </MarkdownLayout>
