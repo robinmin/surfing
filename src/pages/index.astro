@@ -2,15 +2,13 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
-import { getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 
-// Static site: use default language
-const lang = 'en';
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 const metadata = {
-  title: `Surfing — ${t('site.description')}`,
-  description: t('site.description'),
+  title: `Surfing — ${t('site.description', lang)}`,
+  description: t('site.description', lang),
   ignoreTitleTemplate: true,
 };
 ---
@@ -22,7 +20,7 @@ const metadata = {
     actions={[
       {
         variant: 'primary',
-        text: t('common.browse'),
+        text: t('common.browse', lang),
         href: '/browse',
         icon: 'tabler:compass',
       },
@@ -36,14 +34,14 @@ const metadata = {
       </div>
     </Fragment>
     <Fragment slot="title">
-      <span data-i18n="pages.home.title">{t('pages.home.title')}</span>
-      <span class="text-accent dark:text-white" data-i18n="site.name">{t('site.name')}</span>
+      <span data-i18n-key="pages.home.title">{t('pages.home.title', lang)}</span>
+      <span class="text-accent dark:text-white" data-i18n-key="site.name">{t('site.name', lang)}</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      <span data-i18n="pages.home.subtitle">{t('pages.home.subtitle')}</span>
+      <span data-i18n-key="pages.home.subtitle">{t('pages.home.subtitle', lang)}</span>
     </Fragment>
   </Hero>
 
-  <BlogLatestPosts title={t('pages.home.latestContent')} linkUrl="/browse" linkText={t('common.browse')} />
+  <BlogLatestPosts title={t('pages.home.latestContent', lang)} linkUrl="/browse" linkText={t('common.browse', lang)} />
 </Layout>
