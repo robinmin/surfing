@@ -41,8 +41,15 @@ const metadata = {
     ...cheatsheet.data.metadata?.openGraph,
   },
 };
+
+// Language selector configuration for detail pages
+const languageSelectorConfig = {
+  translations: cheatsheet.data.translations || ['en'],
+  isDetailPage: true,
+  collectionName: 'cheatsheets',
+};
 ---
 
-<ExternalPageLayout metadata={metadata} entry={cheatsheet}>
+<ExternalPageLayout metadata={metadata} entry={cheatsheet} languageSelectorConfig={languageSelectorConfig}>
   <div set:html={renderedContent} />
 </ExternalPageLayout>
