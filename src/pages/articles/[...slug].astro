@@ -34,6 +34,13 @@ const metadata = {
     ...article.data.metadata?.openGraph,
   },
 };
+
+// Language selector configuration for detail pages
+const languageSelectorConfig = {
+  translations: article.data.translations || ['en'],
+  isDetailPage: true,
+  collectionName: 'articles',
+};
 ---
 
 <MarkdownLayout
@@ -47,6 +54,7 @@ const metadata = {
     author: article.data.author,
   }}
   metadata={metadata}
+  languageSelectorConfig={languageSelectorConfig}
 >
   <Content />
 </MarkdownLayout>
