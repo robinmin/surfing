@@ -3,16 +3,14 @@ import { getCollection } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import { getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 
 function extractLanguageFromId(id: string): string {
   const match = id.match(/^([a-z]{2})\//);
   return match ? match[1] : 'en';
 }
 
-// Static site: use default language
-const lang = 'en';
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 // Get all cheatsheets (NO server-side filtering for static build - client will filter)
 const cheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
@@ -25,8 +23,8 @@ const sortedCheatsheets = cheatsheets.sort(
 );
 
 const metadata = {
-  title: t('pages.cheatsheets.title'),
-  description: t('pages.cheatsheets.description'),
+  title: t('pages.cheatsheets.title', lang),
+  description: t('pages.cheatsheets.description', lang),
 };
 ---
 
@@ -34,10 +32,10 @@ const metadata = {
   <!-- Hero Section -->
   <Hero>
     <Fragment slot="title">
-      <span data-i18n="pages.cheatsheets.heroTitle">{t('pages.cheatsheets.heroTitle')}</span>
+      <span data-i18n-key="pages.cheatsheets.heroTitle">{t('pages.cheatsheets.heroTitle', lang)}</span>
     </Fragment>
     <Fragment slot="subtitle">
-      <span data-i18n="pages.cheatsheets.heroSubtitle">{t('pages.cheatsheets.heroSubtitle')}</span>
+      <span data-i18n-key="pages.cheatsheets.heroSubtitle">{t('pages.cheatsheets.heroSubtitle', lang)}</span>
     </Fragment>
   </Hero>
 
@@ -48,12 +46,12 @@ const metadata = {
         <div class="mb-12 text-center">
           <h2
             class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl"
-            data-i18n="pages.cheatsheets.featuredCheatsheets"
+            data-i18n-key="pages.cheatsheets.featuredCheatsheets"
           >
-            {t('pages.cheatsheets.featuredCheatsheets')}
+            {t('pages.cheatsheets.featuredCheatsheets', lang)}
           </h2>
-          <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n="pages.cheatsheets.featuredDesc">
-            {t('pages.cheatsheets.featuredDesc')}
+          <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n-key="pages.cheatsheets.featuredDesc">
+            {t('pages.cheatsheets.featuredDesc', lang)}
           </p>
         </div>
 
@@ -74,7 +72,7 @@ const metadata = {
                               : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
                         }`}
                       >
-                        {t(`pages.cheatsheets.difficulty.${cheatsheet.data.difficulty}`)}
+                        {t(`pages.cheatsheets.difficulty.${cheatsheet.data.difficulty}`, lang)}
                       </span>
                     </div>
                   )}
@@ -144,12 +142,16 @@ const metadata = {
     <div class="mb-12 text-center">
       <h2
         class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl"
-        data-i18n="pages.cheatsheets.allCheatsheets"
+        data-i18n-key="pages.cheatsheets.allCheatsheets"
       >
-        {featuredCheatsheets.length > 0 ? t('pages.cheatsheets.allCheatsheets') : t('pages.cheatsheets.title')}
+        {
+          featuredCheatsheets.length > 0
+            ? t('pages.cheatsheets.allCheatsheets', lang)
+            : t('pages.cheatsheets.title', lang)
+        }
       </h2>
-      <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n="pages.cheatsheets.allCheatsheetsDesc">
-        {t('pages.cheatsheets.allCheatsheetsDesc')}
+      <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n-key="pages.cheatsheets.allCheatsheetsDesc">
+        {t('pages.cheatsheets.allCheatsheetsDesc', lang)}
       </p>
     </div>
 
@@ -163,12 +165,12 @@ const metadata = {
           </div>
           <h3
             class="text-xl font-medium text-gray-900 dark:text-white mb-2"
-            data-i18n="pages.cheatsheets.noCheatSheetsYet"
+            data-i18n-key="pages.cheatsheets.noCheatSheetsYet"
           >
-            {t('pages.cheatsheets.noCheatSheetsYet')}
+            {t('pages.cheatsheets.noCheatSheetsYet', lang)}
           </h3>
-          <p class="text-gray-600 dark:text-gray-400 mb-6" data-i18n="pages.cheatsheets.startCreating">
-            {t('pages.cheatsheets.startCreating')}
+          <p class="text-gray-600 dark:text-gray-400 mb-6" data-i18n-key="pages.cheatsheets.startCreating">
+            {t('pages.cheatsheets.startCreating', lang)}
           </p>
           <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-left max-w-lg mx-auto">
             <code class="text-sm text-gray-800 dark:text-gray-200">
@@ -194,13 +196,13 @@ const metadata = {
                               : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
                         }`}
                       >
-                        {t(`pages.cheatsheets.difficulty.${cheatsheet.data.difficulty}`)}
+                        {t(`pages.cheatsheets.difficulty.${cheatsheet.data.difficulty}`, lang)}
                       </span>
                     )}
 
                     {cheatsheet.data.format && (
                       <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100 uppercase font-medium">
-                        {t(`pages.cheatsheets.format.${cheatsheet.data.format}`)}
+                        {t(`pages.cheatsheets.format.${cheatsheet.data.format}`, lang)}
                       </span>
                     )}
                   </div>
@@ -247,7 +249,7 @@ const metadata = {
                       )}
                       {cheatsheet.data.generatedBy && (
                         <span>
-                          {t('pages.cheatsheets.generatedBy')} {cheatsheet.data.generatedBy}
+                          {t('pages.cheatsheets.generatedBy', lang)} {cheatsheet.data.generatedBy}
                         </span>
                       )}
                     </div>
