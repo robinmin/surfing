@@ -1,5 +1,5 @@
 ---
-import { getLanguageFromRequest, getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 import { getBlogPermalink } from '~/utils/permalinks';
 import { getRelatedPosts } from '~/utils/blog';
 import type { Post } from '~/types';
@@ -11,8 +11,7 @@ export interface Props {
 }
 
 const { post } = Astro.props;
-const lang = getLanguageFromRequest(Astro.request);
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 const relatedPosts = post.tags ? await getRelatedPosts(post, 4) : [];
 ---
@@ -20,7 +19,11 @@ const relatedPosts = post.tags ? await getRelatedPosts(post, 4) : [];
 {
   relatedPosts.length > 0 && (
     <section class="pt-0 lg:pt-0 md:pt-0">
-      <Headline title={t('blog.relatedPosts')} linkText={t('blog.viewAllPosts')} linkUrl={getBlogPermalink()} />
+      <Headline
+        title={t('blog.relatedPosts', lang)}
+        linkText={t('blog.viewAllPosts', lang)}
+        linkUrl={getBlogPermalink()}
+      />
       <Grid posts={relatedPosts} />
     </section>
   )
