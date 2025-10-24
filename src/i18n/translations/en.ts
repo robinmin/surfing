@@ -189,6 +189,7 @@ export const en = {
   language: {
     selector: 'Language',
     current: 'Current language',
+    onlyAvailable: 'Only current language available',
   },
   social: {
     share: 'Share',
@@ -437,6 +438,7 @@ export type Translation = {
   language: {
     selector: string;
     current: string;
+    onlyAvailable: string;
   };
   social: {
     share: string;
