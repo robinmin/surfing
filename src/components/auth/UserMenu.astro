@@ -54,7 +54,7 @@ const lang = (Astro.currentLocale || getCurrentLanguage()) as SupportedLanguage;
       />
       <span
         class="text-sm font-medium text-red-700 dark:text-red-300 group-hover:text-red-800 dark:group-hover:text-red-200 transition-colors duration-150"
-        >{t('auth.signOut', lang)}</span
+        data-i18n-key="auth.signOut">{t('auth.signOut', lang)}</span
       >
     </button>
   </div>
