@@ -1,5 +1,5 @@
 ---
-import { t } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 import { Icon } from 'astro-icon/components';
 import Logo from '~/components/Logo.astro';
 import ToggleTheme from '~/components/common/ToggleTheme.astro';
@@ -13,7 +13,7 @@ import { trimSlash, getAsset } from '~/utils/permalinks';
 import type { CallToAction } from '~/types';
 
 interface Link {
-  text?: string;
+  textKey?: string;
   href?: string;
   ariaLabel?: string;
   icon?: string;
@@ -49,6 +49,7 @@ const {
   position = 'center',
 } = Astro.props;
 
+const lang = getCurrentLanguage();
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
 ---
 
@@ -85,49 +86,39 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
     </div>
     <nav
       class="items-center w-full md:w-auto hidden md:flex md:mx-5 text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:justify-self-center"
-      aria-label={t('navigation.mainNavigation')}
+      aria-label={t('navigation.mainNavigation', lang)}
     >
       <ul
         class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium md:justify-center"
       >
         {
-          links.map(({ text, href, links }) => (
+          links.map(({ textKey, href, links }) => (
             <li class={links?.length ? 'dropdown' : ''}>
               {links?.length ? (
                 <>
                   <button
                     type="button"
                     class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap main-nav-item"
-                    data-i18n-key="nav.content"
+                    data-i18n-key={textKey}
                   >
-                    {t('nav.content')}{' '}
+                    {t(textKey, lang)}{' '}
                     <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
                   </button>
                   <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
-                    {links.map(({ href: href2 }) => {
-                      // Map dropdown link text to nav keys based on href
-                      let navKey = '';
-                      if (href2?.includes('/browse')) navKey = 'nav.browse';
-                      else if (href2?.includes('/articles')) navKey = 'nav.articles';
-                      else if (href2?.includes('/showcase')) navKey = 'nav.showcase';
-                      else if (href2?.includes('/documents')) navKey = 'nav.documents';
-                      else if (href2?.includes('/cheatsheets')) navKey = 'nav.cheatsheets';
-
-                      return (
-                        <li>
-                          <a
-                            class:list={[
-                              'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap',
-                              { 'aw-link-active': href2 === currentPath },
-                            ]}
-                            href={href2}
-                            data-i18n-key={navKey}
-                          >
-                            {t(navKey)}
-                          </a>
-                        </li>
-                      );
-                    })}
+                    {links.map(({ textKey: subTextKey, href: href2 }) => (
+                      <li>
+                        <a
+                          class:list={[
+                            'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap',
+                            { 'aw-link-active': href2 === currentPath },
+                          ]}
+                          href={href2}
+                          data-i18n-key={subTextKey}
+                        >
+                          {t(subTextKey, lang)}
+                        </a>
+                      </li>
+                    ))}
                   </ul>
                 </>
               ) : (
@@ -137,11 +128,9 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                     { 'aw-link-active': href === currentPath },
                   ]}
                   href={href}
-                  data-i18n-key={
-                    href?.includes('/about') ? 'nav.about' : href?.includes('/cheatsheets') ? 'nav.cheatsheets' : ''
-                  }
+                  data-i18n-key={textKey}
                 >
-                  {text}
+                  {t(textKey, lang)}
                 </a>
               )}
             </li>
@@ -163,7 +152,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
             showRssFeed && (
               <a
                 class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
-                aria-label={t('navigation.rssFeed')}
+                aria-label={t('navigation.rssFeed', lang)}
                 href={getAsset('/rss.xml')}
               >
                 <Icon name="tabler:rss" class="w-5 h-5" />
@@ -180,11 +169,12 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
           {
             actions?.length ? (
               <span class="ml-4 rtl:ml-0 rtl:mr-4">
-                {actions.map((btnProps) => (
+                {actions.map(({ textKey, ...btnProps }) => (
                   <Button
                     {...btnProps}
+                    text={t(textKey, lang)}
                     class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto"
-                    data-i18n-key="nav.explore"
+                    data-i18n-key={textKey}
                   />
                 ))}
               </span>
