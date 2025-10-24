@@ -1,12 +1,10 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import { getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 import { getCollection } from 'astro:content';
 
-// Static site: use default language
-const lang = 'en';
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 const showcases = await getCollection('showcase', ({ data }) => data.draft !== true);
 const featuredShowcases = showcases.filter((item) => item.data.featured);
@@ -15,8 +13,8 @@ const sortedShowcases = showcases.sort(
 );
 
 const metadata = {
-  title: t('pages.showcase.title'),
-  description: t('pages.showcase.description'),
+  title: t('pages.showcase.title', lang),
+  description: t('pages.showcase.description', lang),
 };
 ---
 
@@ -24,10 +22,10 @@ const metadata = {
   <!-- Hero Section -->
   <Hero>
     <Fragment slot="title">
-      <span data-i18n="pages.showcase.heroTitle">{t('pages.showcase.heroTitle')}</span>
+      <span data-i18n-key="pages.showcase.heroTitle">{t('pages.showcase.heroTitle', lang)}</span>
     </Fragment>
     <Fragment slot="subtitle">
-      <span data-i18n="pages.showcase.heroSubtitle">{t('pages.showcase.heroSubtitle')}</span>
+      <span data-i18n-key="pages.showcase.heroSubtitle">{t('pages.showcase.heroSubtitle', lang)}</span>
     </Fragment>
   </Hero>
 
@@ -38,12 +36,12 @@ const metadata = {
         <div class="mb-12 text-center">
           <h2
             class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl"
-            data-i18n="pages.showcase.featuredProjects"
+            data-i18n-key="pages.showcase.featuredProjects"
           >
-            {t('pages.showcase.featuredProjects')}
+            {t('pages.showcase.featuredProjects', lang)}
           </h2>
-          <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n="pages.showcase.featuredDesc">
-            {t('pages.showcase.featuredDesc')}
+          <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n-key="pages.showcase.featuredDesc">
+            {t('pages.showcase.featuredDesc', lang)}
           </p>
         </div>
 
@@ -64,9 +62,9 @@ const metadata = {
                 <div class="flex items-center justify-between mb-4">
                   <span
                     class="inline-block px-3 py-1 text-sm bg-purple-100 text-purple-800 rounded-full dark:bg-purple-900 dark:text-purple-200"
-                    data-i18n="pages.showcase.featured"
+                    data-i18n-key="pages.showcase.featured"
                   >
-                    {t('pages.showcase.featured')}
+                    {t('pages.showcase.featured', lang)}
                   </span>
                   <time class="text-sm text-gray-500 dark:text-gray-400">
                     {new Date(showcase.data.publishDate).toLocaleDateString()}
@@ -112,12 +110,12 @@ const metadata = {
     <div class="mb-12 text-center">
       <h2
         class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl"
-        data-i18n="pages.showcase.allProjects"
+        data-i18n-key="pages.showcase.allProjects"
       >
-        {t('pages.showcase.allProjects')}
+        {t('pages.showcase.allProjects', lang)}
       </h2>
-      <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n="pages.showcase.allProjectsDesc">
-        {t('pages.showcase.allProjectsDesc')}
+      <p class="mt-4 text-lg text-gray-600 dark:text-gray-300" data-i18n-key="pages.showcase.allProjectsDesc">
+        {t('pages.showcase.allProjectsDesc', lang)}
       </p>
     </div>
 
@@ -140,9 +138,9 @@ const metadata = {
                 {showcase.data.featured && (
                   <span
                     class="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full dark:bg-purple-900 dark:text-purple-200"
-                    data-i18n="pages.showcase.featured"
+                    data-i18n-key="pages.showcase.featured"
                   >
-                    {t('pages.showcase.featured')}
+                    {t('pages.showcase.featured', lang)}
                   </span>
                 )}
                 <time class="text-sm text-gray-500 dark:text-gray-400">
@@ -194,11 +192,11 @@ const metadata = {
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-            <h3 class="text-lg font-medium mb-2" data-i18n="pages.showcase.noShowcasesYet">
-              {t('pages.showcase.noShowcasesYet')}
+            <h3 class="text-lg font-medium mb-2" data-i18n-key="pages.showcase.noShowcasesYet">
+              {t('pages.showcase.noShowcasesYet', lang)}
             </h3>
-            <p class="text-sm" data-i18n="pages.showcase.checkBackSoon">
-              {t('pages.showcase.checkBackSoon')}
+            <p class="text-sm" data-i18n-key="pages.showcase.checkBackSoon">
+              {t('pages.showcase.checkBackSoon', lang)}
             </p>
           </div>
         </div>
