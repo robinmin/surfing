@@ -4,11 +4,10 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { getAllContent, filterContent, sortContent, extractTags, extractCategories } from '~/utils/content';
 import { findImage } from '~/utils/images';
-import { getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 
 // Static site: use default language
-const lang = 'en';
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 // Get all content for the browser
 const allContent = await getAllContent();
@@ -27,8 +26,8 @@ const allTags = extractTags(publishedContent);
 const allCategories = extractCategories(publishedContent);
 
 const metadata = {
-  title: t('pages.browse.title'),
-  description: t('pages.browse.description'),
+  title: t('pages.browse.title', lang),
+  description: t('pages.browse.description', lang),
 };
 ---
 
@@ -36,10 +35,10 @@ const metadata = {
   <!-- Hero Section -->
   <Hero>
     <Fragment slot="title">
-      <span data-i18n="pages.browse.heroTitle">{t('pages.browse.heroTitle')}</span>
+      <span data-i18n-key="pages.browse.heroTitle">{t('pages.browse.heroTitle', lang)}</span>
     </Fragment>
     <Fragment slot="subtitle">
-      <span data-i18n="pages.browse.heroSubtitle">{t('pages.browse.heroSubtitle')}</span>
+      <span data-i18n-key="pages.browse.heroSubtitle">{t('pages.browse.heroSubtitle', lang)}</span>
     </Fragment>
   </Hero>
 
@@ -53,7 +52,7 @@ const metadata = {
           <input
             type="text"
             id="searchInput"
-            placeholder={t('pages.browse.searchPlaceholder')}
+            placeholder={t('pages.browse.searchPlaceholder', lang)}
             data-i18n-placeholder="pages.browse.searchPlaceholder"
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           />
@@ -64,11 +63,11 @@ const metadata = {
           id="typeFilter"
           class="px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white"
         >
-          <option value="" data-i18n="pages.browse.allTypes">{t('pages.browse.allTypes')}</option>
-          <option value="articles" data-i18n="nav.articles">{t('nav.articles')}</option>
-          <option value="post" data-i18n="pages.browse.blogPost">{t('pages.browse.blogPost')}</option>
-          <option value="showcase" data-i18n="nav.showcase">{t('nav.showcase')}</option>
-          <option value="documents" data-i18n="nav.documents">{t('nav.documents')}</option>
+          <option value="" data-i18n-key="pages.browse.allTypes">{t('pages.browse.allTypes', lang)}</option>
+          <option value="articles" data-i18n-key="nav.articles">{t('nav.articles', lang)}</option>
+          <option value="post" data-i18n-key="pages.browse.blogPost">{t('pages.browse.blogPost', lang)}</option>
+          <option value="showcase" data-i18n-key="nav.showcase">{t('nav.showcase', lang)}</option>
+          <option value="documents" data-i18n-key="nav.documents">{t('nav.documents', lang)}</option>
         </select>
 
         <!-- Sort Options -->
@@ -76,17 +75,21 @@ const metadata = {
           id="sortFilter"
           class="px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white"
         >
-          <option value="date-desc" data-i18n="pages.browse.latestFirst">{t('pages.browse.latestFirst')}</option>
-          <option value="date-asc" data-i18n="pages.browse.oldestFirst">{t('pages.browse.oldestFirst')}</option>
-          <option value="title-asc" data-i18n="pages.browse.titleAZ">{t('pages.browse.titleAZ')}</option>
-          <option value="title-desc" data-i18n="pages.browse.titleZA">{t('pages.browse.titleZA')}</option>
+          <option value="date-desc" data-i18n-key="pages.browse.latestFirst"
+            >{t('pages.browse.latestFirst', lang)}</option
+          >
+          <option value="date-asc" data-i18n-key="pages.browse.oldestFirst"
+            >{t('pages.browse.oldestFirst', lang)}</option
+          >
+          <option value="title-asc" data-i18n-key="pages.browse.titleAZ">{t('pages.browse.titleAZ', lang)}</option>
+          <option value="title-desc" data-i18n-key="pages.browse.titleZA">{t('pages.browse.titleZA', lang)}</option>
         </select>
       </div>
 
       <!-- Tag Filter -->
       <div class="mb-4">
-        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-i18n="pages.browse.filterByTags">
-          {t('pages.browse.filterByTags')}
+        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-i18n-key="pages.browse.filterByTags">
+          {t('pages.browse.filterByTags', lang)}
         </h3>
         <div class="flex flex-wrap gap-2" id="tagFilter">
           {
@@ -104,8 +107,11 @@ const metadata = {
 
       <!-- Category Filter -->
       <div class="mb-6">
-        <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-i18n="pages.browse.filterByCategory">
-          {t('pages.browse.filterByCategory')}
+        <h3
+          class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          data-i18n-key="pages.browse.filterByCategory"
+        >
+          {t('pages.browse.filterByCategory', lang)}
         </h3>
         <div class="flex flex-wrap gap-2" id="categoryFilter">
           {
@@ -173,7 +179,7 @@ const metadata = {
                             ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
                             : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                   }`}
-                  data-i18n={
+                  data-i18n-key={
                     contentType === 'articles'
                       ? 'pages.browse.article'
                       : contentType === 'showcase'
@@ -186,14 +192,14 @@ const metadata = {
                   }
                 >
                   {contentType === 'articles'
-                    ? t('pages.browse.article')
+                    ? t('pages.browse.article', lang)
                     : contentType === 'showcase'
-                      ? t('pages.browse.showcase')
+                      ? t('pages.browse.showcase', lang)
                       : contentType === 'documents'
-                        ? t('pages.browse.document')
+                        ? t('pages.browse.document', lang)
                         : contentType === 'cheatsheets'
                           ? 'Cheatsheet'
-                          : t('pages.browse.blogPost')}
+                          : t('pages.browse.blogPost', lang)}
                 </span>
 
                 <h3 class="text-xl font-bold mb-2 dark:text-white">
@@ -203,7 +209,7 @@ const metadata = {
                 </h3>
 
                 <p class="text-gray-600 dark:text-gray-300 mb-4 text-sm">
-                  {entry.data.description || entry.data.excerpt || t('pages.articles.noDescription')}
+                  {entry.data.description || entry.data.excerpt || t('pages.articles.noDescription', lang)}
                 </p>
 
                 {/* Tags */}
@@ -227,11 +233,11 @@ const metadata = {
                   <span>
                     {entry.data.publishDate
                       ? new Date(entry.data.publishDate).toLocaleDateString()
-                      : t('pages.articles.noDate')}
+                      : t('pages.articles.noDate', lang)}
                   </span>
                   {entry.data.readingTime && (
                     <span>
-                      {entry.data.readingTime} {t('pages.articles.minRead')}
+                      {entry.data.readingTime} {t('pages.articles.minRead', lang)}
                     </span>
                   )}
                 </div>
@@ -253,10 +259,10 @@ const metadata = {
             d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
           ></path>
         </svg>
-        <h3 class="text-lg font-medium mb-2" data-i18n="pages.browse.noContentFound">
-          {t('pages.browse.noContentFound')}
+        <h3 class="text-lg font-medium mb-2" data-i18n-key="pages.browse.noContentFound">
+          {t('pages.browse.noContentFound', lang)}
         </h3>
-        <p class="text-sm" data-i18n="pages.browse.adjustFilters">{t('pages.browse.adjustFilters')}</p>
+        <p class="text-sm" data-i18n-key="pages.browse.adjustFilters">{t('pages.browse.adjustFilters', lang)}</p>
       </div>
     </div>
   </section>
