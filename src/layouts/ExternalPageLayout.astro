@@ -11,9 +11,14 @@ import type { CollectionEntry } from 'astro:content';
 export interface Props {
   metadata?: MetaData;
   entry: CollectionEntry<'documents'> | CollectionEntry<'cheatsheets'>;
+  languageSelectorConfig?: {
+    translations?: string[];
+    isDetailPage?: boolean;
+    collectionName?: string;
+  };
 }
 
-const { metadata, entry } = Astro.props;
+const { metadata, entry, languageSelectorConfig } = Astro.props;
 const { data: frontmatter } = entry;
 
 // Determine if we should preserve the original HTML structure
@@ -39,7 +44,7 @@ const cheatsheetFrontmatter = isCheatsheet ? (frontmatter as CollectionEntry<'ch
 
   <Announcement />
 
-  <Header {...headerData} isSticky showRssFeed showToggleTheme />
+  <Header {...headerData} isSticky showRssFeed showToggleTheme languageSelectorConfig={languageSelectorConfig} />
 
   <main>
     <!-- Document Header - Skip for cheatsheets to preserve author-provided title -->
