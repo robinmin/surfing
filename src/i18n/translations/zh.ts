@@ -187,6 +187,7 @@ export const zh: Translation = {
   language: {
     selector: '语言',
     current: '当前语言',
+    onlyAvailable: '仅当前语言可用',
   },
   social: {
     share: '分享',
