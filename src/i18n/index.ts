@@ -20,6 +20,39 @@ const translations: Record<SupportedLanguage, Translation> = {
 export const DEFAULT_LANGUAGE: SupportedLanguage = 'en';
 export const LANGUAGE_STORAGE_KEY = 'surfing-language';
 
+/**
+ * Language code mapping between i18n codes and content directory names
+ * i18n: 'en' | 'zh' | 'ja'
+ * content: 'en' | 'cn' | 'jp'
+ */
+export const LANG_CODE_MAP: Record<SupportedLanguage, string> = {
+  en: 'en',
+  zh: 'cn',
+  ja: 'jp',
+};
+
+export const CONTENT_LANG_MAP: Record<string, SupportedLanguage> = {
+  en: 'en',
+  cn: 'zh',
+  jp: 'ja',
+};
+
+/**
+ * Convert i18n language code to content directory name
+ * Example: 'zh' -> 'cn', 'ja' -> 'jp'
+ */
+export function toContentLang(i18nLang: SupportedLanguage): string {
+  return LANG_CODE_MAP[i18nLang] || i18nLang;
+}
+
+/**
+ * Convert content directory name to i18n language code
+ * Example: 'cn' -> 'zh', 'jp' -> 'ja'
+ */
+export function toI18nLang(contentLang: string): SupportedLanguage {
+  return CONTENT_LANG_MAP[contentLang] || (contentLang as SupportedLanguage);
+}
+
 // Get nested property from object using dot notation
 function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((current, key) => current?.[key], obj);
@@ -83,7 +116,10 @@ export function getCurrentLanguage(): SupportedLanguage {
 }
 
 // Translation function
-export function t(key: string, lang?: SupportedLanguage): string {
+export function t(key: string | undefined, lang?: SupportedLanguage): string {
+  // Handle undefined or empty keys
+  if (!key) return '';
+
   const currentLang = lang || getCurrentLanguage();
   const translation = translations[currentLang];
 
@@ -100,50 +136,4 @@ export function t(key: string, lang?: SupportedLanguage): string {
   }
 
   return value;
-}
-
-// Get translation for server-side rendering
-export function getServerTranslation(lang: SupportedLanguage) {
-  return (key: string): string => t(key, lang);
-}
-
-// Get language from request (for SSR)
-export function getLanguageFromRequest(request: Request): SupportedLanguage {
-  // Check URL params first
-  const url = new URL(request.url);
-  const urlLang = url.searchParams.get('lang') as SupportedLanguage;
-  if (urlLang && Object.keys(LANGUAGES).includes(urlLang)) {
-    return urlLang;
-  }
-
-  // Check cookies
-  const cookieHeader = request.headers.get('cookie');
-  if (cookieHeader) {
-    const cookies = Object.fromEntries(
-      cookieHeader.split(';').map((cookie) => {
-        const [name, value] = cookie.trim().split('=');
-        return [name, value];
-      })
-    );
-
-    const cookieLang = cookies[LANGUAGE_STORAGE_KEY] as SupportedLanguage;
-    if (cookieLang && Object.keys(LANGUAGES).includes(cookieLang)) {
-      return cookieLang;
-    }
-  }
-
-  // Check Accept-Language header
-  const acceptLanguage = request.headers.get('accept-language');
-  if (acceptLanguage) {
-    const browserLangs = acceptLanguage
-      .split(',')
-      .map((lang) => lang.split(';')[0].trim().split('-')[0])
-      .filter((lang) => Object.keys(LANGUAGES).includes(lang));
-
-    if (browserLangs.length > 0) {
-      return browserLangs[0] as SupportedLanguage;
-    }
-  }
-
-  return DEFAULT_LANGUAGE;
 }
