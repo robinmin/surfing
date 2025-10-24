@@ -1,7 +1,7 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import { getServerTranslation } from '~/i18n';
+import { t, getCurrentLanguage } from '~/i18n';
 import { getCollection } from 'astro:content';
 
 function extractLanguageFromId(id: string): string {
@@ -9,9 +9,7 @@ function extractLanguageFromId(id: string): string {
   return match ? match[1] : 'en';
 }
 
-// Static site: use default language
-const lang = 'en';
-const t = getServerTranslation(lang);
+const lang = getCurrentLanguage();
 
 // Get all documents (NO server-side filtering for static build - client will filter)
 const documents = await getCollection('documents', ({ data }) => !data.draft);
@@ -24,8 +22,8 @@ const sortedDocuments = documents.sort(
 );
 
 const metadata = {
-  title: t('pages.documents.title'),
-  description: t('pages.documents.description'),
+  title: t('pages.documents.title', lang),
+  description: t('pages.documents.description', lang),
 };
 ---
 
@@ -33,11 +31,11 @@ const metadata = {
   <!-- Hero Widget ******************* -->
   <Hero>
     <Fragment slot="title">
-      <span data-i18n="pages.documents.heroTitle">{t('pages.documents.heroTitle')}</span>
+      <span data-i18n-key="pages.documents.heroTitle">{t('pages.documents.heroTitle', lang)}</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      <span data-i18n="pages.documents.heroSubtitle">{t('pages.documents.heroSubtitle')}</span>
+      <span data-i18n-key="pages.documents.heroSubtitle">{t('pages.documents.heroSubtitle', lang)}</span>
     </Fragment>
   </Hero>
 
@@ -49,9 +47,9 @@ const metadata = {
         <div class="mb-16">
           <h2
             class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8"
-            data-i18n="pages.documents.featuredDocuments"
+            data-i18n-key="pages.documents.featuredDocuments"
           >
-            {t('pages.documents.featuredDocuments')}
+            {t('pages.documents.featuredDocuments', lang)}
           </h2>
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredDocuments.map((document) => (
@@ -63,7 +61,7 @@ const metadata = {
                   {/* Content Type Badge */}
                   <span
                     class="inline-block px-2 py-1 text-xs rounded-full mb-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                    data-i18n={
+                    data-i18n-key={
                       document.data.contentType === 'legacy'
                         ? 'pages.documents.legacy'
                         : document.data.contentType === 'template'
@@ -74,12 +72,12 @@ const metadata = {
                     }
                   >
                     {document.data.contentType === 'legacy'
-                      ? t('pages.documents.legacy')
+                      ? t('pages.documents.legacy', lang)
                       : document.data.contentType === 'template'
-                        ? t('pages.documents.template')
+                        ? t('pages.documents.template', lang)
                         : document.data.contentType === 'snippet'
-                          ? t('pages.documents.snippet')
-                          : t('pages.documents.document')}
+                          ? t('pages.documents.snippet', lang)
+                          : t('pages.documents.document', lang)}
                   </span>
 
                   <h3 class="text-xl font-semibold mb-2 dark:text-white">
@@ -108,7 +106,7 @@ const metadata = {
                       {document.data.author && <span>{document.data.author}</span>}
                       {document.data.readingTime && (
                         <span>
-                          {document.data.readingTime} {t('pages.documents.minRead')}
+                          {document.data.readingTime} {t('pages.documents.minRead', lang)}
                         </span>
                       )}
                     </div>
@@ -134,9 +132,9 @@ const metadata = {
     <div>
       <h2
         class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8"
-        data-i18n={featuredDocuments.length > 0 ? 'pages.documents.allDocuments' : 'pages.documents.title'}
+        data-i18n-key={featuredDocuments.length > 0 ? 'pages.documents.allDocuments' : 'pages.documents.title'}
       >
-        {featuredDocuments.length > 0 ? t('pages.documents.allDocuments') : t('pages.documents.title')}
+        {featuredDocuments.length > 0 ? t('pages.documents.allDocuments', lang) : t('pages.documents.title', lang)}
       </h2>
 
       {
@@ -151,7 +149,7 @@ const metadata = {
                   {/* Content Type Badge */}
                   <span
                     class="inline-block px-2 py-1 text-xs rounded-full mb-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                    data-i18n={
+                    data-i18n-key={
                       document.data.contentType === 'legacy'
                         ? 'pages.documents.legacy'
                         : document.data.contentType === 'template'
@@ -162,12 +160,12 @@ const metadata = {
                     }
                   >
                     {document.data.contentType === 'legacy'
-                      ? t('pages.documents.legacy')
+                      ? t('pages.documents.legacy', lang)
                       : document.data.contentType === 'template'
-                        ? t('pages.documents.template')
+                        ? t('pages.documents.template', lang)
                         : document.data.contentType === 'snippet'
-                          ? t('pages.documents.snippet')
-                          : t('pages.documents.document')}
+                          ? t('pages.documents.snippet', lang)
+                          : t('pages.documents.document', lang)}
                   </span>
 
                   <h3 class="text-xl font-semibold mb-2 dark:text-white">
@@ -196,7 +194,7 @@ const metadata = {
                       {document.data.author && <span>{document.data.author}</span>}
                       {document.data.readingTime && (
                         <span>
-                          {document.data.readingTime} {t('pages.documents.minRead')}
+                          {document.data.readingTime} {t('pages.documents.minRead', lang)}
                         </span>
                       )}
                     </div>
@@ -225,13 +223,15 @@ const metadata = {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <h3 class="text-lg font-medium mb-2" data-i18n="pages.documents.noDocumentsYet">
-                {t('pages.documents.noDocumentsYet')}
+              <h3 class="text-lg font-medium mb-2" data-i18n-key="pages.documents.noDocumentsYet">
+                {t('pages.documents.noDocumentsYet', lang)}
               </h3>
               <p class="text-sm">
-                <span data-i18n="pages.documents.addDocuments">{t('pages.documents.addDocuments')}</span>{' '}
+                <span data-i18n-key="pages.documents.addDocuments">{t('pages.documents.addDocuments', lang)}</span>{' '}
                 <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">contents/documents/</code>{' '}
-                <span data-i18n="pages.documents.directoryToStart">{t('pages.documents.directoryToStart')}</span>
+                <span data-i18n-key="pages.documents.directoryToStart">
+                  {t('pages.documents.directoryToStart', lang)}
+                </span>
               </p>
             </div>
           </div>
