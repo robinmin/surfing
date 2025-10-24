@@ -44,10 +44,10 @@ const resolvedPosts = posts;
             <h2
               class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
               set:html={title}
-              data-i18n="pages.home.latestContent"
+              data-i18n-key="pages.home.latestContent"
             />
             {APP_BLOG.list.isEnabled && linkText && linkUrl && (
-              <Button variant="link" href={linkUrl} data-i18n="nav.browse">
+              <Button variant="link" href={linkUrl} data-i18n-key="nav.browse">
                 {' '}
                 {linkText} »
               </Button>
