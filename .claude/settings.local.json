@@ -68,7 +68,15 @@
       "mcp__playwright__browser_type",
       "mcp__ultra-mcp__ultra-review",
       "Bash(sips -Z:*)",
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__ultra-mcp__ultra-debug",
+      "Bash(npx playwright screenshot:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npx exec playwright:*)",
+      "WebFetch(domain:localhost)",
+      "mcp__ultra-mcp__debug-issue",
+      "WebFetch(domain:surfing.salty.vip)",
+      "mcp__ultra-mcp__tracer"
     ],
     "deny": [],
     "ask": []
