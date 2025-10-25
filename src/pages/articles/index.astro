@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import { t, getCurrentLanguage } from '~/i18n';
+import Image from '~/components/common/Image.astro';
 
 function extractLanguageFromId(id: string): string {
   const match = id.match(/^([a-z]{2})\//);
@@ -61,10 +62,15 @@ const metadata = {
               data-lang={extractLanguageFromId(article.id)}
             >
               {article.data.image && (
-                <img
-                  src={article.data.image.replace('@assets', '/assets')}
+                <Image
+                  src={article.data.image}
                   alt={article.data.title}
                   class="w-full h-64 object-cover"
+                  widths={[400, 800]}
+                  width={400}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  aspectRatio="16:9"
+                  layout="cover"
                   loading="lazy"
                   decoding="async"
                 />
@@ -151,10 +157,15 @@ const metadata = {
             data-lang={extractLanguageFromId(article.id)}
           >
             {article.data.image && (
-              <img
-                src={article.data.image.replace('@assets', '/assets')}
+              <Image
+                src={article.data.image}
                 alt={article.data.title}
                 class="w-full h-48 object-cover"
+                widths={[300, 600]}
+                width={300}
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                aspectRatio="16:9"
+                layout="cover"
                 loading="lazy"
                 decoding="async"
               />
