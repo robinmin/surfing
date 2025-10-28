@@ -595,6 +595,8 @@ addskill.sh hello greeting-formatter      # 使用默认 basic 模板
 # ✓ 生成 README.md (包含后续步骤指导)
 ```
 
+具体代码可参见 [github](https://github.com/robinmin/cc-agents/blob/main/plugins/rd/scripts/addskill.sh)。
+
 **设计亮点**:脚本提供了四种模板,覆盖了 90% 的 Skill 开发场景。你可以根据需求快速选择合适的起点,而不是每次从空白文件开始。模板之间的主要区别在于**初始结构的复杂度**和**支持文件的完整性**,但都遵循相同的最佳实践。
 
 ##### 关键实现剖析
@@ -944,6 +946,9 @@ Script 负责:
 
 # 输出:Overall Score: 89/100 (Good)
 ```
+
+一旦安装完成之后，你的Claude Code大概会变成这样，就说明新的`rd` plugin已经安装成功、可以使用了。
+![Claude Code with rd plugin](@assets/images/claude_code_rd_plugin.png)
 
 #### 实战:评估 cc-skills 自身
 
@@ -1583,10 +1588,6 @@ Haiku 的跨模型测试教会了我:具体的 checklist 比抽象的原则更�
 - RD Plugin: `plugins/rd/`
 
 如果你在开发过程中遇到问题,欢迎提 issue 讨论。
-
-**致谢**
-
-感谢 Claude Code 团队提供的详细文档,以及社区中分享经验的开发者们。这篇文章是站在巨人的肩膀上。
 
 ---
 
