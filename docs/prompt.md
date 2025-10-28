@@ -518,3 +518,12 @@ I updated the content in @contents/articles/cn/claude_code_plugins_02.md. I need
 For the schema of the frontmatter, you can refer to src/content.config.ts.
 
 I will publish this article in 3 languages and on several different platforms, including twitter, substack, and medium and juejin, infoq and etc.
+
+## Translation
+
+New I need you act as a senior translator to translate this Chinese version(@contents/articles/cn/claude_code_plugins_02.md) into English as a new file in @contents/articles/en/claude_code_plugins_02.md. Please:
+
+- keep the structure and content aligned with the original.
+- Do not translate all blocks (including code, diagrams, flows, scripts, and etc., unless there are some Chinese comments I already noticed), unless there are some Chinese comments I already noticed.
+
+I will try to publish it to https://medium.com/ and https://substack.com/. Try your best to help native speakers understand this articles

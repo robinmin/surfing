@@ -1,5 +1,5 @@
 ---
-title: 'Claude Code Plugins 实战指南：从 Hello World 到技能管理系统'
+title: 'Claude Code Plugins 实战指南：从 Hello World 到技能管理系统（2/4）'
 description: '深入解析 Claude Code Plugins 开发实战，手把手教你构建实用插件。涵盖插件架构、开发流程、最佳实践，让你的 Claude Code 升级为专属研发终端。'
 tags:
   # Chinese SEO keywords
@@ -42,7 +42,7 @@ aliases: ['Claude Code教程', 'AI插件开发', 'MCP插件', 'Claude Agent']
 excerpt: '本文是 Claude Code 系列教程的第二部分，聚焦 Plugins 实战开发。通过构建 Hello World 和技能管理系统的完整案例，深入讲解插件架构、开发流程和最佳实践。'
 
 # Translation support
-translations: ['zh', 'en']
+translations: ['zh', 'en', 'ja']
 
 # SEO metadata
 metadata:
@@ -61,7 +61,7 @@ metadata:
   openGraph:
     url: 'https://surfing.salty.vip/articles/cn/claude_code_plugins_02'
     siteName: 'Robin Min'
-    title: 'Claude Code Plugins 实战指南：从 Hello World 到技能管理系统'
+    title: 'Claude Code Plugins 实战指南：从 Hello World 到技能管理系统（2/4）'
     description: '深入解析 Claude Code Plugins 开发实战，手把手教你构建实用插件。涵盖插件架构、开发流程、最佳实践，让你的 Claude Code 升级为专属研发终端。'
     locale: 'zh_CN'
     type: 'article'
@@ -87,8 +87,6 @@ metadata:
     site: '@salty.vip'
     handle: '@tangmian'
 ---
-
-# Claude Code Plugins 实战篇：从 Hello World 到技能管理系统
 
 ## 一、从一个真实需求说起
 

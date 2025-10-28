@@ -1,5 +1,5 @@
 ---
-title: 'Claude Code Plugins Practical Guide: From Hello World to Skill Management System'
+title: 'Claude Code Plugins Practical Guide: From Hello World to Skill Management System(2/4)'
 description: 'In-depth analysis of Claude Code Plugins development with hands-on tutorials. Learn to build practical plugins through complete examples, covering plugin architecture, development workflow, and best practices to upgrade your Claude Code into a dedicated development terminal.'
 tags:
   # English SEO keywords
@@ -42,7 +42,7 @@ aliases: ['Claude Code Tutorial', 'AI Plugin Development', 'MCP Plugin', 'Claude
 excerpt: 'This is the second part of the Claude Code tutorial series, focusing on practical plugin development. Through complete examples of building Hello World and a skill management system, it深入讲解 plugin architecture, development workflow, and best practices.'
 
 # Translation support
-translations: ['zh', 'en']
+translations: ['zh', 'en', 'ja']
 
 # SEO metadata
 metadata:
@@ -61,7 +61,7 @@ metadata:
   openGraph:
     url: 'https://surfing.salty.vip/articles/en/claude_code_plugins_02'
     siteName: 'Robin Min'
-    title: 'Claude Code Plugins Practical Guide: From Hello World to Skill Management System'
+    title: 'Claude Code Plugins Practical Guide: From Hello World to Skill Management System(2/4)'
     description: 'In-depth analysis of Claude Code Plugins development with hands-on tutorials. Learn to build practical plugins through complete examples, covering plugin architecture, development workflow, and best practices to upgrade your Claude Code into a dedicated development terminal.'
     locale: 'en_US'
     type: 'article'
@@ -87,8 +87,6 @@ metadata:
     site: '@salty.vip'
     handle: '@tangmian'
 ---
-
-# Claude Code Plugins in Practice: From Hello World to Skill Management System
 
 ## I. Starting with a Real Need
 
@@ -304,15 +302,15 @@ plugins/rd/
 
 **Role of each file**:
 
-| File              | Type    | Responsibility                           | Size    |
-| ----------------- | ------- | ---------------------------------------- | ------- |
-| skill-add.md      | Command | Receive user input, call script, show results | ~200 lines |
-| skill-evaluate.md | Command | Define evaluation process, generate quality report | ~600 lines |
+| File              | Type    | Responsibility                                                  | Size       |
+| ----------------- | ------- | --------------------------------------------------------------- | ---------- |
+| skill-add.md      | Command | Receive user input, call script, show results                   | ~200 lines |
+| skill-evaluate.md | Command | Define evaluation process, generate quality report              | ~600 lines |
 | skill-refine.md   | Command | Interactive improvement process, apply optimization suggestions | ~400 lines |
-| SKILL.md          | Skill   | Core knowledge navigation, provide overview | ~300 lines |
-| BEST_PRACTICES.md | Skill   | Detailed best practice guide | ~200 lines |
-| EXAMPLES.md       | Skill   | Before/After example comparisons | ~150 lines |
-| addskill.sh       | Script  | Template generation, parameter validation, file creation | ~500 lines |
+| SKILL.md          | Skill   | Core knowledge navigation, provide overview                     | ~300 lines |
+| BEST_PRACTICES.md | Skill   | Detailed best practice guide                                    | ~200 lines |
+| EXAMPLES.md       | Skill   | Before/After example comparisons                                | ~150 lines |
+| addskill.sh       | Script  | Template generation, parameter validation, file creation        | ~500 lines |
 
 ### 3.3 Thinking Process of Design Decisions
 
@@ -675,12 +673,12 @@ esac
 
 I provided a decision table:
 
-| Skill Type       | Recommended Template | Typical Features                |
-| ---------------- | -------------------- | ------------------------------- |
-| Simple interactive commands | basic | Single task, no complex states |
-| Knowledge-intensive | complete | Need detailed reference documentation |
-| Multi-step workflows | workflow | Has validation points, might need retry on failure |
-| Analysis and evaluation | analysis | Output structured reports |
+| Skill Type                  | Recommended Template | Typical Features                                   |
+| --------------------------- | -------------------- | -------------------------------------------------- |
+| Simple interactive commands | basic                | Single task, no complex states                     |
+| Knowledge-intensive         | complete             | Need detailed reference documentation              |
+| Multi-step workflows        | workflow             | Has validation points, might need retry on failure |
+| Analysis and evaluation     | analysis             | Output structured reports                          |
 
 **✅BP11: Parameter validation should be strict, give clear error messages**
 
@@ -1395,13 +1393,13 @@ Document learned experiences to form reusable knowledge.
 
 #### Question 1: How to choose which plugin component to use?
 
-| Need                      | Recommended Solution | Reason                     | Example            |
-| ------------------------- | -------------------- | -------------------------- | ------------------ |
-| Simple interactive commands | Command              | Lightweight, easy to implement | /hello            |
-| Need domain knowledge     | Skill                | Can be understood and applied by Claude | cc-skills       |
-| Deterministic file operations | Script             | High reliability, doesn't depend on AI | addskill.sh     |
-| Automated workflows       | Hook                 | No manual triggering needed | pre-commit checks |
-| External tool integration | MCP Server           | Standardized interface     | Database connection |
+| Need                          | Recommended Solution | Reason                                  | Example             |
+| ----------------------------- | -------------------- | --------------------------------------- | ------------------- |
+| Simple interactive commands   | Command              | Lightweight, easy to implement          | /hello              |
+| Need domain knowledge         | Skill                | Can be understood and applied by Claude | cc-skills           |
+| Deterministic file operations | Script               | High reliability, doesn't depend on AI  | addskill.sh         |
+| Automated workflows           | Hook                 | No manual triggering needed             | pre-commit checks   |
+| External tool integration     | MCP Server           | Standardized interface                  | Database connection |
 
 #### Question 2: What to do if plugins become slow?
 
