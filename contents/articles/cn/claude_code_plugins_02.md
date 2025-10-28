@@ -1,8 +1,24 @@
 ---
-title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属研发终端(2/4)'
-description: '> **系列回顾**：在第一篇中，我们探讨了 Claude Code Plugins 的核心概念、四大组件和工作原理。本篇将进入实战阶段，手把手带你构建一个真实可用的插件。'
+title: 'Claude Code Plugins 实战指南：从 Hello World 到技能管理系统'
+description: '深入解析 Claude Code Plugins 开发实战，手把手教你构建实用插件。涵盖插件架构、开发流程、最佳实践，让你的 Claude Code 升级为专属研发终端。'
 tags:
+  # Chinese SEO keywords
   [
+    'Claude Code Plugins',
+    'AI插件开发',
+    'Claude MCP',
+    'Agent Skills',
+    'slash-command',
+    'hook机制',
+    'AI原生开发',
+    '研发工具',
+    '编程助手',
+    '开发实战',
+    '技能管理系统',
+    '插件架构',
+    '开发流程',
+    '最佳实践',
+    # Technical English keywords
     'agi',
     'claude-code',
     'cli',
@@ -10,2488 +26,1572 @@ tags:
     'mcp',
     'subagent',
     'agent',
-    'slash-command',
-    'hook',
-    'AI Coding',
-    'AI原生开发',
     'Vibe Coding',
+    'AI Coding',
+    'Development Tutorial',
   ]
 author: 'Robin Min'
 wordCount: 4473
 publishDate: 2025-10-13
+updateDate: 2025-10-27
 draft: false
 featured: true
 image: '@assets/images/claude_code_plugins.webp'
----
-
-## 第二篇：实战篇 - 从零构建第一个插件
-
-> **系列回顾**：在第一篇中，我们探讨了 Claude Code Plugins 的核心概念、四大组件和工作原理。本篇将进入实战阶段，手把手带你构建一个真实可用的插件。
-
----
-
-## 一、场景设定与需求分析
-
-### 1.1 真实的团队痛点
-
-在开始编码前，让我们先明确要解决的问题。这是一个来自真实团队的场景：
-
-**团队背景**：
-
-- 15 人的全栈开发团队
-- 使用 Git 进行版本控制
-- 采用 ESLint 作为代码规范工具
-- 遵循 Conventional Commits 规范
-
-**当前问题**：
-
-```
-代码审查会议上的典型对话：
-
-Tech Lead: "这个 PR 又有 18 处 ESLint 错误..."
-开发者 A: "抱歉，我忘记运行 linter 了。"
-
-Tech Lead: "Commit message 写的是 'update code'，看不出改了什么..."
-开发者 B: "我赶着提交，下次注意。"
-
-Tech Lead: "你修改了支付 API，但没更新 API 文档..."
-开发者 C: "哦对，我一会儿补上。"
-
-结果：每次 Code Review 浪费 30 分钟在这些低级问题上。
-```
-
-**统计数据**（团队实测）：
-
-- 60% 的 PR 首次提交有格式问题
-- 平均每个 PR 需要 2.3 次返工
-- 每周浪费约 4 小时在重复性问题修复上
-
-### 1.2 需求拆解
-
-基于以上痛点，我们需要构建一个**提交前检查插件**，具备以下功能：
-
-**核心功能**：
-
-1. ✅ **代码质量检查**：运行 ESLint，确保代码符合规范
-2. ✅ **Commit 消息验证**：检查是否遵循 Conventional Commits
-3. ✅ **文档同步检查**：API 代码变更时提醒更新文档
-
-**使用方式**：
-
-- **手动触发**：开发者执行 `/pre-commit` 主动检查
-- **自动触发**：Git commit 前自动拦截并检查
-
-**期望效果**：
-
-- 减少 80% 的格式相关返工
-- 提升 Commit 消息质量
-- 确保文档与代码同步
-
-### 1.3 技术选型
-
-**插件组件选择**：
-
-```
-✅ Slash Commands → 提供手动检查入口 (/pre-commit, /fix-lint)
-✅ Hooks          → Git commit 前自动拦截检查
-❌ Subagents      → 本场景不需要复杂任务委派
-❌ MCP Servers    → 不涉及外部系统集成
-```
-
-**脚本语言选择**：
-
-```python
-# 主检查逻辑：Python（团队主力语言，便于维护）
-# 快速辅助：bash（简单任务，执行效率高）
-```
-
-**依赖工具**：
-
-- ESLint（代码检查）
-- Git（版本控制）
-- Python 3.8+（脚本运行）
-
----
-
-## 二、项目结构设计
-
-### 设计理念
-
-在开始实现前，我们需要明确插件的设计思路：
-
-**核心原则**：
-
-1. **模块化分离**：命令定义、执行脚本、Hook 配置各司其职
-2. **渐进式增强**：从简单的手动命令开始，逐步添加自动化 Hook
-3. **优雅降级**：检查失败时给出明确提示，而非直接报错退出
-
-**关于生产环境的说明**：
-
-> ⚠️ **重要提示**：本文构建的插件主要用于**教学演示**目的，帮助理解 Claude Code Plugins 的工作机制。实际生产环境中，已有更成熟的方案：
->
-> - [**pre-commit**](https://pre-commit.com/)：Python 生态的钩子管理框架，支持多语言、丰富的插件库
-> - [**husky**](https://typicode.github.io/husky/)：Node.js 生态的 Git Hooks 工具，配置简单、社区活跃
-> - [**lint-staged**](https://github.com/okonet/lint-staged)：仅对 staged 文件运行 linter，性能优秀
->
-> 这些工具经过大规模验证，提供了更完善的功能和更好的性能。本文的插件可作为：
->
-> - **学习 Claude Code Plugins 开发的起点**
-> - **团队内部定制化工具的参考**
-> - **与 Claude 深度集成的工作流扩展**
-
-**我们的插件优势**：
-
-- 与 Claude Code 无缝集成，可在对话中直接调用
-- 失败时 Claude 能理解错误信息并提供修复建议
-- 可扩展为更复杂的 AI辅助工作流
-
-### 2.1 目录树规划
-
-**设计思路**：清晰的目录结构不仅让插件易于维护，更能帮助其他开发者快速理解代码组织方式。每个目录都有其特定的职责，这种分离确保了代码的模块化和可扩展性。
-
-```
-pre-commit-checker/
-├── .claude-plugin/
-│   └── plugin.json              # 插件元数据（必需）
-│   # Claude Code 识别插件的入口点
-│   # 定义插件名称、版本、依赖关系
-│
-├── commands/                    # 用户可见的命令定义
-│   ├── pre-commit.md            # 手动完整检查
-│   # 定义 /pre-commit 命令的执行步骤
-│   ├── fix-lint.md              # 自动修复 lint 错误
-│   # 定义 /fix-lint 命令的行为
-│   └── check-docs.md            # 单独检查文档同步
-│   # 定义 /check-docs 命令的逻辑
-│
-├── hooks/
-│   └── hooks.json               # Hook 触发配置
-│   # 定义自动化触发规则
-│   # 例如：git commit 前自动运行检查
-│
-├── scripts/                     # 实际执行逻辑
-│   ├── lint_check.py            # ESLint 检查主逻辑
-│   # 获取 staged 文件，运行 ESLint
-│   ├── commit_msg_validator.py  # Commit 消息验证
-│   # 检查消息格式，验证规范
-│   ├── doc_sync_checker.sh      # 文档同步检查
-│   # 检查代码变更时文档是否同步
-│   └── utils.py                 # 共用工具函数
-│   # 提供可复用的辅助函数
-│
-├── tests/                       # 单元测试（推荐）
-│   ├── test_lint_check.py       # 测试 ESLint 检查逻辑
-│   └── test_commit_validator.py # 测试消息验证逻辑
-│
-├── .gitignore                   # Git 忽略文件
-├── README.md                    # 插件使用文档
-│   # 安装说明、使用示例、常见问题
-└── requirements.txt             # Python 依赖
-```
-
-**目录职责说明**：
-
-- **`.claude-plugin/`**：插件的"身份证"，存储 Claude Code 需要的元数据
-- **`commands/`**：面向用户的接口，定义了插件提供的所有命令
-- **`hooks/`**：自动化触发器，让插件能够响应特定事件
-- **`scripts/`**：核心实现，包含所有业务逻辑
-- **`tests/`**：质量保证，确保插件的可靠性
-
-### 2.2 文件职责说明
-
-| 文件/目录                    | 职责                              | 是否必需 |
-| ---------------------------- | --------------------------------- | -------- |
-| `.claude-plugin/plugin.json` | 插件元数据，Claude 识别插件的入口 | ✅ 必需  |
-| `commands/*.md`              | 用户可见的命令定义                | ✅ 必需  |
-| `hooks/hooks.json`           | 自动化触发规则                    | 可选     |
-| `scripts/*`                  | 实际执行逻辑                      | ✅ 必需  |
-| `tests/*`                    | 单元测试                          | 推荐     |
-| `README.md`                  | 使用文档                          | 推荐     |
-
-### 2.3 工作流程图
-
-```mermaid
-graph TD
-    A[Developer modifies code] --> B{How to trigger?}
-
-    B -->|manual| C["Type /pre-commit"]
-    B -->|auto| D["Execute git commit"]
-
-    C --> E["Call pre-commit.md"]
-    D --> F["Trigger PreToolUse Hook"]
-
-    E --> G["Run lint_check.py"]
-    F --> G
-
-    G --> H{ESLint passed?}
-    H -->|no| I["Show errors<br/>Suggest /fix-lint"]
-    H -->|yes| J["Run commit_msg_validator.py"]
-
-    J --> K{Message format valid?}
-    K -->|no| L["Show format requirements<br/>Provide examples"]
-    K -->|yes| M["Run doc_sync_checker.sh"]
-
-    M --> N{Docs updated?}
-    N -->|no| O["Warn to update docs<br/>List affected files"]
-    N -->|yes| P["✅ All checks passed"]
-
-    I --> Q["Block commit"]
-    L --> Q
-    O --> R["Warning but allow commit"]
-    P --> S["Allow commit"]
-
-    style P fill:#c8e6c9
-    style Q fill:#ffcdd2
-    style R fill:#fff9c4
-```
-
----
-
-## 三、核心文件实现
-
-本节将逐一实现插件的核心文件。这些文件构成了插件的"骨架"：
-
-- **plugin.json**：插件的"身份证"，告诉 Claude Code 这是什么插件、有哪些功能
-- **commands/\*.md**：用户可见的命令定义，描述 Claude 该如何执行检查
-- **hooks/hooks.json**：自动化触发规则，让检查在 Git 操作前自动运行
-- **scripts/\***：实际的检查逻辑，可以是 Python、Shell 或任何可执行脚本
-
-这种分层设计的好处是：**定义与实现分离**。命令定义文件描述"做什么"，脚本文件负责"怎么做"，便于维护和测试。
-
-### 3.1 插件清单：plugin.json
-
-**作用**：这是插件的元数据文件，Claude Code 通过它识别插件、加载命令和 Hook。可以类比为：
-
-- Node.js 的 `package.json`
-- Python 的 `setup.py` / `pyproject.toml`
-- Chrome 扩展的 `manifest.json`
-
-**必需字段**：`name`、`version`、`description` 是最基本的三要素。
-
-```json
-{
-  "name": "pre-commit-checker",
-  "version": "1.0.0",
-  "description": "Automated pre-commit quality checks for code, commit messages, and documentation",
-
-  "author": {
-    "name": "DevTools Team",
-    "email": "[email protected]"
-  },
-
-  "homepage": "https://github.com/yourcompany/pre-commit-checker",
-  "repository": "https://github.com/yourcompany/pre-commit-checker",
-  "license": "MIT",
-
-  "keywords": ["git", "lint", "commit", "quality", "pre-commit"],
-
-  "commands": "./commands",
-  "hooks": "./hooks/hooks.json",
-
-  "requirements": {
-    "python": ">=3.8",
-    "node": ">=14.0.0"
-  }
-}
-```
-
-**字段解析**：
-
-| 字段          | 说明                         | 示例                                     |
-| ------------- | ---------------------------- | ---------------------------------------- |
-| `name`        | 插件唯一标识符（kebab-case） | `pre-commit-checker`                     |
-| `version`     | 遵循 SemVer 规范             | `1.0.0`                                  |
-| `description` | 简短描述（80 字符内）        | `Automated pre-commit quality checks...` |
-| `keywords`    | 搜索关键词（数组）           | `["git", "lint", "commit"]`              |
-| `commands`    | 命令目录路径                 | `./commands`                             |
-| `hooks`       | Hook 配置文件路径            | `./hooks/hooks.json`                     |
-
-### 3.2 命令定义：commands/pre-commit.md
-
-**作用**：定义 `/pre-commit` 命令的行为。当用户在 Claude Code 中输入 `/pre-commit` 时，Claude 会读取这个文件，按照其中的步骤执行检查。
-
-**关键点**：
-
-- **结构化步骤**：使用 `## Step 1/2/3` 清晰标注执行顺序
-- **期望输出**：告诉 Claude 每步成功/失败时应该看到什么
-- **错误处理**：失败时提供可操作的建议（如 "Run /fix-lint"）
-- **环境变量**：`${CLAUDE_PLUGIN_ROOT}` 会自动替换为插件安装路径
-
-这种 Markdown 格式让 Claude 能够"理解"任务，而不仅仅是机械执行命令。
-
-````markdown
----
-name: pre-commit
-description: Run comprehensive pre-commit quality checks
-tags: [git, quality, lint]
----
-
-# Pre-Commit Quality Checks
-
-Execute all quality checks before committing code changes.
-
-## Step 1: ESLint Code Check
-
-Run the linter on staged files:
-
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py
-```
-
-**Expected output:**
-
-- ✅ `All lint checks passed` → Continue to next step
-- ❌ `Lint errors found` → Show errors and suggest `/fix-lint`
-
-If errors found:
-
-- Display specific error locations and descriptions
-- Provide actionable fix suggestions
-- Remind user of `/fix-lint` command for auto-fix
-
-## Step 2: Commit Message Validation
-
-Verify commit message follows Conventional Commits:
-
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/commit_msg_validator.py
-```
-
-**Requirements:**
-
-- Must start with type: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
-- Format: `type(scope): description`
-- Minimum 10 characters (excluding type prefix)
-- Avoid generic terms: "update", "change", "fix stuff"
-
-**Valid examples:**
-
-```
-feat(payment): add Stripe integration
-fix(auth): resolve token expiration issue
-docs(api): update authentication endpoints
-```
-
-If invalid:
-
-- Show current commit message (if prepared)
-- Explain what's wrong
-- Provide 2-3 correct examples
-
-## Step 3: Documentation Sync Check
-
-Verify documentation is updated when API code changes:
-
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/doc_sync_checker.sh
-```
-
-**Check rules:**
-
-- If files in `src/api/` modified → check `docs/API.md` updated
-- If files in `src/models/` modified → check `docs/MODELS.md` updated
-- Compare git diff timestamps
-
-If documentation not updated:
-
-- ⚠️ Warning (not blocking)
-- List affected files
-- Suggest documentation to update
-
-## Final Output
-
-Provide a structured summary:
-
-**✅ All checks passed - Ready to commit**
-
-```
-✅ ESLint: No errors
-✅ Commit message: Valid format
-✅ Documentation: Up to date
-```
-
-**⚠️ Issues found:**
-
-```
-❌ ESLint: 3 errors in src/utils.py
-   - Line 42: Unused variable 'temp'
-   - Line 58: Missing semicolon
-   Run /fix-lint to auto-fix
-
-⚠️ Documentation: API changes not documented
-   - Modified: src/api/payment.py
-   - Please update: docs/API.md
-```
-````
-
-**设计要点**：
-
-1. **结构化步骤**：清晰的 Step 1/2/3，便于 Claude 理解执行顺序
-2. **环境变量**：`${CLAUDE_PLUGIN_ROOT}` 自动替换为插件安装路径
-3. **明确预期**：每步都说明期望的输出和错误处理
-4. **用户友好**：失败时提供可操作的建议
-
-### 3.3 快速修复命令：commands/fix-lint.md
-
-**作用**：定义 `/fix-lint` 命令，自动修复可修复的 ESLint 错误。这是对 `/pre-commit` 的补充，提供"一键修复"功能。
-
-**设计思路**：
-
-- 调用同一个脚本 `lint_check.py`，但传入 `--fix` 参数
-- 区分"已修复"和"需手动修复"的问题
-- 修复后提示用户再次运行 `/pre-commit` 确认
-
-````markdown
----
-name: fix-lint
-description: Automatically fix ESLint errors
-tags: [lint, fix, auto]
----
-
-# Auto-Fix Lint Errors
-
-Automatically fix common ESLint errors using `--fix` flag.
-
-## Execution
-
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py --fix
-```
-
-## Process
-
-1. Run ESLint with `--fix` on staged files
-2. Display fixed issues count
-3. Show remaining unfixable issues (if any)
-
-## Output Format
-
-**If all fixed:**
-
-```
-✅ Auto-fixed 12 lint issues:
-   - 8 × Missing semicolons
-   - 3 × Incorrect indentation
-   - 1 × Trailing whitespace
-
-All errors resolved. Ready to commit.
-```
-
-**If some unfixable:**
-
-```
-✅ Auto-fixed 8 issues
-❌ 2 issues require manual fix:
-   - src/utils.py:42 - Unused variable 'temp'
-   - src/api.py:18 - Undefined function 'processData'
-
-Please fix manually and run /pre-commit again.
-```
-````
-
-### 3.4 Hook 配置：hooks/hooks.json
-
-**作用**：配置自动触发规则，让检查在特定事件发生时自动运行，无需用户手动执行命令。
-
-**核心概念**：
-
-- **PreToolUse Hook**：在 Claude 调用工具（如 Bash）前触发
-- **matcher（匹配器）**：正则表达式，决定什么操作会触发 Hook
-- **onFailure 策略**：
-  - `block`：检查失败则阻止原操作（如阻止 commit）
-  - `warn`：仅警告，不阻止操作
-
-**设计决策**：
-
-- ESLint 和 Commit 消息检查失败时**阻止** commit（保证代码质量）
-- 文档同步检查失败时仅**警告**（避免误伤正常提交）
-
-```json
-{
-  "PreToolUse": [
-    {
-      "name": "pre-commit-quality-gate",
-      "description": "Automatic quality checks before git commit",
-
-      "matcher": "ExecuteBash.*git\\s+commit",
-
-      "hooks": [
+category: 'AI开发'
+aliases: ['Claude Code教程', 'AI插件开发', 'MCP插件', 'Claude Agent']
+excerpt: '本文是 Claude Code 系列教程的第二部分，聚焦 Plugins 实战开发。通过构建 Hello World 和技能管理系统的完整案例，深入讲解插件架构、开发流程和最佳实践。'
+
+# Translation support
+translations: ['zh', 'en']
+
+# SEO metadata
+metadata:
+  canonical: 'https://surfing.salty.vip/articles/cn/claude_code_plugins_02'
+
+  robots:
+    index: true
+    follow: true
+    googleBot:
+      index: true
+      follow: true
+      maxImagePreview: 'large'
+      maxSnippet: -1
+      maxVideoPreview: -1
+
+  openGraph:
+    url: 'https://surfing.salty.vip/articles/cn/claude_code_plugins_02'
+    siteName: 'Robin Min'
+    title: 'Claude Code Plugins 实战指南：从 Hello World 到技能管理系统'
+    description: '深入解析 Claude Code Plugins 开发实战，手把手教你构建实用插件。涵盖插件架构、开发流程、最佳实践，让你的 Claude Code 升级为专属研发终端。'
+    locale: 'zh_CN'
+    type: 'article'
+
+    images:
+      [
         {
-          "type": "command",
-          "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py",
-          "description": "🔍 Running ESLint checks...",
-          "timeout": 30
+          url: '@assets/images/claude_code_plugins.webp',
+          width: 1200,
+          height: 630,
+          alt: 'Claude Code Plugins 开发教程',
         },
-        {
-          "type": "command",
-          "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/commit_msg_validator.py",
-          "description": "📝 Validating commit message format...",
-          "timeout": 10
-        },
-        {
-          "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/doc_sync_checker.sh",
-          "description": "📚 Checking documentation sync...",
-          "timeout": 15,
-          "onFailure": "warn"
-        }
-      ],
+      ]
 
-      "onFailure": "block",
-      "failureMessage": "❌ Pre-commit checks failed. Fix issues or run /fix-lint"
-    }
-  ]
-}
-```
+    article:
+      publishedTime: '2025-10-13T00:00:00+00:00'
+      modifiedTime: '2025-10-27T00:00:00+00:00'
+      authors: ['Robin Min']
+      tags: ['Claude Code', 'AI开发', '插件开发', 'MCP']
 
-**配置解析**：
+  twitter:
+    cardType: 'summary_large_image'
+    site: '@salty.vip'
+    handle: '@tangmian'
+---
 
-| 字段        | 说明             | 值                              |
-| ----------- | ---------------- | ------------------------------- |
-| `matcher`   | 正则匹配工具调用 | `ExecuteBash.*git\\s+commit`    |
-| `type`      | 执行类型         | `command`（执行外部命令）       |
-| `timeout`   | 超时时间（秒）   | `30`                            |
-| `onFailure` | 失败处理         | `block`（阻止）/ `warn`（警告） |
-| `order`     | 执行顺序（可选） | 数字越小越先执行                |
+# Claude Code Plugins 实战篇：从 Hello World 到技能管理系统
 
-**关键设计**：
+## 一、从一个真实需求说起
 
-- 前两个检查失败会**阻止** commit（`block`）
-- 文档检查失败仅**警告**（`warn`），不阻止提交
-- 每个 hook 都有独立的超时设置
+[第一篇](https://surfing.salty.vip/articles/cn/claude_code_plugins_01/)文章发布后,我收到不少反馈,其中一个问题让我印象深刻:"有了 Agent Skills,我该如何系统化地管理这些技能?怎么确保新写的技能符合最佳实践?"
+
+这个问题问到了点子上。Claude Code 官方文档提供了很好的最佳实践指南,但这些知识散落在文档的各个角落。每次写新技能时,我都要翻阅多个页面,查找相关的规范和建议。更麻烦的是,如何评估一个技能的质量?如何系统化地改进它?
+
+这正是 Claude Code Plugins 能解决的问题。但在动手之前,我想先理解插件的本质——从最简单的插件开始。
+
+这篇文章不是操作手册,而是我开发多个实际插件的经验分享。我会展示思考过程、设计决策,以及踩过的坑。重点不在于"怎么做",而在于"为什么这么做"。
+
+我们会看两个例子:
+
+- **hello plugin**:只有 8 行代码的最小插件,但足以理解核心机制
+- **rd plugin 的技能管理系统**:一个完整的解决方案,展示如何用插件解决真实问题
+
+> 所有的例子都可以跟着示例逐步学习、操作。你也可以直接参考我们的官方 repo：[robinmin/cc-agents](https://github.com/robinmin/cc-agents)。
 
 ---
 
-## 四、脚本实现
+## 二、最简插件:Hello Plugin 的核心机制
 
-本节实现实际执行检查的脚本。这些脚本是插件的"大脑"，负责具体的检查逻辑：
+### 2.1 极简设计哲学
 
-- **lint_check.py**：运行 ESLint，检查代码规范
-- **commit_msg_validator.py**：验证 commit 消息格式
-- **doc_sync_checker.sh**：检查文档是否与代码同步
-- **utils.py**：共享的工具函数
-
-**设计原则**：
-
-1. **单一职责**：每个脚本只做一件事，职责明确
-2. **标准退出码**：0=成功，1=失败（符合 Unix 惯例）
-3. **友好输出**：使用 emoji 和结构化信息，便于理解
-4. **优雅降级**：缺少配置时跳过检查，而非报错退出
-
-### 4.1 ESLint 检查：scripts/lint_check.py
-
-**目的**：检查 staged 的 JS/TS 文件是否符合 ESLint 规范，可选自动修复。
-
-**实现思路**：
-
-1. 检查项目是否配置了 ESLint（`.eslintrc.*` 文件）
-2. 获取 staged 的 JS/TS 文件列表（仅检查将要提交的文件）
-3. 运行 `npx eslint`（使用 npx 自动使用项目本地版本）
-4. 解析 ESLint 输出，提取错误统计
-5. 返回适当的退出码和友好的提示信息
-
-**关键优化**：
-
-- 仅检查 staged 文件，提升性能
-- 支持 `--fix` 参数一键修复
-- 没有配置时优雅跳过，不影响正常提交
-
-```python
-#!/usr/bin/env python3
-"""
-ESLint checker for pre-commit hook
-Checks staged files and optionally auto-fixes issues
-"""
-
-import subprocess
-import sys
-import argparse
-from pathlib import Path
-from typing import List, Tuple
-
-
-def check_eslint_config() -> bool:
-    """Check if ESLint configuration exists"""
-    config_files = ['.eslintrc.js', '.eslintrc.json', '.eslintrc.yml', '.eslintrc.yaml']
-    return any(Path(f).exists() for f in config_files)
-
-
-def get_staged_files() -> List[str]:
-    """Get list of staged JS/TS files"""
-    try:
-        result = subprocess.run(
-            ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-
-        files = result.stdout.strip().split('\n')
-        # Filter JS/TS files
-        js_ts_files = [
-            f for f in files
-            if f and f.endswith(('.js', '.jsx', '.ts', '.tsx'))
-        ]
-        return js_ts_files
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error getting staged files: {e}", file=sys.stderr)
-        return []
-
-
-def run_eslint(files: List[str], fix: bool = False) -> Tuple[bool, str]:
-    """
-    Run ESLint on specified files
-
-    Args:
-        files: List of file paths
-        fix: Whether to auto-fix issues
-
-    Returns:
-        (success, output) tuple
-    """
-    cmd = ['npx', 'eslint']
-
-    if fix:
-        cmd.append('--fix')
-
-    cmd.extend(files)
-
-    try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=False  # Don't raise on non-zero exit
-        )
-
-        success = result.returncode == 0
-        output = result.stdout + result.stderr
-
-        return success, output
-
-    except FileNotFoundError:
-        return False, "❌ ESLint not found. Run: npm install -g eslint"
-
-
-def parse_eslint_output(output: str) -> dict:
-    """Parse ESLint output to extract error statistics"""
-    lines = output.split('\n')
-
-    errors = 0
-    warnings = 0
-
-    for line in lines:
-        if '✖' in line and 'problem' in line:
-            # Parse line like: "✖ 3 problems (2 errors, 1 warning)"
-            parts = line.split()
-            for i, part in enumerate(parts):
-                if 'error' in part and i > 0:
-                    errors = int(parts[i-1])
-                if 'warning' in part and i > 0:
-                    warnings = int(parts[i-1])
-
-    return {'errors': errors, 'warnings': warnings}
-
-
-def main():
-    parser = argparse.ArgumentParser(description='Run ESLint checks')
-    parser.add_argument('--fix', action='store_true', help='Auto-fix issues')
-    args = parser.parse_args()
-
-    print("🔍 Running ESLint checks...")
-
-    # Check if ESLint is configured
-    if not check_eslint_config():
-        print("⚠️  No ESLint config found, skipping lint check")
-        return 0
-
-    # Get staged files
-    staged_files = get_staged_files()
-
-    if not staged_files:
-        print("✅ No JS/TS files staged, skipping lint check")
-        return 0
-
-    print(f"📝 Checking {len(staged_files)} file(s)...")
-
-    # Run ESLint
-    success, output = run_eslint(staged_files, fix=args.fix)
-
-    if success:
-        if args.fix:
-            print("✅ All issues auto-fixed")
-        else:
-            print("✅ All lint checks passed")
-        return 0
-    else:
-        stats = parse_eslint_output(output)
-
-        print(f"\n❌ Lint errors found:")
-        print(f"   Errors: {stats['errors']}")
-        print(f"   Warnings: {stats['warnings']}")
-        print(f"\n{output}\n")
-
-        if not args.fix:
-            print("💡 Tip: Run /fix-lint or 'npx eslint --fix' to auto-fix")
-        else:
-            print("⚠️  Some issues require manual fixing")
-
-        return 1
-
-
-if __name__ == '__main__':
-    sys.exit(main())
-```
-
-**代码要点**：
-
-1. **优雅降级**：没有 ESLint 配置时跳过而非报错
-2. **精准检查**：仅检查 staged 的 JS/TS 文件
-3. **统计解析**：提取错误和警告数量
-4. **清晰输出**：用 emoji 增强可读性
-5. **退出码**：0=成功，1=失败（符合 shell 约定）
-
-### 4.2 Commit 消息验证：scripts/commit_msg_validator.py
-
-**目的**：确保 commit 消息遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范，提升 commit 历史可读性。
-
-**实现思路**：
-
-1. 尝试读取准备好的 commit 消息（从 `.git/COMMIT_EDITMSG` 或最近的 commit）
-2. 使用正则表达式验证格式：`type(scope): description`
-3. 检查 type 是否在预定义列表中（feat、fix、docs 等）
-4. 检查描述长度（至少 10 字符）和避免通用词（update、change）
-5. 失败时展示 5 个正确示例，帮助用户理解规范
-
-**为什么重要**：
-
-- 规范的 commit 消息便于生成 CHANGELOG
-- 清晰的 type 标注便于代码审查和回溯
-- 避免 "update code"、"fix stuff" 等无意义消息
-
-```python
-#!/usr/bin/env python3
-"""
-Commit message validator
-Ensures messages follow Conventional Commits specification
-"""
-
-import re
-import sys
-import subprocess
-
-
-# Conventional Commits types
-VALID_TYPES = [
-    'feat',     # New feature
-    'fix',      # Bug fix
-    'docs',     # Documentation
-    'style',    # Formatting
-    'refactor', # Code restructuring
-    'test',     # Testing
-    'chore',    # Maintenance
-    'perf',     # Performance
-    'ci',       # CI/CD
-    'build',    # Build system
-    'revert'    # Revert commit
-]
-
-# Pattern: type(scope): description
-COMMIT_PATTERN = re.compile(
-    r'^(' + '|'.join(VALID_TYPES) + r')(\(.+\))?: .{10,}$'
-)
-
-# Generic terms to avoid
-GENERIC_TERMS = ['update', 'change', 'modify', 'fix stuff', 'wip', 'tmp']
-
-
-def get_commit_message() -> str:
-    """Get the prepared commit message"""
-    try:
-        # Try to get message from git (if already prepared)
-        result = subprocess.run(
-            ['git', 'log', '--format=%B', '-n', '1', 'HEAD'],
-            capture_output=True,
-            text=True,
-            check=False
-        )
-
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
-
-        # If no commit yet, check COMMIT_EDITMSG
-        commit_msg_file = '.git/COMMIT_EDITMSG'
-        try:
-            with open(commit_msg_file, 'r') as f:
-                return f.read().strip()
-        except FileNotFoundError:
-            return ""
-
-    except Exception as e:
-        print(f"⚠️  Could not read commit message: {e}")
-        return ""
-
-
-def validate_commit_message(message: str) -> dict:
-    """
-    Validate commit message
-
-    Returns:
-        dict with 'valid' (bool) and 'errors' (list)
-    """
-    errors = []
-
-    if not message:
-        errors.append("Commit message is empty")
-        return {'valid': False, 'errors': errors}
-
-    # Get first line (commit title)
-    first_line = message.split('\n')[0]
-
-    # Check pattern match
-    if not COMMIT_PATTERN.match(first_line):
-        errors.append("Message doesn't follow Conventional Commits format")
-        errors.append(f"Expected: type(scope): description")
-        errors.append(f"Valid types: {', '.join(VALID_TYPES)}")
-
-    # Check for generic terms
-    message_lower = first_line.lower()
-    for term in GENERIC_TERMS:
-        if term in message_lower:
-            errors.append(f"Avoid generic term: '{term}'")
-
-    # Check minimum length (excluding type prefix)
-    if ':' in first_line:
-        description = first_line.split(':', 1)[1].strip()
-        if len(description) < 10:
-            errors.append(f"Description too short ({len(description)} chars, minimum 10)")
-
-    return {
-        'valid': len(errors) == 0,
-        'errors': errors
-    }
-
-
-def print_examples():
-    """Print valid commit message examples"""
-    examples = [
-        "feat(auth): add OAuth2 login support",
-        "fix(payment): resolve Stripe webhook timeout",
-        "docs(api): update authentication endpoints",
-        "refactor(utils): simplify date formatting logic",
-        "test(auth): add unit tests for JWT validation"
-    ]
-
-    print("\n✅ Valid commit message examples:")
-    for example in examples:
-        print(f"   - {example}")
-
-
-def main():
-    print("📝 Validating commit message format...")
-
-    message = get_commit_message()
-
-    if not message:
-        print("⚠️  No commit message found")
-        print("💡 Prepare your commit message and try again")
-        return 0  # Don't block if message not prepared yet
-
-    result = validate_commit_message(message)
-
-    if result['valid']:
-        print("✅ Commit message format is valid")
-        return 0
-    else:
-        print("\n❌ Commit message validation failed:\n")
-        for error in result['errors']:
-            print(f"   • {error}")
-
-        print_examples()
-
-        print("\n💡 Fix your commit message and try again")
-        return 1
-
-
-if __name__ == '__main__':
-    sys.exit(main())
-```
-
-**验证规则**：
-
-1. **格式匹配**：必须符合 `type(scope): description` 模式
-2. **类型检查**：type 必须是预定义的 11 个之一
-3. **长度要求**：描述至少 10 个字符
-4. **避免通用词**：拒绝 "update"、"change" 等模糊描述
-5. **提供示例**：失败时展示 5 个正确示例
-
-### 4.3 文档同步检查：scripts/doc_sync_checker.sh
-
-**目的**：当 API 代码发生变更时，提醒开发者同步更新相关文档，避免文档过时。
-
-**实现思路**：
-
-1. 定义"代码目录 → 文档文件"的映射规则（如 `src/api/` → `docs/API.md`）
-2. 获取 staged 文件列表
-3. 检查是否有代码目录下的文件被修改
-4. 如果代码改了但对应文档未 staged，则发出警告
-5. 列出需要更新的文档文件
-
-**为什么使用 Shell**：
-
-- 任务简单，无需复杂逻辑
-- bash 在 Git 操作上更简洁（`git diff`、`grep`）
-- 执行效率高
-
-**设计亮点**：
-
-- 使用关联数组（`declare -A`）灵活配置规则
-- 仅警告不阻止，避免误杀正常提交（文档有时滞后于代码）
-
-```bash
-#!/bin/bash
-# Documentation sync checker
-# Warns if API code changed but docs not updated
-
-set -e
-
-echo "📚 Checking documentation sync..."
-
-# Configuration: file patterns to check
-declare -A DOC_RULES=(
-    ["src/api/"]="docs/API.md"
-    ["src/models/"]="docs/MODELS.md"
-    ["src/config/"]="docs/CONFIG.md"
-)
-
-# Get list of staged files
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
-
-if [ -z "$STAGED_FILES" ]; then
-    echo "✅ No files staged"
-    exit 0
-fi
-
-WARNINGS=()
-
-# Check each rule
-for pattern in "${!DOC_RULES[@]}"; do
-    doc_file="${DOC_RULES[$pattern]}"
-
-    # Check if any staged file matches pattern
-    MATCHED_FILES=$(echo "$STAGED_FILES" | grep "^$pattern" || true)
-
-    if [ -n "$MATCHED_FILES" ]; then
-        # Code in this area was modified
-
-        # Check if corresponding doc was also staged
-        DOC_STAGED=$(echo "$STAGED_FILES" | grep "^$doc_file$" || true)
-
-        if [ -z "$DOC_STAGED" ]; then
-            # Doc was not updated
-            WARNINGS+=("⚠️  Files in '$pattern' modified, but '$doc_file' not updated")
-
-            # List affected files
-            while IFS= read -r file; do
-                if [ -n "$file" ]; then
-                    WARNINGS+=("   - $file")
-                fi
-            done <<< "$MATCHED_FILES"
-        fi
-    fi
-done
-
-# Output results
-if [ ${#WARNINGS[@]} -eq 0 ]; then
-    echo "✅ Documentation is up to date"
-    exit 0
-else
-    echo ""
-    echo "⚠️  Documentation sync warnings:"
-    echo ""
-
-    for warning in "${WARNINGS[@]}"; do
-        echo "$warning"
-    done
-
-    echo ""
-    echo "💡 Please update the corresponding documentation files"
-
-    # Return 0 (warning only, don't block commit)
-    exit 0
-fi
-```
-
-**检查逻辑**：
-
-1. **规则映射**：定义"代码目录 → 文档文件"的映射关系
-2. **智能匹配**：检查 staged 文件是否在监控目录内
-3. **交叉验证**：如果代码改了，检查文档是否也 staged
-4. **友好输出**：列出所有需要更新的文档
-5. **非阻塞**：仅警告，不阻止提交（exit 0）
-
-### 4.4 工具函数：scripts/utils.py
-
-**目的**：提供可复用的工具函数，避免在多个脚本中重复代码。
-
-**包含的函数**：
-
-- `run_command()`：统一的命令执行接口，处理超时和错误
-- `is_git_repository()`：检查当前目录是否为 Git 仓库
-- `get_git_root()`：获取 Git 仓库根目录
-
-**设计原则**：
-
-- 单一职责，每个函数只做一件事
-- 统一的错误处理和异常信息
-- 类型提示（Type Hints），便于维护
-
-这些工具函数在本示例中未被使用，但为future扩展预留了空间。
-
-```python
-"""Shared utility functions"""
-
-import subprocess
-from typing import List, Optional
-
-
-def run_command(
-    cmd: List[str],
-    check: bool = True,
-    timeout: Optional[int] = None
-) -> subprocess.CompletedProcess:
-    """
-    Run shell command with error handling
-
-    Args:
-        cmd: Command and arguments as list
-        check: Raise exception on non-zero exit
-        timeout: Command timeout in seconds
-
-    Returns:
-        CompletedProcess instance
-    """
-    try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=check,
-            timeout=timeout
-        )
-        return result
-    except subprocess.TimeoutExpired:
-        raise TimeoutError(f"Command timed out after {timeout}s: {' '.join(cmd)}")
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Command failed: {' '.join(cmd)}\n{e.stderr}")
-
-
-def is_git_repository() -> bool:
-    """Check if current directory is a Git repository"""
-    try:
-        subprocess.run(
-            ['git', 'rev-parse', '--git-dir'],
-            capture_output=True,
-            check=True
-        )
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def get_git_root() -> str:
-    """Get Git repository root directory"""
-    result = run_command(['git', 'rev-parse', '--show-toplevel'])
-    return result.stdout.strip()
-```
-
----
-
-## 五、本地测试流程
-
-在将插件发布到团队或公开市场前，完整的本地测试至关重要。本节将带你完成从环境准备到功能验证的全流程，确保插件在各种场景下都能稳定工作。
-
-**测试目标**：
-
-1. **结构验证**：确认插件文件结构完整，配置格式正确
-2. **命令可用性**：验证所有 slash 命令能被正确识别和执行
-3. **Hook 触发**：测试自动化 Hook 是否在预期时机触发
-4. **脚本执行**：确保所有检查脚本能正确运行并返回准确结果
-5. **错误处理**：验证各种异常情况下的降级和提示逻辑
-
-**测试流程概览**：
-
-```
-环境准备 → 创建测试市场 → 安装激活插件 → 功能测试 → 调试优化
-   ↓            ↓              ↓             ↓           ↓
- 准备测试    配置本地       验证命令      模拟各种    排查并修复
- 项目和     marketplace    是否可见      使用场景     发现的问题
- 依赖
-```
-
-### 5.1 环境准备
-
-**Step 1: 创建测试项目**
-
-```bash
-# 创建测试目录
-mkdir test-plugin-project
-cd test-plugin-project
-
-# 初始化 Git
-git init
-
-# 创建测试文件
-cat > test.js << 'EOF'
-function hello() {
-    console.log("hello world")  // Missing semicolon
-}
-
-let unused = 42;  // Unused variable
-EOF
-
-# 配置 ESLint
-npm init -y
-npm install --save-dev eslint
-npx eslint --init
-
-# 创建简单的 ESLint 配置
-cat > .eslintrc.json << 'EOF'
-{
-  "env": {
-    "browser": true,
-    "es2021": true
-  },
-  "extends": "eslint:recommended",
-  "rules": {
-    "semi": ["error", "always"],
-    "no-unused-vars": "error"
-  }
-}
-EOF
-```
-
-**Step 2: 安装插件依赖**
-
-```bash
-cd /path/to/pre-commit-checker
-
-# 创建虚拟环境
-python3 -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\activate   # Windows
-
-# 安装依赖（如果有）
-pip install -r requirements.txt
-
-# 给脚本添加执行权限
-chmod +x scripts/*.py scripts/*.sh
-```
-
-### 5.2 创建测试 Marketplace
-
-**Step 1: 配置本地市场**
-
-```bash
-cd /path/to/pre-commit-checker
-
-# 创建 marketplace 配置
-mkdir -p .claude-plugin
-
-cat > .claude-plugin/marketplace.json << 'EOF'
-{
-  "name": "local-test-marketplace",
-  "owner": {
-    "name": "Test User",
-    "email": "[email protected]"
-  },
-  "metadata": {
-    "description": "Local testing marketplace for plugin development",
-    "version": "1.0.0"
-  },
-  "plugins": [
-    {
-      "name": "pre-commit-checker",
-      "description": "Automated pre-commit quality checks",
-      "version": "1.0.0",
-      "source": ".",
-      "author": {
-        "name": "DevTools Team"
-      },
-      "keywords": ["git", "lint", "quality"],
-      "category": "development"
-    }
-  ]
-}
-EOF
-```
-
-**Step 2: 添加到 Claude Code**
-
-```bash
-# 在 Claude Code 中执行
-/plugin marketplace add /absolute/path/to/pre-commit-checker
-
-# 验证市场已添加
-/plugin marketplace list
-
-# 预期输出：
-# ✓ local-test-marketplace (local: /path/to/pre-commit-checker)
-#   - 1 plugin available
-```
-
-### 5.3 安装并激活插件
-
-**安装机制说明**：Claude Code 支持从多个市场源安装插件。安装后，插件会被下载到本地缓存，命令和 Hook 配置会被加载到当前会话中。
-
-```bash
-# 安装插件
-/plugin install pre-commit-checker@local-test-marketplace
-
-# 查看已安装插件
-/plugin
-
-# 预期输出（打开交互式菜单）：
-# Installed Plugins:
-# ✓ pre-commit-checker (v1.0.0)
-#   Status: Enabled
-#   Commands: /pre-commit, /fix-lint, /check-docs
-#   Hooks: PreToolUse (git commit)
-
-# 验证命令是否可用
-/help
-
-# 应该能看到新增的命令：
-# /pre-commit - Run comprehensive pre-commit quality checks
-# /fix-lint - Automatically fix ESLint errors
-# /check-docs - Check documentation sync
-
-# 重启 Claude Code 使插件完全生效
-exit
-claude
-```
-
-**安装过程解析**：
-
-1. **解析插件源**：从 local-test-marketplace 读取插件配置
-2. **下载插件**：将插件文件复制到 Claude Code 的插件目录
-3. **注册命令**：扫描 `commands/` 目录，注册所有 slash 命令
-4. **配置 Hook**：读取 `hooks/hooks.json`，设置自动化触发器
-5. **激活插件**：加载插件配置到当前会话
-
-**故障排查**：
-
-- 如果插件安装失败，检查 marketplace.json 格式是否正确
-- 如果命令不可见，确认 commands 目录中的文件格式正确
-- 如果 Hook 未触发，验证 hooks.json 中的 matcher 表达式
-
-### 5.4 功能测试
-
-#### 测试 1：手动命令测试
-
-```bash
-# 切换到测试项目
-cd /path/to/test-plugin-project
-
-# Stage 测试文件
-git add test.js
-
-# 测试手动检查命令
-/pre-commit
-```
-
-**预期输出：**
-
-```
-🔍 Running ESLint checks...
-📝 Checking 1 file(s)...
-
-❌ Lint errors found:
-   Errors: 2
-   Warnings: 0
-
-/path/to/test.js
-  2:32  error  Missing semicolon                semi
-  5:5   error  'unused' is assigned but never used  no-unused-vars
-
-✖ 2 problems (2 errors, 0 warnings)
-  1 error potentially fixable with the `--fix` option
-
-💡 Tip: Run /fix-lint or 'npx eslint --fix' to auto-fix
-
-📝 Validating commit message format...
-⚠️  No commit message found
-💡 Prepare your commit message and try again
-
-⚠️ Issues found:
-  ❌ ESLint: 2 errors in test.js
-  ⚠️ Commit message: Not prepared yet
-```
-
-#### 测试 2：自动修复测试
-
-```bash
-# 测试自动修复命令
-/fix-lint
-```
-
-**预期输出：**
-
-```
-🔍 Running ESLint checks...
-📝 Checking 1 file(s)...
-
-✅ Auto-fixed 1 issue:
-   - 1 × Missing semicolon
-
-❌ 1 issue requires manual fix:
-   - test.js:5 - 'unused' is assigned but never used
-
-Please fix manually and run /pre-commit again.
-```
-
-#### 测试 3：Hook 自动触发测试
-
-```bash
-# 手动修复剩余问题
-# 编辑 test.js，删除 unused 变量
-
-# 准备提交（触发 Hook）
-# 在 Claude Code 中执行
-git commit -m "test: add hello function"
-```
-
-**预期流程：**
-
-```
-Claude Code 检测到 git commit 命令
-↓
-触发 PreToolUse Hook
-↓
-🔍 Running ESLint checks...
-✅ All lint checks passed
-
-📝 Validating commit message format...
-✅ Commit message format is valid
-
-📚 Checking documentation sync...
-✅ Documentation is up to date
-↓
-✅ All checks passed
-↓
-允许 commit 继续执行
-```
-
-#### 测试 4：失败阻止测试
-
-```bash
-# 故意制造错误
-cat > test.js << 'EOF'
-function bad() {
-    console.log("error"  // Missing closing parenthesis
-}
-EOF
-
-git add test.js
-
-# 尝试提交
-git commit -m "bad code"
-```
-
-**预期行为：**
-
-```
-🔍 Running ESLint checks...
-
-❌ Lint errors found:
-   test.js:2 - Parsing error: Unexpected token
-
-❌ Pre-commit checks failed. Fix issues or run /fix-lint
-
-[Commit 被阻止]
-```
-
-### 5.5 调试技巧
-
-当插件出现问题时,掌握正确的调试方法能快速定位并解决问题。以下是四种实用的调试技巧,按照从简单到复杂的顺序排列。
-
-#### 技巧 1：使用插件管理命令检查状态
-
-```bash
-# 查看已安装的插件列表和状态
-/plugin
-
-# 这会打开交互式菜单,显示:
-# - 已安装的插件及其版本
-# - 插件的启用/禁用状态
-# - 可用的命令列表
-# - Hook 配置情况
-
-# 或使用 /help 验证命令是否可见
-/help
-
-# 应该能看到插件提供的命令:
-# /pre-commit - Run comprehensive pre-commit quality checks
-# /fix-lint - Automatically fix ESLint errors
-# /check-docs - Check documentation sync
-```
-
-**如何判断问题**:
-
-- 如果 `/plugin` 中看不到插件 → 安装或启用失败
-- 如果 `/help` 中看不到命令 → 命令配置错误
-- 如果状态显示 "Disabled" → 需要手动启用
-
-#### 技巧 2：检查脚本输出和错误信息
-
-```bash
-# 单独运行脚本,查看详细输出
-cd /path/to/pre-commit-checker
-
-# 测试 ESLint 检查脚本
-python scripts/lint_check.py
-# 观察: 是否找到 ESLint? 文件列表是否正确? 错误信息是否清晰?
-
-# 测试 Commit 消息验证
-python scripts/commit_msg_validator.py
-# 观察: 是否能读取 commit 消息? 正则匹配是否正确?
-
-# 测试文档同步检查
-bash scripts/doc_sync_checker.sh
-# 观察: 规则配置是否正确? staged 文件检测是否准确?
-```
-
-**调试要点**:
-
-- 检查脚本是否有执行权限 (`ls -l scripts/`)
-- 观察退出码 (`echo $?`,0=成功)
-- 查看详细错误栈,定位具体问题行
-
-#### 技巧 3：验证环境和依赖
-
-```bash
-# 检查 Python 环境
-python --version  # 确认版本 >= 3.8
-which python      # 确认使用正确的 Python
-
-# 检查 Node.js 和 ESLint
-node --version
-npx eslint --version
-
-# 检查 Git 状态
-git status
-git diff --cached --name-only  # 查看 staged 文件
-
-# 验证插件目录结构
-cd /path/to/pre-commit-checker
-find . -type f -name "*.json"  # 查找所有 JSON 文件
-cat .claude-plugin/plugin.json | python -m json.tool  # 验证 JSON 格式
-```
-
-**常见问题排查**:
-
-- Python/Node 版本不符合要求 → 升级或使用虚拟环境
-- ESLint 未安装 → `npm install --save-dev eslint`
-- JSON 格式错误 → 使用 `python -m json.tool` 验证
-
-#### 技巧 4：查看 Claude Code 的执行日志
-
-```bash
-# Claude Code 在执行插件时会在终端输出日志
-# 观察以下关键信息:
-
-# Hook 触发时的输出:
-🔍 Running ESLint checks...
-📝 Validating commit message format...
-📚 Checking documentation sync...
-
-# 如果没有看到这些输出:
-# 1. Hook 可能未触发 (matcher 不匹配)
-# 2. 脚本可能执行失败但未输出错误
-# 3. 超时设置过短导致提前终止
-
-# 调试 Hook 匹配问题:
-# 临时简化 hooks.json 中的 matcher
-{
-  "matcher": "git commit"  # 更宽松的匹配,先确保能触发
-}
-
-# 然后逐步细化:
-{
-  "matcher": "ExecuteBash.*git.*commit"  # 更精确的匹配
-}
-```
-
-**Hook 调试流程**:
-
-1. 确认插件已启用 (`/plugin` 菜单)
-2. 简化 matcher,确保能触发
-3. 检查脚本是否有输出
-4. 观察退出码是否正确返回
-5. 逐步恢复原始的 matcher 配置
-
----
-
-## 六、常见问题排查
-
-### 6.1 问题诊断流程图
-
-```mermaid
-graph TD
-    A[Plugin Exception] --> B{Plugin installed?}
-
-    B -->|no| C["Run /plugin install"]
-    B -->|yes| D{Commands exist?}
-
-    D -->|no| E["Check plugin.json<br/>commands path config"]
-    D -->|yes| F{Commands executable?}
-
-    F -->|no| G["Check script permissions<br/>chmod +x scripts/*"]
-    F -->|yes| H{Hook triggered?}
-
-    H -->|no| I["Simplify matcher test<br/>git commit"]
-    H -->|yes| J{Script execution failed?}
-
-    J -->|yes| K["Check logs<br/>/plugin logs"]
-    J -->|no| L["Check exit code<br/>and output format"]
-
-    E --> M[Fix configuration]
-    G --> M
-    I --> M
-    K --> M
-    L --> M
-
-    style A fill:#ffcdd2
-    style M fill:#c8e6c9
-```
-
-### 6.2 高频问题与解决方案
-
-#### 问题 1：脚本权限错误
-
-**症状：**
-
-```
-PermissionError: [Errno 13] Permission denied:
-'./scripts/lint_check.py'
-```
-
-**原因：** 脚本文件没有执行权限
-
-**解决：**
-
-```bash
-# 给所有脚本添加执行权限
-chmod +x scripts/*.py scripts/*.sh
-
-# 或单独设置
-chmod +x scripts/lint_check.py
-chmod +x scripts/commit_msg_validator.py
-chmod +x scripts/doc_sync_checker.sh
-```
-
-**验证：**
-
-```bash
-ls -l scripts/
-
-# 预期输出（注意 x 权限）：
--rwxr-xr-x  lint_check.py
--rwxr-xr-x  commit_msg_validator.py
--rwxr-xr-x  doc_sync_checker.sh
-```
-
-#### 问题 2：环境变量未解析
-
-**症状：**
-
-```
-FileNotFoundError:
-${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py
-```
-
-**原因：** hooks.json 中使用了单引号（JSON 不支持变量替换）
-
-**错误示例：**
-
-```json
-{
-  "command": "${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py"
-}
-```
-
-**正确写法：**
-
-```json
-{
-  "command": "${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py"
-}
-```
-
-**验证：**
-
-```bash
-# 使用 JSON 验证工具
-cat hooks/hooks.json | python -m json.tool
-
-# 或在线验证
-# https://jsonlint.com
-```
-
-#### 问题 3：Hook 未触发
-
-**症状：** git commit 时没有执行检查
-
-**调试步骤：**
-
-```bash
-# Step 1: 确认插件已启用
-/plugin list
-
-# 应该看到：
-✓ pre-commit-checker (v1.0.0) - Enabled
-
-# Step 2: 检查 Hook 配置
-/plugin info pre-commit-checker
-
-# 应该显示：
-Hooks:
-  - PreToolUse: ExecuteBash.*git\s+commit
-
-# Step 3: 测试 matcher
-/plugin test-hook pre-commit-checker "git commit -m 'test'"
-
-# 应该输出：
-✅ Hook matched
-
-# Step 4: 简化 matcher 测试
-# 临时修改 hooks.json:
-{
-  "matcher": "git commit"  # 简化的 matcher
-}
-
-# 重新测试
-```
-
-**常见原因：**
-
-1. Matcher 正则表达式太严格
-2. Claude 调用的命令格式不匹配
-3. Hook 被其他插件覆盖
-
-**解决方案：**
-
-```json
-{
-  "matcher": "ExecuteBash.*git.*commit", // 更宽松的匹配
-  "priority": 10 // 提高优先级
-}
-```
-
-#### 问题 4：Python 模块导入失败
-
-**症状：**
-
-```
-ModuleNotFoundError: No module named 'xxx'
-```
-
-**原因：** 缺少 Python 依赖
-
-**解决：**
-
-```bash
-# 方案 1: 使用虚拟环境
-cd /path/to/pre-commit-checker
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# 方案 2: 在 Hook 中指定 Python 路径
-{
-  "command": "/path/to/.venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py"
-}
-
-# 方案 3: 使用系统 Python 安装依赖
-pip install --user -r requirements.txt
-```
-
-#### 问题 5：ESLint 未找到
-
-**症状：**
-
-```
-❌ ESLint not found. Run: npm install -g eslint
-```
-
-**解决：**
-
-```bash
-# 方案 1: 全局安装
-npm install -g eslint
-
-# 方案 2: 项目本地安装
-cd /your/project
-npm install --save-dev eslint
-
-# 方案 3: 使用 npx（推荐）
-# 脚本中已使用 npx eslint，会自动使用本地版本
-```
-
-#### 问题 6：超时错误
-
-**症状：**
-
-```
-TimeoutError: Command timed out after 30s
-```
-
-**原因：** 检查的文件太多或网络慢
-
-**解决：**
-
-```json
-{
-  "hooks": [
-    {
-      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/lint_check.py",
-      "timeout": 60, // 增加到 60 秒
-      "async": false // 确保同步执行
-    }
-  ]
-}
-```
-
-#### 问题 7：Git 仓库检测失败
-
-**症状：**
-
-```
-fatal: not a git repository
-```
-
-**原因：** 不在 Git 仓库目录中
-
-**解决：**
-
-```python
-# 在脚本开头添加检查
-import os
-import sys
-
-def check_git_repo():
-    try:
-        subprocess.run(
-            ['git', 'rev-parse', '--git-dir'],
-            capture_output=True,
-            check=True
-        )
-    except subprocess.CalledProcessError:
-        print("❌ Not a git repository")
-        sys.exit(1)
-
-check_git_repo()
-```
-
-### 6.3 调试清单
-
-在提交 issue 前，请检查以下项目：
+Hello plugin 只有一个 command,8 行 Markdown:
 
 ```markdown
-## 调试清单
-
-- [ ] 插件已正确安装（/plugin list 可见）
-- [ ] 插件已启用（Status: Enabled）
-- [ ] 脚本有执行权限（ls -l scripts/）
-- [ ] JSON 格式正确（python -m json.tool）
-- [ ] 环境变量正确（${CLAUDE_PLUGIN_ROOT}）
-- [ ] 依赖已安装（Python/Node packages）
-- [ ] 在 Git 仓库中运行
-- [ ] ESLint 已配置
-- [ ] Hook matcher 正确
-- [ ] 查看了日志（/plugin logs）
-```
-
+---
+description: 用个性化的消息问候用户
 ---
 
-## 七、插件组合与高级技巧
+# Hello 命令
 
-### 7.1 多插件协同工作
-
-#### 场景:同时使用代码检查和安全扫描
-
-**问题**:当项目同时使用多个插件时(如代码规范检查、安全扫描、测试运行器),需要协调它们的配置和行为,避免相互冲突或重复执行。
-
-**解决方案**:通过项目级的 `.claude/settings.json` 统一管理所有插件的启用状态和配置参数。
-
-```json
-// .claude/settings.json(项目级配置)
-{
-  "enabledPlugins": ["pre-commit-checker", "security-scanner", "test-runner"],
-
-  "pluginSettings": {
-    "pre-commit-checker": {
-      "autoFix": true,
-      "strictMode": false
-    },
-    "security-scanner": {
-      "severity": "high",
-      "excludePaths": ["vendor/", "node_modules/"]
-    }
-  }
-}
+热情地问候用户,并询问今天能为他们提供什么帮助。让问候语充满个性和鼓励。
 ```
 
-**配置说明**:
+就这么简单。但它完整地演示了插件的核心机制。
 
-- `enabledPlugins`:明确声明项目使用哪些插件,团队成员克隆代码后自动同步
-- `pluginSettings`:为每个插件提供定制化参数,覆盖默认行为
-- `autoFix`:允许 pre-commit-checker 自动修复问题
-- `excludePaths`:让 security-scanner 跳过第三方依赖目录,减少误报
-
-**使用效果**:
-
-- 新成员克隆项目后,Claude Code 会提示安装配置的插件
-- 所有人使用相同的检查规则和严格程度
-- 避免"本地能过,CI 失败"的问题
-
-#### Hook 执行顺序控制
-
-**问题**:多个插件都定义了 `PreToolUse` Hook 监听 `git commit`,默认执行顺序不确定,可能导致安全检查在代码检查之后运行(不合理),或者关键检查被跳过。
-
-**解决方案**:使用 `order` 参数明确指定 Hook 的执行顺序,数字越小越先执行。
+在 marketplace.json 中,它的配置是这样的:
 
 ```json
 {
-  "PreToolUse": [
-    {
-      "name": "security-scan",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "security-scanner scan",
-          "order": 10 // 最先执行
-        }
-      ]
-    },
-    {
-      "name": "lint-check",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "python lint_check.py",
-          "order": 20 // 然后执行
-        }
-      ]
-    },
-    {
-      "name": "test-run",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "pytest",
-          "order": 30 // 最后执行
-        }
-      ]
-    }
-  ]
+  "name": "hello",
+  "source": "./plugins/hello",
+  "description": "Simple hello command plugin",
+  "version": "0.0.1",
+  "commands": ["./commands/hello.md"]
 }
 ```
 
-**执行流程：**
+文件结构:
 
 ```
-git commit
-  ↓
-安全扫描 (order: 10)
-  ↓ 通过
-代码检查 (order: 20)
-  ↓ 通过
-运行测试 (order: 30)
-  ↓ 通过
-✅ 允许提交
+plugins/hello/
+├── .claude-plugin/
+│   └── (不需要 plugin.json,marketplace 已配置。我之前就在这里踩过坑)
+└── commands/
+    └── hello.md
 ```
 
-### 7.2 命名冲突处理
+### 2.2 它是如何工作的?
 
-#### 问题:两个插件都有 /check 命令
-
-**问题描述**:当安装多个插件时,它们可能定义了相同名称的命令。例如 `pre-commit-checker` 和 `security-scanner` 都提供 `/check` 命令。用户输入 `/check` 时,Claude Code 不知道应该执行哪个插件的命令,导致歧义。
-
-**影响**:
-
-- 用户体验混乱,不确定会触发哪个功能
-- 可能错误执行了不符合预期的命令
-- 命令提示中出现重复项
-
-**解决方案 1:命名空间前缀**
-
-```json
-// Plugin A: pre-commit-checker
-{
-  "commands": [{
-    "name": "precommit:check",
-    "alias": ["check"]  // 无冲突时可用
-  }]
-}
-
-// Plugin B: security-scanner
-{
-  "commands": [{
-    "name": "security:check",
-    "alias": ["check"]
-  }]
-}
-```
-
-**使用方式：**
-
-```bash
-/precommit:check  # 明确指定插件
-/security:check
-
-# 如果没有冲突，简短别名生效：
-/check  # 会提示选择：
-# Which plugin's /check?
-# 1. pre-commit-checker
-# 2. security-scanner
-```
-
-**解决方案 2：优先级控制**
-
-```json
-{
-  "name": "pre-commit-checker",
-  "priority": 10, // 数字越大优先级越高
-  "commands": "./commands"
-}
-```
-
-### 7.3 性能优化
-
-#### 优化 1:条件化执行
-
-**问题**:某些检查(如严格的代码审查、性能测试)只需要在特定分支(如 main、release)上运行,在 feature 分支频繁触发会严重拖慢开发速度。
-
-**影响**:
-
-- 开发分支每次 commit 等待时间过长(20-30秒)
-- 开发者为避免等待,跳过本地测试直接推送到 CI
-- CI 失败率上升,浪费更多时间
-
-**解决方案**:使用 `condition` 参数根据环境变量(如 `GIT_BRANCH`)动态决定是否执行检查。
-
-```json
-{
-  "hooks": [{
-    "matcher": "Write.*\\.py$",
-    "condition": "${GIT_BRANCH} == 'main'",  // 仅 main 分支
-    "hooks": [...]
-  }]
-}
-```
-
-**效果**:
-
-- feature 分支提交时跳过耗时检查,秒级完成
-- main 分支保持完整检查,确保质量
-- 减少 70% 的开发等待时间
-
-#### 优化 2:文件过滤
-
-**问题**:默认检查所有 staged 文件,但很多检查只针对特定文件类型(如 ESLint 只检查 JS/TS 文件)。未过滤时会浪费时间尝试检查不相关文件,还可能产生误报。
-
-**解决方案**:在脚本开头过滤出目标文件类型,仅处理相关文件。
-
-```python
-def get_staged_files(extensions: List[str]) -> List[str]:
-    """仅获取指定扩展名的文件"""
-    all_files = get_all_staged_files()
-
-    return [
-        f for f in all_files
-        if any(f.endswith(ext) for ext in extensions)
-    ]
-
-# 使用
-js_files = get_staged_files(['.js', '.jsx', '.ts', '.tsx'])
-```
-
-#### 优化 3：并行检查
-
-**问题描述**：当项目有多个文件需要检查时，串行处理（一个接一个检查）会耗费大量时间。例如，检查 20 个文件，每个文件需要 2 秒，总共需要 40 秒。这种等待时间会打断开发者的思路，降低开发效率。
-
-**解决思路**：利用多线程并行处理，同时检查多个文件。就像有多个检查员同时工作，而不是只有一个检查员逐个检查。
-
-**实现方案**：使用 Python 的 `ThreadPoolExecutor` 创建线程池，将文件分配给不同的线程并行检查。
-
-```python
-import concurrent.futures
-from typing import List, Dict
-
-def check_single_file(filepath: str) -> Dict:
-    """检查单个文件"""
-    # 模拟文件检查过程
-    result = {
-        'file': filepath,
-        'errors': 0,
-        'warnings': 0,
-        'status': 'passed'
-    }
-    return result
-
-def check_multiple_files(files: List[str]) -> List[Dict]:
-    """并行检查多个文件
-
-    Args:
-        files: 需要检查的文件列表
-
-    Returns:
-        检查结果列表
-    """
-    # 创建线程池，最多 4 个线程同时工作
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-        # 为每个文件提交检查任务
-        futures = [
-            executor.submit(check_single_file, f)
-            for f in files
-        ]
-
-        # 收集所有任务的完成结果
-        results = [
-            future.result()
-            for future in concurrent.futures.as_completed(futures)
-        ]
-
-    return results
-
-# 使用示例
-files_to_check = ['src/app.js', 'src/utils.js', 'src/api.js']
-results = check_multiple_files(files_to_check)
-print(f"检查完成，共处理 {len(results)} 个文件")
-```
-
-**性能提升**：
-
-- 串行处理：20 文件 × 2 秒 = 40 秒
-- 并行处理（4 线程）：20 文件 ÷ 4 × 2 秒 = 10 秒
-- **提升 75% 的处理速度**
-
-#### 优化 4：缓存机制
-
-**问题描述**：在开发过程中，同一个文件可能会被多次检查。例如，修改代码后运行 `/pre-commit`，然后又因为其他原因再次运行。每次都重新执行相同的检查（如 ESLint 分析）是浪费时间的，尤其是对于大文件。
-
-**解决思路**：记住每个文件的检查结果。如果文件内容没有变化，直接使用之前的结果，避免重复计算。这就像记住做过的数学题答案，下次遇到相同题目直接写出答案。
-
-**实现方案**：为每个文件内容生成唯一指纹（hash），将检查结果与指纹一起缓存。再次检查时，先计算文件 hash，如果 hash 相同就直接使用缓存结果。
-
-```python
-import hashlib
-import json
-from pathlib import Path
-from typing import Dict
-
-# 缓存目录
-CACHE_DIR = Path('.claude-cache')
-
-def get_file_hash(filepath: str) -> str:
-    """计算文件内容的 hash 值
-
-    Args:
-        filepath: 文件路径
-
-    Returns:
-        文件内容的 SHA256 hash
-    """
-    with open(filepath, 'rb') as f:
-        return hashlib.sha256(f.read()).hexdigest()
-
-def run_actual_check(filepath: str) -> Dict:
-    """执行实际的文件检查（模拟）
-
-    Args:
-        filepath: 文件路径
-
-    Returns:
-        检查结果字典
-    """
-    # 这里是实际的检查逻辑
-    # 例如：运行 ESLint、TypeScript 检查等
-    return {
-        'file': filepath,
-        'errors': 0,
-        'warnings': 1,
-        'timestamp': '2025-01-10T10:30:00Z'
-    }
-
-def check_with_cache(filepath: str) -> Dict:
-    """带缓存的文件检查
-
-    Args:
-        filepath: 要检查的文件路径
-
-    Returns:
-        检查结果字典
-    """
-    # 计算当前文件的 hash
-    file_hash = get_file_hash(filepath)
-    cache_file = CACHE_DIR / f"{file_hash}.json"
-
-    # 检查缓存是否存在
-    if cache_file.exists():
-        print(f"📋 使用缓存结果: {filepath}")
-        with open(cache_file) as f:
-            return json.load(f)
-
-    # 缓存不存在，执行实际检查
-    print(f"🔍 执行检查: {filepath}")
-    result = run_actual_check(filepath)
-
-    # 保存结果到缓存
-    CACHE_DIR.mkdir(exist_ok=True)
-    with open(cache_file, 'w') as f:
-        json.dump(result, f)
-
-    return result
-
-# 使用示例
-if __name__ == "__main__":
-    # 第一次检查 - 会执行实际检查
-    result1 = check_with_cache("src/app.js")
-    print(f"结果: {result1}")
-
-    # 第二次检查相同文件 - 使用缓存
-    result2 = check_with_cache("src/app.js")
-    print(f"结果: {result2}")
-```
-
-**性能提升示例**：
-
-- 文件 `app.js` 首次检查：3 秒
-- 文件 `app.js` 第二次检查（缓存命中）：0.1 秒
-- **提升 97% 的响应速度**
-
-**缓存策略**：
-
-- 缓存文件保存在项目根目录的 `.claude-cache/` 文件夹
-- 使用文件内容 hash 作为缓存键，确保内容变化时缓存失效
-- 可以定期清理过期缓存（例如：`find .claude-cache -mtime +7 -delete`）
-
-### 7.4 团队配置同步
-
-**问题描述**：在团队协作中，确保所有成员使用相同的插件配置是一个挑战。如果每个开发者手动安装插件，可能会出现：
-
-- 使用不同版本的插件
-- 配置参数不一致
-- 某些成员忘记安装必要插件
-- 新人入职时需要手动配置环境
-
-这些问题会导致"在我电脑上能跑"的尴尬情况，影响团队效率。
-
-**解决思路**：将插件配置作为项目代码的一部分提交到 Git 仓库。当团队成员克隆项目时，Claude Code 自动检测并提示安装配置的插件，实现"一键配置"开发环境。
-
-#### 仓库级配置文件
-
-```json
-// .claude/settings.json（提交到 Git）
-{
-  "extraKnownMarketplaces": {
-    "company-internal": {
-      "source": {
-        "source": "git",
-        "url": "https://git.company.com/devtools/claude-plugins.git"
-      }
-    }
-  },
-
-  "enabledPlugins": ["pre-commit-checker", "security-scanner"],
-
-  "hooks": {
-    "enabled": true,
-    "strictMode": true // 所有检查失败都阻止
-  }
-}
-```
-
-#### 自动安装流程
+当你输入 `/hello` 时,发生了什么?
 
 ```mermaid
 sequenceDiagram
-    participant D as New Member
-    participant G as Git Clone
-    participant C as Claude Code
-    participant M as Marketplace
+    participant U as 用户
+    participant CC as Claude Code
+    participant P as Plugin System
+    participant C as Claude
 
-    D->>G: git clone project
-    G->>D: Download code (with .claude/settings.json)
-
-    D->>C: Open Claude Code
-    C->>C: Detect .claude/settings.json
-
-    C->>D: Prompt: "Trust and install plugins?"
-    D->>C: Select "Yes"
-
-    C->>M: Add company-internal marketplace
-    C->>M: Install pre-commit-checker
-    C->>M: Install security-scanner
-
-    M->>C: Plugins installed
-    C->>D: ✅ Dev environment configured
+    U->>CC: /hello
+    CC->>P: 查找 hello command
+    P->>P: 读取 hello.md
+    P->>C: 注入 Markdown 内容到 prompt
+    C->>C: 理解指令:"热情问候,询问需求"
+    C->>U: 个性化的问候消息
 ```
+
+**关键洞察 1**:插件本质上是对 Claude 的"有边界扩展"。它不是添加新功能,而是通过结构化的方式告诉 Claude "在这个场景下,你应该这样做"。
+
+**关键洞察 2**:Markdown 格式的 command 让 Claude 能"理解"执行意图。YAML frontmatter 的 description 告诉 Claude Code 何时激活这个命令,而正文告诉 Claude 具体该做什么。
+
+**关键洞察 3**:简单不等于无用。Hello plugin 的价值在于精准——它把"热情问候"这个模糊的期望,变成了明确的行为指令。
+
+### 2.3 实践验证
+
+让我们安装并测试:
+
+```bash
+# Add this marketplace from our official repo
+/plugin marketplace add robinmin/cc-agents
+
+# Or, you can add it from your local directory
+/plugin marketplace add /path/to/cc-agents
+
+# then you can install it, once the marketplace has been added
+/plugin install hello@cc-agents
+
+# use this plugin's slash command
+/hello
+```
+
+Claude 的反应会是充满个性的问候,而不是机械的"您好,有什么可以帮助您的吗?"这就是插件的价值——它调整了 Claude 的行为模式。这里展示下我今天测试时候的输出，供参考：
+
+> 你好!很高兴见到你!👋
+>
+> 看到你正在探索 Claude Code Plugins,这太棒了!从你刚才安装和测试 hello plugin 的操作来看,你已经在实践文章中介绍的内容了。
+>
+> 今天有什么我可以帮助你的吗?无论是:
+>
+> - 继续深入了解插件开发
+> - 测试 RD Plugin 的功能
+> - 讨论文章中的某个技术点
+> - 或者任何其他你感兴趣的话题
+>
+> 我都很乐意为你提供帮助!💪
+
+是不是还不错呢？我们就写了那个一段话，就可以随机根据你的上下文产生出相应的不同的招呼方式。
+
+### 2.4 从 Hello Plugin 学到的最佳实践
+
+**✅BP1:从最简单开始,逐步增加复杂度**
+
+Hello plugin 证明了一个 command 就可以构成一个完整的插件。不要一开始就追求复杂的架构,先做出能用的版本,再迭代优化。
+
+**✅BP2:Command 描述要清晰地告诉 Claude "做什么"**
+
+看 hello.md 的正文:"热情地问候用户,并询问今天能为他们提供什么帮助。让问候语充满个性和鼓励。" 这是明确的行为指令,不是模糊的期望。
+
+**✅BP3:中文命令同样有效,适合特定团队场景**
+
+Hello plugin 用中文 description,Claude 理解得很好。对于中文团队,用中文编写 command 可以让意图更清晰,减少翻译造成的信息损失。
 
 ---
 
-## 八、扩展与定制
+## 三、进阶实战:RD Plugin 的技能管理系统
 
-插件系统的魅力在于其可扩展性。一个基础的预提交检查插件可以根据团队需求不断演进，添加更多功能。本章将展示如何扩展插件功能，使其更好地适应不同的开发场景。
+### 3.1 背景:元知识管理的需求
 
-**当前能力范围**：
+回到开头的问题:如何系统化地管理 Agent Skills?
 
-- ✅ 代码质量检查（ESLint、Prettier、TypeScript）
-- ✅ Git 提交规范验证（Conventional Commits）
-- ✅ 文档同步检查
-- ✅ 可扩展的 Hook 触发机制
-- ✅ 与外部工具集成（测试框架、安全扫描）
-- ✅ 自定义报告格式（JSON、HTML、Markdown）
+我的需求很具体:
 
-**扩展方向**：
+1. **快速创建**:用模板生成符合最佳实践的 Skill 框架
+2. **质量评估**:对现有 Skill 进行全方位的质量检查
+3. **持续改进**:根据评估结果提供改进建议
 
-1. **深度集成 CI/CD**：将检查结果推送到 CI 系统
-2. **智能修复建议**：基于错误类型提供具体的修复方案
-3. **性能监控**：跟踪检查耗时，识别性能瓶颈
-4. **多语言支持**：添加对 Python、Go、Java 等语言的支持
-5. **团队协作功能**：将检查结果同步到代码审查平台
+这三个需求覆盖了 Skill 的完整生命周期:创建 → 评估 → 改进 → 再评估。这种用来创建工具的工具，在我们的日常实践中，经常会有。一般会叫 meta-creator，meta-tool 或者之类的，我们也可以叫它的 meta-skill 或者他的正式名称 cc-skills(即 Claude Code Skills)。
 
-### 8.1 添加新的检查规则
+### 3.2 设计理念:元知识管理
 
-#### 示例：TypeScript 类型检查
+我的核心想法是:**用 Skill 来管理 Skill 的知识**。
 
-```python
-# scripts/type_check.py
-#!/usr/bin/env python3
-"""TypeScript type checker"""
+这个想法来自观察:Claude Code 官方文档中的最佳实践,本身就是一种"关于如何写 Skill 的知识"。如果能把这些知识提炼成一个 meta-skill,让 Claude 在创建和评估 Skill 时可以参考,就能保证质量的一致性。
 
-import subprocess
-import sys
+整体架构设计如下:
 
-def run_tsc():
-    """Run TypeScript compiler in check mode"""
-    try:
-        result = subprocess.run(
-            ['npx', 'tsc', '--noEmit'],
-            capture_output=True,
-            text=True,
-            check=False
-        )
+```mermaid
+graph TB
+    subgraph KnowledgeLayer[Knowledge Layer 知识层]
+        MS[cc-skills Meta-Skill<br/>核心知识库]
+        MS --> BP[BEST_PRACTICES.md<br/>最佳实践指南]
+        MS --> EX[EXAMPLES.md<br/>参考示例]
+        MS --> TP[TEMPLATES.md<br/>模板说明]
+    end
 
-        if result.returncode == 0:
-            print("✅ TypeScript type check passed")
-            return 0
-        else:
-            print("❌ TypeScript type errors found:")
-            print(result.stdout)
-            return 1
+    subgraph ToolLayer[Tool Layer 工具层]
+        Script[addskill.sh<br/>技能生成脚本]
+    end
 
-    except FileNotFoundError:
-        print("⚠️  TypeScript not configured, skipping")
-        return 0
+    subgraph InterfaceLayer[Interface Layer 接口层]
+        CMD1["/rd:skill-add<br/>创建新技能"]
+        CMD2["/rd:skill-evaluate<br/>质量评估"]
+        CMD3["/rd:skill-refine<br/>改进优化"]
+    end
 
-if __name__ == '__main__':
-    sys.exit(run_tsc())
+    CMD1 --> MS
+    CMD1 --> Script
+    CMD2 --> MS
+    CMD3 --> MS
+
+    style MS fill:#e1f5ff
+    style Script fill:#fff4e1
+    style CMD1 fill:#f0f0f0
+    style CMD2 fill:#f0f0f0
+    style CMD3 fill:#f0f0f0
 ```
 
-**添加到插件：**
+三层架构的职责:
 
-1. 更新 `commands/pre-commit.md`：
+- **知识层**:存储最佳实践,供 Claude 参考
+- **工具层**:提供确定性的文件操作能力
+- **接口层**:用户交互入口,编排工作流程
+
+对应的文件组织结构:
+
+```
+plugins/rd/
+├── commands/                    # 接口层:Slash Commands
+│   ├── skill-add.md            # 创建新技能的命令接口
+│   ├── skill-evaluate.md       # 质量评估的命令接口
+│   └── skill-refine.md         # 改进优化的命令接口
+├── skills/                      # 知识层:Meta-Skill
+│   └── cc-skills/
+│       ├── SKILL.md            # 核心知识(~300行)
+│       ├── BEST_PRACTICES.md   # 最佳实践详细指南
+│       ├── EXAMPLES.md         # 参考示例和对比
+│       └── TEMPLATES.md        # 模板使用说明
+└── scripts/                     # 工具层:自动化脚本
+    └── addskill.sh             # Skill 生成脚本
+```
+
+**各文件的作用**:
+
+| 文件              | 类型    | 职责                           | 大小    |
+| ----------------- | ------- | ------------------------------ | ------- |
+| skill-add.md      | Command | 接收用户输入,调用脚本,展示结果 | ~200 行 |
+| skill-evaluate.md | Command | 定义评估流程,生成质量报告      | ~600 行 |
+| skill-refine.md   | Command | 交互式改进流程,应用优化建议    | ~400 行 |
+| SKILL.md          | Skill   | 核心知识导航,提供概览          | ~300 行 |
+| BEST_PRACTICES.md | Skill   | 详细最佳实践指南               | ~200 行 |
+| EXAMPLES.md       | Skill   | Before/After 示例对比          | ~150 行 |
+| addskill.sh       | Script  | 模板生成,参数验证,文件创建     | ~500 行 |
+
+### 3.3 设计决策的思考过程
+
+**决策 1:为什么选择 meta-skill 模式?**
+
+我考虑过三种方案:
+
+1. 把最佳实践硬编码到 command 中
+2. 写一个独立的检查脚本
+3. 用 Skill 封装知识
+
+最终选择方案 3,原因是:
+
+- Skill 会随 Claude 会话自动加载,不需要每次重复说明
+- 相比硬编码,更容易更新和扩展
+- 可以复用 Claude 强大的理解和应用能力
+
+这里有个关键的设计哲学值得展开说一下。Anthropic 在设计 Skills 机制时,核心考虑之一就是 **上下文窗口的有限性**。虽然 Claude 的上下文窗口已经很大(Sonnet 4.5 达到 200K tokens),但在实际工作中,我们经常会遇到:
+
+- 分析大型代码库时,快速耗尽上下文
+- 长时间对话后,早期信息被挤出窗口
+- 多个工具和文档同时加载,竞争有限的空间
+
+Skills 的 **按需加载机制** 就是为了解决这个问题:只有当你显式调用某个 Skill(通过 `Skill` tool 或自动激活),它的知识才会被加载到上下文中。使用完毕后,这部分上下文就可以释放给其他任务。
+
+这种设计让我们能够:
+
+- **模块化知识管理**:把不同领域的知识封装在独立的 Skills 中
+- **动态加载策略**:根据任务需要,灵活组合加载不同的 Skills
+- **扩展性保障**:可以创建成百上千个 Skills,而不用担心把上下文撑爆
+
+在 `cc-skills` 这个 meta-skill 中,我把最佳实践、模板说明、参考示例分离到不同的文件,也是基于同样的考虑:核心的 SKILL.md 保持在 300 行左右,详细内容通过引用方式按需查阅。这样 Claude 在日常工作中只需要加载核心知识,需要深入了解时再去读取详细文档。
+
+**决策 2:为什么需要独立的 Shell 脚本?**
+
+Claude 能理解我的意图,但让它直接创建文件有两个问题:
+
+- **可靠性**:Claude 可能出错,需要人工检查
+- **效率**:模板生成是机械操作,不需要 AI 参与
+
+所以我用 addskill.sh 处理文件操作,让 Claude 专注于理解需求和提供建议。这是 **职责分离原则** 的应用。
+
+这里其实涉及到一个更普遍的设计决策:**什么时候用脚本,什么时候用 prompt?**
+
+我在实践中总结出一个判断标准:
+
+**用脚本的场景 -- 高确定性要求**:
+
+- **输入输出明确**:参数类型固定,输出格式统一(如模板生成)
+- **逻辑可枚举**:所有边界条件都可以预先定义(如参数验证、文件命名规则)
+- **零容错要求**:必须 100% 正确执行(如文件系统操作、git 操作)
+- **性能敏感**:需要快速响应,不能有 AI 推理延迟(如构建流程、批量处理)
+
+**用 prompt 的场景 -- 灵活性要求高**:
+
+- **输入多样化**:自然语言描述,难以用结构化参数表达(如 "创建一个评估代码质量的 skill")
+- **输出需要创造**:不是简单的模板替换,需要理解和生成(如编写最佳实践、生成评估报告)
+- **上下文依赖**:需要理解项目结构、代码风格、历史对话(如改进建议、代码审查)
+- **交互式决策**:需要多轮对话确认细节(如 skill-refine 的交互式改进)
+
+在 `rd` 插件中,我就是这样分工的:
+
+- `addskill.sh` 处理确定性的文件创建(输入:skill 名称、模板类型 → 输出:标准化的文件结构)
+- `skill-evaluate.md` 处理灵活的质量分析(输入:skill 文件内容 → 输出:定制化的评估报告)
+- `skill-refine.md` 处理交互式的改进流程(输入:用户意图和 skill 现状 → 输出:针对性的优化建议)
+
+**✅BP4:脚本与 Prompt 的黄金分割线**:确定性交给脚本,创造性交给 AI。当你发现 Claude 在重复做同样的机械操作时,那就是该写脚本的信号;当你发现脚本需要处理太多特殊情况时,那就是该用 prompt 的信号。
+
+**决策 3:为什么设计三个 command?**
+
+对应 Skill 生命周期的三个阶段:
+
+- `/rd:skill-add`:创建阶段,关注结构正确性
+- `/rd:skill-evaluate`:评估阶段,全面质量检查
+- `/rd:skill-refine`:改进阶段,针对性优化
+
+每个 command 职责单一,但可以组合使用。这符合 **Unix 哲学**:做好一件事,并且可以组合。
+
+这种设计还有一个隐含的优势:**命令行模式天然支持幂等性**,特别适合需要反复打磨的场景。
+
+什么是幂等性?简单说就是:**执行多次和执行一次的效果相同**。在 Skill 开发中,这意味着:
+
+- `/rd:skill-evaluate my-skill` 可以反复运行,每次都基于最新状态给出评估
+- `/rd:skill-refine my-skill` 可以多次调用,每次针对当前问题提供改进建议
+- 不会因为"已经评估过"而拒绝再次执行
+- 不会因为"已经改进过"而累积错误状态
+
+这种设计对 Skill 开发特别重要,因为:
+
+**写好一个 Skill 需要多轮迭代**:
+
+1. **初稿**:用 skill-add 快速生成骨架
+2. **评估**:skill-evaluate 发现问题(描述太简略、缺少例子、结构不清晰)
+3. **改进**:skill-refine 应用建议
+4. **再评估**:skill-evaluate 检查改进效果
+5. **再改进**:继续优化直到满意
+
+在这个循环中,每次 evaluate 都是基于当前文件内容的**全新评估**,不会受之前评估的影响。每次 refine 也是针对**当前问题**的独立建议。这就是幂等性的价值:你可以自由地反复执行,不用担心状态混乱。
+
+对比一下如果不是命令行模式会怎样:
+
+- **对话式**:"继续改进" → 但 Claude 可能不记得上次改到哪了
+- **一次性工具**:"全自动优化" → 要么一步到位,要么失败重来
+- **状态机模式**:"下一步" → 必须按固定顺序执行,不能跳步
+
+而命令行的幂等性让你可以:
+
+- 随时跳入任何阶段(想评估就评估,想改进就改进)
+- 不用关心"上次执行到哪一步"(每次都是全新的开始)
+- 自由掌控节奏(可能评估一次就够了,也可能要评估十次)
+
+**✅BP5:拥抱迭代,设计幂等命令**:对于需要反复打磨的任务(代码审查、文档优化、架构设计),不要设计成"向导式流程",而要设计成"独立的幂等命令"。让用户可以自由地反复执行,每次都基于最新状态给出结果。
+
+### 3.4 核心组件实现详解
+
+#### 3.4.1 知识提炼:cc-skills
+
+##### 知识来源
+
+我的知识来源有三个:
+
+1. **官方文档**:https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices
+2. **实践经验**:在写其他 Skills 时踩过的坑
+3. **迭代反馈**:用 `/rd:skill-evaluate` 评估 cc-skills 自身时的发现
+
+##### 知识组织:Progressive Disclosure
+
+SKILL.md 的结构设计遵循了 **渐进式披露(Progressive Disclosure)** 原则:
+
+```markdown
+---
+name: cc-skills
+description: Domain knowledge and best practices for creating Claude Code Agent Skills
+---
+
+# Claude Code Agent Skills - Best Practices
+
+## Core Architecture
+
+[核心架构的简要说明]
+
+See BEST_PRACTICES.md for detailed guidelines.
+
+## Writing Effective Skills
+
+[关键要点列表]
+
+See EXAMPLES.md for complete examples.
+
+## Quality Checklist
+
+- [ ] Structure requirements
+- [ ] Content quality
+- [ ] Code standards
+      ...
+```
+
+**设计考量**:
+
+- SKILL.md 控制在 ~300 行,确保 token 效率
+- 详细内容分散到 BEST_PRACTICES.md (约 200 行)、EXAMPLES.md (约 150 行)
+- 引用深度不超过一层(SKILL.md → BEST_PRACTICES.md,不再深入)
+
+为什么这样设计?因为 Claude 加载 Skill 时,先读取 SKILL.md。如果所有内容都堆在一个文件里,会消耗大量 token,影响性能。Progressive Disclosure 让 Claude 只在需要时加载详细内容。
+
+**✅BP6:Skill 描述必须包含"做什么"和"何时使用"**
+
+看 cc-skills 的 description:"Domain knowledge and best practices for creating Claude Code Agent Skills"
+
+- "做什么":提供领域知识和最佳实践
+- "何时使用":创建 Claude Code Agent Skills 时
+
+**✅BP7:保持 SKILL.md 简洁(<500 行),用引用管理详细内容**
+
+这是 token 效率的关键。我们实测发现,超过 500 行的 SKILL.md 会明显增加响应时间。
+
+**✅BP8:一致的术语使用比丰富的表达更重要**
+
+在 cc-skills 中,我统一使用"Skill"而不是"skill"、"agent skill"、"Claude skill"。虽然有点单调,但避免了 Claude 的理解偏差。
+
+**✅BP9:具体示例胜过抽象描述**
+
+EXAMPLES.md 提供了完整的 before/after 对比:
 
 ````markdown
-## Step 4: TypeScript Type Check
+## Example: Improving Skill Structure
 
-```bash
-python ${CLAUDE_PLUGIN_ROOT}/scripts/type_check.py
+### Before (Poor Structure)
+
+```yaml
+---
+name: my-skill
+---
+Do something useful.
 ```
 ````
 
-2. 更新 `hooks/hooks.json`：
+````
 
-```json
-{
-  "hooks": [
-    ...,
-    {
-      "type": "command",
-      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/type_check.py",
-      "description": "🔷 Type checking TypeScript..."
-    }
-  ]
-}
+### After (Good Structure)
+```yaml
+---
+name: my-skill
+description: Analyzes code quality and suggests improvements. Use when reviewing code.
+---
+
+# My Skill
+
+## Purpose
+[Clear statement of what this skill does]
+
+## Workflow
+1. Step with specific actions
+2. Validation criteria
+...
+````
+
 ```
 
-### 8.2 集成外部工具
+```
 
-#### 示例：Prettier 格式化
+这种对比让 Claude 能快速理解"好"和"差"的区别。
+
+#### 3.4.2 工具脚本:addskill.sh
+
+##### 设计思路
+
+addskill.sh 负责自动化模板生成,核心设计思路:
+
+1. **严格验证**:确保输入参数符合规范
+
+2. **多种模板**:覆盖不同类型的 Skill 需求
+
+3. **清晰错误提示**:出错时告诉用户怎么改
+
+4. **可独立使用**:不依赖 Claude,可以直接运行
+
+##### 使用方法
 
 ```bash
-# scripts/format_check.sh
-#!/bin/bash
+# 基本语法
+addskill.sh <plugin-name> <skill-name> [template-type]
 
-echo "🎨 Checking code formatting..."
+# 参数说明
+# plugin-name    - 插件名称(如 "rd", "hello")
+# skill-name     - 新技能名称(小写字母、数字、连字符,最长64字符)
+# template-type  - 可选,模板类型(默认: basic)
 
-# Get staged files
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+# 可用模板类型
+basic      # 基础模板 - 简单聚焦的任务(~160行)
+           # 包含: SKILL.md
+           # 适用于: 单一职责的简单技能
 
-# Filter formattable files
-FORMAT_FILES=$(echo "$STAGED_FILES" | grep -E '\.(js|jsx|ts|tsx|css|md)$' || true)
+complete   # 完整模板 - 复杂领域详细指导(~230行 + 支持文件)
+           # 包含: SKILL.md, REFERENCE.md, EXAMPLES.md, scripts/
+           # 适用于: 需要详细文档和工具支持的复杂技能
 
-if [ -z "$FORMAT_FILES" ]; then
-    echo "✅ No files need formatting"
-    exit 0
+workflow   # 工作流模板 - 多阶段流程(~370行)
+           # 包含: SKILL.md (带验证和恢复逻辑)
+           # 适用于: 需要多步骤验证的流程型技能
+
+analysis   # 分析模板 - 检查或审查任务(~450行)
+           # 包含: SKILL.md (带结构化报告格式)
+           # 适用于: 代码审查、质量分析等评估型技能
+
+# 使用示例
+addskill.sh rd code-review complete       # 创建完整的代码审查技能
+addskill.sh rd api-docs basic             # 创建基础的 API 文档技能
+addskill.sh hello greeting-formatter      # 使用默认 basic 模板
+
+# 验证规则
+# ✅ 正确: my-skill, api-v2, user-auth-flow
+# ❌ 错误: MySkill (大写), my_skill (下划线), my.skill (点号)
+# ❌ 错误: claude-helper (包含保留词 "claude")
+# ❌ 错误: very-long-skill-name-that-exceeds-sixty-four-character-limit (>64字符)
+
+# 输出
+# ✓ 创建 plugins/<plugin>/skills/<skill-name>/
+# ✓ 生成 SKILL.md (及其他支持文件,取决于模板)
+# ✓ 生成 README.md (包含后续步骤指导)
+```
+
+**设计亮点**:脚本提供了四种模板,覆盖了 90% 的 Skill 开发场景。你可以根据需求快速选择合适的起点,而不是每次从空白文件开始。模板之间的主要区别在于**初始结构的复杂度**和**支持文件的完整性**,但都遵循相同的最佳实践。
+
+##### 关键实现剖析
+
+**参数验证**:
+
+```bash
+# 验证 skill 名称格式
+if ! echo "$SKILL_NAME" | grep -qE '^[a-z0-9-]+$'; then
+    error "Invalid skill name: $SKILL_NAME"
+    echo "Skill names must be lowercase letters, numbers, and hyphens only"
+    exit 1
 fi
 
-# Check formatting
-npx prettier --check $FORMAT_FILES
+# 验证长度
+if [ ${#SKILL_NAME} -gt 64 ]; then
+    error "Skill name too long: ${#SKILL_NAME} characters (max 64)"
+    exit 1
+fi
 
-if [ $? -eq 0 ]; then
-    echo "✅ All files properly formatted"
-    exit 0
-else
-    echo "❌ Some files need formatting"
-    echo "💡 Run: npx prettier --write <files>"
+# 检查保留字
+if echo "$SKILL_NAME" | grep -qE 'anthropic|claude'; then
+    error "Skill name cannot contain reserved words: anthropic, claude"
     exit 1
 fi
 ```
 
-### 8.3 自定义报告格式
+**设计考量**:为什么要这么严格?
 
-#### 示例：生成 HTML 报告
+因为 Skill 名称会成为命令的一部分(如 `/rd:skill-evaluate my-skill`),必须:
 
-```python
-# scripts/generate_report.py
-import json
-from datetime import datetime
-from pathlib import Path
+- 避免路径注入风险(只允许小写字母、数字、连字符)
+- 确保跨平台兼容(不用空格、特殊字符)
+- 避免命名冲突(禁用保留字)
 
-def generate_html_report(results: dict) -> str:
-    """Generate HTML report from check results"""
+**✅BP10:脚本要处理所有错误情况,不要依赖 Claude 兜底**
 
-    html = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Pre-Commit Report</title>
-        <style>
-            body {{ font-family: Arial; margin: 20px; }}
-            .pass {{ color: green; }}
-            .fail {{ color: red; }}
-            .warn {{ color: orange; }}
-        </style>
-    </head>
-    <body>
-        <h1>Pre-Commit Quality Report</h1>
-        <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+如果脚本假设输入总是正确的,Claude 就要处理各种边界情况。这违背了职责分离原则——脚本应该保证确定性,让 Claude 专注于理解和决策。
 
-        <h2>ESLint Check</h2>
-        <p class="{results['lint']['status']}">{results['lint']['message']}</p>
+**模板生成逻辑**:
 
-        <h2>Commit Message</h2>
-        <p class="{results['commit']['status']}">{results['commit']['message']}</p>
+```bash
+case "$TEMPLATE_TYPE" in
+    basic)
+        # 简单任务,快速上手
+        cat > "$SKILL_DIR/SKILL.md" <<'EOF'
+---
+name: SKILL_NAME_PLACEHOLDER
+description: DESCRIPTION_PLACEHOLDER
+---
 
-        <h2>Documentation</h2>
-        <p class="{results['docs']['status']}">{results['docs']['message']}</p>
-    </body>
-    </html>
-    """
+# SKILL_TITLE_PLACEHOLDER
 
-    return html
+## Workflow
+1. **Step 1 Title**
+   - Action detail
 
-# Save report
-report_dir = Path('.claude-reports')
-report_dir.mkdir(exist_ok=True)
+## Example
+...
+EOF
+        ;;
 
-timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-report_file = report_dir / f"pre-commit_{timestamp}.html"
+    complete)
+        # 复杂领域,需要详细文档
+        # 创建 SKILL.md, REFERENCE.md, EXAMPLES.md, scripts/
+        ;;
 
-with open(report_file, 'w') as f:
-    f.write(generate_html_report(results))
+    workflow)
+        # 多阶段流程,需要验证机制
+        ;;
 
-print(f"📊 Report saved: {report_file}")
+    analysis)
+        # 分析类任务,需要报告格式
+        ;;
+esac
 ```
 
+**设计考量**:如何选择模板?
+
+我提供了决策表:
+
+| Skill 类型   | 推荐模板 | 典型特征                |
+| ------------ | -------- | ----------------------- |
+| 简单交互命令 | basic    | 单一任务,无复杂状态     |
+| 知识密集型   | complete | 需要详细参考文档        |
+| 多步骤流程   | workflow | 有验证点,可能失败需重试 |
+| 分析评估类   | analysis | 输出结构化报告          |
+
+**✅BP11:参数验证要严格,给出明确的错误提示**
+
+看这个错误提示:
+
+```
+ERROR: Skill name too long: 72 characters (max 64)
+```
+
+而不是:
+
+```
+ERROR: Invalid input
+```
+
+前者告诉用户问题是什么、当前值、允许范围,后者只能让用户猜。
+
+**✅BP12:提供多种模板,但给出明确的选择指导**
+
+四种模板覆盖了大部分场景,但我在 skill-add.md 中给出了选择指导,避免用户困惑。
+
+#### 3.4.3 命令接口:Slash Commands
+
+##### /rd:skill-add 的设计
+
+这个 command 的职责是:
+
+1. 接收用户输入(plugin、skill 名、模板类型)
+2. 验证参数有效性
+3. 调用 addskill.sh 脚本
+4. 展示结果和后续步骤
+
+关键代码片段:
+
+````markdown
+## Workflow
+
+1. **Validate Input**
+   - Check plugin name exists in marketplace
+   - Validate skill name format (lowercase, hyphens, max 64 chars)
+   - Verify template type is valid
+
+2. **Execute Script**
+
+   ```bash
+   $PROJECT_ROOT/plugins/$PLUGIN_NAME/scripts/addskill.sh \
+     $PLUGIN_NAME $SKILL_NAME $TEMPLATE_TYPE
+   ```
+
+3. **Display Results**
+   - Show created files
+   - Provide next steps guidance
+   - Suggest using /rd:skill-evaluate
+````
+
+**设计考量**:Command 与 Script 的协作模式
+
+Command 负责:
+
+- 用户交互和参数收集
+- 参数语义验证(如 plugin 是否存在)
+- 结果展示和引导
+
+Script 负责:
+
+- 参数格式验证
+- 文件系统操作
+- 模板生成
+
+两者通过明确的接口协作,互不干扰。
+
+##### /rd:skill-evaluate 的设计
+
+这是三个 command 中最复杂的,因为它要全面评估 Skill 质量。
+
+评估维度设计:
+
+```markdown
+## Evaluation Dimensions
+
+### 1. Structure Quality (25%)
+
+- YAML frontmatter completeness
+- File organization
+- Reference depth (max 1 level)
+
+### 2. Content Quality (35%)
+
+- Description clarity (what + when)
+- Workflow definition
+- Example quality
+- Consistency
+
+### 3. Code Quality (20%)
+
+- Script error handling
+- Parameter documentation
+- Dependency clarity
+
+### 4. Testing Quality (20%)
+
+- Cross-model validation
+- Real-world scenarios
+```
+
+**设计考量**:评分标准如何制定?
+
+我参考了软件工程中的质量模型,但做了调整:
+
+- **结构质量**占比低(25%),因为这是基础,大部分 Skill 都能做到
+- **内容质量**占比高(35%),因为这是核心价值
+- **测试质量**占比(20%),反映了跨模型兼容的重要性
+
+报告格式设计:
+
+```markdown
+# Skill Evaluation Report: {skill-name}
+
+**Overall Score**: 85/100 (Good)
+
+## Dimension Scores
+
+- Structure: 23/25 ✅
+- Content: 28/35 ⚠️ Needs improvement
+- Code: 18/20 ✅
+- Testing: 16/20 ⚠️ Needs improvement
+
+## Key Findings
+
+### Strengths
+
+- Well-organized file structure
+- Clear workflow definition
+
+### Issues
+
+1. **[Medium] Description lacks "when to use"**
+   - Location: SKILL.md:2
+   - Current: "Analyzes code quality"
+   - Suggested: "Analyzes code quality and suggests improvements. Use when reviewing code."
+
+## Recommendations
+
+...
+```
+
+**✅BP13:Command 应该清晰地定义工作流程,让 Claude 理解执行步骤**
+
+/rd:skill-evaluate 的 Markdown 中,我明确写出了评估的步骤:读取文件 → 检查结构 → 评估内容 → 生成报告。这让 Claude 能系统化地执行评估,而不是随意检查。
+
+**✅BP14:提供结构化的输出格式,方便用户理解**
+
+评估报告用 Markdown 结构化输出,而不是自由文本。用户能快速定位问题,而不是在大段文字里找关键信息。
+
+##### /rd:skill-refine 的设计
+
+这个 command 负责根据评估结果提供改进建议。
+
+交互式流程设计:
+
+```markdown
+## Interactive Refinement Workflow
+
+1. **Load Evaluation Results**
+   - If recent evaluation exists, load it
+   - Otherwise, prompt to run /rd:skill-evaluate first
+
+2. **Prioritize Issues**
+   - Group by severity: Critical > High > Medium > Low
+   - Focus on top 3 issues
+
+3. **Generate Improvements**
+   - For each issue, provide:
+     - Current implementation
+     - Suggested improvement
+     - Rationale
+
+4. **Apply Changes**
+   - Show diff preview
+   - Request confirmation
+   - Apply changes
+
+5. **Validate**
+   - Suggest running /rd:skill-evaluate again
+```
+
+**设计考量**:为什么采用交互式流程?
+
+我尝试过一次性生成所有改进,但发现问题:
+
+- 用户可能不认同所有建议
+- 一次改太多,难以验证效果
+- 缺少学习过程
+
+交互式流程让用户参与决策,每次改一点,立即验证,学习效果更好。
+
+**✅BP15:Command 之间应该可以组合使用**
+
+完整的改进流程:
+
+```
+/rd:skill-evaluate my-skill  # 评估
+↓
+/rd:skill-refine my-skill    # 改进
+↓
+/rd:skill-evaluate my-skill  # 再次评估,验证改进效果
+```
+
+三个 command 形成闭环,支持持续改进。
+
+### 3.5 完整的使用演示
+
+#### 场景:创建并改进一个新 Skill
+
+```bash
+# 步骤 1:添加 marketplace
+# Add this marketplace from our official repo
+/plugin marketplace add robinmin/cc-agents
+
+# Or, you can add it from your local directory
+/plugin marketplace add /path/to/cc-agents
+
+# 步骤 2:安装 rd plugin
+/plugin install rd@cc-agents
+
+# 步骤 3:创建新 Skill(使用 complete 模板)
+/rd:skill-add rd code-review complete
+
+# Claude 会调用 addskill.sh,创建:
+# - plugins/rd/skills/code-review/SKILL.md
+# - plugins/rd/skills/code-review/REFERENCE.md
+# - plugins/rd/skills/code-review/EXAMPLES.md
+# - plugins/rd/skills/code-review/scripts/
+# - plugins/rd/skills/code-review/README.md
+
+# 步骤 4:编辑 SKILL.md,填充内容
+# (这一步需要手动编辑,添加具体的 workflow、示例等)
+
+# 步骤 5:评估质量
+/rd:skill-evaluate code-review
+
+# 输出示例:
+# Overall Score: 72/100 (Fair)
+# Issues:
+# 1. [High] Description lacks "when to use"
+# 2. [Medium] SKILL.md exceeds 500 lines
+# 3. [Low] Missing concrete examples in workflow
+
+# 步骤 6:根据建议改进
+/rd:skill-refine code-review
+
+# Claude 会:
+# 1. 读取评估结果
+# 2. 针对 Issue 1,建议修改 description
+# 3. 针对 Issue 2,建议拆分内容到 REFERENCE.md
+# 4. 针对 Issue 3,建议添加代码示例
+
+# 步骤 7:再次评估,验证改进
+/rd:skill-evaluate code-review
+
+# 输出:Overall Score: 89/100 (Good)
+```
+
+#### 实战:评估 cc-skills 自身
+
+既然我们在创造一个工具来评价一般的 Skills，那我们以子之矛攻子之盾又会如何呢？本节我们就来看看实际的结果：用 cc-skills 评估它自己，看看会有什么样的结果:
+
+```bash
+/rd:skill-evaluate plugins/rd/skills/cc-skills
+```
+
+评估结果(节选):
+
+```markdown
+# Skill Quality Evaluation: cc-skills
+
+## Executive Summary
+
+- Overall Quality: Excellent
+- Readiness: Production Ready
+
+## Key Strengths:
+
+- Comprehensive meta-skill with authoritative domain knowledge
+- Exemplary structure and organization patterns
+- Outstanding content quality with clear, actionable guidance
+- Perfect adherence to best practices it teaches
+- Excellent progressive disclosure with supporting reference files
+
+## Critical Issues:
+
+- None identified
+
+Recommendation: This skill serves as an exemplary reference implementation and is ready for production use as a meta-skill for guiding skill creation and
+refinement.
+
+......
+
+## Quality Metrics Summary
+
+| Category                 | Score | Weight | Weighted Score |
+| ------------------------ | ----- | ------ | -------------- |
+| Frontmatter Compliance   | 10/10 | 15%    | 1.5            |
+| Content Quality          | 10/10 | 30%    | 3.0            |
+| Structure & Organization | 10/10 | 20%    | 2.0            |
+| Token Efficiency         | 10/10 | 15%    | 1.5            |
+| Best Practices           | 10/10 | 15%    | 1.5            |
+| Code Quality             | N/A   | 5%     | 0.5 (average)  |
+| Overall Score            |       |        | 10.0/10        |
+
+Grade: A
+
+- A (9.0-10.0): Excellent - Production ready
+
+## Strengths to Maintain
+
+1. Content Excellence
+   - Authoritative domain knowledge presentation
+   - Perfect balance of completeness and conciseness
+   - Exceptional clarity and organization
+   - Why this works: Serves as reference implementation while being genuinely useful
+2. Structural Perfection
+   - Ideal progressive disclosure implementation
+   - Perfect file organization with clear purposes
+   - Optimal reference depth maintained
+   - Why this works: Demonstrates the patterns it teaches
+3. Best Practices Leadership
+   - Zero anti-patterns detected
+   - Exemplary adherence to all guidelines
+   - Consistent terminology throughout
+   - Why this works: Practices what it preaches, building trust
+
+## Next Steps
+
+### Immediate Actions
+
+1. No Critical Fixes Required
+   - Skill is production-ready as-is
+   - Consider current version stable for release
+
+### Recommended Maintenance
+
+1. Periodic Review
+   - Review quarterly for Claude capability changes
+   - Update examples as patterns evolve
+   - Maintain alignment with Claude Code updates
+2. Community Integration
+   - Use as reference for evaluating other skills
+   - Highlight as exemplar in documentation
+   - Reference in skill creation tutorials
+
+......
+
+## Conclusion
+
+The cc-skills skill represents an exemplary implementation of a Claude Code Agent Skill. It achieves a perfect 10.0/10 score by demonstrating mastery of
+every criterion while serving as authoritative domain knowledge for skill creation itself.
+
+### Key Achievements:
+
+- Perfect compliance with all best practices it teaches
+- Outstanding content quality with optimal token efficiency
+- Ideal structural organization serving as reference pattern
+- Comprehensive coverage of the skill creation domain
+- Zero anti-patterns or quality issues
+
+### Special Value:
+
+As a meta-skill, cc-skills provides unique foundational knowledge that enhances the entire ecosystem. Its quality establishes trust and serves as a
+reference implementation for other skill authors.
+
+Ready for Production: Yes
+```
+
+**反思**:
+
+这个评估揭示了几点很有趣的现象：
+
+- 【工具的逻辑自洽】：无论这套工具本身的价值如何，它首先实现了逻辑自洽：我们用制造出来的工具去评价其自身，还能获得几乎满分的效果。尤其是如果大家已经了解到的LLM的输出不确定性的前提下，就会更加印象深刻。
+- 【工具的模型无关性】：实际开发过程，我是使用sonnet 4.5进行的。我开发完后的实测分数是9.8, 基本是满意的。截至我写本文时需要截取上述输出，恰好今天的Claude token用完了，我就把GLM 4.6套在Claude Code上执行上述指令的。我原本还担心说会不会跨模型后分数会有明显的下降。从结果来看，分数反而变得更高了。这可以理解为工具已经具有了一定的模型无关性。对于大模型应用来说，确实性是困难的，更是好事。
+
+### 3.6 开发过程中的挑战和解决方案
+
+#### 挑战 1:知识的提炼和组织
+
+**问题**:官方文档有 20+ 页,如何提炼精华?
+
+**初步尝试**:我最初把所有内容都放进 SKILL.md,结果超过 800 行,Claude 加载很慢。
+
+**解决方案**:
+
+1. 确定核心知识:哪些是"必须知道"的,哪些是"参考资料"
+2. 建立质量 checklist,以问题为导向组织知识
+3. 用 Progressive Disclosure 拆分内容
+
+**学到的经验**:最佳实践应该是可执行的(actionable),而不是描述性的(descriptive)。与其说"描述要清晰",不如说"描述必须包含'做什么'和'何时使用'"。
+
+**✅BP16:开发 Skill 前先创建评估基准(evaluation-driven development)**
+
+我先写了 skill-evaluate 的评估标准,再去写 cc-skills。这让我在写的过程中,能对照标准检查,避免遗漏。
+
+#### 挑战 2:Token 效率
+
+**问题**:完整的最佳实践文档会消耗大量 token,影响响应速度。
+
+**数据**:
+
+- SKILL.md 800 行:~6000 tokens
+- 优化后 311 行:~2300 tokens
+- 节省:~60%
+
+**解决方案**:
+
+1. 把详细内容移到 REFERENCE.md、EXAMPLES.md
+2. 在 SKILL.md 中只保留"导航"和"核心流程"
+3. 用"See XXX.md for details"引用详细内容
+
+**验证**:用不同大小的 SKILL.md 测试响应时间:
+
+- 311 行:平均 2.3 秒
+- 500 行:平均 3.1 秒
+- 800 行:平均 4.7 秒
+
+**✅BP7**(再次强调):保持 SKILL.md 简洁(<500 行),这不是建议,是性能要求。
+
+#### 挑战 3:跨模型兼容性
+
+**问题**:Opus 能理解的内容,Haiku 可能需要更多细节。
+
+**发现**:在 Haiku 上测试时,发现它对抽象描述的理解不如 Opus。例如:
+
+抽象描述:"Ensure content is clear and actionable"
+→ Haiku 不知道具体检查什么
+
+具体 checklist:
+
+- [ ] Description includes 'what' and 'when'
+- [ ] Workflow has numbered steps
+- [ ] Examples are concrete and complete
+      → Haiku 能精确执行
+
+**解决方案**:提供具体示例,减少依赖推理。
+
+**✅BP17:在不同 Claude 实例中测试**
+
+我的实践:
+
+- 一个 Claude 会话用于设计和开发
+- 另一个会话用于测试(模拟新用户)
+- 在 Haiku/Sonnet/Opus 上分别验证
+
+#### 挑战 4:工具链集成
+
+**问题**:Command、Script、Skill 如何协同?职责边界在哪?
+
+**初步设计**:Command 直接生成文件
+→ 问题:Claude 可能出错,需要反复确认
+
+**改进方案**:Command 调用 Script
+→ 问题:Script 出错时,Claude 不知道怎么处理
+
+**最终方案**:
+
+- Script 负责所有文件操作,返回清晰的错误信息
+- Command 负责解释错误,引导用户解决
+- Skill 提供背景知识,帮助 Claude 理解意图
+
+**学到的经验**:单一职责原则在插件开发中同样重要。每个组件做好一件事,通过清晰的接口协作。
+
+**✅BP18:观察实际使用中的问题,而不是假设可能的问题**
+
+我最初担心的很多问题(如命名冲突、路径错误)实际使用中很少发生。真正的问题是:用户不知道选哪个模板、不理解评估报告的含义。所以我重点优化了模板选择指导和报告格式。
+
 ---
 
-## 九、总结与展望
+## 四、最佳实践总结
 
-### 9.1 本章核心要点
+通过 Hello Plugin 和 RD Plugin 的开发,我提炼出以下可复用的经验。
 
-通过本篇的实战演练，我们完成了一个完整的预提交检查插件开发：
+### 4.1 插件设计原则
 
-**技术收获**：
+#### 💡 原则 1:简单性原则
 
-- 掌握了插件的四大组件：Slash Commands、Hooks、Scripts、Configuration
-- 学会了从需求分析到实现测试的完整开发流程
-- 理解了插件与 Claude Code 的集成机制
+**从最简单的版本开始**
 
-**实践成果**：
+Hello Plugin 证明了 8 行代码就能做出有用的插件。不要一开始就追求"完美的架构",先做出能工作的版本,再根据实际需求迭代。
 
-- 构建了可用的代码质量检查工具
-- 实现了自动化的工作流集成
-- 建立了可扩展的插件架构
+```
+MVP → 收集反馈 → 迭代优化 → 再收集反馈 ...
+```
 
-### 9.2 下期预告
+**逐步增加复杂度**
 
-**第三篇：应用篇 - 企业级场景与安全实践**
+RD Plugin 的技能管理系统也是逐步演化的:
 
-内容预告：
+1. v1:只有 addskill.sh,手动创建文件
+2. v2:添加 /rd:skill-add,提供命令接口
+3. v3:添加 /rd:skill-evaluate,支持质量评估
+4. v4:添加 /rd:skill-refine,形成闭环
 
-- 企业私有市场搭建与管理
-- 大规模团队的插件分发策略
-- 安全最佳实践与权限控制
-- 性能优化与监控方案
-- 故障排查与维护指南
+每个版本都是可用的,每次只添加一个新能力。
 
-**你将学会**：
+**每次只添加一个功能**
 
-- 如何构建企业级插件生态
-- 如何保障插件的安全性
-- 如何优化插件性能
-- 如何处理复杂的团队协作场景
+这是敏捷开发的核心思想,在插件开发中同样适用。一次添加多个功能,出了问题很难定位。
 
-### 9.3 行动建议
+#### 💡 原则 2:职责分离原则
 
-现在，你已经具备了开发 Claude Code Plugins 的基础能力。建议你：
+**Command:用户交互接口**
 
-1. **立即实践**：基于本文示例，为你的团队构建第一个插件
-2. **循序渐进**：从简单的自动化任务开始，逐步扩展功能
-3. **注重体验**：关注插件的易用性和错误提示
-4. **持续改进**：根据团队反馈不断优化插件功能
+- 接收和验证参数
+- 展示结果和引导
+- 不直接操作文件
+
+**Skill:知识和指导**
+
+- 提供领域知识
+- 定义工作流程
+- 不执行具体操作
+
+**Script:确定性操作**
+
+- 文件系统操作
+- 模板生成
+- 不依赖 Claude
+
+每个组件职责单一,通过清晰的接口协作。
+
+#### 💡 原则 3:渐进式披露原则
+
+**主文件保持简洁**
+
+SKILL.md 应该像目录,让 Claude 快速了解全貌:
+
+```markdown
+## Core Concepts
+
+[简要说明]
+
+See BEST_PRACTICES.md for detailed guidelines.
+
+## Workflow
+
+[关键步骤]
+
+See EXAMPLES.md for complete examples.
+```
+
+**详细内容按需引用**
+
+只在 Claude 需要详细信息时,才加载 REFERENCE.md、EXAMPLES.md 等。
+
+**引用深度不超过一层**
+
+❌ 不好:SKILL.md → REFERENCE.md → DETAILS.md → ADVANCED.md
+✅ 好:SKILL.md → REFERENCE.md (停止)
+
+过深的引用会让 Claude 迷失,也影响 token 效率。
+
+#### 原则 4:用户体验原则
+
+**清晰的错误提示**
+
+```bash
+# ❌ 不好
+ERROR: Invalid input
+
+# ✅ 好
+ERROR: Skill name too long: 72 characters (max 64)
+Skill names must be lowercase letters, numbers, and hyphens only
+```
+
+**结构化的输出**
+
+用 Markdown 的标题、列表、代码块组织输出,而不是大段文字。
+
+**一致的命名风格**
+
+插件内的所有 command、skill、script 应该遵循统一的命名规范。
+
+基于实际使用经验,这里有两个关键的命名建议:
+
+**✅BP19:插件名称要简短精炼**
+
+原因:Claude Code 在加载 slash commands 时会用 `plugin-name:command-name` 格式作为前缀。如果插件名太长,命令会显得很啰嗦:
+
+```bash
+# ❌ 不好:名字太长
+/rapid-development-tools:skill-add
+/rapid-development-tools:skill-evaluate
+/rapid-development-tools:skill-refine
+
+# ✅ 好:简短易读
+/rd:skill-add
+/rd:skill-evaluate
+/rd:skill-refine
+```
+
+建议插件名控制在 2-6 个字符,既要有辨识度,又要简洁。常见好例子:`rd`(rapid dev)、`ui`(user interface)、`db`(database)。
+
+**✅BP20:命令采用 `<宾语>-<动词>` 结构**
+
+原因:Claude Code 在展示命令列表时会按字母顺序排序。使用 `<object>-<verb>` 结构,同一对象的所有操作会自动聚合在一起,方便查找和使用:
+
+```bash
+# ✅ 好:按对象组织,操作聚合
+/rd:skill-add          # skill相关命令聚在一起
+/rd:skill-evaluate     # ↓
+/rd:skill-refine       # ↓
+
+# ❌ 不好:按动词组织,操作分散
+/rd:add-skill          # add相关命令
+/rd:evaluate-skill     # evaluate相关命令(被其他命令分隔)
+/rd:refine-skill       # refine相关命令(被其他命令分隔)
+```
+
+这种设计让用户在输入 `/rd:skill` 后,TAB 补全就能看到所有 skill 相关的操作,符合"按对象思考"的自然习惯。
+
+### 4.2 开发流程最佳实践
+
+#### 阶段 1:需求分析
+
+**明确要解决的问题**
+
+不是"我想做一个插件",而是"我遇到了 X 问题,需要 Y 能力"。
+
+**确定使用场景和触发条件**
+
+- 谁会用这个插件?
+- 在什么情况下用?
+- 期望达到什么效果?
+
+**评估是否真的需要插件**
+
+Claude 本身已经很强大,很多任务不需要插件。只有当你需要:
+
+- 结构化的工作流
+- 可复用的能力
+- 团队协作标准
+
+才考虑开发插件。
+
+#### 阶段 2:设计
+
+**从最简单的实现开始**
+
+参考 Hello Plugin,先做一个最小可行版本。
+
+**设计清晰的文件组织结构**
+
+```
+plugins/my-plugin/
+├── commands/
+│   ├── do-something.md
+│   └── check-quality.md
+├── skills/
+│   └── domain-knowledge/
+│       ├── SKILL.md
+│       └── REFERENCE.md
+└── scripts/
+    └── automation.sh
+```
+
+**规划组件间的协作方式**
+
+画出数据流图:用户输入 → Command → Script/Skill → 输出
+
+#### 阶段 3:实现
+
+**先实现核心功能**
+
+不要被边界情况分散注意力,先让主流程跑通。
+
+**添加错误处理**
+
+然后处理可能的错误:参数错误、文件不存在、权限问题等。
+
+**提供清晰的文档**
+
+每个 command 都应该有清晰的使用说明和示例。
+
+#### 阶段 4:测试
+
+**在新的 Claude 会话中测试**
+
+开发时的 Claude 会话有上下文,可能掩盖问题。新会话能暴露描述不清晰、缺少关键信息等问题。
+
+**跨模型测试(Haiku/Sonnet/Opus)**
+
+不同模型的理解能力不同,要确保在所有模型上都能工作。
+
+**收集真实使用反馈**
+
+让其他人试用,观察他们遇到的问题。
+
+#### 阶段 5:迭代优化
+
+**观察实际使用中的问题**
+
+不要假设问题,而要观察真实使用情况。
+
+**根据反馈调整实现**
+
+优先解决高频问题,而不是追求"完美"。
+
+**持续提炼最佳实践**
+
+把学到的经验文档化,形成可复用的知识。
+
+### 4.3 常见问题和解决方案
+
+#### 问题 1:如何选择使用哪种插件组件?
+
+| 需求             | 推荐方案   | 原因                     | 示例            |
+| ---------------- | ---------- | ------------------------ | --------------- |
+| 简单的交互命令   | Command    | 轻量级,易于实现          | /hello          |
+| 需要领域知识     | Skill      | 可以被 Claude 理解和应用 | cc-skills       |
+| 确定性的文件操作 | Script     | 可靠性高,不依赖 AI       | addskill.sh     |
+| 自动化工作流     | Hook       | 无需手动触发             | pre-commit 检查 |
+| 外部工具集成     | MCP Server | 标准化接口               | 数据库连接      |
+
+#### 问题 2:插件变慢了怎么办?
+
+**诊断**:
+
+1. 检查 SKILL.md 长度(应该 <500 行)
+2. 检查引用深度(应该 ≤1 层)
+3. 检查是否有冗余内容
+
+**优化**:
+
+1. 拆分大文件到 REFERENCE.md、EXAMPLES.md
+2. 删除重复内容
+3. 用更简洁的表达
+
+#### 问题 3:Claude 没有按预期执行怎么办?
+
+**可能的原因**:
+
+1. Command 描述不清晰
+2. 缺少具体示例
+3. 工作流程太复杂
+
+**解决方案**:
+
+1. 在 description 中明确"做什么"和"何时使用"
+2. 在 Markdown 正文中添加具体示例
+3. 简化步骤,每步只做一件事
+
+#### 问题 4:如何处理跨平台兼容性?
+
+**常见问题**:
+
+- Windows 路径分隔符(\\\)vs Unix(/)
+- 换行符(CRLF vs LF)
+- Shell 脚本兼容性
+
+**最佳实践**:
+
+1. 在文档中统一使用 `/`(forward slash)
+2. 在 Script 中显式处理路径兼容性
+3. 标注平台限制(如"此 script 仅支持 Unix-like 系统")
+
+### 4.4 质量 Checklist(完整版)
+
+在发布插件前,对照这个 checklist 检查:
+
+#### 结构质量
+
+- [ ] 文件组织清晰合理
+- [ ] 引用深度不超过一层
+- [ ] 使用正斜杠路径分隔符(/)
+- [ ] YAML frontmatter 格式正确
+- [ ] 文件命名符合规范
+
+#### 内容质量
+
+- [ ] 描述包含"做什么"和"何时使用"
+- [ ] 无时间敏感信息(如"2024 年最新")
+- [ ] 术语使用一致
+- [ ] 提供具体示例而非抽象描述
+- [ ] 工作流程清晰,步骤明确
+- [ ] SKILL.md 控制在 500 行以内
+
+#### 代码质量(如果有脚本)
+
+- [ ] 显式错误处理,不依赖 Claude
+- [ ] 参数有明确说明
+- [ ] 依赖列表完整
+- [ ] 执行意图清晰
+- [ ] 有使用示例
+
+#### 测试质量
+
+- [ ] 在新的 Claude 会话中测试通过
+- [ ] 在 Haiku/Sonnet/Opus 上验证
+- [ ] 真实场景下验证可用性
+- [ ] 错误情况测试
+
+#### 文档质量
+
+- [ ] README.md 说明用途和用法
+- [ ] 示例完整可运行
+- [ ] 常见问题有解答
+- [ ] 版本信息清晰
 
 ---
 
-## 本系列文章
+## 五、总结与展望
 
-- 📖 [基础篇 - 基本概念与开发环境搭建](https://surfing.salty.vip/articles/cn/claude_code_plugins_01/)
-- 📖 [实战篇 - 从零构建第一个插件](https://surfing.salty.vip/articles/cn/claude_code_plugins_02/)
-- 📖 **下篇预告**：应用篇 - 企业级场景与安全实践（即将发布）
+### 5.1 核心要点回顾
+
+**插件开发是思维方式的转变**
+
+从"让 Claude 帮我做"到"教 Claude 如何做"。前者是一次性任务,后者是构建可复用能力。
+
+**简单并不意味着无用**
+
+Hello Plugin 只有 8 行,但它精准地解决了"个性化问候"这个需求。复杂性应该来自真实需求,而非炫技。
+
+**最佳实践是在实践中总结出来的**
+
+官方文档提供原则,但只有在实际开发中遇到问题、解决问题,才能真正理解这些原则的价值。
+
+**好的插件是迭代出来的**
+
+没有一次完美的设计。从最简单的版本开始,观察实际使用情况,根据反馈持续改进。
+
+**职责分离是关键**
+
+Command、Skill、Script 各司其职,通过清晰的接口协作。这不仅让代码更清晰,也让维护和扩展更容易。
+
+**Token 效率很重要**
+
+Progressive Disclosure 不是可选的优化,而是必须的设计。SKILL.md 超过 500 行,性能会明显下降。
+
+**具体示例胜过抽象描述**
+
+Haiku 的跨模型测试教会了我:具体的 checklist 比抽象的原则更有效。
+
+### 5.2 我踩过的坑
+
+分享一些弯路,希望能帮你避开:
+
+**坑 1:一开始就追求"完美架构"**
+
+我最初设计 RD Plugin 时,想一次性实现所有功能。结果开发了两周,还没跑通主流程。后来改为迭代开发,一周就做出了可用版本。
+
+**坑 2:忽视 Token 效率**
+
+第一版 cc-skills 的 SKILL.md 有 800+ 行,Claude 加载要 4-5 秒。优化到 311 行后,降到 2-3 秒。这个性能差异在实际使用中非常明显。
+
+**坑 3:假设问题而不是观察问题**
+
+我担心用户会用特殊字符命名 skill,写了很多验证逻辑。但实际使用中,真正的问题是:用户不知道选哪个模板。后来我花更多精力优化模板选择指导。
+
+**坑 4:在开发会话中测试**
+
+开发时的 Claude 会话有大量上下文,掩盖了描述不清晰的问题。只有在新会话中测试,才能发现这些问题。
+
+### 5.3 进阶方向
+
+如果你已经掌握了 Command 和 Skill,可以探索:
+
+**1. Hooks 的深入应用**
+
+- 自动化工作流(如 pre-commit 检查)
+- 质量卡点(如代码提交前的强制检查)
+- 团队规范强制(如统一的代码风格)
+
+**2. MCP Servers 集成**
+
+- 外部工具集成(如数据库、API)
+- 企业系统对接(如 JIRA、GitLab)
+- 自定义开发环境增强
+
+**3. 团队协作模式**
+
+- 私有 marketplace 搭建
+- 插件版本管理策略
+- 团队最佳实践沉淀
+
+### 5.4 下期预告
+
+在第三篇文章中,我将分享:
+
+- 企业级应用
+- 插件生态建设
+- 高级技巧
 
 ---
 
-## 相关资源
+**关于代码和示例**
 
-- [📚 **Claude Code Plugins**](https://docs.anthropic.com/claude/docs/claude-code/plugins) - Tutorials and practical usage
-- [📚 **Claude Code Plugin marketplaces**](https://docs.anthropic.com/claude/docs/claude-code/plugin-marketplaces) - Creating and managing marketplaces
-- [📚 **Claude Code Slash commands**](https://docs.anthropic.com/claude/docs/claude-code/slash-commands) - Command development details
-- [📚 **Claude Code Subagents**](https://docs.anthropic.com/claude/docs/claude-code/sub-agents) - Agent configuration and capabilities
-- [📚 **Claude Code Hooks**](https://docs.anthropic.com/claude/docs/claude-code/hooks) - Event handling and automation
-- [📚 **Claude Code MCP**](https://docs.anthropic.com/claude/docs/claude-code/mcp) - External tool integration
-- [📚 **Claude Code Settings**](https://docs.anthropic.com/claude/docs/claude-code/settings) - Configuration options for plugins
-- 💻 **官方GitHub 示例**：https://github.com/anthropics/claude-code-plugins
-- [💠 **OpenAPI Specification**](https://swagger.io/specification/)
+文中提到的所有代码都可以在 GitHub 仓库找到:
 
----
+- cc-agents 项目: https://github.com/robinmin/cc-agents
+- Hello Plugin: `plugins/hello/`
+- RD Plugin: `plugins/rd/`
 
-**作者注**：本文是 Claude Code Plugins 系列的第二篇，后续将持续更新企业应用、安全最佳实践等内容。如果你觉得有帮助，欢迎关注、点赞、转发！
+如果你在开发过程中遇到问题,欢迎提 issue 讨论。
+
+**致谢**
+
+感谢 Claude Code 团队提供的详细文档,以及社区中分享经验的开发者们。这篇文章是站在巨人的肩膀上。
 
 ---
 
-_声明：本文部分场景和案例为了说明概念进行了简化处理，实际应用中请根据具体情况调整。_
+本文是 Claude Code Plugins 系列的第二篇。如果你还没有读过第一篇《Claude Code Plugins 基础篇》,建议先阅读以了解基本概念。
+
+**参考链接**
+
+- [不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链(1/4)](https://surfing.salty.vip/articles/cn/claude_code_plugins_01/)

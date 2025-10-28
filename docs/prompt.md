@@ -501,3 +501,20 @@ Actually, this option stored in `localStorage` 's LANGUAGE_STORAGE_KEY. We need 
 - Rule to compose new URL based on the selected language. For the details page, the URL of current page always be /{collection_name}/{language_code}/{slug}. When you prepare new URL, you should use the selected language code to replace the current language code in the URL. That's all. For example, if the current URL is /articles/cn/color_common_sense_and_tools and the user selects `ja` as the language, the new URL should be /articles/ja/color_common_sense_and_tools.
 
 This implementation will help end users to switch between different languages seamlessly for the same contents' details pages.
+
+###
+
+Please carefully read the input content, extract the theme and core points, and generate a cover image for the response article content, with the following requirements:
+
+- Infographic style, with appropriate text added, defaulting to English
+- Include rich and cute cartoon characters and elements
+- Image size should be landscape (16:9)
+- Think first before generating
+
+## SEO Optimization
+
+I updated the content in @contents/articles/cn/claude_code_plugins_02.md. I need your leverage agent seo-technical-optimization's capacity to optimize the meta data or frontmatter for this article, so that we can improve the search engine ranking and user experience.
+
+For the schema of the frontmatter, you can refer to src/content.config.ts.
+
+I will publish this article in 3 languages and on several different platforms, including twitter, substack, and medium and juejin, infoq and etc.
