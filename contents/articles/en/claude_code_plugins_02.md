@@ -371,7 +371,7 @@ I've summarized a judgment criterion from practice:
 - **Context dependent**: Need to understand project structure, code style, conversation history (e.g., improvement suggestions, code reviews)
 - **Interactive decisions**: Need multi-turn conversation to confirm details (e.g., interactive improvement in skill-refine)
 
-In the `rd` plugin, I分工 like this:
+In the `rd` plugin, this is how I divided the work:
 
 - `addskill.sh` handles deterministic file creation (input: skill name, template type → output: standardized file structure)
 - `skill-evaluate.md` handles flexible quality analysis (input: skill file content → output: customized evaluation report)
@@ -784,7 +784,7 @@ Evaluation dimension design:
 - Real-world scenarios
 ```
 
-**Design considerations**: How to制定评分标准?
+**Design considerations**: How to develop a scorecard to evaluate Skill quality?
 
 I referenced quality models in software engineering but made adjustments:
 
@@ -1061,7 +1061,7 @@ Ready for Production: Yes
 This evaluation reveals several interesting phenomena:
 
 - **Tool's logical consistency**: Regardless of this tool's actual value, it first achieves logical consistency: we use the manufactured tool to evaluate itself and still get nearly perfect results. Especially considering everyone's understanding of LLM output uncertainty, this is even more impressive.
-- **Tool's model independence**: Actual development was done using sonnet 4.5. My test score after development was 9.8, basically satisfactory. When I needed to截取 the above output while writing this article, I happened to run out of Claude tokens today, so I put GLM 4.6 on Claude Code to execute the above command. I was originally worried about whether the score would significantly decrease across models. From the results, the score actually became higher. This can be understood as the tool having a certain degree of model independence. For large model applications, consistency is difficult and valuable.
+- **Tool's model independence**: Actual development was done using sonnet 4.5. My test score after development was 9.8, basically satisfactory. When I needed to copy and paste the above output while writing this article, I happened to run out of Claude tokens today, so I put GLM 4.6 on Claude Code to execute the above command. I was originally worried about whether the score would significantly decrease across models. From the results, the score actually became higher. This can be understood as the tool having a certain degree of model independence. For large model applications, consistency is difficult and valuable.
 
 ### 3.6 Challenges and Solutions During Development
 
