@@ -506,11 +506,9 @@ name: my-skill
 ---
 Do something useful.
 ```
-````
-
-````
 
 ### After (Good Structure)
+
 ```yaml
 ---
 name: my-skill
@@ -525,12 +523,8 @@ description: Analyzes code quality and suggests improvements. Use when reviewing
 ## Workflow
 1. Step with specific actions
 2. Validation criteria
-...
+```
 ````
-
-```
-
-```
 
 这种对比让 Claude 能快速理解"好"和"差"的区别。
 
