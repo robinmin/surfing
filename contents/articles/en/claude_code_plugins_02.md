@@ -405,7 +405,7 @@ This design is particularly important for Skill development because:
 1. **Draft**: Use skill-add to quickly generate a skeleton
 2. **Evaluate**: skill-evaluate discovers issues (description too brief, missing examples, unclear structure)
 3. **Improve**: skill-refine applies suggestions
-4. **Re-evaluate**: skill-evaluate checks improvement效果
+4. **Re-evaluate**: skill-evaluate checks improvement
 5. **Re-improve**: Continue optimizing until satisfied
 
 In this cycle, each evaluate is a **brand new evaluation** based on current file content, not affected by previous evaluations. Each refine is also an independent suggestion for **current issues**. This is the value of idempotency: you can freely execute repeatedly without worrying about state confusion.
@@ -884,7 +884,7 @@ Complete improvement workflow:
 ↓
 /rd:skill-refine my-skill    # Improve
 ↓
-/rd:skill-evaluate my-skill  # Re-evaluate, verify improvement效果
+/rd:skill-evaluate my-skill  # Re-evaluate, verify improvement
 ```
 
 Three commands form a closed loop, supporting continuous improvement.
@@ -1061,7 +1061,7 @@ Ready for Production: Yes
 This evaluation reveals several interesting phenomena:
 
 - **Tool's logical consistency**: Regardless of this tool's actual value, it first achieves logical consistency: we use the manufactured tool to evaluate itself and still get nearly perfect results. Especially considering everyone's understanding of LLM output uncertainty, this is even more impressive.
-- **Tool's model independence**: Actual development was done using sonnet 4.5. My test score after development was 9.8, basically satisfactory. When I needed to copy and paste the above output while writing this article, I happened to run out of Claude tokens today, so I put GLM 4.6 on Claude Code to execute the above command. I was originally worried about whether the score would significantly decrease across models. From the results, the score actually became higher. This can be understood as the tool having a certain degree of model independence. For large model applications, consistency is difficult and valuable.
+- **Tool's model Agnostic**: Actual development was done using sonnet 4.5. My test score after development was 9.8, basically satisfactory. When I needed to copy and paste the above output while writing this article, I happened to run out of Claude tokens today, so I put GLM 4.6 on Claude Code to execute the above command. I was originally worried about whether the score would significantly decrease across models. From the results, the score actually became higher. This can be understood as the tool having a certain degree of model independence. For large model applications, consistency is difficult and valuable.
 
 ### 3.6 Challenges and Solutions During Development
 
