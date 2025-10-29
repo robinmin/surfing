@@ -34,6 +34,9 @@ export function initializei18n() {
     return;
   }
 
+  // Make translation function globally available
+  (window as any).t = t;
+
   // Initial translation
   translateUI();
 
