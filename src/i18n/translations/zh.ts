@@ -33,6 +33,8 @@ export const zh: Translation = {
     browse: '浏览所有',
     terms: '条款',
     privacyPolicy: '隐私政策',
+    copyFailed: '复制失败',
+    copySuccess: '复制成功',
   },
   pages: {
     home: {
