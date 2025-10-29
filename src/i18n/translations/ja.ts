@@ -33,6 +33,8 @@ export const ja: Translation = {
     browse: 'すべて閲覧',
     terms: '利用規約',
     privacyPolicy: 'プライバシーポリシー',
+    copyFailed: 'コピーに失敗しました',
+    copySuccess: 'コピーしました！',
   },
   pages: {
     home: {
