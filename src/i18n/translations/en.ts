@@ -31,6 +31,8 @@ export const en = {
     browse: 'Browse All',
     terms: 'Terms',
     privacyPolicy: 'Privacy Policy',
+    copyFailed: 'Copy failed',
+    copySuccess: 'Copied!',
   },
   pages: {
     home: {
@@ -284,6 +286,8 @@ export type Translation = {
     browse: string;
     terms: string;
     privacyPolicy: string;
+    copyFailed: string;
+    copySuccess: string;
   };
   pages: {
     home: {
