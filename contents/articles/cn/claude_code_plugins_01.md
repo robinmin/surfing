@@ -1,8 +1,24 @@
 ---
-title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链(1/4)'
-description: '本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。敬请关注，多提宝贵意见。'
+title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链 - 概念篇(1/4)'
+description: '本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。'
 tags:
+  # Chinese SEO keywords
   [
+    'Claude Code Plugins',
+    'AI插件开发',
+    'Claude MCP',
+    'Agent Skills',
+    'slash-command',
+    'hook机制',
+    'AI原生开发',
+    '研发工具',
+    '编程助手',
+    '开发实战',
+    '技能管理系统',
+    '插件架构',
+    '开发流程',
+    '最佳实践',
+    # Technical English keywords
     'agi',
     'claude-code',
     'cli',
@@ -10,11 +26,9 @@ tags:
     'mcp',
     'subagent',
     'agent',
-    'slash-command',
-    'hook',
-    'AI Coding',
-    'AI原生开发',
     'Vibe Coding',
+    'AI Coding',
+    'Development Tutorial',
   ]
 author: 'Robin Min'
 readingTime: 17
@@ -23,7 +37,53 @@ publishDate: 2025-10-10
 draft: false
 featured: true
 image: '@assets/images/claude_code_plugins.webp'
+category: 'AI开发'
+aliases: ['Claude Code教程', 'AI插件开发', 'MCP插件', 'Claude Agent']
+excerpt: '本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。'
 translations: ['en', 'zh', 'ja']
+
+# SEO metadata
+metadata:
+  canonical: 'https://surfing.salty.vip/articles/cn/claude_code_plugins_01'
+
+  robots:
+    index: true
+    follow: true
+    googleBot:
+      index: true
+      follow: true
+      maxImagePreview: 'large'
+      maxSnippet: -1
+      maxVideoPreview: -1
+
+  openGraph:
+    url: 'https://surfing.salty.vip/articles/cn/claude_code_plugins_01'
+    siteName: 'Robin Min'
+    title: '不仅仅是代码助手：用 Plugins 将 Claude Code 打造成你的专属工具链 - 概念篇(1/4)'
+    description: '本文是 Claude Code Plugins 系列的第一篇，聚焦核心概念与工作原理。后续将推出实战开发、企业应用和未来展望篇。'
+    locale: 'zh_CN'
+    type: 'article'
+
+    images:
+      [
+        {
+          url: '@assets/images/claude_code_plugins.webp',
+          width: 1200,
+          height: 630,
+          alt: 'Claude Code Plugins 开发教程',
+        },
+      ]
+
+    article:
+      publishedTime: '2025-10-13T00:00:00+00:00'
+      modifiedTime: '2025-10-27T00:00:00+00:00'
+      authors: ['Robin Min']
+      tags: ['Claude Code', 'AI开发', '插件开发', 'MCP']
+
+  twitter:
+    cardType: 'summary_large_image'
+    site: '@salty.vip'
+    handle: '@tangmian'
 ---
 
 ## 第一篇：概念篇 - 打破 AI 助手的"次元壁"
