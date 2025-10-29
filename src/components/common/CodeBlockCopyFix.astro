@@ -58,9 +58,36 @@
       return success;
     }
 
+    function getOriginalCodeText(button: HTMLButtonElement): string {
+      // Try to get the original code from the DOM instead of data-code attribute
+      // This fixes the issue where expressive-code strips comments from bash/shell
+      const expressiveCodeElement = button.closest('.expressive-code');
+      if (!expressiveCodeElement) {
+        // Fallback to data-code if no expressive-code parent found
+        return button.dataset.code?.replace(/\u007f/g, '\n') || '';
+      }
+
+      const preElement = expressiveCodeElement.querySelector('pre[data-language]');
+      if (!preElement) {
+        // Fallback to data-code if no pre element found
+        return button.dataset.code?.replace(/\u007f/g, '\n') || '';
+      }
+
+      // Get the original text content from the pre element
+      let originalText = (preElement as HTMLElement).innerText || preElement.textContent || '';
+
+      // Clean up the text while preserving comments
+      originalText = originalText
+        .replace(/\u007f/g, '\n') // Replace any literal \u007f with actual newlines
+        .replace(/\r\n/g, '\n') // Normalize line endings
+        .replace(/\r/g, '\n') // Normalize Mac line endings
+        .trim();
+
+      return originalText;
+    }
+
     async function handleCopyClick(event: Event) {
       const button = event.currentTarget as HTMLButtonElement;
-      const dataset = button.dataset;
 
       // Prevent race condition: check if button is already processing
       if (processingButtons.has(button)) {
@@ -75,7 +102,8 @@
       // Mark button as processing
       processingButtons.add(button);
 
-      const code = dataset.code?.replace(/\u007f/g, '\n') || '';
+      // Use the improved function to get original code text
+      const code = getOriginalCodeText(button);
       let success = false;
 
       try {
@@ -93,7 +121,10 @@
         // Show error feedback
         const errorFeedback = document.createElement('div');
         errorFeedback.classList.add('feedback', 'error');
-        errorFeedback.textContent = 'Copy failed';
+        // Get translated copy failed message
+        const copyFailedText =
+          typeof (window as any).t === 'function' ? (window as any).t('common.copyFailed') : 'Copy failed';
+        errorFeedback.textContent = copyFailedText;
         button.before(errorFeedback);
 
         setTimeout(() => {
@@ -115,7 +146,10 @@
       // Create feedback element
       const feedback = document.createElement('div');
       feedback.classList.add('feedback');
-      feedback.append(dataset.copied || 'Copied!');
+      feedback.append(
+        button.dataset.copied ||
+          (typeof (window as any).t === 'function' ? (window as any).t('common.copySuccess') : 'Copied!')
+      );
       button.before(feedback);
 
       // Trigger reflow to ensure transition works
