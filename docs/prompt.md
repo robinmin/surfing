@@ -526,4 +526,32 @@ New I need you act as a senior translator to translate this Chinese version(@con
 - keep the structure and content aligned with the original.
 - Do not translate all blocks (including code, diagrams, flows, scripts, and etc., unless there are some Chinese comments I already noticed), unless there are some Chinese comments I already noticed.
 
-I will try to publish it to https://medium.com/ and https://substack.com/. Try your best to help native speakers understand this articles
+I will try to publish it to https://medium.com/ and https://substack.com/. Try your best to help native speakers understand
+
+## Replace astro-expressive-code with rehype-pretty-code
+
+### investigation
+
+As the original astro-expressive-code library caused this issuee, despite you already fix it on the dev server, I still wanto to discuss with you whether we need to replace this existing astro-expressive-code with its alternative solution, rehype-pretty-code component. Tell me the pros and cons between these two solutions.
+
+### Replacement
+
+Please refer to https://rehype-pretty.pages.dev/, According to this page, we can see a lots of new features in the rehype-pretty-code component. That's the reason I turn to give it a try on this stage. So, please have a solid plan to implement this migration.
+
+### Enhancement
+
+there are a few places that need to be enhanced:
+1, Rename the new added file `src/components/common/RehypeCopyButton.astro` as `src/components/common/CopyButton.astro`. As we do not want to show too many details to the end user. in case we replace this component into another one going forward, we do not need to change the file name again. For the same reason, we also need to rename another file `src/styles/rehype-pretty-code.css` as `src/styles/code-block-enhanced.css`
+2, In `astro.config.ts`, we need to add support for the code block's default theme. By default, I want to use 'github-dark'. It looks more like previous version with astro-expressive-code.
+3, In this renamed file `src/components/common/CopyButton.astro`:
+
+- Take special care for i18n support, as previous version already has it.
+- I more prefer to use the original icon(emoji or SVG icon?) instead of your enhanced 📋. Please replace it if possible and not too complex.
+
+4, I need to show the line numbers by default, and add a feature to toggle line numbers in file `astro.config.ts`.
+
+### 2nd round enhancement
+
+- Background rgb(36, 41, 46) is not fit with github-dark theme. Remove it when in github-dark theme. Let's try the default background color for github-dark theme first.
+- In src/config.yaml, let's support a new value for codeBlocks.theme = 'auto'. When the web site in "dark" theme(including the theme is "system" and the actual theme is "dark" and the theme is "dark:only"), use 'github-light' as default theme. When the web site in "light" theme(including the theme is "system" and the actual theme is "light" and the theme is "light:only"), use 'github-dark' as default theme. By default, use 'auto' for codeBlocks.theme.
+- I can not see the copy & paste button now. Help to investigate it and fix it. Please ensure the button is visible and functional across different themes.
