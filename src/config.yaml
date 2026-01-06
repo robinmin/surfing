@@ -97,10 +97,28 @@ build:
 
 # Authentication configuration
 auth:
-  google_one_tap:
+  # Zitadel OIDC configuration (primary auth provider)
+  zitadel:
     enabled: true
+    # Supported identity providers (federated via Zitadel)
+    providers:
+      google: true
+      github: true
+      apple: true
+      microsoft: true
+    # Popup window dimensions for OIDC flow
+    popup:
+      width: 500
+      height: 600
+    # Silent token renewal (refresh tokens in background)
+    silent_renewal: true
+
+  # Legacy providers (DEPRECATED - kept for migration period)
+  google_one_tap:
+    enabled: false # Disabled - use Zitadel instead
   apple_sign_in:
-    enabled: false
+    enabled: false # Disabled - use Zitadel instead
+
   # Token cache duration in seconds (default: 900 = 15 minutes)
   # Reduces unnecessary auth server checks by caching token validation
   token_cache_duration: 900
