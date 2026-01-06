@@ -76,7 +76,10 @@
       "WebFetch(domain:localhost)",
       "mcp__ultra-mcp__debug-issue",
       "WebFetch(domain:surfing.salty.vip)",
-      "mcp__ultra-mcp__tracer"
+      "mcp__ultra-mcp__tracer",
+      "mcp__auggie-mcp__codebase-retrieval",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:zitadel.com)"
     ],
     "deny": [],
     "ask": []
