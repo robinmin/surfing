@@ -66,6 +66,7 @@ interface ZitadelEnvConfig {
   clientId: string;
   redirectUri: string;
   postLogoutUri: string;
+  orgId?: string;
   idpGoogle?: string;
   idpGithub?: string;
   idpApple?: string;
@@ -90,6 +91,7 @@ const getEnvConfig = (): ZitadelEnvConfig => {
     clientId: clientId || '',
     redirectUri: redirectUri || `${window.location.origin}/auth/callback`,
     postLogoutUri: postLogoutUri || window.location.origin,
+    orgId: import.meta.env.PUBLIC_ZITADEL_ORG_ID,
     idpGoogle: import.meta.env.PUBLIC_ZITADEL_IDP_GOOGLE,
     idpGithub: import.meta.env.PUBLIC_ZITADEL_IDP_GITHUB,
     idpApple: import.meta.env.PUBLIC_ZITADEL_IDP_APPLE,
@@ -134,7 +136,10 @@ const getUserManager = (): UserManager => {
     redirect_uri: config.redirectUri,
     post_logout_redirect_uri: config.postLogoutUri,
     response_type: 'code',
-    scope: 'openid profile email offline_access',
+    // Include org scope if configured to ensure users are created in the correct organization
+    scope: config.orgId
+      ? `openid profile email offline_access urn:zitadel:iam:org:id:${config.orgId}`
+      : 'openid profile email offline_access',
     automaticSilentRenew: true,
     silentRequestTimeoutInSeconds: 10,
     userStore: new WebStorageStateStore({ store: window.localStorage }),

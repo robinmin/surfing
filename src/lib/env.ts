@@ -48,6 +48,7 @@ export const authConfig = {
     clientId: getPublicEnvVar('PUBLIC_ZITADEL_CLIENT_ID', ''),
     redirectUri: getPublicEnvVar('PUBLIC_ZITADEL_REDIRECT_URI', ''),
     postLogoutUri: getPublicEnvVar('PUBLIC_ZITADEL_POST_LOGOUT_URI', ''),
+    orgId: getPublicEnvVar('PUBLIC_ZITADEL_ORG_ID', ''),
     isEnabled:
       getPublicEnvVar('PUBLIC_ZITADEL_AUTHORITY', '') !== '' && getPublicEnvVar('PUBLIC_ZITADEL_CLIENT_ID', '') !== '',
     idpHints: {

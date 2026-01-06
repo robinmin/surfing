@@ -99,6 +99,9 @@ Create `.env` file with:
 PUBLIC_ZITADEL_AUTHORITY="https://your-instance.zitadel.cloud"
 PUBLIC_ZITADEL_CLIENT_ID="your-pkce-client-id"
 
+# Required for user organization assignment
+PUBLIC_ZITADEL_ORG_ID="your-organization-id"
+
 # Optional (have sensible defaults)
 PUBLIC_ZITADEL_REDIRECT_URI="https://your-domain.com/auth/callback"
 PUBLIC_ZITADEL_POST_LOGOUT_URI="https://your-domain.com"
@@ -117,6 +120,7 @@ Add secrets to your GitHub repository:
 ```bash
 gh secret set PUBLIC_ZITADEL_AUTHORITY --body "https://your-instance.zitadel.cloud"
 gh secret set PUBLIC_ZITADEL_CLIENT_ID --body "your-client-id"
+gh secret set PUBLIC_ZITADEL_ORG_ID --body "your-organization-id"
 gh secret set PUBLIC_ZITADEL_REDIRECT_URI --body "https://your-domain.com/auth/callback"
 gh secret set PUBLIC_ZITADEL_POST_LOGOUT_URI --body "https://your-domain.com"
 gh secret set PUBLIC_ZITADEL_IDP_GOOGLE --body "google-idp-id"
@@ -136,6 +140,7 @@ Add to `.github/workflows/deploy.yml`:
     # Zitadel OIDC Authentication
     PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
     PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
+    PUBLIC_ZITADEL_ORG_ID: ${{ secrets.PUBLIC_ZITADEL_ORG_ID }}
     PUBLIC_ZITADEL_REDIRECT_URI: ${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}
     PUBLIC_ZITADEL_POST_LOGOUT_URI: ${{ secrets.PUBLIC_ZITADEL_POST_LOGOUT_URI }}
     PUBLIC_ZITADEL_IDP_GOOGLE: ${{ secrets.PUBLIC_ZITADEL_IDP_GOOGLE }}
