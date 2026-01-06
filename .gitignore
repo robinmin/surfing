@@ -46,4 +46,6 @@ dev-debug.log
 # tasks.json
 # tasks/
 
+/draft/
 /CLAUDE.md
+/GEMINI.md
