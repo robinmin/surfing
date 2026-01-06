@@ -243,6 +243,8 @@ export const ja: Translation = {
     signInWith: '',
     signInWithGoogle: 'Googleでログイン',
     signInWithApple: 'Appleでログイン',
+    signInWithGitHub: 'GitHubでログイン',
+    signInWithMicrosoft: 'Microsoftでログイン',
     userMenu: 'ユーザーメニュー',
     loading: '読み込み中...',
     profile: 'プロフィール',
