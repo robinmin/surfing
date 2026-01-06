@@ -40,17 +40,21 @@ export const getPublicEnvVar = (key: string, fallback: string = ''): string => {
 };
 
 /**
- * Authentication configuration
+ * Zitadel authentication configuration
  */
 export const authConfig = {
-  google: {
-    clientId: getPublicEnvVar('PUBLIC_GOOGLE_CLIENT_ID', ''),
-    isEnabled: getPublicEnvVar('PUBLIC_GOOGLE_CLIENT_ID', '') !== '',
-  },
-  apple: {
-    servicesId: getPublicEnvVar('PUBLIC_APPLE_SERVICES_ID', ''),
-    redirectUri: getPublicEnvVar('PUBLIC_APPLE_REDIRECT_URI', ''),
+  zitadel: {
+    authority: getPublicEnvVar('PUBLIC_ZITADEL_AUTHORITY', ''),
+    clientId: getPublicEnvVar('PUBLIC_ZITADEL_CLIENT_ID', ''),
+    redirectUri: getPublicEnvVar('PUBLIC_ZITADEL_REDIRECT_URI', ''),
+    postLogoutUri: getPublicEnvVar('PUBLIC_ZITADEL_POST_LOGOUT_URI', ''),
     isEnabled:
-      getPublicEnvVar('PUBLIC_APPLE_SERVICES_ID', '') !== '' && getPublicEnvVar('PUBLIC_APPLE_REDIRECT_URI', '') !== '',
+      getPublicEnvVar('PUBLIC_ZITADEL_AUTHORITY', '') !== '' && getPublicEnvVar('PUBLIC_ZITADEL_CLIENT_ID', '') !== '',
+    idpHints: {
+      google: getPublicEnvVar('PUBLIC_ZITADEL_IDP_GOOGLE', ''),
+      github: getPublicEnvVar('PUBLIC_ZITADEL_IDP_GITHUB', ''),
+      apple: getPublicEnvVar('PUBLIC_ZITADEL_IDP_APPLE', ''),
+      microsoft: getPublicEnvVar('PUBLIC_ZITADEL_IDP_MICROSOFT', ''),
+    },
   },
 };
