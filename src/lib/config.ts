@@ -1,7 +1,7 @@
 /**
  * Configuration loader for application settings
  *
- * This module now loads configuration from the virtual module provided by Astro integration
+ * This module loads configuration from the virtual module provided by Astro integration
  * which reads from config.yaml and makes it available to client-side code.
  */
 
@@ -12,24 +12,30 @@ export interface SentryConfig {
   org: string;
 }
 
-export interface AuthConfig {
-  google_one_tap: {
-    enabled: boolean;
+export interface ZitadelAuthConfig {
+  enabled: boolean;
+  providers: {
+    google: boolean;
+    github: boolean;
+    apple: boolean;
+    microsoft: boolean;
   };
-  apple_sign_in: {
-    enabled: boolean;
+  popup: {
+    width: number;
+    height: number;
   };
+  silent_renewal: boolean;
   token_cache_duration: number;
 }
 
 // Cache for configuration to avoid repeated imports
-let authConfigCache: AuthConfig | null = null;
+let authConfigCache: ZitadelAuthConfig | null = null;
 let sentryConfigCache: SentryConfig | null = null;
 
 /**
- * Get authentication configuration from config.yaml via virtual module
+ * Get Zitadel authentication configuration from config.yaml via virtual module
  */
-export const getAuthConfig = async (): Promise<AuthConfig> => {
+export const getAuthConfig = async (): Promise<ZitadelAuthConfig> => {
   if (authConfigCache) {
     return authConfigCache;
   }
@@ -37,17 +43,39 @@ export const getAuthConfig = async (): Promise<AuthConfig> => {
   try {
     const configModule = (await import('astrowind:config')) as any;
     const AUTH = configModule.AUTH || {};
+    const zitadel = AUTH.zitadel || {};
+
     authConfigCache = {
-      google_one_tap: { enabled: true, ...AUTH.google_one_tap },
-      apple_sign_in: { enabled: false, ...AUTH.apple_sign_in },
+      enabled: zitadel.enabled !== undefined ? zitadel.enabled : true,
+      providers: {
+        google: zitadel.providers?.google !== undefined ? zitadel.providers.google : true,
+        github: zitadel.providers?.github !== undefined ? zitadel.providers.github : true,
+        apple: zitadel.providers?.apple !== undefined ? zitadel.providers.apple : true,
+        microsoft: zitadel.providers?.microsoft !== undefined ? zitadel.providers.microsoft : true,
+      },
+      popup: {
+        width: zitadel.popup?.width || 500,
+        height: zitadel.popup?.height || 600,
+      },
+      silent_renewal: zitadel.silent_renewal !== undefined ? zitadel.silent_renewal : true,
       token_cache_duration: AUTH.token_cache_duration || 900,
     };
     return authConfigCache;
   } catch (error) {
     console.warn('Failed to load auth config from virtual module, using defaults:', error);
-    const fallback: AuthConfig = {
-      google_one_tap: { enabled: true },
-      apple_sign_in: { enabled: false },
+    const fallback: ZitadelAuthConfig = {
+      enabled: true,
+      providers: {
+        google: true,
+        github: true,
+        apple: true,
+        microsoft: true,
+      },
+      popup: {
+        width: 500,
+        height: 600,
+      },
+      silent_renewal: true,
       token_cache_duration: 900,
     };
     authConfigCache = fallback;
@@ -56,80 +84,37 @@ export const getAuthConfig = async (): Promise<AuthConfig> => {
 };
 
 /**
- * Check if Google One Tap is enabled
+ * Check if Zitadel authentication is enabled
  */
-export const isGoogleOneTapEnabled = async (): Promise<boolean> => {
+export const isZitadelAuthEnabled = async (): Promise<boolean> => {
   try {
     const config = await getAuthConfig();
-    const clientId = import.meta.env?.PUBLIC_GOOGLE_CLIENT_ID || '';
+    const authority = import.meta.env?.PUBLIC_ZITADEL_AUTHORITY || '';
+    const clientId = import.meta.env?.PUBLIC_ZITADEL_CLIENT_ID || '';
 
-    // Must have client ID configured
-    if (!clientId) {
+    // Must have authority and client ID configured
+    if (!authority || !clientId) {
       return false;
     }
 
-    // In development, only enable if client ID is configured for localhost
-    if (import.meta.env.DEV) {
-      // Check if we're on localhost
-      const isLocalhost =
-        typeof window !== 'undefined' &&
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
-      if (isLocalhost) {
-        // For localhost development, require a client ID that includes 'localhost' or is Google's test client ID
-        const isValidLocalhostClientId =
-          clientId.includes('localhost') ||
-          clientId.includes('test') ||
-          clientId === '511333300252-2d54h6n4th9q0c3r1ed7k4eq9c5dj7v.apps.googleusercontent.com' || // Google's test client ID
-          clientId === '644801417181-e1glvt4j9tpsaakvfqrlfrq56m277e4f.apps.googleusercontent.com'; // Google's official test client ID
-
-        if (!isValidLocalhostClientId) {
-          console.warn(
-            "Google One Tap disabled in development: Client ID not configured for localhost. Use Google's test client ID or configure OAuth for localhost."
-          );
-          return false;
-        }
-      }
-    }
-
-    return config.google_one_tap.enabled;
+    return config.enabled;
   } catch (error) {
-    console.warn('Failed to check Google One Tap configuration:', error);
+    console.warn('Failed to check Zitadel configuration:', error);
     return false;
   }
 };
 
 /**
- * Check if Apple Sign In is enabled
+ * Get enabled authentication providers
  */
-export const isAppleSignInEnabled = async (): Promise<boolean> => {
-  try {
-    const config = await getAuthConfig();
-    const hasServicesId = (import.meta.env?.PUBLIC_APPLE_SERVICES_ID || '') !== '';
-    const hasRedirectUri = (import.meta.env?.PUBLIC_APPLE_REDIRECT_URI || '') !== '';
-    return config.apple_sign_in.enabled && hasServicesId && hasRedirectUri;
-  } catch (error) {
-    console.warn('Failed to check Apple Sign In configuration:', error);
-    return false;
-  }
-};
-
-/**
- * Get enabled authentication methods
- */
-export const getEnabledAuthMethods = async (): Promise<{
+export const getEnabledProviders = async (): Promise<{
   google: boolean;
+  github: boolean;
   apple: boolean;
-  showDivider: boolean;
+  microsoft: boolean;
 }> => {
-  const googleEnabled = await isGoogleOneTapEnabled();
-  const appleEnabled = await isAppleSignInEnabled();
-
-  return {
-    google: googleEnabled,
-    apple: appleEnabled,
-    showDivider: googleEnabled && appleEnabled,
-  };
+  const config = await getAuthConfig();
+  return config.providers;
 };
 
 /**
