@@ -85,9 +85,16 @@ const iconSizeClasses = {
 </div>
 
 <script>
-  import { initializeGoogleOneTap, signInWithGoogle, signOut, getCurrentSession } from '~/lib/google-auth';
-  import { supabase } from '~/lib/supabase';
-  import { getEnabledAuthMethods } from '~/lib/config';
+  import {
+    signInPopup,
+    signInRedirect,
+    signOut,
+    getCurrentSession,
+    isZitadelConfigured,
+    onUserLoaded,
+    onUserUnloaded,
+    type ZitadelIdProvider,
+  } from '~/lib/zitadel-auth';
 
   let isLoggedIn = false;
 
@@ -178,12 +185,11 @@ const iconSizeClasses = {
   };
 
   // Update UI based on auth state
-  const updateAuthUI = (session: any) => {
+  const updateAuthUI = (session: Awaited<ReturnType<typeof getCurrentSession>>) => {
     const loggedOutAvatar = document.querySelector('[data-logged-out]');
     const loggedInAvatar = document.querySelector('[data-logged-in]') as HTMLImageElement;
     const userName = document.querySelector('[data-user-name]');
     const userEmail = document.querySelector('[data-user-email]');
-    const providerLogo = document.querySelector('[data-provider-logo]');
 
     // Update global login state
     const wasLoggedIn = isLoggedIn;
@@ -202,45 +208,20 @@ const iconSizeClasses = {
       loggedInAvatar?.classList.remove('hidden');
 
       // Set user profile picture
-      if (loggedInAvatar && session.user.user_metadata?.avatar_url) {
-        loggedInAvatar.src = session.user.user_metadata.avatar_url;
-        loggedInAvatar.style.background = ''; // Clear any fallback background
-      } else if (loggedInAvatar && session.user.user_metadata?.picture) {
-        loggedInAvatar.src = session.user.user_metadata.picture;
-        loggedInAvatar.style.background = ''; // Clear any fallback background
+      if (loggedInAvatar && session.user.picture) {
+        loggedInAvatar.src = session.user.picture;
+        loggedInAvatar.style.background = '';
       } else if (loggedInAvatar) {
-        // Fallback: ensure avatar shows something when no metadata available
-        // The default SVG will remain from the initial src
         loggedInAvatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         loggedInAvatar.alt = 'User avatar (logged in)';
       }
 
       // Update user info in menu
       if (userName) {
-        userName.textContent = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User';
+        userName.textContent = session.user.name || session.user.email?.split('@')[0] || 'User';
       }
       if (userEmail) {
         userEmail.textContent = session.user.email || '';
-      }
-
-      // Update provider logo based on auth provider
-      if (providerLogo) {
-        // Check if user signed in with Google
-        const isGoogleUser =
-          session.user.app_metadata?.provider === 'google' ||
-          session.user.user_metadata?.provider === 'google' ||
-          session.user.email?.endsWith('@gmail.com');
-
-        if (isGoogleUser) {
-          providerLogo.innerHTML =
-            '<svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
-          providerLogo.parentElement?.setAttribute('data-provider', 'google');
-        } else {
-          // Default or Apple user
-          providerLogo.innerHTML =
-            '<svg class="h-5 w-5 text-gray-800 dark:text-gray-200" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>';
-          providerLogo.parentElement?.setAttribute('data-provider', 'apple');
-        }
       }
     } else {
       isLoggedIn = false;
@@ -252,182 +233,54 @@ const iconSizeClasses = {
       console.debug('User logged out, hiding user avatar');
     }
 
-    // Re-initialize click handlers after UI update to ensure they work with new state
+    // Re-initialize click handlers after UI update
     setTimeout(async () => {
       setupAvatarClick();
-      // Update translations when user state changes
       await updatePopupTranslations();
     }, 10);
   };
 
-  // Global flag to track if Google has been initialized
-  let isGoogleInitialized = false;
-
-  // Check if user has valid session before triggering auto-login
-  const shouldTriggerAutoLogin = async (): Promise<boolean> => {
+  // Handle login with a specific provider
+  const handleProviderLogin = async (provider: ZitadelIdProvider) => {
     try {
-      // Check if supabase is available
-      if (!supabase) {
-        console.debug('Supabase not available, proceeding with Google One Tap');
-        return true;
+      console.debug(`Starting ${provider} sign-in via Zitadel`);
+
+      // Close the login menu
+      const loginMenu = document.querySelector('[data-popup-menu]');
+      loginMenu?.classList.remove('show');
+
+      // Try popup first, fall back to redirect if blocked
+      try {
+        const user = await signInPopup(provider);
+        console.log('Sign in success:', user.profile.email);
+        // Reload page to reflect authenticated state
+        window.location.reload();
+      } catch (popupError) {
+        console.debug('Popup blocked or failed, trying redirect:', popupError);
+        // Fall back to redirect flow
+        await signInRedirect(provider);
       }
-
-      // Check if user already has a valid Supabase session
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
-
-      if (error) {
-        console.debug('Session check failed:', error);
-        return true; // Proceed with Google One Tap if session check fails
-      }
-
-      if (session?.user) {
-        // Verify session is not expired
-        const now = Math.floor(Date.now() / 1000);
-        if (session.expires_at && session.expires_at < now) {
-          console.debug('Session expired, proceeding with Google One Tap');
-          return true;
-        }
-
-        console.debug('User already has valid session, skipping Google One Tap');
-        return false; // Don't trigger Google One Tap if user has valid session
-      }
-
-      // No session found, proceed with Google One Tap
-      return true;
     } catch (error) {
-      console.debug('Session validation error, proceeding with Google One Tap:', error);
-      return true;
+      console.error(`${provider} sign-in error:`, error);
+      // Show error to user
+      alert(`Sign-in failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
-  // Initialize Google One Tap once on page load
-  const initializeGoogle = async () => {
-    if (isGoogleInitialized) {
-      return;
-    }
-
-    try {
-      // 🔄 First check if we should trigger auto-login based on session
-      const shouldTrigger = await shouldTriggerAutoLogin();
-      if (!shouldTrigger) {
-        console.debug('Skipping Google One Tap - user already authenticated');
-        isGoogleInitialized = true; // Mark as initialized to prevent re-checks
-        return;
-      }
-
-      // 🚀 Only proceed if Google is the only enabled auth method
-      const authMethods = await getEnabledAuthMethods();
-      if (!authMethods.google || authMethods.apple) {
-        console.debug('Google One Tap not needed - either disabled or multiple auth methods available');
-        isGoogleInitialized = true;
-        return;
-      }
-
-      await initializeGoogleOneTap(
-        async (response) => {
-          try {
-            await signInWithGoogle(response.credential);
-            console.log('Google sign in success');
-            // Reload page to reflect authenticated state
-            window.location.reload();
-          } catch (error) {
-            console.error('Google sign in error:', error);
-          }
-        },
-        (error) => {
-          console.error('Google initialization error:', error);
-        }
-      );
-      isGoogleInitialized = true;
-      console.debug('Google One Tap initialized with auto-trigger (only auth method enabled)');
-    } catch (error) {
-      console.error('Failed to initialize Google Sign In:', error);
-    }
-  };
-
-  // Handle login option clicks
+  // Handle login option clicks for all providers
   const setupLoginHandlers = () => {
-    const googleButton = document.querySelector('.login-option-google');
-    const appleButton = document.querySelector('.login-option-apple');
+    const providers: ZitadelIdProvider[] = ['google', 'github', 'apple', 'microsoft'];
 
-    // Google Sign In - Remove existing listeners by cloning
-    if (googleButton) {
-      const newGoogleButton = googleButton.cloneNode(true) as HTMLElement;
-      googleButton.parentNode?.replaceChild(newGoogleButton, googleButton);
+    providers.forEach((provider) => {
+      const button = document.querySelector(`.login-option-${provider}`);
+      if (button) {
+        // Clone to remove existing listeners
+        const newButton = button.cloneNode(true) as HTMLElement;
+        button.parentNode?.replaceChild(newButton, button);
 
-      newGoogleButton.addEventListener('click', async () => {
-        try {
-          // Ensure Google is initialized
-          if (!isGoogleInitialized) {
-            await initializeGoogle();
-          }
-
-          if (window.google?.accounts?.id) {
-            console.debug('Triggering Google Sign In');
-
-            // Create a container for the button if it doesn't exist
-            let buttonContainer = document.getElementById('google-signin-button-container');
-            if (!buttonContainer) {
-              buttonContainer = document.createElement('div');
-              buttonContainer.id = 'google-signin-button-container';
-              buttonContainer.style.cssText =
-                'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
-              document.body.appendChild(buttonContainer);
-
-              // Add close button
-              const closeButton = document.createElement('button');
-              closeButton.textContent = '×';
-              closeButton.style.cssText =
-                'position: absolute; top: 5px; right: 10px; border: none; background: none; font-size: 24px; cursor: pointer; color: #666;';
-              closeButton.onclick = () => {
-                buttonContainer?.remove();
-              };
-              buttonContainer.appendChild(closeButton);
-            }
-
-            // Clear previous content
-            const existingButton = buttonContainer.querySelector('[data-google-button]');
-            if (existingButton) {
-              existingButton.remove();
-            }
-
-            // Create button wrapper
-            const buttonWrapper = document.createElement('div');
-            buttonWrapper.setAttribute('data-google-button', 'true');
-            buttonContainer.appendChild(buttonWrapper);
-
-            // Use renderButton as primary method (works when FedCM is blocked)
-            window.google.accounts.id.renderButton(buttonWrapper, {
-              theme: 'outline',
-              size: 'large',
-              text: 'signin_with',
-              shape: 'rectangular',
-              logo_alignment: 'left',
-              width: 280,
-            });
-
-            console.debug('Google Sign In button rendered');
-          } else {
-            console.error('Google Sign In not available');
-          }
-        } catch (error) {
-          console.error('Failed to show Google Sign In:', error);
-        }
-      });
-    }
-
-    // Apple Sign In - Remove existing listeners by cloning
-    if (appleButton) {
-      const newAppleButton = appleButton.cloneNode(true) as HTMLElement;
-      appleButton.parentNode?.replaceChild(newAppleButton, appleButton);
-
-      newAppleButton.addEventListener('click', () => {
-        console.log('Apple Sign In clicked - to be implemented');
-      });
-    }
+        newButton.addEventListener('click', () => handleProviderLogin(provider));
+      }
+    });
   };
 
   // Handle sign out
@@ -435,25 +288,22 @@ const iconSizeClasses = {
     const signOutButton = document.querySelector('.user-menu-signout') as HTMLButtonElement;
 
     if (signOutButton) {
-      signOutButton.addEventListener('click', async () => {
+      // Clone to remove existing listeners
+      const newSignOutButton = signOutButton.cloneNode(true) as HTMLButtonElement;
+      signOutButton.parentNode?.replaceChild(newSignOutButton, signOutButton);
+
+      newSignOutButton.addEventListener('click', async () => {
         try {
-          // Disable button to prevent multiple clicks during sign out process
-          signOutButton.disabled = true;
-
-          await signOut();
+          newSignOutButton.disabled = true;
+          await signOut(true); // Local signout first
           console.log('Sign out success');
-
-          // Clear session storage (Supabase handles localStorage automatically)
           sessionStorage.clear();
-
-          // Add a small delay to ensure all cleanup is complete
           setTimeout(() => {
             window.location.reload();
           }, 500);
         } catch (error) {
           console.error('Sign out error:', error);
-          // Re-enable button on error
-          signOutButton.disabled = false;
+          newSignOutButton.disabled = false;
         }
       });
     }
@@ -462,6 +312,12 @@ const iconSizeClasses = {
   // Check auth state and update UI
   const checkAuthState = async () => {
     try {
+      if (!isZitadelConfigured()) {
+        console.debug('Zitadel not configured, skipping auth check');
+        updateAuthUI(null);
+        return;
+      }
+
       const session = await getCurrentSession();
       updateAuthUI(session);
     } catch {
@@ -474,21 +330,27 @@ const iconSizeClasses = {
   const setupAuthSync = async () => {
     const { initAuthSync, onAuthSync } = await import('~/lib/auth-sync');
 
-    // Initialize auth sync
     initAuthSync();
 
-    // Listen for auth events from other tabs
     onAuthSync((event) => {
       console.debug('Auth sync event received:', event);
-
-      if (event === 'login') {
-        // Reload page to reflect logged in state
-        window.location.reload();
-      } else if (event === 'logout') {
-        // Reload page to reflect logged out state
+      if (event === 'login' || event === 'logout') {
         window.location.reload();
       }
     });
+
+    // Also subscribe to oidc-client-ts events
+    if (isZitadelConfigured()) {
+      onUserLoaded(() => {
+        console.debug('User loaded event from Zitadel');
+        checkAuthState();
+      });
+
+      onUserUnloaded(() => {
+        console.debug('User unloaded event from Zitadel');
+        checkAuthState();
+      });
+    }
   };
 
   // Update popup menu translations when language changes
@@ -496,16 +358,17 @@ const iconSizeClasses = {
     const { getPreferredLanguage, t } = await import('~/i18n');
     const lang = getPreferredLanguage();
 
-    // Update login popup menu
-    const loginTitle = document.querySelector('[data-popup-menu] .text-sm.font-semibold');
-    const loginSubtitle = document.querySelector('[data-popup-menu] .text-xs.text-gray-500');
-    const googleButtonText = document.querySelector('.login-option-google .text-sm.font-medium');
-    const appleButtonText = document.querySelector('.login-option-apple .text-sm.font-medium');
-
-    if (loginTitle) loginTitle.textContent = t('auth.signIn', lang);
-    if (loginSubtitle) loginSubtitle.textContent = t('auth.oneClickLogin', lang);
-    if (googleButtonText) googleButtonText.textContent = t('auth.signInWithGoogle', lang);
-    if (appleButtonText) appleButtonText.textContent = t('auth.signInWithApple', lang);
+    // Update login popup menu - provider buttons
+    const providers = ['google', 'github', 'apple', 'microsoft'];
+    providers.forEach((provider) => {
+      const buttonText = document.querySelector(`.login-option-${provider} [data-i18n-key]`);
+      if (buttonText) {
+        const key = buttonText.getAttribute('data-i18n-key');
+        if (key) {
+          buttonText.textContent = t(key, lang);
+        }
+      }
+    });
 
     // Update user menu
     const signedInText = document.querySelector('[data-user-menu] .text-xs.text-gray-400');
@@ -521,150 +384,58 @@ const iconSizeClasses = {
   const setupLanguageListener = async () => {
     const { LANGUAGE_STORAGE_KEY } = await import('~/i18n');
 
-    // Listen for language change events
     document.addEventListener('language:change', () => {
-      console.debug('Language change detected, updating popup translations');
-      setTimeout(async () => await updatePopupTranslations(), 50); // Small delay to ensure DOM is ready
+      setTimeout(async () => await updatePopupTranslations(), 50);
     });
 
-    // Listen for storage changes (for language changes in other tabs)
     window.addEventListener('storage', (e) => {
       if (e.key === LANGUAGE_STORAGE_KEY) {
-        console.debug('Language change detected in storage, updating popup translations');
         setTimeout(async () => await updatePopupTranslations(), 50);
       }
     });
-
-    // Set up a MutationObserver to detect language changes in the DOM
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          const langButton = document.querySelector('[data-language-selector]');
-          if (langButton) {
-            const currentLang = langButton.getAttribute('data-current-lang');
-            if (currentLang && currentLang !== (window as any).__lastLang) {
-              (window as any).__lastLang = currentLang;
-              setTimeout(async () => await updatePopupTranslations(), 50);
-            }
-          }
-        }
-      });
-    });
-
-    // Start observing the language button
-    const langButton = document.querySelector('[data-language-selector]');
-    if (langButton) {
-      observer.observe(langButton, { attributes: true, attributeFilter: ['class'] });
-    }
   };
 
-  // Setup navigation listener to re-check auth state on page navigation
+  // Setup navigation listener
   const setupNavigationListener = () => {
-    // Listen for browser navigation events
     const handleNavigation = () => {
       console.debug('Navigation detected, re-checking auth state');
       setTimeout(() => {
         checkAuthState();
-        // Re-initialize event listeners after navigation to ensure they work with new DOM
         setupAvatarClick();
         setupLoginHandlers();
         setupSignOutHandler();
-        // Google is already initialized, no need to re-initialize
-      }, 100); // Small delay to ensure DOM is ready
+      }, 100);
     };
 
-    // Listen for popstate events (browser back/forward)
     window.addEventListener('popstate', handleNavigation);
-
-    // Listen for Astro view transitions if available
-    if (typeof window !== 'undefined' && 'navigation' in window) {
-      (window.navigation as any).addEventListener('navigate', handleNavigation);
-    }
-
-    // Listen for Astro view transition events
     document.addEventListener('astro:page-load', handleNavigation);
-    document.addEventListener('astro:after-preparation', handleNavigation);
     document.addEventListener('astro:after-swap', handleNavigation);
-
-    // Also set up a MutationObserver to detect when the AuthAvatar is added to DOM
-    // This helps with dynamic content loading
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-              const authAvatar = (node as Element).querySelector?.('[data-auth-avatar]');
-              if (authAvatar) {
-                console.debug('AuthAvatar detected in DOM, checking auth state');
-                setTimeout(() => {
-                  checkAuthState();
-                  setupAvatarClick();
-                  setupLoginHandlers();
-                  setupSignOutHandler();
-                  // Google is already initialized, no need to re-initialize
-                }, 50);
-              }
-            }
-          });
-        }
-      });
-    });
-
-    // Start observing the document body for changes
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-
-    // Set up periodic auth state check as a fallback
-    setInterval(async () => {
-      const currentAvatar = document.querySelector('img[data-logged-in]') as HTMLImageElement;
-      const loggedOutAvatar = document.querySelector('[data-logged-out]');
-
-      // Check if user appears logged out but should be logged in (has auth tokens)
-      // Since Supabase handles localStorage automatically, we just check our cache
-      const hasValidCache = localStorage.getItem('auth_token_guardian_timestamp');
-      const hasAuthToken = hasValidCache !== null; // If we have cache, user should be logged in
-
-      if (hasAuthToken && hasValidCache && currentAvatar && loggedOutAvatar) {
-        // User should be logged in but avatar shows default SVG
-        if (currentAvatar.src.includes('data:image/svg+xml') && !loggedOutAvatar.classList.contains('hidden')) {
-          console.debug(
-            'Detected inconsistent auth state - user should be logged in but showing default avatar, re-checking'
-          );
-          checkAuthState();
-          setupAvatarClick();
-          setupLoginHandlers();
-          setupSignOutHandler();
-          // Google is already initialized, no need to re-initialize
-        }
-      }
-    }, 2000); // Check every 2 seconds
   };
 
+  // Listen for auth errors from popup
+  window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin) return;
+    if (event.data?.type === 'auth_error') {
+      console.error('Auth error from popup:', event.data.error);
+      alert(`Authentication failed: ${event.data.error}`);
+    }
+  });
+
   // Initialize on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', async () => {
-      setupAvatarClick();
-      setupLoginHandlers();
-      setupSignOutHandler();
-      checkAuthState();
-      setupAuthSync();
-      setupLanguageListener();
-      setupNavigationListener();
-      // Pre-initialize Google for faster sign-in
-      await initializeGoogle();
-    });
-  } else {
+  const initialize = async () => {
     setupAvatarClick();
     setupLoginHandlers();
     setupSignOutHandler();
-    checkAuthState();
+    await checkAuthState();
     setupAuthSync();
     setupLanguageListener();
     setupNavigationListener();
-    // Pre-initialize Google for faster sign-in
-    initializeGoogle();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+  } else {
+    initialize();
   }
 </script>
 
