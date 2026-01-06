@@ -237,6 +237,8 @@ export const zh: Translation = {
     signInWith: '使用',
     signInWithGoogle: '使用 Google 登录',
     signInWithApple: '使用 Apple 登录',
+    signInWithGitHub: '使用 GitHub 登录',
+    signInWithMicrosoft: '使用 Microsoft 登录',
     userMenu: '用户菜单',
     loading: '加载中...',
     profile: '个人资料',
