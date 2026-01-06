@@ -4,14 +4,14 @@ This document describes how to reuse the Zitadel OIDC authentication solution ac
 
 ## Solution Overview
 
-| Feature | Implementation |
-|---------|----------------|
-| **Auth Library** | `oidc-client-ts` (client-side OIDC) |
-| **Auth Backend** | Zitadel (unified identity provider) |
-| **Flow** | Authorization Code + PKCE (popup-based) |
-| **Site Type** | Static (`output: 'static'`) |
-| **Deployment** | Cloudflare Pages via GitHub Actions |
-| **Providers** | Google, GitHub, Apple, Microsoft |
+| Feature          | Implementation                          |
+| ---------------- | --------------------------------------- |
+| **Auth Library** | `oidc-client-ts` (client-side OIDC)     |
+| **Auth Backend** | Zitadel (unified identity provider)     |
+| **Flow**         | Authorization Code + PKCE (popup-based) |
+| **Site Type**    | Static (`output: 'static'`)             |
+| **Deployment**   | Cloudflare Pages via GitHub Actions     |
+| **Providers**    | Google, GitHub, Apple, Microsoft        |
 
 ## Files to Copy
 
@@ -75,6 +75,7 @@ npm install oidc-client-ts
 ```
 
 Also requires (likely already in your Astro project):
+
 - `astro-icon` - For provider icons (tabler icons)
 - `tailwind-merge` - For CSS class merging (if using Tailwind)
 
@@ -198,8 +199,8 @@ auth:
     providers:
       google: true
       github: true
-      apple: false      # Disabled
-      microsoft: false  # Disabled
+      apple: false # Disabled
+      microsoft: false # Disabled
 ```
 
 Then update `LoginPopupMenu.astro` to filter providers based on config.
@@ -207,6 +208,7 @@ Then update `LoginPopupMenu.astro` to filter providers based on config.
 ### Custom Styling
 
 The components use Tailwind CSS classes. Modify these files for custom styling:
+
 - `AuthAvatar.astro` - Avatar button appearance
 - `LoginPopupMenu.astro` - Provider button styles
 - `UserMenu.astro` - Logged-in user dropdown
@@ -214,6 +216,7 @@ The components use Tailwind CSS classes. Modify these files for custom styling:
 ### Multi-Site Same Zitadel Instance
 
 For multiple sites sharing one Zitadel instance:
+
 1. Create one PKCE application per site in Zitadel
 2. Each site gets its own Client ID
 3. All sites can use the same IdP IDs (federated providers are shared)
@@ -276,13 +279,13 @@ See `docs/SECURITY_AUDIT_OIDC.md` for detailed security analysis.
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Popup blocked | Falls back to redirect automatically |
+| Issue                      | Solution                                                        |
+| -------------------------- | --------------------------------------------------------------- |
+| Popup blocked              | Falls back to redirect automatically                            |
 | "Configuration incomplete" | Check `PUBLIC_ZITADEL_AUTHORITY` and `PUBLIC_ZITADEL_CLIENT_ID` |
-| Invalid redirect URI | Ensure URI in Zitadel matches exactly |
-| Silent renewal fails | Check `offline_access` scope in Zitadel |
-| Cross-tab sync not working | Check browser BroadcastChannel support |
+| Invalid redirect URI       | Ensure URI in Zitadel matches exactly                           |
+| Silent renewal fails       | Check `offline_access` scope in Zitadel                         |
+| Cross-tab sync not working | Check browser BroadcastChannel support                          |
 
 ## Related Documentation
 
