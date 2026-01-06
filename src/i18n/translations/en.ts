@@ -242,6 +242,8 @@ export const en = {
     signInWith: 'Sign in with',
     signInWithGoogle: 'Sign in with Google',
     signInWithApple: 'Sign in with Apple',
+    signInWithGitHub: 'Sign in with GitHub',
+    signInWithMicrosoft: 'Sign in with Microsoft',
     userMenu: 'User menu',
     loading: 'Loading...',
     profile: 'Profile',
@@ -488,6 +490,8 @@ export type Translation = {
     signInWith: string;
     signInWithGoogle: string;
     signInWithApple: string;
+    signInWithGitHub: string;
+    signInWithMicrosoft: string;
     userMenu: string;
     loading: string;
     profile: string;
