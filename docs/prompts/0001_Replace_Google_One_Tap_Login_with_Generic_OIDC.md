@@ -1,7 +1,7 @@
 ---
 name: Replace Google One Tap Login with Generic OIDC
 description: Replace Google One Tap + Supabase with Zitadel OIDC using oidc-client-ts for static site popup authentication
-status: Completed
+status: Done
 created_at: 2026-01-05 16:49:23
 updated_at: 2026-01-05 19:30:00
 ---

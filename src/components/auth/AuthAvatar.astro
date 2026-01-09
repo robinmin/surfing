@@ -94,7 +94,7 @@ const iconSizeClasses = {
     onUserLoaded,
     onUserUnloaded,
     type ZitadelIdProvider,
-  } from '~/lib/zitadel-auth';
+  } from '~/lib/turnstile-client';
 
   let isLoggedIn = false;
 
@@ -328,7 +328,7 @@ const iconSizeClasses = {
 
   // Setup auth sync across tabs
   const setupAuthSync = async () => {
-    const { initAuthSync, onAuthSync } = await import('~/lib/auth-sync');
+    const { initAuthSync, onAuthSync } = await import('~/lib/turnstile-client');
 
     initAuthSync();
 

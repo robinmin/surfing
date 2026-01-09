@@ -68,6 +68,9 @@ const articlesCollection = defineCollection({
     draft: z.boolean().default(false),
     featured: z.boolean().default(false),
 
+    // Subscription/premium content gating
+    premium: z.boolean().default(false), // Requires Standard+ subscription to access
+
     // Content metadata
     author: z.string().optional(),
     image: z.string().optional(),

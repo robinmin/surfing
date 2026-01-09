@@ -25,7 +25,6 @@ export interface ZitadelAuthConfig {
     height: number;
   };
   silent_renewal: boolean;
-  token_cache_duration: number;
 }
 
 // Cache for configuration to avoid repeated imports
@@ -58,7 +57,6 @@ export const getAuthConfig = async (): Promise<ZitadelAuthConfig> => {
         height: zitadel.popup?.height || 600,
       },
       silent_renewal: zitadel.silent_renewal !== undefined ? zitadel.silent_renewal : true,
-      token_cache_duration: AUTH.token_cache_duration || 900,
     };
     return authConfigCache;
   } catch (error) {
@@ -76,7 +74,6 @@ export const getAuthConfig = async (): Promise<ZitadelAuthConfig> => {
         height: 600,
       },
       silent_renewal: true,
-      token_cache_duration: 900,
     };
     authConfigCache = fallback;
     return fallback;
@@ -115,15 +112,6 @@ export const getEnabledProviders = async (): Promise<{
 }> => {
   const config = await getAuthConfig();
   return config.providers;
-};
-
-/**
- * Get token cache duration in seconds
- * @returns Cache duration in seconds (default: 900 = 15 minutes)
- */
-export const getTokenCacheDuration = async (): Promise<number> => {
-  const config = await getAuthConfig();
-  return config.token_cache_duration;
 };
 
 /**

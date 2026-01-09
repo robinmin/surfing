@@ -1,0 +1,158 @@
+---
+/**
+ * CheatsheetDownload Component
+ *
+ * Handles cheatsheet PDF download with subscription gating.
+ * Shows download button for subscribers, upgrade prompt for free users.
+ */
+import { Icon } from 'astro-icon/components';
+import { t, getCurrentLanguage } from '~/i18n';
+
+interface Props {
+  /** URL to the PDF file */
+  pdfUrl?: string;
+  /** Cheatsheet title for accessibility */
+  title: string;
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const { pdfUrl, title, size = 'md', class: className = '' } = Astro.props;
+
+const lang = getCurrentLanguage();
+
+const sizeClasses = {
+  sm: 'text-sm px-3 py-1.5',
+  md: 'text-base px-4 py-2',
+  lg: 'text-lg px-6 py-3',
+};
+
+const iconSizes = {
+  sm: 'w-4 h-4',
+  md: 'w-5 h-5',
+  lg: 'w-6 h-6',
+};
+---
+
+<div class:list={['cheatsheet-download', className]} data-pdf-url={pdfUrl} data-title={title}>
+  {
+    pdfUrl ? (
+      <div class="download-container">
+        {/* Subscription-gated download button */}
+        {/* For authenticated subscribers */}
+        <button
+          type="button"
+          class:list={[
+            'download-btn hidden items-center gap-2 font-medium rounded-lg transition-colors',
+            'bg-primary text-white hover:bg-primary/90',
+            sizeClasses[size],
+          ]}
+          data-action="download"
+          aria-label={`Download ${title} as PDF`}
+        >
+          <Icon name="tabler:download" class={iconSizes[size]} />
+          <span data-i18n-key="pages.cheatsheets.downloadPdf">{t('pages.cheatsheets.downloadPdf', lang)}</span>
+        </button>
+
+        {/* For free users or unauthenticated */}
+        <button
+          type="button"
+          class:list={[
+            'upgrade-btn hidden items-center gap-2 font-medium rounded-lg transition-colors',
+            'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600',
+            sizeClasses[size],
+          ]}
+          data-action="upgrade"
+          aria-label="Upgrade to download"
+        >
+          <Icon name="tabler:lock" class={iconSizes[size]} />
+          <span data-i18n-key="subscription.upgradeToDownload">{t('subscription.upgradeToDownload', lang)}</span>
+        </button>
+
+        {/* Loading state */}
+        <div class="loading-state hidden items-center gap-2 text-gray-500">
+          <Icon name="tabler:loader-2" class:list={[iconSizes[size], 'animate-spin']} />
+          <span data-i18n-key="common.loading">{t('common.loading', lang)}</span>
+        </div>
+      </div>
+    ) : (
+      /* No PDF available */
+      <span class="text-gray-500 dark:text-gray-400 text-sm italic">{t('subscription.pdfNotAvailable', lang)}</span>
+    )
+  }
+</div>
+
+<script>
+  import { getCurrentSession } from '~/lib/turnstile-client';
+  import { canAccessPremiumArticlesByRole } from '~/lib/subscription';
+
+  // Initialize all download containers
+  document.querySelectorAll('.cheatsheet-download').forEach(async (container) => {
+    const downloadBtn = container.querySelector('.download-btn') as HTMLButtonElement;
+    const upgradeBtn = container.querySelector('.upgrade-btn') as HTMLButtonElement;
+    const loadingState = container.querySelector('.loading-state') as HTMLElement;
+    const pdfUrl = container.getAttribute('data-pdf-url');
+
+    if (!pdfUrl || !downloadBtn || !upgradeBtn || !loadingState) return;
+
+    // Show loading state
+    loadingState.classList.remove('hidden');
+    loadingState.classList.add('flex');
+
+    try {
+      const session = await getCurrentSession();
+      const canDownload = canAccessPremiumArticlesByRole(session);
+
+      // Hide loading
+      loadingState.classList.add('hidden');
+      loadingState.classList.remove('flex');
+
+      if (canDownload) {
+        // Show download button
+        downloadBtn.classList.remove('hidden');
+        downloadBtn.classList.add('inline-flex');
+
+        downloadBtn.addEventListener('click', () => {
+          // Track download (if analytics is enabled)
+          if (typeof (window as any).gtag === 'function') {
+            (window as any).gtag('event', 'cheatsheet_download', {
+              event_category: 'downloads',
+              event_label: container.getAttribute('data-title'),
+            });
+          }
+
+          // Trigger download
+          const link = document.createElement('a');
+          link.href = pdfUrl;
+          link.download = '';
+          link.target = '_blank';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        });
+      } else {
+        // Show upgrade button
+        upgradeBtn.classList.remove('hidden');
+        upgradeBtn.classList.add('inline-flex');
+
+        upgradeBtn.addEventListener('click', () => {
+          window.location.href = '/pricing';
+        });
+      }
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+
+      // Hide loading, show upgrade button as fallback
+      loadingState.classList.add('hidden');
+      loadingState.classList.remove('flex');
+      upgradeBtn.classList.remove('hidden');
+      upgradeBtn.classList.add('inline-flex');
+
+      upgradeBtn.addEventListener('click', () => {
+        window.location.href = '/pricing';
+      });
+    }
+  });
+</script>

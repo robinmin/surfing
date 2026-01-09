@@ -255,6 +255,37 @@ export default defineConfig({
   },
 
   vite: {
+    plugins: [
+      {
+        name: 'fetch-turnstile-config',
+        async buildStart() {
+          // Skip during type checking or if module runner is closed
+          try {
+            // Only run in production or if explicitly enabled
+            if (process.env.NODE_ENV !== 'production' && process.env.FETCH_TURNSTILE_CONFIG !== 'true') {
+              console.log('ℹ️  Skipping Turnstile config fetch (development mode or FETCH_TURNSTILE_CONFIG not set)');
+              return;
+            }
+
+            console.log('🔄 Fetching Turnstile configuration...');
+            const { execFileSync } = await import('child_process');
+            execFileSync('node', ['scripts/fetch-turnstile-config.mjs'], {
+              stdio: 'inherit',
+              cwd: process.cwd(),
+            });
+          } catch (error: unknown) {
+            // Ignore errors during type checking (module runner closed)
+            const err = error as Error;
+            if (err.message?.includes('module runner has been closed')) {
+              console.log('ℹ️  Skipping Turnstile config fetch (module runner closed during type check)');
+              return;
+            }
+            console.error('❌ Failed to fetch Turnstile config:', error);
+            throw new Error('Build failed: Could not fetch application configuration from Turnstile API');
+          }
+        },
+      },
+    ],
     resolve: {
       alias: {
         '~': path.resolve(__dirname, './src'),
