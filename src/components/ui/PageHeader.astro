@@ -1,15 +1,23 @@
 ---
 export interface Props {
-  title: string;
-  publishDate?: Date;
-  updateDate?: Date;
-  tags?: string[];
-  author?: string;
-  description?: string;
-  class?: string;
+  title: string
+  publishDate?: Date
+  updateDate?: Date
+  tags?: string[]
+  author?: string
+  description?: string
+  class?: string
 }
 
-const { title, publishDate, updateDate, tags, author, description, class: className = '' } = Astro.props;
+const {
+  title,
+  publishDate,
+  updateDate,
+  tags,
+  author,
+  description,
+  class: className = '',
+} = Astro.props
 ---
 
 <header class={`mb-8 ${className}`}>

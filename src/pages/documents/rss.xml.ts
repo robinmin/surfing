@@ -1,10 +1,10 @@
-import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
-import { SITE } from 'astrowind:config';
-import { getPermalink } from '~/utils/permalinks';
+import { getCollection } from 'astro:content'
+import { SITE } from 'astrowind:config'
+import rss from '@astrojs/rss'
+import { getPermalink } from '~/utils/permalinks'
 
 export async function GET(context: any) {
-  const documents = await getCollection('documents', ({ data }) => !data.draft);
+  const documents = await getCollection('documents', ({ data }) => !data.draft)
 
   return rss({
     title: `${SITE?.name} - Documents`,
@@ -24,5 +24,5 @@ export async function GET(context: any) {
       `,
     })),
     customData: `<language>en-us</language>`,
-  });
+  })
 }

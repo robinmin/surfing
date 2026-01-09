@@ -2,17 +2,17 @@
  * Test Utilities for Authentication Tests
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export class TestUtils {
   constructor() {
-    this.tempDir = join(__dirname, 'temp');
-    this.fixturesDir = join(__dirname, 'fixtures');
+    this.tempDir = join(__dirname, 'temp')
+    this.fixturesDir = join(__dirname, 'fixtures')
   }
 
   /**
@@ -20,9 +20,9 @@ export class TestUtils {
    */
   setup() {
     if (existsSync(this.tempDir)) {
-      rmSync(this.tempDir, { recursive: true, force: true });
+      rmSync(this.tempDir, { recursive: true, force: true })
     }
-    mkdirSync(this.tempDir, { recursive: true });
+    mkdirSync(this.tempDir, { recursive: true })
   }
 
   /**
@@ -30,7 +30,7 @@ export class TestUtils {
    */
   cleanup() {
     if (existsSync(this.tempDir)) {
-      rmSync(this.tempDir, { recursive: true, force: true });
+      rmSync(this.tempDir, { recursive: true, force: true })
     }
   }
 
@@ -38,25 +38,25 @@ export class TestUtils {
    * Get fixture file path
    */
   getFixture(filename) {
-    return join(this.fixturesDir, filename);
+    return join(this.fixturesDir, filename)
   }
 
   /**
    * Read file content
    */
   readFile(filepath) {
-    return readFileSync(filepath, 'utf8');
+    return readFileSync(filepath, 'utf8')
   }
 
   /**
    * Write file content
    */
   writeFile(filepath, content) {
-    const dir = dirname(filepath);
+    const dir = dirname(filepath)
     if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
+      mkdirSync(dir, { recursive: true })
     }
-    writeFileSync(filepath, content, 'utf8');
+    writeFileSync(filepath, content, 'utf8')
   }
 
   /**
@@ -64,7 +64,7 @@ export class TestUtils {
    */
   assert(condition, message) {
     if (!condition) {
-      throw new Error(`Assertion failed: ${message}`);
+      throw new Error(`Assertion failed: ${message}`)
     }
   }
 
@@ -72,21 +72,21 @@ export class TestUtils {
    * Log message
    */
   log(message) {
-    console.log(`  ${message}`);
+    console.log(`  ${message}`)
   }
 
   /**
    * Log success message
    */
   success(message) {
-    console.log(`\n✓ ${message}\n`);
+    console.log(`\n✓ ${message}\n`)
   }
 
   /**
    * Log error message
    */
   error(message) {
-    console.error(`\n✗ ${message}\n`);
+    console.error(`\n✗ ${message}\n`)
   }
 
   /**
@@ -113,7 +113,7 @@ export class TestUtils {
               },
             },
             error: null,
-          };
+          }
         },
         getSession: async () => {
           return {
@@ -126,10 +126,10 @@ export class TestUtils {
               },
             },
             error: null,
-          };
+          }
         },
         signOut: async () => {
-          return { error: null };
+          return { error: null }
         },
         onAuthStateChange: () => {
           return {
@@ -138,10 +138,10 @@ export class TestUtils {
                 unsubscribe: () => {},
               },
             },
-          };
+          }
         },
       },
-    };
+    }
   }
 
   /**
@@ -159,22 +159,22 @@ export class TestUtils {
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
       nonce: 'mock-nonce-hash',
-    };
+    }
 
-    const mergedPayload = { ...defaultPayload, ...payload };
+    const mergedPayload = { ...defaultPayload, ...payload }
 
     // Create a simple mock JWT (not cryptographically valid, just for testing)
-    const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
-    const body = Buffer.from(JSON.stringify(mergedPayload)).toString('base64url');
-    const signature = 'mock-signature';
+    const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url')
+    const body = Buffer.from(JSON.stringify(mergedPayload)).toString('base64url')
+    const signature = 'mock-signature'
 
-    return `${header}.${body}.${signature}`;
+    return `${header}.${body}.${signature}`
   }
 
   /**
    * Wait for a specified duration
    */
   async wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 }

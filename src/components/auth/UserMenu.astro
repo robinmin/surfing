@@ -3,15 +3,15 @@
  * UserMenu Component
  * Popup menu for authenticated users with profile and sign out options
  */
-import { Icon } from 'astro-icon/components';
-import { t, getCurrentLanguage, type SupportedLanguage } from '~/i18n';
+import { Icon } from 'astro-icon/components'
+import { getCurrentLanguage, type SupportedLanguage, t } from '~/i18n'
 
 export interface Props {
-  className?: string;
+  className?: string
 }
 
-const { className = '' } = Astro.props;
-const lang = (Astro.currentLocale || getCurrentLanguage()) as SupportedLanguage;
+const { className = '' } = Astro.props
+const lang = (Astro.currentLocale || getCurrentLanguage()) as SupportedLanguage
 ---
 
 <div

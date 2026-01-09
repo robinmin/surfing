@@ -1,4 +1,4 @@
-import { getPermalink, getAsset } from './utils/permalinks';
+import { getAsset, getPermalink } from './utils/permalinks'
 
 export const headerData = {
   links: [
@@ -41,7 +41,7 @@ export const headerData = {
     },
   ],
   actions: [{ text: 'Explore', href: '/browse', icon: 'tabler:compass' }],
-};
+}
 
 export const footerData = {
   links: [
@@ -88,9 +88,13 @@ export const footerData = {
   ],
   socialLinks: [
     { ariaLabel: 'RSS All Content', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robinmin/surfing' },
+    {
+      ariaLabel: 'Github',
+      icon: 'tabler:brand-github',
+      href: 'https://github.com/robinmin/surfing',
+    },
   ],
   footNote: `
   Surfing - AI-Powered Content Platform for Creators
   `,
-};
+}

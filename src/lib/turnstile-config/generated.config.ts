@@ -4,10 +4,10 @@
 // This is a placeholder for development. In production, this file is
 // generated at build time by fetching config from the Turnstile API.
 
-import type { SubscriptionConfig } from '../turnstile-client';
+import type { SubscriptionConfig } from '../turnstile-client'
 
-export const TURNSTILE_APP_ID = 'surfing';
-export const TURNSTILE_APP_NAME = 'Surfing';
+export const TURNSTILE_APP_ID = 'surfing'
+export const TURNSTILE_APP_NAME = 'Surfing'
 
 export const SURFING_SUBSCRIPTION_CONFIG: SubscriptionConfig = {
   roleHierarchy: {
@@ -21,7 +21,7 @@ export const SURFING_SUBSCRIPTION_CONFIG: SubscriptionConfig = {
     'surfing-premium': 'premium',
   },
   defaultRole: 'surfing-free',
-};
+}
 
 export const PRICE_IDS: Record<string, Record<string, string>> = {
   standard: {
@@ -34,4 +34,4 @@ export const PRICE_IDS: Record<string, Record<string, string>> = {
     yearly: '',
     lifetime: '',
   },
-};
+}

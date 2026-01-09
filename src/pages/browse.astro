@@ -1,34 +1,40 @@
 ---
-import { Image } from 'astro:assets';
-import Layout from '~/layouts/PageLayout.astro';
-import Hero from '~/components/widgets/Hero.astro';
-import { getAllContent, filterContent, sortContent, extractTags, extractCategories } from '~/utils/content';
-import { findImage } from '~/utils/images';
-import { t, getCurrentLanguage } from '~/i18n';
+import { Image } from 'astro:assets'
+import Hero from '~/components/widgets/Hero.astro'
+import { getCurrentLanguage, t } from '~/i18n'
+import Layout from '~/layouts/PageLayout.astro'
+import {
+  extractCategories,
+  extractTags,
+  filterContent,
+  getAllContent,
+  sortContent,
+} from '~/utils/content'
+import { findImage } from '~/utils/images'
 
 // Static site: use default language
-const lang = getCurrentLanguage();
+const lang = getCurrentLanguage()
 
 // Get all content for the browser
-const allContent = await getAllContent();
-const publishedContent = filterContent(allContent, { draft: false });
-const sortedContent = sortContent(publishedContent, 'date', 'desc');
+const allContent = await getAllContent()
+const publishedContent = filterContent(allContent, { draft: false })
+const sortedContent = sortContent(publishedContent, 'date', 'desc')
 
 // Resolve all images
 for (const entry of sortedContent) {
   if (entry.data.image) {
-    entry.data.resolvedImage = await findImage(entry.data.image);
+    entry.data.resolvedImage = await findImage(entry.data.image)
   }
 }
 
 // Get available filters
-const allTags = extractTags(publishedContent);
-const allCategories = extractCategories(publishedContent);
+const allTags = extractTags(publishedContent)
+const allCategories = extractCategories(publishedContent)
 
 const metadata = {
   title: t('pages.browse.title', lang),
   description: t('pages.browse.description', lang),
-};
+}
 ---
 
 <Layout metadata={metadata}>

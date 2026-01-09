@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/astro';
+import * as Sentry from '@sentry/astro'
 
 // Fallback Sentry configuration for SSR - runtime will handle async loading properly
 const fallbackSentryConfig = {
@@ -6,11 +6,11 @@ const fallbackSentryConfig = {
   debug: false,
   project: import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
   org: import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
-};
-const sentryConfig = fallbackSentryConfig;
-const sentryDsn = import.meta.env.PUBLIC_SENTRY_DSN || '';
-const environment = import.meta.env.MODE || 'production';
-const isProduction = environment === 'production';
+}
+const sentryConfig = fallbackSentryConfig
+const sentryDsn = import.meta.env.PUBLIC_SENTRY_DSN || ''
+const environment = import.meta.env.MODE || 'production'
+const isProduction = environment === 'production'
 
 Sentry.init({
   dsn: sentryDsn,
@@ -45,7 +45,7 @@ Sentry.init({
   beforeSend(event, _hint) {
     // Don't send events in development unless debug mode is enabled in config
     if (!isProduction && !sentryConfig.debug) {
-      return null;
+      return null
     }
 
     // Remove sensitive data from error messages
@@ -55,20 +55,23 @@ Sentry.init({
           // Remove tokens, keys, and other sensitive data
           exception.value = exception.value
             .replace(/sk-[a-zA-Z0-9-_]{20,}/g, '[REDACTED_API_KEY]')
-            .replace(/ey[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}/g, '[REDACTED_JWT]')
-            .replace(/[0-9]{13,}/g, '[REDACTED_ID]');
+            .replace(
+              /ey[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}/g,
+              '[REDACTED_JWT]'
+            )
+            .replace(/[0-9]{13,}/g, '[REDACTED_ID]')
         }
-        return exception;
-      });
+        return exception
+      })
     }
 
     // Remove authentication tokens from request data
     if (event.request?.headers) {
-      delete event.request.headers.Authorization;
-      delete event.request.headers.Cookie;
+      delete event.request.headers.Authorization
+      delete event.request.headers.Cookie
     }
 
-    return event;
+    return event
   },
 
   // Ignore common errors that aren't actionable
@@ -99,4 +102,4 @@ Sentry.init({
     /eatdifferent\.com\.woopra-ns\.com/i,
     /static\.woopra\.com/i,
   ],
-});
+})

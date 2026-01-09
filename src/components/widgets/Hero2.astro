@@ -1,8 +1,8 @@
 ---
-import Image from '~/components/common/Image.astro';
-import Button from '~/components/ui/Button.astro';
+import Image from '~/components/common/Image.astro'
+import Button from '~/components/ui/Button.astro'
 
-import type { Hero as Props } from '~/types';
+import type { Hero as Props } from '~/types'
 
 const {
   title = await Astro.slots.render('title'),
@@ -15,7 +15,7 @@ const {
 
   id,
   bg = await Astro.slots.render('bg'),
-} = Astro.props;
+} = Astro.props
 ---
 
 <section class="relative md:-mt-[76px] not-prose" {...id ? { id } : {}}>

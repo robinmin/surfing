@@ -7,7 +7,10 @@
     "paths": {
       "~/*": ["src/*"],
       "@turnstile/client": ["../turnstile/packages/client/src/index.ts"],
-      "@turnstile/client/*": ["../turnstile/packages/client/src/*/index.ts", "../turnstile/packages/client/src/*"]
+      "@turnstile/client/*": [
+        "../turnstile/packages/client/src/*/index.ts",
+        "../turnstile/packages/client/src/*"
+      ]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],

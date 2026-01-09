@@ -21,16 +21,16 @@ interface Props {
   /**
    * Additional CSS classes to apply to the page break
    */
-  class?: string;
+  class?: string
 
   /**
    * Whether to show a visual indicator in the browser (not visible in print)
    * Default: false
    */
-  showIndicator?: boolean;
+  showIndicator?: boolean
 }
 
-const { class: className, showIndicator = false } = Astro.props;
+const { class: className, showIndicator = false } = Astro.props
 ---
 
 <div class:list={['page-break', showIndicator && 'page-break-indicator', className]} aria-hidden="true">

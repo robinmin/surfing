@@ -4,19 +4,19 @@
  * Provides structured logging with different levels and formatting
  */
 
-import { inspect } from 'util';
+import { inspect } from 'util'
 
 export class Logger {
   constructor(verbose = false) {
-    this.verbose = verbose;
-    this.stepCounter = 0;
+    this.verbose = verbose
+    this.stepCounter = 0
   }
 
   /**
    * Log an informational message
    */
   info(message) {
-    console.log(`ℹ️  ${message}`);
+    console.log(`ℹ️  ${message}`)
   }
 
   /**
@@ -24,7 +24,7 @@ export class Logger {
    */
   infoVerbose(message) {
     if (this.verbose) {
-      console.log(`ℹ️  ${message}`);
+      console.log(`ℹ️  ${message}`)
     }
   }
 
@@ -32,7 +32,7 @@ export class Logger {
    * Log a success message
    */
   success(message) {
-    console.log(`✅ ${message}`);
+    console.log(`✅ ${message}`)
   }
 
   /**
@@ -40,7 +40,7 @@ export class Logger {
    */
   successVerbose(message) {
     if (this.verbose) {
-      console.log(`✅ ${message}`);
+      console.log(`✅ ${message}`)
     }
   }
 
@@ -48,7 +48,7 @@ export class Logger {
    * Log a warning message
    */
   warn(message) {
-    console.log(`⚠️  ${message}`);
+    console.log(`⚠️  ${message}`)
   }
 
   /**
@@ -56,7 +56,7 @@ export class Logger {
    */
   warnVerbose(message) {
     if (this.verbose) {
-      console.log(`⚠️  ${message}`);
+      console.log(`⚠️  ${message}`)
     }
   }
 
@@ -64,7 +64,7 @@ export class Logger {
    * Log an error message
    */
   error(message) {
-    console.error(`❌ ${message}`);
+    console.error(`❌ ${message}`)
   }
 
   /**
@@ -72,7 +72,7 @@ export class Logger {
    */
   debug(message) {
     if (this.verbose) {
-      console.log(`🐛 DEBUG: ${message}`);
+      console.log(`🐛 DEBUG: ${message}`)
     }
   }
 
@@ -80,8 +80,8 @@ export class Logger {
    * Log a step in the process
    */
   step(message) {
-    this.stepCounter++;
-    console.log(`\n${this.stepCounter}. ${message}`);
+    this.stepCounter++
+    console.log(`\n${this.stepCounter}. ${message}`)
   }
 
   /**
@@ -89,8 +89,8 @@ export class Logger {
    */
   object(obj, label = 'Object') {
     if (this.verbose) {
-      console.log(`📋 ${label}:`);
-      console.log(inspect(obj, { colors: true, depth: 3 }));
+      console.log(`📋 ${label}:`)
+      console.log(inspect(obj, { colors: true, depth: 3 }))
     }
   }
 
@@ -99,7 +99,7 @@ export class Logger {
    */
   file(operation, path) {
     if (this.verbose) {
-      console.log(`📁 ${operation}: ${path}`);
+      console.log(`📁 ${operation}: ${path}`)
     }
   }
 
@@ -107,7 +107,7 @@ export class Logger {
    * Log a prompt message
    */
   prompt(message) {
-    console.log(`❓ ${message}`);
+    console.log(`❓ ${message}`)
   }
 
   /**
@@ -115,10 +115,10 @@ export class Logger {
    */
   list(items, title = 'Items') {
     if (this.verbose) {
-      console.log(`\n📋 ${title}:`);
+      console.log(`\n📋 ${title}:`)
       items.forEach((item, index) => {
-        console.log(`   ${index + 1}. ${item}`);
-      });
+        console.log(`   ${index + 1}. ${item}`)
+      })
     }
   }
 
@@ -126,60 +126,61 @@ export class Logger {
    * Log a list of items (always visible)
    */
   listAlways(items, title = 'Items') {
-    console.log(`\n📋 ${title}:`);
+    console.log(`\n📋 ${title}:`)
     items.forEach((item, index) => {
-      console.log(`   ${index + 1}. ${item}`);
-    });
+      console.log(`   ${index + 1}. ${item}`)
+    })
   }
 
   /**
    * Log a table of key-value pairs
    */
   table(data, title = 'Data') {
-    console.log(`\n📊 ${title}:`);
+    console.log(`\n📊 ${title}:`)
     Object.entries(data).forEach(([key, value]) => {
-      const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
-      console.log(`   ${key}: ${displayValue}`);
-    });
+      const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value)
+      console.log(`   ${key}: ${displayValue}`)
+    })
   }
 
   /**
    * Log a separator line
    */
   separator() {
-    console.log('─'.repeat(50));
+    console.log('─'.repeat(50))
   }
 
   /**
    * Log build output with error highlighting
    */
   buildOutput(output, isError = false) {
-    const lines = output.split('\n');
+    const lines = output.split('\n')
 
     lines.forEach((line) => {
       if (line.includes('error') || line.includes('Error') || line.includes('ERROR')) {
-        console.log(`🔴 ${line}`);
+        console.log(`🔴 ${line}`)
       } else if (line.includes('warn') || line.includes('Warning') || line.includes('WARN')) {
-        console.log(`🟡 ${line}`);
+        console.log(`🟡 ${line}`)
       } else if (line.includes('✓') || line.includes('success') || line.includes('Success')) {
-        console.log(`🟢 ${line}`);
+        console.log(`🟢 ${line}`)
       } else if (this.verbose || isError) {
-        console.log(`   ${line}`);
+        console.log(`   ${line}`)
       }
-    });
+    })
   }
 
   /**
    * Log a progress indicator
    */
   progress(current, total, operation = 'Processing') {
-    const percentage = Math.round((current / total) * 100);
-    const progressBar = '█'.repeat(Math.floor(percentage / 5)) + '░'.repeat(20 - Math.floor(percentage / 5));
+    const percentage = Math.round((current / total) * 100)
+    const progressBar =
+      '█'.repeat(Math.floor(percentage / 5)) + '░'.repeat(20 - Math.floor(percentage / 5))
 
-    process.stdout.write(`\r⏳ ${operation}: [${progressBar}] ${percentage}% (${current}/${total})`);
+    process.stdout.write(`\r⏳ ${operation}: [${progressBar}] ${percentage}% (${current}/${total})`)
 
     if (current === total) {
-      console.log(); // New line when complete
+      console.log() // New line when complete
     }
   }
 
@@ -187,15 +188,15 @@ export class Logger {
    * Clear the current line (useful for progress updates)
    */
   clearLine() {
-    process.stdout.write('\r\x1b[K');
+    process.stdout.write('\r\x1b[K')
   }
 
   /**
    * Log a confirmation prompt result
    */
   confirmation(question, answer) {
-    const emoji = answer ? '✅' : '❌';
-    console.log(`${emoji} ${question} → ${answer ? 'Yes' : 'No'}`);
+    const emoji = answer ? '✅' : '❌'
+    console.log(`${emoji} ${question} → ${answer ? 'Yes' : 'No'}`)
   }
 
   /**
@@ -203,32 +204,32 @@ export class Logger {
    */
   frontmatterValidation(results) {
     if (this.verbose) {
-      console.log('\n📝 Frontmatter Validation:');
+      console.log('\n📝 Frontmatter Validation:')
     }
 
     if (results.valid) {
       if (this.verbose) {
-        console.log('✅ All required fields are present');
+        console.log('✅ All required fields are present')
       }
     } else {
-      console.log('❌ Missing required fields:');
+      console.log('❌ Missing required fields:')
       results.missing.forEach((field) => {
-        console.log(`   • ${field}`);
-      });
+        console.log(`   • ${field}`)
+      })
     }
 
     if (this.verbose && results.warnings && results.warnings.length > 0) {
-      console.log('\n⚠️  Warnings:');
+      console.log('\n⚠️  Warnings:')
       results.warnings.forEach((warning) => {
-        console.log(`   • ${warning}`);
-      });
+        console.log(`   • ${warning}`)
+      })
     }
 
     if (this.verbose && results.suggestions && results.suggestions.length > 0) {
-      console.log('\n💡 Suggestions:');
+      console.log('\n💡 Suggestions:')
       results.suggestions.forEach((suggestion) => {
-        console.log(`   • ${suggestion}`);
-      });
+        console.log(`   • ${suggestion}`)
+      })
     }
   }
 
@@ -237,13 +238,13 @@ export class Logger {
    */
   gitOperation(operation, result) {
     if (result.success) {
-      console.log(`✅ Git ${operation} successful`);
+      console.log(`✅ Git ${operation} successful`)
       if (result.output && this.verbose) {
-        console.log(`   Output: ${result.output}`);
+        console.log(`   Output: ${result.output}`)
       }
     } else {
-      console.log(`❌ Git ${operation} failed`);
-      console.log(`   Error: ${result.error}`);
+      console.log(`❌ Git ${operation} failed`)
+      console.log(`   Error: ${result.error}`)
     }
   }
 
@@ -252,33 +253,33 @@ export class Logger {
    */
   htmlConversion(results) {
     if (this.verbose) {
-      console.log('\n🔄 HTML Conversion Results:');
+      console.log('\n🔄 HTML Conversion Results:')
 
       if (results.title) {
-        console.log(`   📝 Title extracted: ${results.title}`);
+        console.log(`   📝 Title extracted: ${results.title}`)
       }
 
       if (results.externalCSSCount > 0) {
-        console.log(`   🔗 External CSS: ${results.externalCSSCount} file(s)`);
+        console.log(`   🔗 External CSS: ${results.externalCSSCount} file(s)`)
       }
 
       if (results.externalJSCount > 0) {
-        console.log(`   🔗 External JS: ${results.externalJSCount} file(s)`);
+        console.log(`   🔗 External JS: ${results.externalJSCount} file(s)`)
       }
 
       if (results.cssExtracted) {
-        console.log(`   🎨 Custom CSS extracted: ${results.cssLines} lines`);
+        console.log(`   🎨 Custom CSS extracted: ${results.cssLines} lines`)
       }
 
       if (results.jsExtracted) {
-        console.log(`   ⚡ Custom JavaScript extracted: ${results.jsLines} lines`);
+        console.log(`   ⚡ Custom JavaScript extracted: ${results.jsLines} lines`)
       }
 
       if (results.metaExtracted && results.metaExtracted.length > 0) {
-        console.log(`   📋 Meta tags extracted: ${results.metaExtracted.length}`);
+        console.log(`   📋 Meta tags extracted: ${results.metaExtracted.length}`)
       }
 
-      console.log(`   📄 Content body: ${results.bodyLines} lines`);
+      console.log(`   📄 Content body: ${results.bodyLines} lines`)
     }
   }
 }

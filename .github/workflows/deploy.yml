@@ -15,22 +15,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Use Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '18'
-          cache: 'npm'
+          bun-version: latest
 
-      - name: Cache Astro Content
+      - name: Cache Bun
         uses: actions/cache@v4
         with:
-          path: .astro/cache
-          key: ${{ runner.os }}-astro-cache-${{ hashFiles('contents/**', 'src/content/**') }}
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
           restore-keys: |
-            ${{ runner.os }}-astro-cache-
+            ${{ runner.os }}-bun-
 
       - name: Build
-        run: npm install && npm run build
+        run: bun install --frozen-lockfile && bun run build
         env:
           # Zitadel OIDC Authentication
           PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}

@@ -1,4 +1,4 @@
-import type { Translation } from './en';
+import type { Translation } from './en'
 
 export const zh: Translation = {
   site: {
@@ -221,7 +221,8 @@ export const zh: Translation = {
     responseTime: '我们的支持团队通常在24个工作小时内回复。',
     weAreHere: '我们在这里帮助您！',
     generalSupport: '一般支持',
-    generalSupportDesc: '与我们聊天，了解账户管理、网站导航、支付问题、访问购买的模板或有关网站功能的一般问题。',
+    generalSupportDesc:
+      '与我们聊天，了解账户管理、网站导航、支付问题、访问购买的模板或有关网站功能的一般问题。',
     contactSales: '联系销售',
     contactSalesDesc: '与我们聊天，了解购买、定制选项、商业使用许可、特定模板查询等问题。',
     technicalSupport: '技术支持',
@@ -248,4 +249,4 @@ export const zh: Translation = {
     signedInAs: '登录为',
     welcomeBack: '欢迎回来',
   },
-};
+}

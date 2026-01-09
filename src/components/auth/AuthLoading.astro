@@ -1,15 +1,21 @@
 ---
-import { Icon } from 'astro-icon/components';
-import Loading from '~/components/ui/Loading.astro';
+import { Icon } from 'astro-icon/components'
+import Loading from '~/components/ui/Loading.astro'
 
 interface Props {
-  class?: string;
-  type?: 'initializing' | 'signing-in' | 'validating' | 'signing-out' | 'loading' | 'checking-session';
-  provider?: 'google' | 'apple' | 'general';
-  size?: 'sm' | 'md' | 'lg';
-  showText?: boolean;
-  customText?: string;
-  overlay?: boolean;
+  class?: string
+  type?:
+    | 'initializing'
+    | 'signing-in'
+    | 'validating'
+    | 'signing-out'
+    | 'loading'
+    | 'checking-session'
+  provider?: 'google' | 'apple' | 'general'
+  size?: 'sm' | 'md' | 'lg'
+  showText?: boolean
+  customText?: string
+  overlay?: boolean
 }
 
 const {
@@ -21,62 +27,62 @@ const {
   customText,
   overlay = false,
   ...rest
-} = Astro.props;
+} = Astro.props
 
 // Get loading text based on type and provider
 const getLoadingText = (type: string, provider: string, customText?: string) => {
-  if (customText) return customText;
+  if (customText) return customText
 
-  const providerText = provider === 'google' ? 'Google' : provider === 'apple' ? 'Apple' : '';
+  const providerText = provider === 'google' ? 'Google' : provider === 'apple' ? 'Apple' : ''
 
   switch (type) {
     case 'initializing':
-      return 'Initializing authentication...';
+      return 'Initializing authentication...'
     case 'signing-in':
-      return `Signing in with ${providerText}...`;
+      return `Signing in with ${providerText}...`
     case 'validating':
-      return 'Validating session...';
+      return 'Validating session...'
     case 'signing-out':
-      return 'Signing out...';
+      return 'Signing out...'
     case 'checking-session':
-      return 'Checking session...';
+      return 'Checking session...'
     case 'loading':
     default:
-      return providerText ? `Loading ${providerText}...` : 'Loading...';
+      return providerText ? `Loading ${providerText}...` : 'Loading...'
   }
-};
+}
 
 // Get loading variant based on type
 const getLoadingVariant = (type: string) => {
   switch (type) {
     case 'validating':
     case 'checking-session':
-      return 'dots';
+      return 'dots'
     case 'signing-out':
-      return 'pulse';
+      return 'pulse'
     default:
-      return 'spinner';
+      return 'spinner'
   }
-};
+}
 
 // Get loading color based on provider
 const getLoadingColor = (provider: string) => {
   switch (provider) {
     case 'google':
-      return 'blue';
+      return 'blue'
     case 'apple':
-      return 'gray';
+      return 'gray'
     default:
-      return 'blue';
+      return 'blue'
   }
-};
+}
 
-const text = getLoadingText(type, provider, customText);
-const variant = getLoadingVariant(type);
-const color = getLoadingColor(provider);
+const text = getLoadingText(type, provider, customText)
+const variant = getLoadingVariant(type)
+const color = getLoadingColor(provider)
 
 // Generate unique ID for this component instance
-const loadingId = `auth-loading-${Math.random().toString(36).substring(2, 11)}`;
+const loadingId = `auth-loading-${Math.random().toString(36).substring(2, 11)}`
 ---
 
 <div

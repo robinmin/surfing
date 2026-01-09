@@ -1,5 +1,5 @@
-import { z, defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { defineCollection, z } from 'astro:content'
+import { glob } from 'astro/loaders'
 
 const metadataDefinition = () =>
   z
@@ -44,7 +44,7 @@ const metadataDefinition = () =>
         })
         .optional(),
     })
-    .optional();
+    .optional()
 
 // Note: post collection removed - using articles and showcase instead
 
@@ -85,7 +85,7 @@ const articlesCollection = defineCollection({
 
     metadata: metadataDefinition(),
   }),
-});
+})
 
 // HTML documents collection for legacy and rich-formatted content
 const documentsCollection = defineCollection({
@@ -129,7 +129,7 @@ const documentsCollection = defineCollection({
 
     metadata: metadataDefinition(),
   }),
-});
+})
 
 // Showcase collection for featured content
 const showcaseCollection = defineCollection({
@@ -167,7 +167,7 @@ const showcaseCollection = defineCollection({
 
     metadata: metadataDefinition(),
   }),
-});
+})
 
 // Cheatsheets collection for AI-generated reference materials
 const cheatsheetsCollection = defineCollection({
@@ -223,11 +223,11 @@ const cheatsheetsCollection = defineCollection({
 
     metadata: metadataDefinition(),
   }),
-});
+})
 
 export const collections = {
   articles: articlesCollection,
   documents: documentsCollection,
   showcase: showcaseCollection,
   cheatsheets: cheatsheetsCollection,
-};
+}

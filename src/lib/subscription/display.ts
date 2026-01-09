@@ -5,7 +5,7 @@
  * These functions are specific to Surfing's design system and branding.
  */
 
-import type { SurfingSubscriptionTier } from './types';
+import type { SurfingSubscriptionTier } from './types'
 
 /**
  * Get display name for subscription tier
@@ -18,8 +18,8 @@ export function getTierDisplayName(tier: SurfingSubscriptionTier): string {
     free: 'Free',
     standard: 'Standard',
     premium: 'Premium',
-  };
-  return names[tier];
+  }
+  return names[tier]
 }
 
 /**
@@ -36,8 +36,8 @@ export function getTierBadgeClass(tier: SurfingSubscriptionTier): string {
     free: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
     standard: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
     premium: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-  };
-  return classes[tier];
+  }
+  return classes[tier]
 }
 
 /**
@@ -49,15 +49,15 @@ export function getTierBadgeClass(tier: SurfingSubscriptionTier): string {
  */
 export function isExpiringWithin(subscription: any, days: number = 7): boolean {
   if (!subscription.expiresAt) {
-    return false;
+    return false
   }
 
   if (subscription.billingCycle === 'lifetime') {
-    return false;
+    return false
   }
 
-  const now = new Date();
-  const expirationThreshold = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+  const now = new Date()
+  const expirationThreshold = new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
 
-  return subscription.expiresAt <= expirationThreshold;
+  return subscription.expiresAt <= expirationThreshold
 }

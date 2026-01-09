@@ -1,13 +1,13 @@
 ---
-import { SITE } from 'astrowind:config';
-import type { MetaData } from '~/types';
+import { SITE } from 'astrowind:config'
+import type { MetaData } from '~/types'
 
 export interface Props {
-  metadata?: MetaData;
+  metadata?: MetaData
 }
 
-const { metadata = {} } = Astro.props;
-const { title = SITE.name, description = '' } = metadata;
+const { metadata = {} } = Astro.props
+const { title = SITE.name, description = '' } = metadata
 
 // A basic schema for all pages
 const schema = {
@@ -19,10 +19,10 @@ const schema = {
     '@type': 'Organization',
     name: SITE.name,
   },
-};
+}
 
 // For the homepage, add WebSite schema with search functionality
-const isHomepage = Astro.url.pathname === '/';
+const isHomepage = Astro.url.pathname === '/'
 const homeSchema = {
   ...schema,
   '@type': 'WebSite',
@@ -32,22 +32,22 @@ const homeSchema = {
     target: `${Astro.site}search?q={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
-};
+}
 
 // For blog posts, we'll use the Article schema (implementation will be expanded)
-const isBlog = Astro.url.pathname.startsWith('/articles/');
+const isBlog = Astro.url.pathname.startsWith('/articles/')
 if (isBlog && metadata.publishDate) {
-  schema['@type'] = 'Article';
-  schema['headline'] = title;
-  schema['datePublished'] = metadata.publishDate.toISOString();
+  schema['@type'] = 'Article'
+  schema['headline'] = title
+  schema['datePublished'] = metadata.publishDate.toISOString()
   if (metadata.updateDate) {
-    schema['dateModified'] = metadata.updateDate.toISOString();
+    schema['dateModified'] = metadata.updateDate.toISOString()
   }
   if (metadata.author) {
     schema['author'] = {
       '@type': 'Person',
       name: metadata.author,
-    };
+    }
   }
 }
 ---

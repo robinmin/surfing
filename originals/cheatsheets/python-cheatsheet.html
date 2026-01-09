@@ -479,7 +479,7 @@ match value:
         });
 
         // Add some interactive features
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', () => {
           // Add click-to-copy functionality
           document.querySelectorAll('pre code').forEach((block) => {
             block.style.cursor = 'pointer';

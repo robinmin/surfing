@@ -1,38 +1,39 @@
 ---
-import Layout from '~/layouts/Layout.astro';
-import Header from '~/components/widgets/Header.astro';
-import CheatsheetFooter from '~/components/widgets/CheatsheetFooter.astro';
-import Announcement from '~/components/widgets/Announcement.astro';
-
-import { headerData } from '~/navigation';
-import type { MetaData } from '~/types';
-import type { CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content'
+import Announcement from '~/components/widgets/Announcement.astro'
+import CheatsheetFooter from '~/components/widgets/CheatsheetFooter.astro'
+import Header from '~/components/widgets/Header.astro'
+import Layout from '~/layouts/Layout.astro'
+import { headerData } from '~/navigation'
+import type { MetaData } from '~/types'
 
 export interface Props {
-  metadata?: MetaData;
-  entry: CollectionEntry<'documents'> | CollectionEntry<'cheatsheets'>;
+  metadata?: MetaData
+  entry: CollectionEntry<'documents'> | CollectionEntry<'cheatsheets'>
   languageSelectorConfig?: {
-    translations?: string[];
-    isDetailPage?: boolean;
-    collectionName?: string;
-  };
+    translations?: string[]
+    isDetailPage?: boolean
+    collectionName?: string
+  }
 }
 
-const { metadata, entry, languageSelectorConfig } = Astro.props;
-const { data: frontmatter } = entry;
+const { metadata, entry, languageSelectorConfig } = Astro.props
+const { data: frontmatter } = entry
 
 // Determine if we should preserve the original HTML structure
-const preserveStyles = frontmatter.preserveStyles !== false;
-const hasCustomCSS = frontmatter.customCSS && frontmatter.customCSS.trim().length > 0;
-const hasCustomJS = frontmatter.customJS && frontmatter.customJS.trim().length > 0;
-const hasExternalCSS = frontmatter.externalCSS && frontmatter.externalCSS.length > 0;
-const hasExternalJS = frontmatter.externalJS && frontmatter.externalJS.length > 0;
+const preserveStyles = frontmatter.preserveStyles !== false
+const hasCustomCSS = frontmatter.customCSS && frontmatter.customCSS.trim().length > 0
+const hasCustomJS = frontmatter.customJS && frontmatter.customJS.trim().length > 0
+const hasExternalCSS = frontmatter.externalCSS && frontmatter.externalCSS.length > 0
+const hasExternalJS = frontmatter.externalJS && frontmatter.externalJS.length > 0
 
 // Check if this is a cheatsheet (to customize layout)
-const isCheatsheet = entry.collection === 'cheatsheets';
+const isCheatsheet = entry.collection === 'cheatsheets'
 
 // Type guard for cheatsheet frontmatter
-const cheatsheetFrontmatter = isCheatsheet ? (frontmatter as CollectionEntry<'cheatsheets'>['data']) : null;
+const cheatsheetFrontmatter = isCheatsheet
+  ? (frontmatter as CollectionEntry<'cheatsheets'>['data'])
+  : null
 ---
 
 <Layout metadata={metadata}>

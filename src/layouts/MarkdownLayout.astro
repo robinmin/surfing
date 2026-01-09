@@ -1,38 +1,38 @@
 ---
-import Layout from '~/layouts/PageLayout.astro';
-import ReadingProgress from '~/components/ui/ReadingProgress.astro';
-import BackToTopButton from '~/components/ui/BackToTopButton.astro';
-import TableOfContents from '~/components/ui/TableOfContents.astro';
-import ReadingKeyboardNavigation from '~/components/common/ReadingKeyboardNavigation.astro';
-import PageHeader from '~/components/ui/PageHeader.astro';
+import ReadingKeyboardNavigation from '~/components/common/ReadingKeyboardNavigation.astro'
+import BackToTopButton from '~/components/ui/BackToTopButton.astro'
+import PageHeader from '~/components/ui/PageHeader.astro'
+import ReadingProgress from '~/components/ui/ReadingProgress.astro'
+import TableOfContents from '~/components/ui/TableOfContents.astro'
+import Layout from '~/layouts/PageLayout.astro'
 
-import type { MetaData } from '~/types';
+import type { MetaData } from '~/types'
 
 export interface Props {
   frontmatter: {
-    title?: string;
-    description?: string;
-    publishDate?: Date;
-    updateDate?: Date;
-    readingTime?: number;
-    tags?: string[];
-    author?: string;
-  };
-  metadata?: MetaData;
+    title?: string
+    description?: string
+    publishDate?: Date
+    updateDate?: Date
+    readingTime?: number
+    tags?: string[]
+    author?: string
+  }
+  metadata?: MetaData
   languageSelectorConfig?: {
-    translations?: string[];
-    isDetailPage?: boolean;
-    collectionName?: string;
-  };
+    translations?: string[]
+    isDetailPage?: boolean
+    collectionName?: string
+  }
 }
 
-const { frontmatter, metadata: customMetadata, languageSelectorConfig } = Astro.props;
+const { frontmatter, metadata: customMetadata, languageSelectorConfig } = Astro.props
 
 // Merge custom metadata with frontmatter-derived metadata
 const metadata: MetaData = {
   title: frontmatter?.title,
   ...customMetadata,
-};
+}
 
 // Headings will be extracted client-side
 ---

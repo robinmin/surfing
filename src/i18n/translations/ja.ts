@@ -1,4 +1,4 @@
-import type { Translation } from './en';
+import type { Translation } from './en'
 
 export const ja: Translation = {
   site: {
@@ -57,7 +57,8 @@ export const ja: Translation = {
       description: '洞察、研究、技術コンテンツ',
       noArticles: '記事が見つかりません。',
       heroTitle: 'AI搭載の記事',
-      heroSubtitle: 'クリエイターと研究者のコミュニティからのAI洞察、技術記事、詳細なコンテンツを探索してください。',
+      heroSubtitle:
+        'クリエイターと研究者のコミュニティからのAI洞察、技術記事、詳細なコンテンツを探索してください。',
       featuredArticles: '注目記事',
       featuredDesc: '最高のAI洞察と技術コンテンツを紹介する厳選記事',
       allArticles: 'すべての記事',
@@ -221,7 +222,8 @@ export const ja: Translation = {
     name: 'お名前',
     email: 'メールアドレス',
     message: 'メッセージ',
-    disclaimer: 'このお問い合わせフォームを送信することで、個人情報の収集に同意したことになります。',
+    disclaimer:
+      'このお問い合わせフォームを送信することで、個人情報の収集に同意したことになります。',
     responseTime: 'サポートチームは通常24営業時間以内に回答いたします。',
     weAreHere: '私たちはここでお手伝いします！',
     generalSupport: '一般的なサポート',
@@ -254,4 +256,4 @@ export const ja: Translation = {
     signedInAs: 'としてログイン',
     welcomeBack: 'おかえりなさい',
   },
-};
+}

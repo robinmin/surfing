@@ -1,26 +1,29 @@
 ---
-import { t, getCurrentLanguage } from '~/i18n';
-import { Icon } from 'astro-icon/components';
-import { LANGUAGES } from '~/i18n';
+import { Icon } from 'astro-icon/components'
+import { getCurrentLanguage, LANGUAGES, t } from '~/i18n'
 
 export interface Props {
   // Available translations for this content (e.g., ['en', 'zh', 'ja'])
   // If not provided, all languages are available
-  translations?: string[];
+  translations?: string[]
   // Whether this is a detail page (for URL-based routing)
-  isDetailPage?: boolean;
+  isDetailPage?: boolean
   // Current collection name (e.g., 'articles', 'documents')
-  collectionName?: string;
+  collectionName?: string
 }
 
-const { translations = Object.keys(LANGUAGES), isDetailPage = false, collectionName = '' } = Astro.props;
+const {
+  translations = Object.keys(LANGUAGES),
+  isDetailPage = false,
+  collectionName = '',
+} = Astro.props
 
 // Get current language (for SSG, will be 'en', then updated on client)
-const currentLanguage = getCurrentLanguage();
-const currentLangInfo = LANGUAGES[currentLanguage];
+const currentLanguage = getCurrentLanguage()
+const currentLangInfo = LANGUAGES[currentLanguage]
 
 // Filter available languages based on translations prop
-const availableLanguages = Object.entries(LANGUAGES).filter(([code]) => translations.includes(code));
+const availableLanguages = Object.entries(LANGUAGES).filter(([code]) => translations.includes(code))
 ---
 
 <div

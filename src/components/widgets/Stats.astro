@@ -1,8 +1,8 @@
 ---
-import type { Stats as Props } from '~/types';
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import Headline from '~/components/ui/Headline.astro';
-import { Icon } from 'astro-icon/components';
+import { Icon } from 'astro-icon/components'
+import Headline from '~/components/ui/Headline.astro'
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro'
+import type { Stats as Props } from '~/types'
 
 const {
   title = await Astro.slots.render('title'),
@@ -14,7 +14,7 @@ const {
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
-} = Astro.props;
+} = Astro.props
 ---
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>

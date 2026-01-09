@@ -2,19 +2,21 @@
 // Cheatsheet Footer Component
 // Dedicated footer for cheatsheets with PDF download link
 
-import { Icon } from 'astro-icon/components';
+import { Icon } from 'astro-icon/components'
 
 export interface Props {
-  pdfUrl?: string;
-  currentPath?: string;
+  pdfUrl?: string
+  currentPath?: string
 }
 
-const { pdfUrl, currentPath } = Astro.props;
+const { pdfUrl, currentPath } = Astro.props
 
 // Generate PDF URL dynamically based on current page URL if not provided
 const dynamicPdfUrl =
   pdfUrl ||
-  (currentPath ? `/pdf/cheatsheets/en${currentPath.replace('/cheatsheets/en/', '/').replace('.html', '')}.pdf` : null);
+  (currentPath
+    ? `/pdf/cheatsheets/en${currentPath.replace('/cheatsheets/en/', '/').replace('.html', '')}.pdf`
+    : null)
 ---
 
 <!-- Cheatsheet Footer -->

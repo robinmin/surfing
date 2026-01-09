@@ -34,7 +34,7 @@
       log('Testing Google GSI script...');
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
-      script.onload = function () {
+      script.onload = () => {
         log('✅ Google GSI script loaded successfully');
         if (window.google && window.google.accounts) {
           log('✅ Google Accounts API is available');
@@ -42,7 +42,7 @@
           log('❌ Google Accounts API not available');
         }
       };
-      script.onerror = function () {
+      script.onerror = () => {
         log('❌ Failed to load Google GSI script');
       };
       document.head.appendChild(script);

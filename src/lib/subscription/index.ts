@@ -14,35 +14,33 @@
  */
 
 // ============================================================================
-// Types
+// Access Control
 // ============================================================================
-export type { SurfingSubscriptionTier, SurfingRole, SurfingUserSubscription } from './types';
+export {
+  canAccessPremiumArticlesByRole,
+  canDownloadCheatsheetsByRole,
+  getSurfingSubscriptionFromRoles,
+  getSurfingTierFromRoles,
+  hasApiAccessByRole,
+  hasRequiredSurfingRole,
+  hasSurfingRole,
+} from './access'
 
 // ============================================================================
 // Constants
 // ============================================================================
 export {
   DEFAULT_SURFING_SUBSCRIPTION,
+  STATUS_MAPPING,
   SURFING_ROLE_HIERARCHY,
   SURFING_ROLE_TO_TIER,
   SURFING_TIER_MAPPING,
-  STATUS_MAPPING,
-} from './constants';
-
-// ============================================================================
-// Access Control
-// ============================================================================
-export {
-  getSurfingSubscriptionFromRoles,
-  hasSurfingRole,
-  hasRequiredSurfingRole,
-  canAccessPremiumArticlesByRole,
-  canDownloadCheatsheetsByRole,
-  hasApiAccessByRole,
-  getSurfingTierFromRoles,
-} from './access';
-
+} from './constants'
 // ============================================================================
 // Display Utilities
 // ============================================================================
-export { getTierDisplayName, getTierBadgeClass, isExpiringWithin } from './display';
+export { getTierBadgeClass, getTierDisplayName, isExpiringWithin } from './display'
+// ============================================================================
+// Types
+// ============================================================================
+export type { SurfingRole, SurfingSubscriptionTier, SurfingUserSubscription } from './types'

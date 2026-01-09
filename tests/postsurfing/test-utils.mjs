@@ -2,19 +2,19 @@
  * Test Utilities for PostSurfing CLI Tests
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { spawn } from 'child_process';
+import { spawn } from 'child_process'
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export class TestUtils {
   constructor() {
-    this.tempDir = join(__dirname, 'temp');
-    this.fixturesDir = join(__dirname, 'fixtures');
-    this.cliPath = join(__dirname, '../../scripts/postsurfing/postsurfing.mjs');
+    this.tempDir = join(__dirname, 'temp')
+    this.fixturesDir = join(__dirname, 'fixtures')
+    this.cliPath = join(__dirname, '../../scripts/postsurfing/postsurfing.mjs')
   }
 
   /**
@@ -22,9 +22,9 @@ export class TestUtils {
    */
   setup() {
     if (existsSync(this.tempDir)) {
-      rmSync(this.tempDir, { recursive: true, force: true });
+      rmSync(this.tempDir, { recursive: true, force: true })
     }
-    mkdirSync(this.tempDir, { recursive: true });
+    mkdirSync(this.tempDir, { recursive: true })
   }
 
   /**
@@ -32,7 +32,7 @@ export class TestUtils {
    */
   cleanup() {
     if (existsSync(this.tempDir)) {
-      rmSync(this.tempDir, { recursive: true, force: true });
+      rmSync(this.tempDir, { recursive: true, force: true })
     }
   }
 
@@ -40,20 +40,20 @@ export class TestUtils {
    * Get fixture file path
    */
   getFixture(filename) {
-    return join(this.fixturesDir, filename);
+    return join(this.fixturesDir, filename)
   }
 
   /**
    * Copy fixture to temp directory
    */
   copyFixture(filename, newName = null) {
-    const sourcePath = this.getFixture(filename);
-    const targetPath = join(this.tempDir, newName || filename);
+    const sourcePath = this.getFixture(filename)
+    const targetPath = join(this.tempDir, newName || filename)
 
-    const content = readFileSync(sourcePath, 'utf8');
-    writeFileSync(targetPath, content, 'utf8');
+    const content = readFileSync(sourcePath, 'utf8')
+    writeFileSync(targetPath, content, 'utf8')
 
-    return targetPath;
+    return targetPath
   }
 
   /**
@@ -65,18 +65,18 @@ export class TestUtils {
         stdio: 'pipe',
         cwd: options.cwd || process.cwd(),
         env: { ...process.env, ...options.env },
-      });
+      })
 
-      let stdout = '';
-      let stderr = '';
+      let stdout = ''
+      let stderr = ''
 
       cliProcess.stdout.on('data', (data) => {
-        stdout += data.toString();
-      });
+        stdout += data.toString()
+      })
 
       cliProcess.stderr.on('data', (data) => {
-        stderr += data.toString();
-      });
+        stderr += data.toString()
+      })
 
       cliProcess.on('close', (code) => {
         resolve({
@@ -85,8 +85,8 @@ export class TestUtils {
           stdout,
           stderr,
           output: stdout + stderr,
-        });
-      });
+        })
+      })
 
       cliProcess.on('error', (error) => {
         resolve({
@@ -96,9 +96,9 @@ export class TestUtils {
           stderr,
           output: stderr,
           error: error.message,
-        });
-      });
-    });
+        })
+      })
+    })
   }
 
   /**
@@ -106,7 +106,7 @@ export class TestUtils {
    */
   assert(condition, message) {
     if (!condition) {
-      throw new Error(`Assertion failed: ${message}`);
+      throw new Error(`Assertion failed: ${message}`)
     }
   }
 
@@ -115,7 +115,7 @@ export class TestUtils {
    */
   assertEqual(actual, expected, message) {
     if (actual !== expected) {
-      throw new Error(`Assertion failed: ${message}\nExpected: ${expected}\nActual: ${actual}`);
+      throw new Error(`Assertion failed: ${message}\nExpected: ${expected}\nActual: ${actual}`)
     }
   }
 
@@ -124,7 +124,7 @@ export class TestUtils {
    */
   assertContains(haystack, needle, message) {
     if (!haystack.includes(needle)) {
-      throw new Error(`Assertion failed: ${message}\nExpected "${haystack}" to contain "${needle}"`);
+      throw new Error(`Assertion failed: ${message}\nExpected "${haystack}" to contain "${needle}"`)
     }
   }
 
@@ -133,7 +133,7 @@ export class TestUtils {
    */
   assertFileExists(filePath, message) {
     if (!existsSync(filePath)) {
-      throw new Error(`Assertion failed: ${message}\nFile does not exist: ${filePath}`);
+      throw new Error(`Assertion failed: ${message}\nFile does not exist: ${filePath}`)
     }
   }
 
@@ -142,7 +142,7 @@ export class TestUtils {
    */
   assertFileNotExists(filePath, message) {
     if (existsSync(filePath)) {
-      throw new Error(`Assertion failed: ${message}\nFile should not exist: ${filePath}`);
+      throw new Error(`Assertion failed: ${message}\nFile should not exist: ${filePath}`)
     }
   }
 
@@ -150,50 +150,53 @@ export class TestUtils {
    * Read file content
    */
   readFile(filePath) {
-    return readFileSync(filePath, 'utf8');
+    return readFileSync(filePath, 'utf8')
   }
 
   /**
    * Write file content
    */
   writeFile(filePath, content) {
-    const dir = dirname(filePath);
+    const dir = dirname(filePath)
     if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
+      mkdirSync(dir, { recursive: true })
     }
-    writeFileSync(filePath, content, 'utf8');
+    writeFileSync(filePath, content, 'utf8')
   }
 
   /**
    * Parse frontmatter from content
    */
   parseFrontmatter(content) {
-    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
 
     if (!frontmatterMatch) {
-      return { frontmatter: {}, body: content };
+      return { frontmatter: {}, body: content }
     }
 
-    const frontmatterText = frontmatterMatch[1];
-    const body = frontmatterMatch[2];
+    const frontmatterText = frontmatterMatch[1]
+    const body = frontmatterMatch[2]
 
     // Simple YAML parsing
-    const frontmatter = {};
-    const lines = frontmatterText.split('\n');
+    const frontmatter = {}
+    const lines = frontmatterText.split('\n')
 
     for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
 
-      const colonIndex = trimmed.indexOf(':');
-      if (colonIndex === -1) continue;
+      const colonIndex = trimmed.indexOf(':')
+      if (colonIndex === -1) continue
 
-      const key = trimmed.substring(0, colonIndex).trim();
-      let value = trimmed.substring(colonIndex + 1).trim();
+      const key = trimmed.substring(0, colonIndex).trim()
+      let value = trimmed.substring(colonIndex + 1).trim()
 
       // Handle quoted strings
-      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-        value = value.slice(1, -1);
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1)
       }
 
       // Handle arrays
@@ -201,37 +204,37 @@ export class TestUtils {
         value = value
           .slice(1, -1)
           .split(',')
-          .map((item) => item.trim().replace(/['"]/g, ''));
+          .map((item) => item.trim().replace(/['"]/g, ''))
       }
 
       // Handle booleans
-      if (value === 'true') value = true;
-      if (value === 'false') value = false;
+      if (value === 'true') value = true
+      if (value === 'false') value = false
 
-      frontmatter[key] = value;
+      frontmatter[key] = value
     }
 
-    return { frontmatter, body };
+    return { frontmatter, body }
   }
 
   /**
    * Log test progress
    */
   log(message) {
-    console.log(`  ${message}`);
+    console.log(`  ${message}`)
   }
 
   /**
    * Log test error
    */
   error(message) {
-    console.error(`  ❌ ${message}`);
+    console.error(`  ❌ ${message}`)
   }
 
   /**
    * Log test success
    */
   success(message) {
-    console.log(`  ✅ ${message}`);
+    console.log(`  ✅ ${message}`)
   }
 }

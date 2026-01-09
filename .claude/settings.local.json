@@ -95,7 +95,13 @@
       "Bash(ln:*)",
       "Bash(readlink:*)",
       "Bash(npm run fix:prettier:*)",
-      "Skill(rd:task-run)"
+      "Skill(rd:task-run)",
+      "Bash(~/.bun/bin/bun install)",
+      "Bash(/opt/homebrew/bin/biome:*)",
+      "Bash(~/.bun/bin/bun run fix)",
+      "Bash(~/.bun/bin/biome:*)",
+      "Bash(~/.bun/bin/bun x:*)",
+      "Bash(bun:*)"
     ],
     "deny": [],
     "ask": []

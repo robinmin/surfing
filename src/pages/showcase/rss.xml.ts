@@ -1,14 +1,14 @@
-import rss from '@astrojs/rss';
-import type { APIContext } from 'astro';
-import { getAllContent, filterContent, sortContent } from '~/utils/content';
+import rss from '@astrojs/rss'
+import type { APIContext } from 'astro'
+import { filterContent, getAllContent, sortContent } from '~/utils/content'
 
 export async function GET(context: APIContext) {
-  const showcases = await getAllContent('showcase');
-  const publishedShowcases = filterContent(showcases, { draft: false });
-  const sortedShowcases = sortContent(publishedShowcases, 'date', 'desc');
+  const showcases = await getAllContent('showcase')
+  const publishedShowcases = filterContent(showcases, { draft: false })
+  const sortedShowcases = sortContent(publishedShowcases, 'date', 'desc')
 
   // Extract domain from context.site for email addresses
-  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip';
+  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip'
 
   return rss({
     title: 'Surfing Showcase - Latest Projects & Creations',
@@ -50,5 +50,5 @@ export async function GET(context: APIContext) {
       content: 'http://purl.org/rss/1.0/modules/content/',
       dc: 'http://purl.org/dc/elements/1.1/',
     },
-  });
+  })
 }

@@ -1,10 +1,10 @@
-import { I18N } from 'astrowind:config';
+import { I18N } from 'astrowind:config'
 
 /**
  * Collections that support translation filtering
  * Read from config.yaml: i18n.support_translation
  */
-const FILTERED_COLLECTIONS = I18N.support_translation || [];
+const FILTERED_COLLECTIONS = I18N.support_translation || []
 
 /**
  * Check if a collection should be filtered by language
@@ -12,7 +12,7 @@ const FILTERED_COLLECTIONS = I18N.support_translation || [];
  * @returns true if collection should filter by language
  */
 export function isCollectionFiltered(collectionName: string): boolean {
-  return FILTERED_COLLECTIONS.includes(collectionName);
+  return FILTERED_COLLECTIONS.includes(collectionName)
 }
 
 /**
@@ -20,7 +20,7 @@ export function isCollectionFiltered(collectionName: string): boolean {
  * @returns Array of collection names that are filtered by language
  */
 export function getSupportedCollections(): string[] {
-  return [...FILTERED_COLLECTIONS];
+  return [...FILTERED_COLLECTIONS]
 }
 
 /**
@@ -29,5 +29,5 @@ export function getSupportedCollections(): string[] {
  * @returns true if collection should show all language versions
  */
 export function isCollectionMultilingual(collectionName: string): boolean {
-  return !isCollectionFiltered(collectionName);
+  return !isCollectionFiltered(collectionName)
 }

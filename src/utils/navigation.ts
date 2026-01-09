@@ -1,4 +1,4 @@
-import { getPermalink, getAsset } from './permalinks';
+import { getAsset, getPermalink } from './permalinks'
 
 export function getLocalizedHeaderData() {
   return {
@@ -38,7 +38,7 @@ export function getLocalizedHeaderData() {
       },
     ],
     actions: [{ textKey: 'nav.explore', href: '/browse', icon: 'tabler:compass' }],
-  };
+  }
 }
 
 export function getLocalizedFooterData() {
@@ -87,8 +87,12 @@ export function getLocalizedFooterData() {
     ],
     socialLinks: [
       { ariaLabel: 'RSS All Content', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-      { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/robinmin/surfing' },
+      {
+        ariaLabel: 'Github',
+        icon: 'tabler:brand-github',
+        href: 'https://github.com/robinmin/surfing',
+      },
     ],
     footNoteKey: 'footer.tagline',
-  };
+  }
 }

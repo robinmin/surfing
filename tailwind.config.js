@@ -1,6 +1,6 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-import plugin from 'tailwindcss/plugin';
-import typographyPlugin from '@tailwindcss/typography';
+import typographyPlugin from '@tailwindcss/typography'
+import defaultTheme from 'tailwindcss/defaultTheme'
+import plugin from 'tailwindcss/plugin'
 
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,json,md,mdx,svelte,ts,tsx,vue}'],
@@ -15,7 +15,14 @@ export default {
       },
       fontFamily: {
         sans: ['var(--aw-font-sans, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
-        serif: ['var(--aw-font-serif, source-serif-pro)', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+        serif: [
+          'var(--aw-font-serif, source-serif-pro)',
+          'Georgia',
+          'Cambria',
+          '"Times New Roman"',
+          'Times',
+          'serif',
+        ],
         heading: ['var(--aw-font-heading, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
       },
       fontSize: {
@@ -56,8 +63,8 @@ export default {
   plugins: [
     typographyPlugin,
     plugin(({ addVariant }) => {
-      addVariant('intersect', '&:not([no-intersect])');
+      addVariant('intersect', '&:not([no-intersect])')
     }),
   ],
   darkMode: 'class',
-};
+}

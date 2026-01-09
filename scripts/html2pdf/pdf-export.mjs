@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 /**
  * HTML to PDF Converter with Intelligent Optimization
  *
@@ -24,138 +25,142 @@
  * See README.md for comprehensive documentation.
  */
 
-import { chromium } from 'playwright';
-import path from 'path';
-import { pathToFileURL } from 'url';
-import fs from 'fs';
+import fs from 'fs'
+import path from 'path'
+import { chromium } from 'playwright'
+import { pathToFileURL } from 'url'
 
 // Enhanced CLI parser with input/output file logic (replacing bash wrapper)
 function parseArgs(argv) {
-  const options = { _: [] };
+  const options = { _: [] }
 
   // Process all arguments
   for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
+    const arg = argv[i]
     if (arg.startsWith('--')) {
-      const eqIndex = arg.indexOf('=');
+      const eqIndex = arg.indexOf('=')
       if (eqIndex !== -1) {
-        const key = arg.slice(2, eqIndex);
-        const value = arg.slice(eqIndex + 1);
-        options[key] = value;
+        const key = arg.slice(2, eqIndex)
+        const value = arg.slice(eqIndex + 1)
+        options[key] = value
       } else {
-        const key = arg.slice(2);
-        options[key] = true;
+        const key = arg.slice(2)
+        options[key] = true
       }
     } else if (arg.startsWith('-')) {
-      const key = arg.slice(1);
-      options[key] = true;
+      const key = arg.slice(1)
+      options[key] = true
     } else {
-      options._.push(arg);
+      options._.push(arg)
     }
   }
 
   // Enhanced input/output processing (replaces bash script logic)
   if (options._.length === 0) {
-    return { ...options, input: null, output: null };
+    return { ...options, input: null, output: null }
   }
 
   // First positional argument is always input
-  const input = options._[0];
-  let output = null;
+  const input = options._[0]
+  let output = null
 
   // Second positional argument is output if it doesn't look like an option
   if (options._.length >= 2) {
-    const potentialOutput = options._[1];
+    const potentialOutput = options._[1]
     // If it doesn't start with - and looks like a filename, treat as output
     if (!potentialOutput.startsWith('-')) {
-      output = potentialOutput;
+      output = potentialOutput
     }
   }
 
   // Generate default output filename if not provided
   if (!output && input) {
-    const inputPath = path.resolve(input);
-    const baseName = path.basename(inputPath, path.extname(inputPath));
-    output = path.join(process.cwd(), `${baseName}.pdf`);
+    const inputPath = path.resolve(input)
+    const baseName = path.basename(inputPath, path.extname(inputPath))
+    output = path.join(process.cwd(), `${baseName}.pdf`)
   }
 
   return {
     ...options,
     input: input || null,
     output: output || null,
-  };
+  }
 }
 
 // Validate and normalize margin value
 function validateMargin(marginVal) {
-  if (!marginVal) return '20px';
+  if (!marginVal) return '20px'
 
   // Check if it's a valid CSS margin value
-  const validUnits = ['px', 'pt', 'in', 'cm', 'mm', 'em', 'rem', '%'];
-  const marginStr = marginVal.toString();
+  const validUnits = ['px', 'pt', 'in', 'cm', 'mm', 'em', 'rem', '%']
+  const marginStr = marginVal.toString()
 
   // Check if it ends with a valid unit
-  const hasValidUnit = validUnits.some((unit) => marginStr.endsWith(unit));
+  const hasValidUnit = validUnits.some((unit) => marginStr.endsWith(unit))
 
   if (!hasValidUnit) {
     // If it's just a number, assume pixels
     if (/^\d+\.?\d*$/.test(marginStr)) {
-      return marginStr + 'px';
+      return marginStr + 'px'
     }
     // If it looks like it should have 'px' but is missing 'x'
     if (/^\d+\.?\d*p$/.test(marginStr)) {
-      return marginStr + 'x';
+      return marginStr + 'x'
     }
-    throw new Error(`Invalid margin value: "${marginVal}". Use a valid CSS value like "10px", "1cm", "0.5in", etc.`);
+    throw new Error(
+      `Invalid margin value: "${marginVal}". Use a valid CSS value like "10px", "1cm", "0.5in", etc.`
+    )
   }
 
-  return marginStr;
+  return marginStr
 }
 
 // Auto-detect optimal viewport based on content layout
 async function detectOptimalViewport(page, inputUrl) {
-  console.log('🔍 Auto-detecting optimal viewport...');
+  console.log('🔍 Auto-detecting optimal viewport...')
 
   // Try different viewport widths to find the best fit
-  const testWidths = [1920, 1680, 1440, 1280, 1024];
-  let bestViewport = { width: 1280, height: 800 };
-  let bestScore = Infinity;
-  let bestLayout = null;
+  const testWidths = [1920, 1680, 1440, 1280, 1024]
+  let bestViewport = { width: 1280, height: 800 }
+  let bestScore = Infinity
+  let bestLayout = null
 
   for (const width of testWidths) {
-    const height = Math.round(width * 0.7); // Taller aspect ratio for content
-    await page.setViewportSize({ width, height });
-    await page.goto(inputUrl, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(500);
+    const height = Math.round(width * 0.7) // Taller aspect ratio for content
+    await page.setViewportSize({ width, height })
+    await page.goto(inputUrl, { waitUntil: 'networkidle' })
+    await page.waitForTimeout(500)
 
     const metrics = await page.evaluate(() => {
-      const body = document.body;
-      const scrollWidth = body.scrollWidth;
-      const scrollHeight = body.scrollHeight;
+      const body = document.body
+      const scrollWidth = body.scrollWidth
+      const scrollHeight = body.scrollHeight
 
       // Check actual grid layout
-      const gridContainer = document.querySelector('.grid, [class*="grid-cols"]');
-      let actualColumns = 1;
+      const gridContainer = document.querySelector('.grid, [class*="grid-cols"]')
+      let actualColumns = 1
       if (gridContainer) {
-        const computedStyle = window.getComputedStyle(gridContainer);
-        const gridCols = computedStyle.gridTemplateColumns;
+        const computedStyle = window.getComputedStyle(gridContainer)
+        const gridCols = computedStyle.gridTemplateColumns
         if (gridCols && gridCols !== 'none') {
-          actualColumns = gridCols.split(' ').length;
+          actualColumns = gridCols.split(' ').length
         }
       }
 
       // Check if content has multi-column layout
       const mainContent = document.querySelector(
         '.grid, .columns, .flex-wrap, [class*="grid-cols"], [class*="columns-"]'
-      );
-      const hasMultiColumn = mainContent !== null;
+      )
+      const hasMultiColumn = mainContent !== null
 
       // Calculate layout efficiency score (lower is better)
-      const horizontalWaste = Math.max(0, window.innerWidth - scrollWidth);
-      const aspectRatio = scrollWidth / scrollHeight;
+      const horizontalWaste = Math.max(0, window.innerWidth - scrollWidth)
+      const aspectRatio = scrollWidth / scrollHeight
 
       // Get content bounds
-      const contentBounds = document.querySelector('.max-w-7xl, .container, main, .grid')?.getBoundingClientRect();
+      const contentBounds = document
+        .querySelector('.max-w-7xl, .container, main, .grid')
+        ?.getBoundingClientRect()
 
       return {
         scrollWidth,
@@ -167,38 +172,38 @@ async function detectOptimalViewport(page, inputUrl) {
         contentBounds: contentBounds || { width: scrollWidth, height: scrollHeight },
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
-      };
-    });
+      }
+    })
 
     // Score based on column utilization and aspect ratio for content
-    const wasteScore = metrics.horizontalWaste / width;
+    const wasteScore = metrics.horizontalWaste / width
     // Prefer layouts with more columns but not too tall
-    const aspectScore = Math.abs(metrics.aspectRatio - 1.6); // Target wider aspect ratio
-    const columnScore = metrics.actualColumns > 2 ? -0.2 : 0.2; // Bonus for multi-column
-    const score = wasteScore + aspectScore + columnScore;
+    const aspectScore = Math.abs(metrics.aspectRatio - 1.6) // Target wider aspect ratio
+    const columnScore = metrics.actualColumns > 2 ? -0.2 : 0.2 // Bonus for multi-column
+    const score = wasteScore + aspectScore + columnScore
 
     console.log(
       `  ${width}x${height}: scroll=${metrics.scrollWidth}x${metrics.scrollHeight}, cols=${metrics.actualColumns}, waste=${metrics.horizontalWaste}px, score=${score.toFixed(3)}`
-    );
+    )
 
     if (score < bestScore) {
-      bestScore = score;
-      bestViewport = { width, height };
-      bestLayout = metrics;
+      bestScore = score
+      bestViewport = { width, height }
+      bestLayout = metrics
     }
   }
 
   console.log(
     `✅ Selected viewport: ${bestViewport.width}x${bestViewport.height} (${bestLayout.actualColumns} columns, score: ${bestScore.toFixed(3)})`
-  );
-  return bestViewport;
+  )
+  return bestViewport
 }
 
 // Prepare page for single-page PDF generation
 async function prepareSinglePageLayout(page, isSinglePage) {
-  if (!isSinglePage) return;
+  if (!isSinglePage) return
 
-  console.log('🎨 Optimizing layout for single-page PDF...');
+  console.log('🎨 Optimizing layout for single-page PDF...')
 
   // Inject CSS to override print styles and optimize for single page
   await page.addStyleTag({
@@ -365,17 +370,17 @@ async function prepareSinglePageLayout(page, isSinglePage) {
         break-inside: avoid !important;
       }
     `,
-  });
+  })
 
   // Wait for styles to apply
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(500)
 }
 
 // Get optimal PDF dimensions for single-page mode
 async function getOptimalPDFDimensions(page, viewport) {
   const dimensions = await page.evaluate(() => {
-    const body = document.body;
-    const documentElement = document.documentElement;
+    const body = document.body
+    const documentElement = document.documentElement
 
     // Get the full content dimensions using multiple methods
     const scrollWidth = Math.max(
@@ -384,7 +389,7 @@ async function getOptimalPDFDimensions(page, viewport) {
       documentElement.clientWidth,
       documentElement.scrollWidth,
       documentElement.offsetWidth
-    );
+    )
 
     const scrollHeight = Math.max(
       body.scrollHeight,
@@ -392,14 +397,14 @@ async function getOptimalPDFDimensions(page, viewport) {
       documentElement.clientHeight,
       documentElement.scrollHeight,
       documentElement.offsetHeight
-    );
+    )
 
     // Get actual content bounds - use body bounds as primary
-    const bodyRect = body.getBoundingClientRect();
+    const bodyRect = body.getBoundingClientRect()
     let contentBounds = {
       width: bodyRect.width || scrollWidth,
       height: bodyRect.height || scrollHeight,
-    };
+    }
 
     // Also check main containers
     const containers = [
@@ -407,29 +412,29 @@ async function getOptimalPDFDimensions(page, viewport) {
       document.querySelector('.container'),
       document.querySelector('main'),
       document.querySelector('.grid'),
-    ].filter((el) => el !== null);
+    ].filter((el) => el !== null)
 
-    let maxContentHeight = contentBounds.height;
-    let maxContentWidth = contentBounds.width;
+    let maxContentHeight = contentBounds.height
+    let maxContentWidth = contentBounds.width
 
     containers.forEach((container) => {
-      const rect = container.getBoundingClientRect();
-      const style = window.getComputedStyle(container);
-      const marginTop = parseInt(style.marginTop) || 0;
-      const marginBottom = parseInt(style.marginBottom) || 0;
-      const marginLeft = parseInt(style.marginLeft) || 0;
-      const marginRight = parseInt(style.marginRight) || 0;
+      const rect = container.getBoundingClientRect()
+      const style = window.getComputedStyle(container)
+      const marginTop = parseInt(style.marginTop) || 0
+      const marginBottom = parseInt(style.marginBottom) || 0
+      const marginLeft = parseInt(style.marginLeft) || 0
+      const marginRight = parseInt(style.marginRight) || 0
 
-      const totalHeight = rect.height + marginTop + marginBottom;
-      const totalWidth = rect.width + marginLeft + marginRight;
+      const totalHeight = rect.height + marginTop + marginBottom
+      const totalWidth = rect.width + marginLeft + marginRight
 
       if (totalHeight > maxContentHeight) {
-        maxContentHeight = totalHeight;
+        maxContentHeight = totalHeight
       }
       if (totalWidth > maxContentWidth) {
-        maxContentWidth = totalWidth;
+        maxContentWidth = totalWidth
       }
-    });
+    })
 
     // Final content bounds - use the larger of scroll or calculated bounds
     contentBounds = {
@@ -437,19 +442,19 @@ async function getOptimalPDFDimensions(page, viewport) {
       height: Math.max(maxContentHeight, scrollHeight),
       bodyWidth: bodyRect.width,
       bodyHeight: bodyRect.height,
-    };
+    }
 
     // Check grid layout for optimal sizing
-    const gridContainer = document.querySelector('.grid');
-    let gridInfo = null;
+    const gridContainer = document.querySelector('.grid')
+    let gridInfo = null
     if (gridContainer) {
-      const gridRect = gridContainer.getBoundingClientRect();
-      const computedStyle = window.getComputedStyle(gridContainer);
+      const gridRect = gridContainer.getBoundingClientRect()
+      const computedStyle = window.getComputedStyle(gridContainer)
       gridInfo = {
         width: gridRect.width,
         height: gridRect.height,
         columns: computedStyle.gridTemplateColumns?.split(' ').length || 1,
-      };
+      }
     }
 
     return {
@@ -465,8 +470,8 @@ async function getOptimalPDFDimensions(page, viewport) {
         top: bodyRect.top,
         left: bodyRect.left,
       },
-    };
-  });
+    }
+  })
 
   // Calculate optimal PDF size - prioritize scroll dimensions for single-page
   const optimalWidth = Math.max(
@@ -474,148 +479,150 @@ async function getOptimalPDFDimensions(page, viewport) {
     dimensions.contentBounds.width || 0,
     dimensions.gridInfo?.width || 0,
     viewport.width
-  );
+  )
 
   const optimalHeight = Math.max(
     dimensions.scrollHeight,
     dimensions.contentBounds.height || 0,
     dimensions.gridInfo?.height || 0
-  );
+  )
 
-  console.log(`📏 Content analysis:`);
-  console.log(`   Scroll: ${dimensions.scrollWidth}x${dimensions.scrollHeight}px`);
+  console.log(`📏 Content analysis:`)
+  console.log(`   Scroll: ${dimensions.scrollWidth}x${dimensions.scrollHeight}px`)
   console.log(
     `   Content bounds: ${Math.round(dimensions.contentBounds.width || 0)}x${Math.round(dimensions.contentBounds.height || 0)}px`
-  );
-  console.log(`   Body rect: ${Math.round(dimensions.bodyRect.width)}x${Math.round(dimensions.bodyRect.height)}px`);
+  )
+  console.log(
+    `   Body rect: ${Math.round(dimensions.bodyRect.width)}x${Math.round(dimensions.bodyRect.height)}px`
+  )
   if (dimensions.gridInfo) {
     console.log(
       `   Grid: ${Math.round(dimensions.gridInfo.width)}x${Math.round(dimensions.gridInfo.height)}px (${dimensions.gridInfo.columns} cols)`
-    );
+    )
   }
-  console.log(`   Viewport: ${dimensions.viewportWidth}x${dimensions.viewportHeight}px`);
-  console.log(`   Selected: ${Math.ceil(optimalWidth)}x${Math.ceil(optimalHeight)}px`);
+  console.log(`   Viewport: ${dimensions.viewportWidth}x${dimensions.viewportHeight}px`)
+  console.log(`   Selected: ${Math.ceil(optimalWidth)}x${Math.ceil(optimalHeight)}px`)
 
   return {
     width: Math.ceil(optimalWidth),
     height: Math.ceil(optimalHeight),
     rawDimensions: dimensions,
-  };
+  }
 }
 
 // Comprehensive wait for all load events to ensure complete resource loading
 async function waitForAllLoadEvents(page) {
-  console.log('⏳ Verifying complete page loading with multiple events...');
+  console.log('⏳ Verifying complete page loading with multiple events...')
 
   try {
     await page.evaluate(() => {
       return new Promise((resolve) => {
         const timeoutId = setTimeout(() => {
-          console.log('Timeout waiting for all load events');
-          resolve({ success: false, reason: 'timeout' });
-        }, 60000);
+          console.log('Timeout waiting for all load events')
+          resolve({ success: false, reason: 'timeout' })
+        }, 60000)
 
-        let eventsFired = {
+        const eventsFired = {
           domContentLoaded: false,
           load: false,
           imagesLoaded: false,
-        };
+        }
 
         // Check if already complete
         if (document.readyState === 'complete') {
-          eventsFired.domContentLoaded = true;
-          eventsFired.load = true;
+          eventsFired.domContentLoaded = true
+          eventsFired.load = true
         }
 
         // Check images
         const checkImages = () => {
-          const images = Array.from(document.querySelectorAll('img'));
+          const images = Array.from(document.querySelectorAll('img'))
           if (images.length === 0) {
-            eventsFired.imagesLoaded = true;
-            return true;
+            eventsFired.imagesLoaded = true
+            return true
           }
 
-          const allImagesLoaded = images.every((img) => img.complete && img.naturalHeight > 0);
+          const allImagesLoaded = images.every((img) => img.complete && img.naturalHeight > 0)
 
           if (allImagesLoaded) {
-            eventsFired.imagesLoaded = true;
+            eventsFired.imagesLoaded = true
           }
 
-          return allImagesLoaded;
-        };
+          return allImagesLoaded
+        }
 
         // Check if everything is already loaded
         if (eventsFired.load && checkImages()) {
-          clearTimeout(timeoutId);
-          resolve({ success: true, eventsFired });
-          return;
+          clearTimeout(timeoutId)
+          resolve({ success: true, eventsFired })
+          return
         }
 
         // Set up event listeners
         const handleDOMContentLoaded = () => {
-          eventsFired.domContentLoaded = true;
-          checkAllEvents();
-        };
+          eventsFired.domContentLoaded = true
+          checkAllEvents()
+        }
 
         const handleLoad = () => {
-          eventsFired.load = true;
-          checkAllEvents();
-        };
+          eventsFired.load = true
+          checkAllEvents()
+        }
 
         const checkAllEvents = () => {
           if (eventsFired.load && checkImages()) {
-            clearTimeout(timeoutId);
-            document.removeEventListener('DOMContentLoaded', handleDOMContentLoaded);
-            window.removeEventListener('load', handleLoad);
-            resolve({ success: true, eventsFired });
+            clearTimeout(timeoutId)
+            document.removeEventListener('DOMContentLoaded', handleDOMContentLoaded)
+            window.removeEventListener('load', handleLoad)
+            resolve({ success: true, eventsFired })
           }
-        };
+        }
 
         // Add event listeners
         if (!eventsFired.domContentLoaded) {
-          document.addEventListener('DOMContentLoaded', handleDOMContentLoaded);
+          document.addEventListener('DOMContentLoaded', handleDOMContentLoaded)
         }
 
         if (!eventsFired.load) {
-          window.addEventListener('load', handleLoad);
+          window.addEventListener('load', handleLoad)
         }
 
         // Initial check in case we missed the events
         setTimeout(() => {
-          checkAllEvents();
-        }, 100);
-      });
-    });
+          checkAllEvents()
+        }, 100)
+      })
+    })
 
-    console.log('✅ All load events verified successfully');
+    console.log('✅ All load events verified successfully')
   } catch {
-    console.log('⚠️ Comprehensive event verification timeout');
+    console.log('⚠️ Comprehensive event verification timeout')
   }
 }
 
 // Enhanced image waiting with event-based detection
 async function waitForImagesWithEvents(page, verbose = false, timeout = 30000) {
-  console.log('🖼️  Checking image loading status...');
+  console.log('🖼️  Checking image loading status...')
 
-  const startTime = Date.now();
+  const startTime = Date.now()
 
   try {
     // First, check if we have any images at all
     const imageCount = await page.evaluate(() => {
-      return document.querySelectorAll('img').length;
-    });
+      return document.querySelectorAll('img').length
+    })
 
     if (imageCount === 0) {
-      console.log('ℹ️  No images found on page');
-      return;
+      console.log('ℹ️  No images found on page')
+      return
     }
 
-    console.log(`📊 Found ${imageCount} image(s), checking load status...`);
+    console.log(`📊 Found ${imageCount} image(s), checking load status...`)
 
     // Use Playwright's waitForFunction with enhanced image checking
     await page.waitForFunction(
       () => {
-        const images = Array.from(document.querySelectorAll('img'));
+        const images = Array.from(document.querySelectorAll('img'))
         const imageInfo = {
           total: images.length,
           complete: 0,
@@ -623,45 +630,45 @@ async function waitForImagesWithEvents(page, verbose = false, timeout = 30000) {
           failed: 0,
           loading: 0,
           naturalHeightZero: 0,
-        };
+        }
 
         images.forEach((img) => {
           if (img.complete) {
-            imageInfo.complete++;
+            imageInfo.complete++
           }
 
           if (img.naturalHeight > 0) {
-            imageInfo.loaded++;
+            imageInfo.loaded++
           } else if (img.complete) {
-            imageInfo.naturalHeightZero++;
+            imageInfo.naturalHeightZero++
           }
 
           if (img.complete && img.naturalHeight === 0) {
-            imageInfo.failed++;
+            imageInfo.failed++
           } else if (!img.complete) {
-            imageInfo.loading++;
+            imageInfo.loading++
           }
-        });
+        })
 
         // Return the analysis and whether all are loaded
         return {
           ...imageInfo,
           allLoaded: imageInfo.loading === 0,
           readyForPDF: imageInfo.loading === 0 && imageInfo.failed === 0,
-        };
+        }
       },
       {
         timeout: timeout,
       }
-    );
+    )
 
-    const loadTime = Date.now() - startTime;
-    console.log(`✅ Image loading analysis completed in ${loadTime}ms`);
+    const loadTime = Date.now() - startTime
+    console.log(`✅ Image loading analysis completed in ${loadTime}ms`)
 
     // Get final status for verbose mode
     if (verbose) {
       const finalStatus = await page.evaluate(() => {
-        const images = Array.from(document.querySelectorAll('img'));
+        const images = Array.from(document.querySelectorAll('img'))
         return images.map((img, index) => ({
           index: index + 1,
           src: img.src.substring(0, 100),
@@ -675,42 +682,42 @@ async function waitForImagesWithEvents(page, verbose = false, timeout = 30000) {
               : img.complete && img.naturalHeight === 0
                 ? 'FAILED'
                 : 'LOADING',
-        }));
-      });
+        }))
+      })
 
-      console.log('\n📋 Final Image Status:');
+      console.log('\n📋 Final Image Status:')
       finalStatus.forEach((img) => {
-        console.log(`  ${img.index}. ${img.src}... - ${img.status}`);
-      });
+        console.log(`  ${img.index}. ${img.src}... - ${img.status}`)
+      })
     }
 
     // Brief pause for any final rendering
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(500)
   } catch (error) {
-    const loadTime = Date.now() - startTime;
-    console.log(`⚠️ Image analysis timeout after ${loadTime}ms: ${error.message}`);
+    const loadTime = Date.now() - startTime
+    console.log(`⚠️ Image analysis timeout after ${loadTime}ms: ${error.message}`)
 
     if (verbose) {
       const failedStatus = await page.evaluate(() => {
-        const images = Array.from(document.querySelectorAll('img'));
+        const images = Array.from(document.querySelectorAll('img'))
         return images.reduce(
           (stats, img) => {
             if (img.complete && img.naturalHeight === 0) {
-              stats.failed++;
+              stats.failed++
             } else if (!img.complete) {
-              stats.loading++;
+              stats.loading++
             } else {
-              stats.loaded++;
+              stats.loaded++
             }
-            return stats;
+            return stats
           },
           { loaded: 0, failed: 0, loading: 0, total: images.length }
-        );
-      });
+        )
+      })
 
       console.log(
         `📊 Status at timeout: ${failedStatus.loaded} loaded, ${failedStatus.failed} failed, ${failedStatus.loading} still loading of ${failedStatus.total} total`
-      );
+      )
     }
   }
 }
@@ -718,163 +725,179 @@ async function waitForImagesWithEvents(page, verbose = false, timeout = 30000) {
 // Handle cross-origin images and lazy loading
 async function handleCrossOriginImages(page) {
   await page.evaluate(() => {
-    const images = document.querySelectorAll('img');
+    const images = document.querySelectorAll('img')
     images.forEach((img) => {
       // Add crossorigin attribute if not present and image is from external domain
-      if (!img.crossOrigin && img.src && (img.src.includes('http://') || img.src.includes('https://'))) {
-        img.crossOrigin = 'anonymous';
+      if (
+        !img.crossOrigin &&
+        img.src &&
+        (img.src.includes('http://') || img.src.includes('https://'))
+      ) {
+        img.crossOrigin = 'anonymous'
       }
 
       // Remove lazy loading attributes to ensure immediate loading
       if (img.loading === 'lazy') {
-        img.loading = 'eager';
+        img.loading = 'eager'
       }
 
       // Remove data-src and similar lazy loading attributes
       if (img.dataset.src && !img.src) {
-        img.src = img.dataset.src;
+        img.src = img.dataset.src
       }
 
       // Handle other common lazy loading patterns
-      ['data-lazy', 'data-original', 'data-srcset'].forEach((attr) => {
+      ;['data-lazy', 'data-original', 'data-srcset'].forEach((attr) => {
         if (img.dataset[attr.replace('data-', '')] && !img.src) {
-          img.src = img.dataset[attr.replace('data-', '')];
+          img.src = img.dataset[attr.replace('data-', '')]
         }
-      });
+      })
 
       // Force reload images that failed to load
       if (img.naturalHeight === 0 && img.complete && img.src) {
-        const originalSrc = img.src;
-        img.src = '';
+        const originalSrc = img.src
+        img.src = ''
         setTimeout(() => {
-          img.src = originalSrc;
-        }, 100);
+          img.src = originalSrc
+        }, 100)
       }
-    });
+    })
 
     // Scroll to trigger any remaining lazy-loaded images
-    window.scrollTo(0, document.body.scrollHeight);
+    window.scrollTo(0, document.body.scrollHeight)
     setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 500);
-  });
+      window.scrollTo(0, 0)
+    }, 500)
+  })
 }
 
 async function main() {
-  const argv = parseArgs(process.argv.slice(2));
+  const argv = parseArgs(process.argv.slice(2))
 
   // Enhanced input/output handling (replaces bash script functionality)
-  const input = argv.input;
-  const output = argv.output;
+  const input = argv.input
+  const output = argv.output
 
   if (!input) {
-    console.error('Usage: pdf-export.mjs <input> [output] [options]');
-    console.error('');
-    console.error('Arguments:');
-    console.error('  <input>                 Input HTML file or URL (required)');
-    console.error('  [output]                Output PDF file (optional, defaults to input basename + .pdf)');
-    console.error('');
-    console.error('Options:');
-    console.error('  --single-page          Generate one continuous page PDF (removes all page breaks)');
-    console.error('  --viewport WxH         Set viewport, e.g. 1280x800 (auto-detected if not provided)');
-    console.error('  --margin VALUE         Margin, e.g. 20px');
-    console.error('  --format FORMAT        Page format, e.g. A4');
-    console.error('  --width VALUE          Custom width (for single-page)');
-    console.error('  --height VALUE         Custom height (for single-page)');
-    console.error('  --background           Print background (default true)');
-    console.error('  --scale VALUE          Scale factor, e.g. 0.8 (default 1.0)');
-    console.error('  --verbose              Enable detailed logging');
-    console.error('');
-    console.error('Examples:');
-    console.error('  pdf-export.mjs page.html                              # → page.pdf (standard)');
-    console.error('  pdf-export.mjs page.html custom.pdf --single-page     # → custom.pdf (one page)');
-    console.error('  pdf-export.mjs page.html --margin=10px --scale=0.8    # → page.pdf with options');
-    console.error('');
-    console.error('Note: This script replaces the html2pdf bash function with enhanced functionality.');
-    process.exit(1);
+    console.error('Usage: pdf-export.mjs <input> [output] [options]')
+    console.error('')
+    console.error('Arguments:')
+    console.error('  <input>                 Input HTML file or URL (required)')
+    console.error(
+      '  [output]                Output PDF file (optional, defaults to input basename + .pdf)'
+    )
+    console.error('')
+    console.error('Options:')
+    console.error(
+      '  --single-page          Generate one continuous page PDF (removes all page breaks)'
+    )
+    console.error(
+      '  --viewport WxH         Set viewport, e.g. 1280x800 (auto-detected if not provided)'
+    )
+    console.error('  --margin VALUE         Margin, e.g. 20px')
+    console.error('  --format FORMAT        Page format, e.g. A4')
+    console.error('  --width VALUE          Custom width (for single-page)')
+    console.error('  --height VALUE         Custom height (for single-page)')
+    console.error('  --background           Print background (default true)')
+    console.error('  --scale VALUE          Scale factor, e.g. 0.8 (default 1.0)')
+    console.error('  --verbose              Enable detailed logging')
+    console.error('')
+    console.error('Examples:')
+    console.error('  pdf-export.mjs page.html                              # → page.pdf (standard)')
+    console.error(
+      '  pdf-export.mjs page.html custom.pdf --single-page     # → custom.pdf (one page)'
+    )
+    console.error(
+      '  pdf-export.mjs page.html --margin=10px --scale=0.8    # → page.pdf with options'
+    )
+    console.error('')
+    console.error(
+      'Note: This script replaces the html2pdf bash function with enhanced functionality.'
+    )
+    process.exit(1)
   }
 
   // Validate input file exists (if it's not a URL)
   if (!input.startsWith('http://') && !input.startsWith('https://')) {
     try {
-      const inputPath = path.resolve(input);
+      const inputPath = path.resolve(input)
       // Check if file exists
-      await fs.promises.access(inputPath);
+      await fs.promises.access(inputPath)
     } catch {
-      console.error(`❌ Error: Input file not found: ${input}`);
-      console.error(`💡 Tip: Make sure the file path is correct and the file exists`);
-      process.exit(1);
+      console.error(`❌ Error: Input file not found: ${input}`)
+      console.error(`💡 Tip: Make sure the file path is correct and the file exists`)
+      process.exit(1)
     }
   }
 
   // Convert input to absolute path or leave URL as-is
-  let inputUrl;
+  let inputUrl
   if (input.startsWith('http://') || input.startsWith('https://')) {
-    inputUrl = input;
+    inputUrl = input
   } else {
-    inputUrl = pathToFileURL(path.resolve(input)).href;
+    inputUrl = pathToFileURL(path.resolve(input)).href
   }
 
   // Output is already resolved by parseArgs
-  const resolvedOutput = path.resolve(output);
+  const resolvedOutput = path.resolve(output)
 
-  console.log(`📄 Converting: ${input} → ${path.basename(resolvedOutput)}`);
+  console.log(`📄 Converting: ${input} → ${path.basename(resolvedOutput)}`)
   if (argv.verbose) {
-    console.log(`   Input URL: ${inputUrl}`);
-    console.log(`   Output Path: ${resolvedOutput}`);
+    console.log(`   Input URL: ${inputUrl}`)
+    console.log(`   Output Path: ${resolvedOutput}`)
   }
 
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
+  const browser = await chromium.launch()
+  const page = await browser.newPage()
 
   // Determine viewport - auto-detect if not provided
-  let viewport;
+  let viewport
   if (argv.viewport) {
-    const viewportStr = argv.viewport;
-    const [vw, vh] = viewportStr.split('x').map(Number);
-    viewport = { width: vw, height: vh };
-    console.log(`🖥️  Using specified viewport: ${vw}x${vh}`);
+    const viewportStr = argv.viewport
+    const [vw, vh] = viewportStr.split('x').map(Number)
+    viewport = { width: vw, height: vh }
+    console.log(`🖥️  Using specified viewport: ${vw}x${vh}`)
   } else {
-    viewport = await detectOptimalViewport(page, inputUrl);
+    viewport = await detectOptimalViewport(page, inputUrl)
   }
 
   // Set final viewport and load page with enhanced wait strategy
-  await page.setViewportSize(viewport);
+  await page.setViewportSize(viewport)
 
   // Use comprehensive event-based loading detection
-  console.log('📄 Loading page with comprehensive event detection...');
+  console.log('📄 Loading page with comprehensive event detection...')
 
   // Load page and wait for network to be idle (all resources downloaded)
   await page.goto(inputUrl, {
     waitUntil: 'networkidle', // Wait for network activity to stop
     timeout: 60000,
-  });
+  })
 
   // Additional verification with multiple events
-  await waitForAllLoadEvents(page);
+  await waitForAllLoadEvents(page)
 
   // Handle cross-origin image issues after initial load
-  await handleCrossOriginImages(page);
+  await handleCrossOriginImages(page)
 
   // Final verification of image loading status
-  await waitForImagesWithEvents(page, argv.verbose);
+  await waitForImagesWithEvents(page, argv.verbose)
 
   // Handle page mode
-  const isSinglePage = argv['single-page'];
+  const isSinglePage = argv['single-page']
 
   // Prepare layout based on selected mode
   if (isSinglePage) {
-    await prepareSinglePageLayout(page, true);
+    await prepareSinglePageLayout(page, true)
   }
 
   // Options with defaults and validation
-  let marginVal;
+  let marginVal
   try {
-    marginVal = validateMargin(argv.margin);
+    marginVal = validateMargin(argv.margin)
   } catch (error) {
-    await browser.close();
-    console.error(`❌ ${error.message}`);
-    process.exit(1);
+    await browser.close()
+    console.error(`❌ ${error.message}`)
+    process.exit(1)
   }
 
   const margin = {
@@ -882,24 +905,26 @@ async function main() {
     bottom: marginVal,
     left: marginVal,
     right: marginVal,
-  };
-  const format = argv.format || 'A4';
-  const background = argv.background !== false;
-  const scale = parseFloat(argv.scale) || 1.0;
+  }
+  const format = argv.format || 'A4'
+  const background = argv.background !== false
+  const scale = parseFloat(argv.scale) || 1.0
 
   if (isSinglePage) {
     // Get optimal PDF dimensions for single-page mode
-    const pdfDimensions = await getOptimalPDFDimensions(page, viewport);
+    const pdfDimensions = await getOptimalPDFDimensions(page, viewport)
 
     // Use user-specified dimensions or calculated optimal ones
-    const pdfWidth = argv.width || `${pdfDimensions.width}px`;
-    const pdfHeight = argv.height || `${pdfDimensions.height}px`;
+    const pdfWidth = argv.width || `${pdfDimensions.width}px`
+    const pdfHeight = argv.height || `${pdfDimensions.height}px`
 
     // For single-page mode, apply margins if specified, otherwise no margins
-    const singlePageMargin = argv.margin ? margin : { top: '0px', bottom: '0px', left: '0px', right: '0px' };
+    const singlePageMargin = argv.margin
+      ? margin
+      : { top: '0px', bottom: '0px', left: '0px', right: '0px' }
 
-    console.log(`📄 Single-page PDF dimensions: ${pdfWidth} x ${pdfHeight}`);
-    console.log(`📐 Margins: ${JSON.stringify(singlePageMargin)}`);
+    console.log(`📄 Single-page PDF dimensions: ${pdfWidth} x ${pdfHeight}`)
+    console.log(`📐 Margins: ${JSON.stringify(singlePageMargin)}`)
 
     await page.pdf({
       path: resolvedOutput,
@@ -915,12 +940,12 @@ async function main() {
       headerTemplate: '',
       footerTemplate: '',
       omitBackground: false,
-    });
+    })
   } else {
     // Standard mode
-    console.log(`📄 Using format: ${format}`);
-    console.log(`📐 Margins: ${JSON.stringify(margin)}`);
-    console.log(`🔍 Scale: ${scale}`);
+    console.log(`📄 Using format: ${format}`)
+    console.log(`📐 Margins: ${JSON.stringify(margin)}`)
+    console.log(`🔍 Scale: ${scale}`)
 
     await page.pdf({
       path: resolvedOutput,
@@ -929,24 +954,26 @@ async function main() {
       margin,
       scale: scale,
       preferCSSPageSize: true,
-    });
+    })
   }
 
-  await browser.close();
-  console.log(`✅ PDF saved to: ${resolvedOutput}`);
+  await browser.close()
+  console.log(`✅ PDF saved to: ${resolvedOutput}`)
 }
 
 main().catch((error) => {
-  console.error(`❌ Error: ${error.message}`);
+  console.error(`❌ Error: ${error.message}`)
 
   // Provide helpful suggestions based on common error patterns
   if (error.message.includes('Failed to parse parameter value')) {
-    console.error(`💡 Tip: Check your margin value. Use valid CSS units like "10px", "1cm", "0.5in", etc.`);
+    console.error(
+      `💡 Tip: Check your margin value. Use valid CSS units like "10px", "1cm", "0.5in", etc.`
+    )
   } else if (error.message.includes('viewport')) {
-    console.error(`💡 Tip: Viewport should be in format "1920x1080" (width x height in pixels)`);
+    console.error(`💡 Tip: Viewport should be in format "1920x1080" (width x height in pixels)`)
   } else if (error.message.includes('ENOENT') || error.message.includes('file not found')) {
-    console.error(`💡 Tip: Make sure the input file exists and path is correct`);
+    console.error(`💡 Tip: Make sure the input file exists and path is correct`)
   }
 
-  process.exit(1);
-});
+  process.exit(1)
+})

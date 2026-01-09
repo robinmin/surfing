@@ -30,45 +30,43 @@
  * and role extraction from JWT tokens.
  */
 export {
+  type AuthSession,
+  clearAuthState,
+  getCurrentSession,
+  getUser,
+  handlePopupCallback,
+  handleRedirectCallback,
+  initOIDC,
+  isAuthenticated,
+  isZitadelConfigured,
   // OIDC Client
   OIDCClient,
-  initOIDC,
+  // Types
+  type OIDCConfig,
+  type OIDCProvider,
+  type OIDCUserProfile,
+  onUserLoaded,
+  onUserUnloaded,
+  renewToken,
   // Convenience functions
   signInPopup,
   signInRedirect,
-  handlePopupCallback,
-  handleRedirectCallback,
   signOut,
-  getUser,
-  getCurrentSession,
-  isAuthenticated,
-  renewToken,
-  clearAuthState,
-  isZitadelConfigured,
-  onUserLoaded,
-  onUserUnloaded,
-  // Types
-  type OIDCConfig,
-  type OIDCUserProfile,
-  type AuthSession,
-  type OIDCProvider,
   type ZitadelIdProvider,
-} from '@turnstile/client/auth/oidc';
-
+} from '@turnstile/client/auth/oidc'
+export type {
+  AuthProvider,
+  AuthProviderConfig,
+  AuthSignInResponse,
+  IAuthProvider,
+} from '@turnstile/client/auth/providers'
 /**
  * Auth Provider Interface
  *
  * Generic authentication provider interface for implementing
  * different auth backends (Zitadel, Auth0, etc.).
  */
-export { AuthProviderUtils } from '@turnstile/client/auth/providers';
-
-export type {
-  IAuthProvider,
-  AuthProvider,
-  AuthProviderConfig,
-  AuthSignInResponse,
-} from '@turnstile/client/auth/providers';
+export { AuthProviderUtils } from '@turnstile/client/auth/providers'
 
 /**
  * Auth State Synchronization
@@ -77,16 +75,16 @@ export type {
  * Ensures auth state stays consistent across multiple browser tabs.
  */
 export {
+  type AuthSyncEvent,
+  type AuthSyncMessage,
+  type AuthSyncOptions,
+  cleanupAuthSync,
   initAuthSync,
-  onAuthSync,
   notifyLogin,
   notifyLogout,
   notifySessionRefresh,
-  cleanupAuthSync,
-  type AuthSyncOptions,
-  type AuthSyncMessage,
-  type AuthSyncEvent,
-} from '@turnstile/client/auth/sync';
+  onAuthSync,
+} from '@turnstile/client/auth/sync'
 
 // ============================================================================
 // Subscription Module (@turnstile/client/subscription)
@@ -99,14 +97,14 @@ export {
  * Can be used with any app-specific role hierarchy.
  */
 export {
-  hasAccess,
-  hasRole,
-  hasRequiredRole,
   getHighestTierRole,
-  getTierFromRoles,
   getSubscriptionFromRoles,
   getSubscriptionFromSession,
-} from '@turnstile/client/subscription/access';
+  getTierFromRoles,
+  hasAccess,
+  hasRequiredRole,
+  hasRole,
+} from '@turnstile/client/subscription/access'
 
 /**
  * Subscription Types
@@ -117,10 +115,10 @@ export type {
   RoleHierarchy,
   RoleToTierMapping,
   SubscriptionConfig,
-  UserSubscription,
-  SubscriptionTier,
   SubscriptionStatus,
-} from '@turnstile/client/subscription/types';
+  SubscriptionTier,
+  UserSubscription,
+} from '@turnstile/client/subscription/types'
 
 // ============================================================================
 // Checkout Module (@turnstile/client)
@@ -133,9 +131,9 @@ export type {
  * - Admin: For admin operations (requires admin API key)
  * - Customer: For customer-facing operations (session, portal)
  */
-export { TurnstileAdminClient } from '@turnstile/client/checkout/admin';
+export { TurnstileAdminClient } from '@turnstile/client/checkout/admin'
 
-export { TurnstileCustomerClient } from '@turnstile/client/checkout/customer';
+export { TurnstileCustomerClient } from '@turnstile/client/checkout/customer'
 
 // ============================================================================
 // Base Module (@turnstile/client/base + @turnstile/client/types)
@@ -146,6 +144,11 @@ export { TurnstileCustomerClient } from '@turnstile/client/checkout/customer';
  *
  * Low-level API client for making authenticated requests to Turnstile API.
  */
-export { BaseApiClient, TurnstileError } from '@turnstile/client/base';
+export { BaseApiClient, TurnstileError } from '@turnstile/client/base'
 
-export type { ApiResponse, ApiErrorResponse, TurnstileClientOptions, RequestOptions } from '@turnstile/client/types';
+export type {
+  ApiErrorResponse,
+  ApiResponse,
+  RequestOptions,
+  TurnstileClientOptions,
+} from '@turnstile/client/types'

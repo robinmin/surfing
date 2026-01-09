@@ -1,18 +1,18 @@
 ---
-import Layout from '~/layouts/PageLayout.astro';
-import Hero from '~/components/widgets/Hero.astro';
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import Headline from '~/components/ui/Headline.astro';
-import Button from '~/components/ui/Button.astro';
-import { Icon } from 'astro-icon/components';
-import { t, getCurrentLanguage } from '~/i18n';
+import { Icon } from 'astro-icon/components'
+import Button from '~/components/ui/Button.astro'
+import Headline from '~/components/ui/Headline.astro'
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro'
+import Hero from '~/components/widgets/Hero.astro'
+import { getCurrentLanguage, t } from '~/i18n'
+import Layout from '~/layouts/PageLayout.astro'
 
-const lang = getCurrentLanguage();
+const lang = getCurrentLanguage()
 
 const metadata = {
   title: t('pages.pricing.title', lang),
   description: t('pages.pricing.description', lang),
-};
+}
 
 // Pricing tier data
 const pricingTiers = [
@@ -68,14 +68,18 @@ const pricingTiers = [
     cta: { textKey: 'pages.pricing.cta.goPremium', action: 'checkout' },
     highlighted: false,
   },
-];
+]
 
 // Billing cycle options
 const billingCycles = [
   { id: 'monthly', labelKey: 'pages.pricing.billing.monthly' },
-  { id: 'yearly', labelKey: 'pages.pricing.billing.yearly', savingsKey: 'pages.pricing.billing.yearlySavings' },
+  {
+    id: 'yearly',
+    labelKey: 'pages.pricing.billing.yearly',
+    savingsKey: 'pages.pricing.billing.yearlySavings',
+  },
   { id: 'lifetime', labelKey: 'pages.pricing.billing.lifetime' },
-];
+]
 ---
 
 <Layout metadata={metadata}>

@@ -1,18 +1,15 @@
 ---
-import merge from 'lodash.merge';
-import { AstroSeo } from '@astrolib/seo';
-import { getRelativeLocaleUrl } from 'astro:i18n';
-
-import type { Props as AstroSeoProps } from '@astrolib/seo';
-
-import { SITE, METADATA, I18N } from 'astrowind:config';
-import type { MetaData } from '~/types';
-import { getCanonical } from '~/utils/permalinks';
-
-import { adaptOpenGraphImages } from '~/utils/images';
+import { getRelativeLocaleUrl } from 'astro:i18n'
+import { I18N, METADATA, SITE } from 'astrowind:config'
+import type { Props as AstroSeoProps } from '@astrolib/seo'
+import { AstroSeo } from '@astrolib/seo'
+import merge from 'lodash.merge'
+import type { MetaData } from '~/types'
+import { adaptOpenGraphImages } from '~/utils/images'
+import { getCanonical } from '~/utils/permalinks'
 
 export interface Props extends MetaData {
-  dontUseTitleTemplate?: boolean;
+  dontUseTitleTemplate?: boolean
 }
 
 const {
@@ -23,14 +20,14 @@ const {
   description,
   openGraph = {},
   twitter = {},
-} = Astro.props;
+} = Astro.props
 
 // If we have a custom title from markdown metadata, use the format "Surfing -- Custom Title"
 // But only add "Surfing -- " if the title doesn't already start with it (check both dash variations)
 const finalTitle =
   title && !title.startsWith('Surfing -- ') && !title.startsWith('Surfing — ')
     ? `Surfing -- ${title}`
-    : title || undefined;
+    : title || undefined
 
 const seoProps: AstroSeoProps = merge(
   {
@@ -62,7 +59,10 @@ const seoProps: AstroSeoProps = merge(
               {
                 rel: 'alternate',
                 hreflang: 'x-default',
-                href: new URL(getRelativeLocaleUrl(I18N.defaultLocale, Astro.url.pathname), Astro.site).href,
+                href: new URL(
+                  getRelativeLocaleUrl(I18N.defaultLocale, Astro.url.pathname),
+                  Astro.site
+                ).href,
               },
             ]
           : [],
@@ -94,7 +94,7 @@ const seoProps: AstroSeoProps = merge(
       ...(finalTitle && { title: finalTitle }), // Use finalTitle for Twitter title if we have it
     },
   }
-);
+)
 ---
 
 <AstroSeo {...{ ...seoProps, openGraph: await adaptOpenGraphImages(seoProps?.openGraph, Astro.site) }} />

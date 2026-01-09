@@ -5,43 +5,43 @@
  * Displays the user's current subscription tier as a badge.
  * Used in user menus, profile sections, and content headers.
  */
-import { Icon } from 'astro-icon/components';
-import type { SurfingSubscriptionTier } from '~/lib/subscription';
-import { getTierDisplayName, getTierBadgeClass } from '~/lib/subscription';
+import { Icon } from 'astro-icon/components'
+import type { SurfingSubscriptionTier } from '~/lib/subscription'
+import { getTierBadgeClass, getTierDisplayName } from '~/lib/subscription'
 
 interface Props {
   /** User's subscription tier */
-  tier: SurfingSubscriptionTier;
+  tier: SurfingSubscriptionTier
   /** Size variant */
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg'
   /** Show icon */
-  showIcon?: boolean;
+  showIcon?: boolean
   /** Additional CSS classes */
-  class?: string;
+  class?: string
 }
 
-const { tier, size = 'md', showIcon = true, class: className = '' } = Astro.props;
+const { tier, size = 'md', showIcon = true, class: className = '' } = Astro.props
 
-const displayName = getTierDisplayName(tier);
-const badgeClass = getTierBadgeClass(tier);
+const displayName = getTierDisplayName(tier)
+const badgeClass = getTierBadgeClass(tier)
 
 const sizeClasses = {
   sm: 'text-xs px-2 py-0.5',
   md: 'text-sm px-2.5 py-1',
   lg: 'text-base px-3 py-1.5',
-};
+}
 
 const iconSizes = {
   sm: 'w-3 h-3',
   md: 'w-4 h-4',
   lg: 'w-5 h-5',
-};
+}
 
 const tierIcons: Record<SurfingSubscriptionTier, string> = {
   free: 'tabler:user',
   standard: 'tabler:star',
   premium: 'tabler:crown',
-};
+}
 ---
 
 <span

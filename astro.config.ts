@@ -1,53 +1,53 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+import mdx from '@astrojs/mdx'
+import partytown from '@astrojs/partytown'
+import sitemap from '@astrojs/sitemap'
+import tailwind from '@astrojs/tailwind'
+import cookieconsent from '@jop-software/astro-cookieconsent'
+import sentry from '@sentry/astro'
+import type { AstroIntegration } from 'astro'
+import { defineConfig } from 'astro/config'
+import compress from 'astro-compress'
+import expressiveCode from 'astro-expressive-code'
+import icon from 'astro-icon'
+import pagefind from 'astro-pagefind'
+import robotsTxt from 'astro-robots-txt'
+import path from 'path'
+import rehypeExternalLinks from 'rehype-external-links'
+import rehypeMermaid from 'rehype-mermaid'
+import rehypeSlug from 'rehype-slug'
+import remarkToc from 'remark-toc'
+import { fileURLToPath } from 'url'
+import {
+  lazyImagesRehypePlugin,
+  readingTimeRemarkPlugin,
+  responsiveTablesRehypePlugin,
+} from './src/utils/frontmatter'
+import surfing from './vendor/integration'
+import loadConfig from './vendor/integration/utils/loadConfig'
 
-import { defineConfig } from 'astro/config';
-
-import sitemap from '@astrojs/sitemap';
-import tailwind from '@astrojs/tailwind';
-import mdx from '@astrojs/mdx';
-import partytown from '@astrojs/partytown';
-import icon from 'astro-icon';
-import compress from 'astro-compress';
-import type { AstroIntegration } from 'astro';
-
-import expressiveCode from 'astro-expressive-code';
-import pagefind from 'astro-pagefind';
-import robotsTxt from 'astro-robots-txt';
-
-import surfing from './vendor/integration';
-import cookieconsent from '@jop-software/astro-cookieconsent';
-
-import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
-import loadConfig from './vendor/integration/utils/loadConfig';
-import rehypeMermaid from 'rehype-mermaid';
-import remarkToc from 'remark-toc';
-import rehypeSlug from 'rehype-slug';
-import rehypeExternalLinks from 'rehype-external-links';
-
-import sentry from '@sentry/astro';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Load configuration to check if cookie consent is enabled
-const config = (await loadConfig('./src/config.yaml')) as any;
-const isCookieConsentEnabled = config?.cookieConsent?.enabled ?? true;
-const isIncrementalContentCacheEnabled = config?.build?.incrementalContentCache ?? false;
+const config = (await loadConfig('./src/config.yaml')) as any
+const isCookieConsentEnabled = config?.cookieConsent?.enabled ?? true
+const isIncrementalContentCacheEnabled = config?.build?.incrementalContentCache ?? false
 
 // Extract domain from site URL for cookie configuration
-const siteUrl = config?.site?.site || 'https://surfing.salty.vip';
-const siteDomain = new URL(siteUrl).hostname;
+const siteUrl = config?.site?.site || 'https://surfing.salty.vip'
+const siteDomain = new URL(siteUrl).hostname
 
 // Set environment variables for client-side config access
-process.env.PUBLIC_SENTRY_PROJECT = config?.sentry?.project || '4510129071783936';
-process.env.PUBLIC_SENTRY_ORG = config?.sentry?.org || '40fintech';
+process.env.PUBLIC_SENTRY_PROJECT = config?.sentry?.project || '4510129071783936'
+process.env.PUBLIC_SENTRY_ORG = config?.sentry?.org || '40fintech'
 
-const hasExternalScripts = true; // Enable partytown for analytics
+const hasExternalScripts = true // Enable partytown for analytics
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
-  hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
+  hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : []
 
-const whenCookieConsentEnabled = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
-  isCookieConsentEnabled ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
+const whenCookieConsentEnabled = (
+  items: (() => AstroIntegration) | (() => AstroIntegration)[] = []
+) =>
+  isCookieConsentEnabled ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : []
 
 export default defineConfig({
   output: 'static',
@@ -155,7 +155,8 @@ export default defineConfig({
                 acceptAllBtn: 'Accept All',
                 acceptNecessaryBtn: 'Reject All',
                 showPreferencesBtn: 'Manage Individual Preferences',
-                footer: '<a href="/privacy">Privacy Policy</a>\n<a href="/terms">Terms of Service</a>',
+                footer:
+                  '<a href="/privacy">Privacy Policy</a>\n<a href="/terms">Terms of Service</a>',
               },
               preferencesModal: {
                 title: 'Cookie Preferences',
@@ -262,26 +263,35 @@ export default defineConfig({
           // Skip during type checking or if module runner is closed
           try {
             // Only run in production or if explicitly enabled
-            if (process.env.NODE_ENV !== 'production' && process.env.FETCH_TURNSTILE_CONFIG !== 'true') {
-              console.log('ℹ️  Skipping Turnstile config fetch (development mode or FETCH_TURNSTILE_CONFIG not set)');
-              return;
+            if (
+              process.env.NODE_ENV !== 'production' &&
+              process.env.FETCH_TURNSTILE_CONFIG !== 'true'
+            ) {
+              console.log(
+                'ℹ️  Skipping Turnstile config fetch (development mode or FETCH_TURNSTILE_CONFIG not set)'
+              )
+              return
             }
 
-            console.log('🔄 Fetching Turnstile configuration...');
-            const { execFileSync } = await import('child_process');
+            console.log('🔄 Fetching Turnstile configuration...')
+            const { execFileSync } = await import('child_process')
             execFileSync('node', ['scripts/fetch-turnstile-config.mjs'], {
               stdio: 'inherit',
               cwd: process.cwd(),
-            });
+            })
           } catch (error: unknown) {
             // Ignore errors during type checking (module runner closed)
-            const err = error as Error;
+            const err = error as Error
             if (err.message?.includes('module runner has been closed')) {
-              console.log('ℹ️  Skipping Turnstile config fetch (module runner closed during type check)');
-              return;
+              console.log(
+                'ℹ️  Skipping Turnstile config fetch (module runner closed during type check)'
+              )
+              return
             }
-            console.error('❌ Failed to fetch Turnstile config:', error);
-            throw new Error('Build failed: Could not fetch application configuration from Turnstile API');
+            console.error('❌ Failed to fetch Turnstile config:', error)
+            throw new Error(
+              'Build failed: Could not fetch application configuration from Turnstile API'
+            )
           }
         },
       },
@@ -294,4 +304,4 @@ export default defineConfig({
       },
     },
   },
-});
+})

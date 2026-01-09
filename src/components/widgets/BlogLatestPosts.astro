@@ -1,20 +1,19 @@
 ---
-import { APP_BLOG } from 'astrowind:config';
+import { APP_BLOG } from 'astrowind:config'
 
-import Grid from '~/components/blog/Grid.astro';
-
-import { getBlogPermalink } from '~/utils/permalinks';
-import { findLatestPosts } from '~/utils/blog';
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import type { Widget } from '~/types';
-import Button from '~/components/ui/Button.astro';
+import Grid from '~/components/blog/Grid.astro'
+import Button from '~/components/ui/Button.astro'
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro'
+import type { Widget } from '~/types'
+import { findLatestPosts } from '~/utils/blog'
+import { getBlogPermalink } from '~/utils/permalinks'
 
 export interface Props extends Widget {
-  title?: string;
-  linkText?: string;
-  linkUrl?: string | URL;
-  information?: string;
-  count?: number;
+  title?: string
+  linkText?: string
+  linkUrl?: string | URL
+  information?: string
+  count?: number
 }
 
 const {
@@ -28,11 +27,11 @@ const {
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
-} = Astro.props;
+} = Astro.props
 
 // Get latest posts when blog is enabled (NO language filtering - client will filter)
-const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count: count * 3 }) : [];
-const resolvedPosts = posts;
+const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count: count * 3 }) : []
+const resolvedPosts = posts
 ---
 
 {

@@ -9,20 +9,20 @@ export const getEnvVar = (key: string, fallback: string = ''): string => {
   try {
     // Check if we're in a browser environment
     if (typeof window !== 'undefined' && import.meta.env) {
-      return import.meta.env[key] || fallback;
+      return import.meta.env[key] || fallback
     }
 
     // Check if we're in a Node.js environment (for SSR)
     if (typeof process !== 'undefined' && process.env) {
-      return process.env[key] || fallback;
+      return process.env[key] || fallback
     }
 
-    return fallback;
+    return fallback
   } catch (error) {
-    console.warn(`Failed to access environment variable ${key}:`, error);
-    return fallback;
+    console.warn(`Failed to access environment variable ${key}:`, error)
+    return fallback
   }
-};
+}
 
 /**
  * Get public environment variable (browser-safe)
@@ -30,14 +30,14 @@ export const getEnvVar = (key: string, fallback: string = ''): string => {
 export const getPublicEnvVar = (key: string, fallback: string = ''): string => {
   try {
     if (typeof import.meta.env !== 'undefined') {
-      return import.meta.env[key] || fallback;
+      return import.meta.env[key] || fallback
     }
-    return fallback;
+    return fallback
   } catch (error) {
-    console.warn(`Failed to access public environment variable ${key}:`, error);
-    return fallback;
+    console.warn(`Failed to access public environment variable ${key}:`, error)
+    return fallback
   }
-};
+}
 
 /**
  * Zitadel authentication configuration
@@ -50,7 +50,8 @@ export const authConfig = {
     postLogoutUri: getPublicEnvVar('PUBLIC_ZITADEL_POST_LOGOUT_URI', ''),
     orgId: getPublicEnvVar('PUBLIC_ZITADEL_ORG_ID', ''),
     isEnabled:
-      getPublicEnvVar('PUBLIC_ZITADEL_AUTHORITY', '') !== '' && getPublicEnvVar('PUBLIC_ZITADEL_CLIENT_ID', '') !== '',
+      getPublicEnvVar('PUBLIC_ZITADEL_AUTHORITY', '') !== '' &&
+      getPublicEnvVar('PUBLIC_ZITADEL_CLIENT_ID', '') !== '',
     idpHints: {
       google: getPublicEnvVar('PUBLIC_ZITADEL_IDP_GOOGLE', ''),
       github: getPublicEnvVar('PUBLIC_ZITADEL_IDP_GITHUB', ''),
@@ -58,4 +59,4 @@ export const authConfig = {
       microsoft: getPublicEnvVar('PUBLIC_ZITADEL_IDP_MICROSOFT', ''),
     },
   },
-};
+}

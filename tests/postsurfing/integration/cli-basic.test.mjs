@@ -4,114 +4,114 @@
  * Integration tests for basic CLI functionality
  */
 
-import { TestUtils } from '../test-utils.mjs';
+import { TestUtils } from '../test-utils.mjs'
 
-const utils = new TestUtils();
+const utils = new TestUtils()
 
 async function testBasicCLI() {
-  console.log('Testing basic CLI functionality...');
+  console.log('Testing basic CLI functionality...')
 
-  utils.setup();
+  utils.setup()
 
   try {
     // Test 1: Help command
-    await testHelpCommand();
+    await testHelpCommand()
 
     // Test 2: Version information
-    await testVersionInfo();
+    await testVersionInfo()
 
     // Test 3: Error handling for missing arguments
-    await testMissingArguments();
+    await testMissingArguments()
 
     // Test 4: Error handling for invalid content type
-    await testInvalidContentType();
+    await testInvalidContentType()
 
     // Test 5: Error handling for invalid language
-    await testInvalidLanguage();
+    await testInvalidLanguage()
 
     // Test 6: Dry run mode
-    await testDryRunMode();
+    await testDryRunMode()
 
-    utils.success('All basic CLI tests passed');
+    utils.success('All basic CLI tests passed')
   } catch (error) {
-    utils.error(`Basic CLI test failed: ${error.message}`);
-    throw error;
+    utils.error(`Basic CLI test failed: ${error.message}`)
+    throw error
   } finally {
-    utils.cleanup();
+    utils.cleanup()
   }
 }
 
 async function testHelpCommand() {
-  utils.log('Testing help command...');
+  utils.log('Testing help command...')
 
-  const result = await utils.runCLI(['--help']);
+  const result = await utils.runCLI(['--help'])
 
-  utils.assert(result.success, 'Help command should succeed');
-  utils.assertContains(result.stdout, 'PostSurfing CLI Tool', 'Should show tool name');
-  utils.assertContains(result.stdout, 'USAGE:', 'Should show usage information');
-  utils.assertContains(result.stdout, 'EXAMPLES:', 'Should show examples');
-  utils.assertContains(result.stdout, 'articles', 'Should mention articles content type');
-  utils.assertContains(result.stdout, 'showcase', 'Should mention showcase content type');
-  utils.assertContains(result.stdout, 'documents', 'Should mention documents content type');
+  utils.assert(result.success, 'Help command should succeed')
+  utils.assertContains(result.stdout, 'PostSurfing CLI Tool', 'Should show tool name')
+  utils.assertContains(result.stdout, 'USAGE:', 'Should show usage information')
+  utils.assertContains(result.stdout, 'EXAMPLES:', 'Should show examples')
+  utils.assertContains(result.stdout, 'articles', 'Should mention articles content type')
+  utils.assertContains(result.stdout, 'showcase', 'Should mention showcase content type')
+  utils.assertContains(result.stdout, 'documents', 'Should mention documents content type')
 
-  utils.success('Help command test passed');
+  utils.success('Help command test passed')
 }
 
 async function testVersionInfo() {
-  utils.log('Testing version information...');
+  utils.log('Testing version information...')
 
-  const result = await utils.runCLI(['--help']);
+  const result = await utils.runCLI(['--help'])
 
-  utils.assert(result.success, 'Should succeed');
-  utils.assertContains(result.stdout, 'v1.0.0-beta.52', 'Should show version number');
+  utils.assert(result.success, 'Should succeed')
+  utils.assertContains(result.stdout, 'v1.0.0-beta.52', 'Should show version number')
 
-  utils.success('Version info test passed');
+  utils.success('Version info test passed')
 }
 
 async function testMissingArguments() {
-  utils.log('Testing missing arguments error...');
+  utils.log('Testing missing arguments error...')
 
   // Test with no arguments
-  const result1 = await utils.runCLI([]);
-  utils.assert(!result1.success, 'Should fail with no arguments');
-  utils.assertContains(result1.output, 'File path is required', 'Should show file path error');
+  const result1 = await utils.runCLI([])
+  utils.assert(!result1.success, 'Should fail with no arguments')
+  utils.assertContains(result1.output, 'File path is required', 'Should show file path error')
 
   // Test with file but no type
-  const result2 = await utils.runCLI(['test.md']);
-  utils.assert(!result2.success, 'Should fail with no content type');
-  utils.assertContains(result2.output, 'Content type is required', 'Should show content type error');
+  const result2 = await utils.runCLI(['test.md'])
+  utils.assert(!result2.success, 'Should fail with no content type')
+  utils.assertContains(result2.output, 'Content type is required', 'Should show content type error')
 
-  utils.success('Missing arguments test passed');
+  utils.success('Missing arguments test passed')
 }
 
 async function testInvalidContentType() {
-  utils.log('Testing invalid content type error...');
+  utils.log('Testing invalid content type error...')
 
-  const result = await utils.runCLI(['test.md', '--type', 'invalid']);
+  const result = await utils.runCLI(['test.md', '--type', 'invalid'])
 
-  utils.assert(!result.success, 'Should fail with invalid content type');
-  utils.assertContains(result.output, 'Invalid content type', 'Should show invalid type error');
-  utils.assertContains(result.output, 'articles, showcase, documents', 'Should show valid types');
+  utils.assert(!result.success, 'Should fail with invalid content type')
+  utils.assertContains(result.output, 'Invalid content type', 'Should show invalid type error')
+  utils.assertContains(result.output, 'articles, showcase, documents', 'Should show valid types')
 
-  utils.success('Invalid content type test passed');
+  utils.success('Invalid content type test passed')
 }
 
 async function testInvalidLanguage() {
-  utils.log('Testing invalid language error...');
+  utils.log('Testing invalid language error...')
 
-  const result = await utils.runCLI(['test.md', '--type', 'articles', '--lang', 'invalid']);
+  const result = await utils.runCLI(['test.md', '--type', 'articles', '--lang', 'invalid'])
 
-  utils.assert(!result.success, 'Should fail with invalid language');
-  utils.assertContains(result.output, 'Invalid language', 'Should show invalid language warning');
-  utils.assertContains(result.output, 'defaulting to "en"', 'Should show default fallback');
+  utils.assert(!result.success, 'Should fail with invalid language')
+  utils.assertContains(result.output, 'Invalid language', 'Should show invalid language warning')
+  utils.assertContains(result.output, 'defaulting to "en"', 'Should show default fallback')
 
-  utils.success('Invalid language test passed');
+  utils.success('Invalid language test passed')
 }
 
 async function testDryRunMode() {
-  utils.log('Testing dry run mode...');
+  utils.log('Testing dry run mode...')
 
-  const fixturePath = utils.copyFixture('simple-article.md');
+  const fixturePath = utils.copyFixture('simple-article.md')
   const result = await utils.runCLI([
     fixturePath,
     '--type',
@@ -122,17 +122,21 @@ async function testDryRunMode() {
     '--no-build',
     '--no-commit',
     '--verbose',
-  ]);
+  ])
 
-  utils.assert(result.success, 'Dry run should succeed');
-  utils.assertContains(result.output, 'Dry run mode', 'Should indicate dry run mode');
-  utils.assertContains(result.output, 'Content published successfully', 'Should show success message');
+  utils.assert(result.success, 'Dry run should succeed')
+  utils.assertContains(result.output, 'Dry run mode', 'Should indicate dry run mode')
+  utils.assertContains(
+    result.output,
+    'Content published successfully',
+    'Should show success message'
+  )
 
-  utils.success('Dry run mode test passed');
+  utils.success('Dry run mode test passed')
 }
 
 // Run tests
 testBasicCLI().catch((error) => {
-  console.error('Test failed:', error);
-  process.exit(1);
-});
+  console.error('Test failed:', error)
+  process.exit(1)
+})

@@ -6,14 +6,16 @@
  * Surfing-specific type safety and business logic.
  */
 
-import type { AuthSession } from '../turnstile-client';
-import type { SurfingRole, SurfingSubscriptionTier, SurfingUserSubscription } from './types';
-
+import type { AuthSession } from '../turnstile-client'
 // Import turnstile utilities for internal use
-import { hasRole, hasRequiredRole, getHighestTierRole } from '../turnstile-client';
-
+import { getHighestTierRole, hasRequiredRole, hasRole } from '../turnstile-client'
 // Import Surfing-specific constants
-import { SURFING_ROLE_HIERARCHY, SURFING_ROLE_TO_TIER, DEFAULT_SURFING_SUBSCRIPTION } from './constants';
+import {
+  DEFAULT_SURFING_SUBSCRIPTION,
+  SURFING_ROLE_HIERARCHY,
+  SURFING_ROLE_TO_TIER,
+} from './constants'
+import type { SurfingRole, SurfingSubscriptionTier, SurfingUserSubscription } from './types'
 
 // ============================================================================
 // Surfing-Specific Access Control Functions
@@ -28,25 +30,27 @@ import { SURFING_ROLE_HIERARCHY, SURFING_ROLE_TO_TIER, DEFAULT_SURFING_SUBSCRIPT
  * @param session - Auth session with roles array
  * @returns SurfingUserSubscription based on roles
  */
-export function getSurfingSubscriptionFromRoles(session: AuthSession | null): SurfingUserSubscription {
+export function getSurfingSubscriptionFromRoles(
+  session: AuthSession | null
+): SurfingUserSubscription {
   if (!session || !session.roles || session.roles.length === 0) {
-    return DEFAULT_SURFING_SUBSCRIPTION;
+    return DEFAULT_SURFING_SUBSCRIPTION
   }
 
   // Find the highest tier role
-  const highestRole = getHighestTierRole(session.roles, SURFING_ROLE_HIERARCHY);
+  const highestRole = getHighestTierRole(session.roles, SURFING_ROLE_HIERARCHY)
 
   if (!highestRole) {
-    return DEFAULT_SURFING_SUBSCRIPTION;
+    return DEFAULT_SURFING_SUBSCRIPTION
   }
 
   // Map role to subscription tier
-  const tier = SURFING_ROLE_TO_TIER[highestRole] || 'free';
+  const tier = SURFING_ROLE_TO_TIER[highestRole] || 'free'
 
   return {
     tier,
     status: 'active', // Roles are always active (no role = no access)
-  };
+  }
 }
 
 /**
@@ -58,9 +62,9 @@ export function getSurfingSubscriptionFromRoles(session: AuthSession | null): Su
  */
 export function hasSurfingRole(session: AuthSession | null, requiredRole: SurfingRole): boolean {
   if (!session || !session.roles) {
-    return false;
+    return false
   }
-  return hasRole(session.roles, requiredRole);
+  return hasRole(session.roles, requiredRole)
 }
 
 /**
@@ -70,12 +74,15 @@ export function hasSurfingRole(session: AuthSession | null, requiredRole: Surfin
  * @param requiredRole - Minimum role tier required
  * @returns true if user has at least the required role
  */
-export function hasRequiredSurfingRole(session: AuthSession | null, requiredRole: SurfingRole): boolean {
+export function hasRequiredSurfingRole(
+  session: AuthSession | null,
+  requiredRole: SurfingRole
+): boolean {
   if (!session || !session.roles || session.roles.length === 0) {
-    return false;
+    return false
   }
 
-  return hasRequiredRole(session.roles, requiredRole, SURFING_ROLE_HIERARCHY);
+  return hasRequiredRole(session.roles, requiredRole, SURFING_ROLE_HIERARCHY)
 }
 
 /**
@@ -87,7 +94,7 @@ export function hasRequiredSurfingRole(session: AuthSession | null, requiredRole
  * @returns true if user has surfing-standard or higher role
  */
 export function canAccessPremiumArticlesByRole(session: AuthSession | null): boolean {
-  return hasRequiredSurfingRole(session, 'surfing-standard');
+  return hasRequiredSurfingRole(session, 'surfing-standard')
 }
 
 /**
@@ -99,7 +106,7 @@ export function canAccessPremiumArticlesByRole(session: AuthSession | null): boo
  * @returns true if user has surfing-standard or higher role
  */
 export function canDownloadCheatsheetsByRole(session: AuthSession | null): boolean {
-  return hasRequiredSurfingRole(session, 'surfing-standard');
+  return hasRequiredSurfingRole(session, 'surfing-standard')
 }
 
 /**
@@ -111,7 +118,7 @@ export function canDownloadCheatsheetsByRole(session: AuthSession | null): boole
  * @returns true if user has surfing-premium role
  */
 export function hasApiAccessByRole(session: AuthSession | null): boolean {
-  return hasSurfingRole(session, 'surfing-premium');
+  return hasSurfingRole(session, 'surfing-premium')
 }
 
 /**
@@ -121,6 +128,6 @@ export function hasApiAccessByRole(session: AuthSession | null): boolean {
  * @returns Surfing subscription tier
  */
 export function getSurfingTierFromRoles(session: AuthSession | null): SurfingSubscriptionTier {
-  const subscription = getSurfingSubscriptionFromRoles(session);
-  return subscription.tier;
+  const subscription = getSurfingSubscriptionFromRoles(session)
+  return subscription.tier
 }

@@ -1,28 +1,28 @@
 ---
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { type CollectionEntry, getCollection, render } from 'astro:content'
 
-import ShowcaseLayout from '~/layouts/ShowcaseLayout.astro';
+import ShowcaseLayout from '~/layouts/ShowcaseLayout.astro'
 
 export async function getStaticPaths() {
-  const showcases = await getCollection('showcase', ({ data }) => data.draft !== true);
+  const showcases = await getCollection('showcase', ({ data }) => data.draft !== true)
 
   return showcases.map((showcase) => ({
     params: {
       slug: showcase.data.slug || showcase.id,
     },
     props: { showcase },
-  }));
+  }))
 }
 
 interface Props {
-  showcase: CollectionEntry<'showcase'>;
+  showcase: CollectionEntry<'showcase'>
 }
 
-const { showcase }: Props = Astro.props;
-const { Content } = await render(showcase);
+const { showcase }: Props = Astro.props
+const { Content } = await render(showcase)
 
 // Check if this is an HTML-based interactive showcase
-const hasCustomHTML = showcase.body?.trim().startsWith('<') ?? false;
+const hasCustomHTML = showcase.body?.trim().startsWith('<') ?? false
 
 // Merge custom metadata with defaults
 const metadata = {
@@ -40,14 +40,14 @@ const metadata = {
     ...(showcase.data.image && { images: [{ url: showcase.data.image }] }),
     ...showcase.data.metadata?.openGraph,
   },
-};
+}
 
 // Language selector configuration for detail pages
 const languageSelectorConfig = {
   translations: showcase.data.translations || ['en'],
   isDetailPage: true,
   collectionName: 'showcase',
-};
+}
 ---
 
 <ShowcaseLayout metadata={metadata} languageSelectorConfig={languageSelectorConfig}>

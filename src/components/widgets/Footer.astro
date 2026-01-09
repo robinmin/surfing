@@ -1,31 +1,37 @@
 ---
-import { Icon } from 'astro-icon/components';
-import { SITE } from 'astrowind:config';
-import { getHomePermalink } from '~/utils/permalinks';
-import { t, getCurrentLanguage } from '~/i18n';
+import { SITE } from 'astrowind:config'
+import { Icon } from 'astro-icon/components'
+import { getCurrentLanguage, t } from '~/i18n'
+import { getHomePermalink } from '~/utils/permalinks'
 
 interface Link {
-  textKey?: string;
-  href?: string;
-  ariaLabel?: string;
-  icon?: string;
+  textKey?: string
+  href?: string
+  ariaLabel?: string
+  icon?: string
 }
 
 interface Links {
-  titleKey?: string;
-  links: Array<Link>;
+  titleKey?: string
+  links: Array<Link>
 }
 
 export interface Props {
-  links: Array<Links>;
-  secondaryLinks: Array<Link>;
-  socialLinks: Array<Link>;
-  footNoteKey?: string;
-  theme?: string;
+  links: Array<Links>
+  secondaryLinks: Array<Link>
+  socialLinks: Array<Link>
+  footNoteKey?: string
+  theme?: string
 }
 
-const { socialLinks = [], secondaryLinks = [], links = [], footNoteKey = '', theme = 'light' } = Astro.props;
-const lang = getCurrentLanguage();
+const {
+  socialLinks = [],
+  secondaryLinks = [],
+  links = [],
+  footNoteKey = '',
+  theme = 'light',
+} = Astro.props
+const lang = getCurrentLanguage()
 ---
 
 <footer class:list={[{ dark: theme === 'dark' }, 'relative border-t border-gray-200 dark:border-slate-800 not-prose']}>

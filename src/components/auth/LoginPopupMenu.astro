@@ -5,14 +5,14 @@
  * Displays above the avatar button with provider icons + text
  * Supports Google, GitHub, Apple, and Microsoft via Zitadel OIDC
  */
-import { Icon } from 'astro-icon/components';
-import { t, getCurrentLanguage, type SupportedLanguage } from '~/i18n';
+import { Icon } from 'astro-icon/components'
+import { getCurrentLanguage, type SupportedLanguage, t } from '~/i18n'
 
 export interface Props {
-  className?: string;
+  className?: string
 }
 
-const { className = '' } = Astro.props;
+const { className = '' } = Astro.props
 
 // Provider configuration - all 4 providers enabled via Zitadel
 const providers = [
@@ -60,9 +60,9 @@ const providers = [
     hoverBorderClass: 'hover:border-blue-200 dark:hover:border-blue-800',
     hoverTextClass: 'group-hover:text-blue-600 dark:group-hover:text-blue-300',
   },
-];
+]
 
-const lang = (Astro.currentLocale || getCurrentLanguage()) as SupportedLanguage;
+const lang = (Astro.currentLocale || getCurrentLanguage()) as SupportedLanguage
 ---
 
 <div

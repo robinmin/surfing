@@ -5,7 +5,7 @@
  * These constants are specific to Surfing's business logic.
  */
 
-import type { SurfingSubscriptionTier, SurfingRole, SurfingUserSubscription } from './types';
+import type { SurfingRole, SurfingSubscriptionTier, SurfingUserSubscription } from './types'
 
 /**
  * Default subscription for unauthenticated or new users
@@ -13,7 +13,7 @@ import type { SurfingSubscriptionTier, SurfingRole, SurfingUserSubscription } fr
 export const DEFAULT_SURFING_SUBSCRIPTION: SurfingUserSubscription = {
   tier: 'free',
   status: 'active',
-};
+}
 
 /**
  * Surfing role hierarchy for access checking
@@ -23,7 +23,7 @@ export const SURFING_ROLE_HIERARCHY: Record<SurfingRole, number> = {
   'surfing-free': 0,
   'surfing-standard': 1,
   'surfing-premium': 2,
-};
+}
 
 /**
  * Map Surfing roles to subscription tiers
@@ -32,7 +32,7 @@ export const SURFING_ROLE_TO_TIER: Record<SurfingRole, SurfingSubscriptionTier> 
   'surfing-free': 'free',
   'surfing-standard': 'standard',
   'surfing-premium': 'premium',
-};
+}
 
 /**
  * Map generic tier names to Surfing tier names
@@ -44,7 +44,7 @@ export const SURFING_TIER_MAPPING: Record<string, SurfingSubscriptionTier> = {
   pro: 'standard', // Map "pro" to "standard" for compatibility
   premium: 'premium',
   enterprise: 'premium', // Map enterprise to premium
-};
+}
 
 /**
  * Map Turnstile status values to Surfing status
@@ -57,4 +57,4 @@ export const STATUS_MAPPING: Record<string, SurfingUserSubscription['status']> =
   paused: 'canceled',
   canceled: 'canceled',
   expired: 'expired',
-};
+}

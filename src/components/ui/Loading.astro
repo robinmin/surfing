@@ -1,14 +1,14 @@
 ---
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge'
 
 interface Props {
-  class?: string;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'spinner' | 'dots' | 'pulse';
-  color?: 'blue' | 'gray' | 'white' | 'green' | 'red';
-  text?: string;
-  showText?: boolean;
-  overlay?: boolean;
+  class?: string
+  size?: 'sm' | 'md' | 'lg'
+  variant?: 'spinner' | 'dots' | 'pulse'
+  color?: 'blue' | 'gray' | 'white' | 'green' | 'red'
+  text?: string
+  showText?: boolean
+  overlay?: boolean
 }
 
 const {
@@ -20,7 +20,7 @@ const {
   showText = true,
   overlay = false,
   ...rest
-} = Astro.props;
+} = Astro.props
 
 // Size configurations
 const sizeConfig = {
@@ -42,7 +42,7 @@ const sizeConfig = {
     container: 'p-4',
     text: 'text-base',
   },
-};
+}
 
 // Color configurations
 const colorConfig = {
@@ -86,13 +86,13 @@ const colorConfig = {
     bg: 'bg-red-50',
     border: 'border-red-200',
   },
-};
+}
 
-const sizes = sizeConfig[size];
-const colors = colorConfig[color];
+const sizes = sizeConfig[size]
+const colors = colorConfig[color]
 
 // Generate unique ID for this component instance
-const loaderId = `loader-${Math.random().toString(36).substring(2, 11)}`;
+const loaderId = `loader-${Math.random().toString(36).substring(2, 11)}`
 ---
 
 <div

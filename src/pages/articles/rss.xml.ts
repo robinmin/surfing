@@ -1,14 +1,14 @@
-import rss from '@astrojs/rss';
-import type { APIContext } from 'astro';
-import { getAllContent, filterContent, sortContent } from '~/utils/content';
+import rss from '@astrojs/rss'
+import type { APIContext } from 'astro'
+import { filterContent, getAllContent, sortContent } from '~/utils/content'
 
 export async function GET(context: APIContext) {
-  const articles = await getAllContent('articles');
-  const publishedArticles = filterContent(articles, { draft: false });
-  const sortedArticles = sortContent(publishedArticles, 'date', 'desc');
+  const articles = await getAllContent('articles')
+  const publishedArticles = filterContent(articles, { draft: false })
+  const sortedArticles = sortContent(publishedArticles, 'date', 'desc')
 
   // Extract domain from context.site for email addresses
-  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip';
+  const siteDomain = context.site ? new URL(context.site).hostname : 'surfing.salty.vip'
 
   return rss({
     title: 'Surfing Articles - AI Insights & Technical Content',
@@ -19,7 +19,10 @@ export async function GET(context: APIContext) {
       description: article.data.description || article.data.excerpt || '',
       link: `/articles/${article.data.slug || article.id}`,
       pubDate: article.data.publishDate || article.data.updateDate || new Date(),
-      categories: [...(article.data.category ? [article.data.category] : []), ...(article.data.tags || [])],
+      categories: [
+        ...(article.data.category ? [article.data.category] : []),
+        ...(article.data.tags || []),
+      ],
       author: article.data.author || 'Surfing Platform',
       customData: `
         <content:encoded><![CDATA[
@@ -41,5 +44,5 @@ export async function GET(context: APIContext) {
       content: 'http://purl.org/rss/1.0/modules/content/',
       dc: 'http://purl.org/dc/elements/1.1/',
     },
-  });
+  })
 }

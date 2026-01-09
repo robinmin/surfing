@@ -140,7 +140,8 @@ export const en = {
       description: 'Projects and demos',
       noProjects: 'No projects found.',
       heroTitle: 'Project Showcase',
-      heroSubtitle: 'Explore amazing projects, tools, and creations from our community of AI creators and developers.',
+      heroSubtitle:
+        'Explore amazing projects, tools, and creations from our community of AI creators and developers.',
       featuredProjects: 'Featured Projects',
       featuredDesc: 'Highlighted projects that showcase innovation and creativity',
       allProjects: 'All Projects',
@@ -161,7 +162,8 @@ export const en = {
       heroSubtitle:
         'Get access to premium content, cheatsheet downloads, and exclusive features with our subscription plans.',
       choosePlan: 'Choose Your Plan',
-      choosePlanSubtitle: 'Start free and upgrade anytime. All plans include access to our growing library of content.',
+      choosePlanSubtitle:
+        'Start free and upgrade anytime. All plans include access to our growing library of content.',
       popular: 'Popular',
       billing: {
         monthly: 'Monthly',
@@ -219,7 +221,8 @@ export const en = {
       articleTitle: 'Premium Article',
       articleDescription: 'This article is available to Standard and Premium subscribers.',
       downloadTitle: 'Subscriber Download',
-      downloadDescription: 'Download this cheatsheet as PDF with a Standard or Premium subscription.',
+      downloadDescription:
+        'Download this cheatsheet as PDF with a Standard or Premium subscription.',
       apiTitle: 'API Access Required',
       apiDescription: 'API access is available exclusively to Premium subscribers.',
       exclusiveTitle: 'Exclusive Content',
@@ -332,252 +335,252 @@ export const en = {
     signedInAs: 'Signed in as',
     welcomeBack: 'Welcome back',
   },
-};
+}
 
 export type Translation = {
   site: {
-    name: string;
-    description: string;
-  };
+    name: string
+    description: string
+  }
   nav: {
-    home: string;
-    articles: string;
-    showcase: string;
-    documents: string;
-    cheatsheets: string;
-    browse: string;
-    about: string;
-    content: string;
-    explore: string;
-  };
+    home: string
+    articles: string
+    showcase: string
+    documents: string
+    cheatsheets: string
+    browse: string
+    about: string
+    content: string
+    explore: string
+  }
   common: {
-    readMore: string;
-    loading: string;
-    search: string;
-    tags: string;
-    category: string;
-    author: string;
-    publishDate: string;
-    updateDate: string;
-    readingTime: string;
-    minutes: string;
-    viewProject: string;
-    sourceCode: string;
-    liveDemo: string;
-    browse: string;
-    terms: string;
-    privacyPolicy: string;
-    copyFailed: string;
-    copySuccess: string;
-  };
+    readMore: string
+    loading: string
+    search: string
+    tags: string
+    category: string
+    author: string
+    publishDate: string
+    updateDate: string
+    readingTime: string
+    minutes: string
+    viewProject: string
+    sourceCode: string
+    liveDemo: string
+    browse: string
+    terms: string
+    privacyPolicy: string
+    copyFailed: string
+    copySuccess: string
+  }
   pages: {
     home: {
-      title: string;
-      subtitle: string;
-      latestContent: string;
-      featuredContent: string;
-    };
+      title: string
+      subtitle: string
+      latestContent: string
+      featuredContent: string
+    }
     articles: {
-      title: string;
-      description: string;
-      noArticles: string;
-      heroTitle: string;
-      heroSubtitle: string;
-      featuredArticles: string;
-      featuredDesc: string;
-      allArticles: string;
-      allArticlesDesc: string;
-      noArticlesYet: string;
-      checkBackSoon: string;
-      featured: string;
-      anonymous: string;
-      minRead: string;
-      noDate: string;
-      noDescription: string;
-    };
+      title: string
+      description: string
+      noArticles: string
+      heroTitle: string
+      heroSubtitle: string
+      featuredArticles: string
+      featuredDesc: string
+      allArticles: string
+      allArticlesDesc: string
+      noArticlesYet: string
+      checkBackSoon: string
+      featured: string
+      anonymous: string
+      minRead: string
+      noDate: string
+      noDescription: string
+    }
     showcase: {
-      title: string;
-      description: string;
-      noProjects: string;
-      heroTitle: string;
-      heroSubtitle: string;
-      featuredProjects: string;
-      featuredDesc: string;
-      allProjects: string;
-      allProjectsDesc: string;
-      noShowcasesYet: string;
-      checkBackSoon: string;
-      featured: string;
-      learnMore: string;
-      liveDemo: string;
-      details: string;
-      demo: string;
-      code: string;
-    };
+      title: string
+      description: string
+      noProjects: string
+      heroTitle: string
+      heroSubtitle: string
+      featuredProjects: string
+      featuredDesc: string
+      allProjects: string
+      allProjectsDesc: string
+      noShowcasesYet: string
+      checkBackSoon: string
+      featured: string
+      learnMore: string
+      liveDemo: string
+      details: string
+      demo: string
+      code: string
+    }
     documents: {
-      title: string;
-      description: string;
-      noDocuments: string;
-      heroTitle: string;
-      heroSubtitle: string;
-      featuredDocuments: string;
-      allDocuments: string;
-      noDocumentsYet: string;
-      addDocuments: string;
-      directoryToStart: string;
-      legacy: string;
-      template: string;
-      snippet: string;
-      document: string;
-      minRead: string;
-    };
+      title: string
+      description: string
+      noDocuments: string
+      heroTitle: string
+      heroSubtitle: string
+      featuredDocuments: string
+      allDocuments: string
+      noDocumentsYet: string
+      addDocuments: string
+      directoryToStart: string
+      legacy: string
+      template: string
+      snippet: string
+      document: string
+      minRead: string
+    }
     cheatsheets: {
-      title: string;
-      description: string;
-      noCheatsheets: string;
-      heroTitle: string;
-      heroSubtitle: string;
-      featuredCheatsheets: string;
-      featuredDesc: string;
-      allCheatsheets: string;
-      allCheatsheetsDesc: string;
-      noCheatSheetsYet: string;
-      startCreating: string;
-      generatedBy: string;
-      downloadPdf: string;
-      minRead: string;
+      title: string
+      description: string
+      noCheatsheets: string
+      heroTitle: string
+      heroSubtitle: string
+      featuredCheatsheets: string
+      featuredDesc: string
+      allCheatsheets: string
+      allCheatsheetsDesc: string
+      noCheatSheetsYet: string
+      startCreating: string
+      generatedBy: string
+      downloadPdf: string
+      minRead: string
       difficulty: {
-        beginner: string;
-        intermediate: string;
-        advanced: string;
-      };
+        beginner: string
+        intermediate: string
+        advanced: string
+      }
       format: {
-        html: string;
-        markdown: string;
-      };
-    };
+        html: string
+        markdown: string
+      }
+    }
     browse: {
-      title: string;
-      description: string;
-      heroTitle: string;
-      heroSubtitle: string;
-      searchPlaceholder: string;
-      allTypes: string;
-      latestFirst: string;
-      oldestFirst: string;
-      titleAZ: string;
-      titleZA: string;
-      filterByTags: string;
-      filterByCategory: string;
-      noContentFound: string;
-      adjustFilters: string;
-      article: string;
-      showcase: string;
-      document: string;
-      cheatsheet: string;
-      blogPost: string;
-    };
+      title: string
+      description: string
+      heroTitle: string
+      heroSubtitle: string
+      searchPlaceholder: string
+      allTypes: string
+      latestFirst: string
+      oldestFirst: string
+      titleAZ: string
+      titleZA: string
+      filterByTags: string
+      filterByCategory: string
+      noContentFound: string
+      adjustFilters: string
+      article: string
+      showcase: string
+      document: string
+      cheatsheet: string
+      blogPost: string
+    }
     about: {
-      title: string;
-      description: string;
-      whatsHere: string;
-      articlesDesc: string;
-      showcaseDesc: string;
-      collectedContent: string;
-      collectedContentDesc: string;
-    };
-  };
+      title: string
+      description: string
+      whatsHere: string
+      articlesDesc: string
+      showcaseDesc: string
+      collectedContent: string
+      collectedContentDesc: string
+    }
+  }
   footer: {
     sections: {
-      content: string;
-      platform: string;
-      resources: string;
-      community: string;
-    };
+      content: string
+      platform: string
+      resources: string
+      community: string
+    }
     links: {
-      aiIntegration: string;
-      obsidianSupport: string;
-      rssFeeds: string;
-      documentation: string;
-      contentGuidelines: string;
-      apiReference: string;
-      status: string;
-      contributors: string;
-      github: string;
-      support: string;
-    };
-    copyright: string;
-    poweredBy: string;
-    builtWith: string;
-    tagline: string;
-  };
+      aiIntegration: string
+      obsidianSupport: string
+      rssFeeds: string
+      documentation: string
+      contentGuidelines: string
+      apiReference: string
+      status: string
+      contributors: string
+      github: string
+      support: string
+    }
+    copyright: string
+    poweredBy: string
+    builtWith: string
+    tagline: string
+  }
   rss: {
-    title: string;
-    description: string;
-  };
+    title: string
+    description: string
+  }
   search: {
-    placeholder: string;
-    noResults: string;
-    resultsFor: string;
-  };
+    placeholder: string
+    noResults: string
+    resultsFor: string
+  }
   language: {
-    selector: string;
-    current: string;
-    onlyAvailable: string;
-  };
+    selector: string
+    current: string
+    onlyAvailable: string
+  }
   social: {
-    share: string;
-    twitterShare: string;
-    facebookShare: string;
-    linkedinShare: string;
-    whatsappShare: string;
-    emailShare: string;
-  };
+    share: string
+    twitterShare: string
+    facebookShare: string
+    linkedinShare: string
+    whatsappShare: string
+    emailShare: string
+  }
   blog: {
-    relatedPosts: string;
-    viewAllPosts: string;
-  };
+    relatedPosts: string
+    viewAllPosts: string
+  }
   navigation: {
-    mainNavigation: string;
-    rssFeed: string;
-  };
+    mainNavigation: string
+    rssFeed: string
+  }
   contact: {
-    title: string;
-    tagline: string;
-    subtitle: string;
-    dropMessage: string;
-    dropMessageSubtitle: string;
-    name: string;
-    email: string;
-    message: string;
-    disclaimer: string;
-    responseTime: string;
-    weAreHere: string;
-    generalSupport: string;
-    generalSupportDesc: string;
-    contactSales: string;
-    contactSalesDesc: string;
-    technicalSupport: string;
-    technicalSupportDesc: string;
-    phone: string;
-    emailContact: string;
-    location: string;
-  };
+    title: string
+    tagline: string
+    subtitle: string
+    dropMessage: string
+    dropMessageSubtitle: string
+    name: string
+    email: string
+    message: string
+    disclaimer: string
+    responseTime: string
+    weAreHere: string
+    generalSupport: string
+    generalSupportDesc: string
+    contactSales: string
+    contactSalesDesc: string
+    technicalSupport: string
+    technicalSupportDesc: string
+    phone: string
+    emailContact: string
+    location: string
+  }
   auth: {
-    signIn: string;
-    signOut: string;
-    signInWith: string;
-    signInWithGoogle: string;
-    signInWithApple: string;
-    signInWithGitHub: string;
-    signInWithMicrosoft: string;
-    userMenu: string;
-    loading: string;
-    profile: string;
-    account: string;
-    settings: string;
-    oneClickLogin: string;
-    signedInAs: string;
-    welcomeBack: string;
-  };
-};
+    signIn: string
+    signOut: string
+    signInWith: string
+    signInWithGoogle: string
+    signInWithApple: string
+    signInWithGitHub: string
+    signInWithMicrosoft: string
+    userMenu: string
+    loading: string
+    profile: string
+    account: string
+    settings: string
+    oneClickLogin: string
+    signedInAs: string
+    welcomeBack: string
+  }
+}

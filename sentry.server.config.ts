@@ -1,14 +1,14 @@
-import * as Sentry from '@sentry/astro';
-import loadConfig from './vendor/integration/utils/loadConfig';
+import * as Sentry from '@sentry/astro'
+import loadConfig from './vendor/integration/utils/loadConfig'
 
 // Load Sentry debug config from YAML
-const config = (await loadConfig('./src/config.yaml')) as any;
-const SENTRY_DEBUG = config?.sentry?.debug ?? false;
+const config = (await loadConfig('./src/config.yaml')) as any
+const SENTRY_DEBUG = config?.sentry?.debug ?? false
 
 // Get Sentry DSN from environment or use hardcoded value
-const sentryDsn = process.env.PUBLIC_SENTRY_DSN || '';
-const environment = process.env.MODE || 'production';
-const isProduction = environment === 'production';
+const sentryDsn = process.env.PUBLIC_SENTRY_DSN || ''
+const environment = process.env.MODE || 'production'
+const isProduction = environment === 'production'
 
 Sentry.init({
   dsn: sentryDsn,
@@ -32,7 +32,7 @@ Sentry.init({
   beforeSend(event, _hint) {
     // Don't send events in development unless debug mode is enabled in config
     if (!isProduction && !SENTRY_DEBUG) {
-      return null;
+      return null
     }
 
     // Remove sensitive data from error messages
@@ -42,34 +42,42 @@ Sentry.init({
           // Remove tokens, keys, and other sensitive data
           exception.value = exception.value
             .replace(/sk-[a-zA-Z0-9-_]{20,}/g, '[REDACTED_API_KEY]')
-            .replace(/ey[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}/g, '[REDACTED_JWT]')
+            .replace(
+              /ey[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}\.[a-zA-Z0-9-_]{20,}/g,
+              '[REDACTED_JWT]'
+            )
             .replace(/SUPABASE_[A-Z_]*=.*/g, 'SUPABASE_[REDACTED]')
-            .replace(/[0-9]{13,}/g, '[REDACTED_ID]');
+            .replace(/[0-9]{13,}/g, '[REDACTED_ID]')
         }
-        return exception;
-      });
+        return exception
+      })
     }
 
     // Remove authentication headers and cookies
     if (event.request?.headers) {
-      delete event.request.headers.authorization;
-      delete event.request.headers.cookie;
-      delete event.request.headers['set-cookie'];
+      delete event.request.headers.authorization
+      delete event.request.headers.cookie
+      delete event.request.headers['set-cookie']
     }
 
     // Remove sensitive environment variables
     if (event.contexts?.runtime?.env) {
-      const env = event.contexts.runtime.env as Record<string, any>;
+      const env = event.contexts.runtime.env as Record<string, any>
       Object.keys(env).forEach((key) => {
-        if (key.includes('KEY') || key.includes('SECRET') || key.includes('TOKEN') || key.includes('PASSWORD')) {
-          env[key] = '[REDACTED]';
+        if (
+          key.includes('KEY') ||
+          key.includes('SECRET') ||
+          key.includes('TOKEN') ||
+          key.includes('PASSWORD')
+        ) {
+          env[key] = '[REDACTED]'
         }
-      });
+      })
     }
 
-    return event;
+    return event
   },
 
   // Ignore common errors
   ignoreErrors: ['ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND', 'Network request failed'],
-});
+})

@@ -1,9 +1,9 @@
 ---
-import { t, getCurrentLanguage } from '~/i18n';
-import Headline from '~/components/ui/Headline.astro';
-import ItemGrid from '~/components/ui/ItemGrid.astro';
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import type { Faqs as Props } from '~/types';
+import Headline from '~/components/ui/Headline.astro'
+import ItemGrid from '~/components/ui/ItemGrid.astro'
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro'
+import { getCurrentLanguage, t } from '~/i18n'
+import type { Faqs as Props } from '~/types'
 
 const {
   title = '',
@@ -16,15 +16,15 @@ const {
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
-} = Astro.props;
+} = Astro.props
 
-const lang = getCurrentLanguage();
+const lang = getCurrentLanguage()
 
 const translatedItems = items.map((item) => ({
   ...item,
   title: item.title ? t(item.title, lang) : '',
   description: item.description ? t(item.description, lang) : '',
-}));
+}))
 ---
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
