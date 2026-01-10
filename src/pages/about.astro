@@ -1,15 +1,15 @@
 ---
-import Features3 from '~/components/widgets/Features3.astro'
-import Hero from '~/components/widgets/Hero.astro'
-import { getCurrentLanguage, t } from '~/i18n'
-import Layout from '~/layouts/PageLayout.astro'
+import Features3 from '~/components/widgets/Features3.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { getCurrentLanguage, t } from '~/i18n';
+import Layout from '~/layouts/PageLayout.astro';
 
-const lang = getCurrentLanguage()
+const lang = getCurrentLanguage();
 
 const metadata = {
-  title: t('pages.about.title', lang),
-  description: t('pages.about.description', lang),
-}
+    title: t('pages.about.title', lang),
+    description: t('pages.about.description', lang),
+};
 ---
 
 <Layout metadata={metadata}>
