@@ -5,7 +5,7 @@ const fallbackSentryConfig = {
     enabled: true,
     debug: false,
     project: import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
-    org: import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
+    org: import.meta.env.PUBLIC_SENTRY_ORG || 'gobing-ai',
 };
 const sentryConfig = fallbackSentryConfig;
 const sentryDsn = import.meta.env.PUBLIC_SENTRY_DSN || '';
