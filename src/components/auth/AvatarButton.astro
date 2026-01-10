@@ -4,28 +4,28 @@
  * Displays a grey avatar with user icon for logged-out state
  * Reusable component with hover effects and dark mode support
  */
-import { Icon } from 'astro-icon/components'
+import { Icon } from 'astro-icon/components';
 
 export interface Props {
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
-  containerClass?: string
+    size?: 'sm' | 'md' | 'lg';
+    className?: string;
+    containerClass?: string;
 }
 
-const { size = 'md', className = '', containerClass = '' } = Astro.props
+const { size = 'md', className = '', containerClass = '' } = Astro.props;
 
 // Size configurations
 const sizeClasses = {
-  sm: 'h-8 w-8',
-  md: 'h-10 w-10',
-  lg: 'h-12 w-12',
-}
+    sm: 'h-8 w-8',
+    md: 'h-10 w-10',
+    lg: 'h-12 w-12',
+};
 
 const iconSizeClasses = {
-  sm: 'h-4 w-4',
-  md: 'h-5 w-5',
-  lg: 'h-6 w-6',
-}
+    sm: 'h-4 w-4',
+    md: 'h-5 w-5',
+    lg: 'h-6 w-6',
+};
 ---
 
 <button

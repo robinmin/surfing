@@ -1,25 +1,25 @@
 ---
-import Announcement from '~/components/widgets/Announcement.astro'
-import Footer from '~/components/widgets/Footer.astro'
-import Header from '~/components/widgets/Header.astro'
-import Layout from '~/layouts/Layout.astro'
-import type { MetaData } from '~/types'
-import { getLocalizedFooterData, getLocalizedHeaderData } from '~/utils/navigation'
+import Announcement from '~/components/widgets/Announcement.astro';
+import Footer from '~/components/widgets/Footer.astro';
+import Header from '~/components/widgets/Header.astro';
+import Layout from '~/layouts/Layout.astro';
+import type { MetaData } from '~/types';
+import { getLocalizedFooterData, getLocalizedHeaderData } from '~/utils/navigation';
 
 export interface Props {
-  metadata?: MetaData
-  languageSelectorConfig?: {
-    translations?: string[]
-    isDetailPage?: boolean
-    collectionName?: string
-  }
+    metadata?: MetaData;
+    languageSelectorConfig?: {
+        translations?: string[];
+        isDetailPage?: boolean;
+        collectionName?: string;
+    };
 }
 
-const { metadata, languageSelectorConfig } = Astro.props
+const { metadata, languageSelectorConfig } = Astro.props;
 
 // Get localized navigation data
-const headerData = getLocalizedHeaderData()
-const footerData = getLocalizedFooterData()
+const headerData = getLocalizedHeaderData();
+const footerData = getLocalizedFooterData();
 ---
 
 <Layout metadata={metadata}>

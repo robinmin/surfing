@@ -1,22 +1,22 @@
 ---
-import { twMerge } from 'tailwind-merge'
-import type { Headline as Props } from '~/types'
+import { twMerge } from 'tailwind-merge';
+import type { Headline as Props } from '~/types';
 
 const {
-  title = await Astro.slots.render('title'),
-  subtitle = await Astro.slots.render('subtitle'),
-  tagline,
-  classes = {},
-  titleI18n,
-  subtitleI18n,
-  taglineI18n,
-} = Astro.props
+    title = await Astro.slots.render('title'),
+    subtitle = await Astro.slots.render('subtitle'),
+    tagline,
+    classes = {},
+    titleI18n,
+    subtitleI18n,
+    taglineI18n,
+} = Astro.props;
 
 const {
-  container: containerClass = 'max-w-3xl',
-  title: titleClass = 'text-3xl md:text-4xl ',
-  subtitle: subtitleClass = 'text-xl',
-} = classes
+    container: containerClass = 'max-w-3xl',
+    title: titleClass = 'text-3xl md:text-4xl ',
+    subtitle: subtitleClass = 'text-xl',
+} = classes;
 ---
 
 {

@@ -1,61 +1,61 @@
 ---
-import { getCollection, render } from 'astro:content'
-import ExternalPageLayout from '~/layouts/ExternalPageLayout.astro'
-import MarkdownLayout from '~/layouts/MarkdownLayout.astro'
+import { getCollection, render } from 'astro:content';
+import ExternalPageLayout from '~/layouts/ExternalPageLayout.astro';
+import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
 
 export async function getStaticPaths() {
-  const documents = await getCollection('documents', ({ data }) => !data.draft)
+    const documents = await getCollection('documents', ({ data }) => !data.draft);
 
-  return documents.map((document) => ({
-    params: {
-      slug: document.data.slug || document.id,
-    },
-    props: { document },
-  }))
+    return documents.map((document) => ({
+        params: {
+            slug: document.data.slug || document.id,
+        },
+        props: { document },
+    }));
 }
 
-const { document } = Astro.props
+const { document } = Astro.props;
 
 // Determine file type and layout based on file extension and content characteristics
-const fileExtension = document.id.split('.').pop()?.toLowerCase()
-const isHtmlFile = fileExtension === 'html'
+const fileExtension = document.id.split('.').pop()?.toLowerCase();
+const isHtmlFile = fileExtension === 'html';
 const hasCustomStyling =
-  document.data.customCSS ||
-  document.data.customJS ||
-  document.data.externalCSS?.length ||
-  document.data.externalJS?.length
+    document.data.customCSS ||
+    document.data.customJS ||
+    document.data.externalCSS?.length ||
+    document.data.externalJS?.length;
 
 // Use ExternalPageLayout for HTML files or files with custom styling
 // Use MarkdownLayout for standard markdown files
-const useExternalLayout = isHtmlFile || hasCustomStyling
+const useExternalLayout = isHtmlFile || hasCustomStyling;
 
 // Get content based on layout type
-const { Content } = useExternalLayout ? { Content: () => document.body } : await render(document)
+const { Content } = useExternalLayout ? { Content: () => document.body } : await render(document);
 
 // Merge custom metadata with defaults
 const metadata = {
-  title: document.data.metadata?.title || document.data.title,
-  description: document.data.metadata?.description || document.data.description,
-  canonical: new URL(`documents/${document.data.slug || document.id}`, Astro.site).href,
-  robots: {
-    index: true,
-    follow: true,
-    ...document.data.metadata?.robots,
-  },
-  ...document.data.metadata,
-  openGraph: {
-    type: 'article',
-    ...(document.data.image && { images: [{ url: document.data.image }] }),
-    ...document.data.metadata?.openGraph,
-  },
-}
+    title: document.data.metadata?.title || document.data.title,
+    description: document.data.metadata?.description || document.data.description,
+    canonical: new URL(`documents/${document.data.slug || document.id}`, Astro.site).href,
+    robots: {
+        index: true,
+        follow: true,
+        ...document.data.metadata?.robots,
+    },
+    ...document.data.metadata,
+    openGraph: {
+        type: 'article',
+        ...(document.data.image && { images: [{ url: document.data.image }] }),
+        ...document.data.metadata?.openGraph,
+    },
+};
 
 // Language selector configuration for detail pages
 const languageSelectorConfig = {
-  translations: document.data.translations || ['en'],
-  isDetailPage: true,
-  collectionName: 'documents',
-}
+    translations: document.data.translations || ['en'],
+    isDetailPage: true,
+    collectionName: 'documents',
+};
 ---
 
 {

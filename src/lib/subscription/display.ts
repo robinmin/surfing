@@ -5,7 +5,7 @@
  * These functions are specific to Surfing's design system and branding.
  */
 
-import type { SurfingSubscriptionTier } from './types'
+import type { SurfingSubscriptionTier, SurfingUserSubscription } from './types';
 
 /**
  * Get display name for subscription tier
@@ -14,12 +14,12 @@ import type { SurfingSubscriptionTier } from './types'
  * @returns Human-readable display name
  */
 export function getTierDisplayName(tier: SurfingSubscriptionTier): string {
-  const names: Record<SurfingSubscriptionTier, string> = {
-    free: 'Free',
-    standard: 'Standard',
-    premium: 'Premium',
-  }
-  return names[tier]
+    const names: Record<SurfingSubscriptionTier, string> = {
+        free: 'Free',
+        standard: 'Standard',
+        premium: 'Premium',
+    };
+    return names[tier];
 }
 
 /**
@@ -32,12 +32,12 @@ export function getTierDisplayName(tier: SurfingSubscriptionTier): string {
  * @returns Tailwind CSS class string
  */
 export function getTierBadgeClass(tier: SurfingSubscriptionTier): string {
-  const classes: Record<SurfingSubscriptionTier, string> = {
-    free: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-    standard: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-    premium: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-  }
-  return classes[tier]
+    const classes: Record<SurfingSubscriptionTier, string> = {
+        free: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+        standard: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+        premium: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+    };
+    return classes[tier];
 }
 
 /**
@@ -47,17 +47,17 @@ export function getTierBadgeClass(tier: SurfingSubscriptionTier): string {
  * @param days - Number of days to check (default: 7)
  * @returns true if subscription expires within the specified days
  */
-export function isExpiringWithin(subscription: any, days: number = 7): boolean {
-  if (!subscription.expiresAt) {
-    return false
-  }
+export function isExpiringWithin(subscription: SurfingUserSubscription, days: number = 7): boolean {
+    if (!subscription.expiresAt) {
+        return false;
+    }
 
-  if (subscription.billingCycle === 'lifetime') {
-    return false
-  }
+    if (subscription.billingCycle === 'lifetime') {
+        return false;
+    }
 
-  const now = new Date()
-  const expirationThreshold = new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
+    const now = new Date();
+    const expirationThreshold = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 
-  return subscription.expiresAt <= expirationThreshold
+    return subscription.expiresAt <= expirationThreshold;
 }

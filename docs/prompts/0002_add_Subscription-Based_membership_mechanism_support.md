@@ -1,9 +1,9 @@
 ---
 name: add Subscription-Based membership mechanism support
 description: Implement 3-tier subscription membership (Free/Standard/Premium) with Stripe billing, Zitadel user metadata, and turnstile webhook integration
-status: WIP
+status: Done
 created_at: 2026-01-07 12:50:50
-updated_at: 2026-01-07 15:00:00
+updated_at: 2026-01-09 22:16:36
 ---
 
 ## add Subscription-Based membership mechanism support

@@ -1,14 +1,14 @@
 import {
-  CONTENT_LANG_MAP,
-  DEFAULT_LANGUAGE,
-  getPreferredLanguage,
-  LANG_CODE_MAP,
-  toContentLang,
-  toI18nLang,
-} from '~/i18n'
+    CONTENT_LANG_MAP,
+    DEFAULT_LANGUAGE,
+    getPreferredLanguage,
+    LANG_CODE_MAP,
+    toContentLang,
+    toI18nLang,
+} from '~/i18n';
 
 // Re-export for backward compatibility
-export { LANG_CODE_MAP, CONTENT_LANG_MAP, toContentLang, toI18nLang }
+export { LANG_CODE_MAP, CONTENT_LANG_MAP, toContentLang, toI18nLang };
 
 /**
  * Extract language code from content ID
@@ -16,8 +16,8 @@ export { LANG_CODE_MAP, CONTENT_LANG_MAP, toContentLang, toI18nLang }
  * Example: "en/hello-world" -> "en"
  */
 export function extractLanguageFromId(id: string): string {
-  const parts = id.split('/')
-  return parts.length > 1 ? parts[0] : DEFAULT_LANGUAGE
+    const parts = id.split('/');
+    return parts.length > 1 ? parts[0] : DEFAULT_LANGUAGE;
 }
 
 /**
@@ -25,8 +25,8 @@ export function extractLanguageFromId(id: string): string {
  * Example: "en/hello-world" -> "hello-world"
  */
 export function extractSlugFromId(id: string): string {
-  const parts = id.split('/')
-  return parts.length > 1 ? parts.slice(1).join('/') : id
+    const parts = id.split('/');
+    return parts.length > 1 ? parts.slice(1).join('/') : id;
 }
 
 /**
@@ -34,8 +34,8 @@ export function extractSlugFromId(id: string): string {
  * For static sites, this uses client-side preferences (localStorage/cookies/browser)
  */
 export function getPreferredLanguageForContent(): string {
-  const i18nLang = getPreferredLanguage()
-  return toContentLang(i18nLang)
+    const i18nLang = getPreferredLanguage();
+    return toContentLang(i18nLang);
 }
 
 /**
@@ -43,13 +43,13 @@ export function getPreferredLanguageForContent(): string {
  * Returns only items matching the specified language
  */
 export function filterContentByLanguage<T extends { id: string }>(
-  items: T[],
-  language: string
+    items: T[],
+    language: string
 ): T[] {
-  return items.filter((item) => {
-    const itemLang = extractLanguageFromId(item.id)
-    return itemLang === language
-  })
+    return items.filter((item) => {
+        const itemLang = extractLanguageFromId(item.id);
+        return itemLang === language;
+    });
 }
 
 /**
@@ -58,40 +58,40 @@ export function filterContentByLanguage<T extends { id: string }>(
  * If preferredLang version doesn't exist, item is excluded (no fallback)
  */
 export function deduplicateContent<T extends { id: string }>(
-  items: T[],
-  preferredLang: string
+    items: T[],
+    preferredLang: string
 ): T[] {
-  const seenSlugs = new Set<string>()
-  const result: T[] = []
+    const seenSlugs = new Set<string>();
+    const result: T[] = [];
 
-  // Group items by slug
-  const itemsBySlug = new Map<string, T[]>()
-  for (const item of items) {
-    const slug = extractSlugFromId(item.id)
-    if (!itemsBySlug.has(slug)) {
-      itemsBySlug.set(slug, [])
+    // Group items by slug
+    const itemsBySlug = new Map<string, T[]>();
+    for (const item of items) {
+        const slug = extractSlugFromId(item.id);
+        if (!itemsBySlug.has(slug)) {
+            itemsBySlug.set(slug, []);
+        }
+        itemsBySlug.get(slug)?.push(item);
     }
-    itemsBySlug.get(slug)!.push(item)
-  }
 
-  // For each unique slug, pick the preferred language version
-  for (const [slug, variants] of itemsBySlug) {
-    if (seenSlugs.has(slug)) continue
+    // For each unique slug, pick the preferred language version
+    for (const [slug, variants] of itemsBySlug) {
+        if (seenSlugs.has(slug)) continue;
 
-    // Find the variant in preferred language
-    const preferredVariant = variants.find((item) => {
-      const itemLang = extractLanguageFromId(item.id)
-      return itemLang === preferredLang
-    })
+        // Find the variant in preferred language
+        const preferredVariant = variants.find((item) => {
+            const itemLang = extractLanguageFromId(item.id);
+            return itemLang === preferredLang;
+        });
 
-    // Only include if preferred language version exists
-    if (preferredVariant) {
-      result.push(preferredVariant)
-      seenSlugs.add(slug)
+        // Only include if preferred language version exists
+        if (preferredVariant) {
+            result.push(preferredVariant);
+            seenSlugs.add(slug);
+        }
     }
-  }
 
-  return result
+    return result;
 }
 
 /**
@@ -99,30 +99,30 @@ export function deduplicateContent<T extends { id: string }>(
  * This is the main function to use for content filtering
  */
 export function filterAndDeduplicateContent<T extends { id: string }>(
-  items: T[],
-  preferredLang: string
+    items: T[],
+    preferredLang: string
 ): T[] {
-  // Filter by language and deduplicate is the same operation
-  // since we only keep items matching preferred language
-  return deduplicateContent(items, preferredLang)
+    // Filter by language and deduplicate is the same operation
+    // since we only keep items matching preferred language
+    return deduplicateContent(items, preferredLang);
 }
 
 /**
  * Get all available languages for a specific content item (by slug)
  */
 export function getAvailableLanguages<T extends { id: string }>(
-  items: T[],
-  slug: string
+    items: T[],
+    slug: string
 ): string[] {
-  const languages = new Set<string>()
+    const languages = new Set<string>();
 
-  for (const item of items) {
-    const itemSlug = extractSlugFromId(item.id)
-    if (itemSlug === slug) {
-      const lang = extractLanguageFromId(item.id)
-      languages.add(lang)
+    for (const item of items) {
+        const itemSlug = extractSlugFromId(item.id);
+        if (itemSlug === slug) {
+            const lang = extractLanguageFromId(item.id);
+            languages.add(lang);
+        }
     }
-  }
 
-  return Array.from(languages)
+    return Array.from(languages);
 }

@@ -101,7 +101,7 @@
       function updateStatus(elementId, message, isSuccess = null) {
         const element = document.getElementById(elementId);
         element.textContent = message;
-        element.className = 'status ' + (isSuccess === true ? 'success' : isSuccess === false ? 'error' : 'info');
+        element.className = `status ${isSuccess === true ? 'success' : isSuccess === false ? 'error' : 'info'}`;
       }
 
       // Test 1: Environment Variables
@@ -126,7 +126,7 @@
         })
         .catch((error) => {
           updateStatus('env-status', '❌ Error checking environment', false);
-          log('Error checking environment: ' + error.message, 'error');
+          log(`Error checking environment: ${error.message}`, 'error');
         });
 
       // Test 2: Load Google GSI Script
@@ -142,7 +142,7 @@
 
         // Check if Google API is available
         setTimeout(() => {
-          if (window.google && window.google.accounts) {
+          if (window.google?.accounts) {
             log('Google Accounts API available', 'success');
             initializeGoogleSignIn();
           } else {
@@ -170,7 +170,7 @@
             throw new Error('Google Client ID not available');
           }
 
-          log('Initializing Google Sign-In with Client ID: ' + clientId.substring(0, 20) + '...', 'success');
+          log(`Initializing Google Sign-In with Client ID: ${clientId.substring(0, 20)}...`, 'success');
 
           // Set client ID in the HTML elements
           const onloadDiv = document.getElementById('g_id_onload');
@@ -184,7 +184,7 @@
           }
 
           // Initialize Google Sign-In
-          if (window.google && window.google.accounts && window.google.accounts.id) {
+          if (window.google?.accounts?.id) {
             window.google.accounts.id.initialize({
               client_id: clientId,
               callback: handleSignIn,
@@ -198,9 +198,9 @@
 
             // Display the button
             window.google.accounts.id.prompt((notification) => {
-              if (notification.isNotDisplayed && notification.isNotDisplayed()) {
+              if (notification.isNotDisplayed?.()) {
                 log('Google One Tap not displayed', 'error');
-              } else if (notification.isSkippedMoment && notification.isSkippedMoment()) {
+              } else if (notification.isSkippedMoment?.()) {
                 log('Google One Tap was skipped', 'info');
               } else {
                 log('Google One Tap displayed', 'success');
@@ -210,7 +210,7 @@
             throw new Error('Google Accounts ID API not available');
           }
         } catch (error) {
-          log('Error initializing Google Sign-In: ' + error.message, 'error');
+          log(`Error initializing Google Sign-In: ${error.message}`, 'error');
           updateStatus('button-status', '❌ Error initializing Google Sign-In', false);
         }
       }
@@ -218,20 +218,20 @@
       // Handle sign-in response
       function handleSignIn(response) {
         log('Google Sign-In response received', 'success');
-        log('Credential: ' + response.credential.substring(0, 50) + '...', 'success');
-        log('Select by: ' + response.select_by, 'success');
-        log('Client ID: ' + response.client_id, 'success');
+        log(`Credential: ${response.credential.substring(0, 50)}...`, 'success');
+        log(`Select by: ${response.select_by}`, 'success');
+        log(`Client ID: ${response.client_id}`, 'success');
 
         // Here you would normally send the credential to your backend
         // For testing, we'll just decode the JWT
         try {
           const payload = decodeJWT(response.credential);
           log('Decoded JWT payload:', 'success');
-          log('Email: ' + payload.email, 'success');
-          log('Name: ' + payload.name, 'success');
-          log('Email verified: ' + payload.email_verified, 'success');
+          log(`Email: ${payload.email}`, 'success');
+          log(`Name: ${payload.name}`, 'success');
+          log(`Email verified: ${payload.email_verified}`, 'success');
         } catch (error) {
-          log('Error decoding JWT: ' + error.message, 'error');
+          log(`Error decoding JWT: ${error.message}`, 'error');
         }
       }
 
@@ -243,11 +243,11 @@
           const jsonPayload = decodeURIComponent(
             atob(base64)
               .split('')
-              .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+              .map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
               .join('')
           );
           return JSON.parse(jsonPayload);
-        } catch (error) {
+        } catch (_error) {
           throw new Error('Failed to decode JWT token');
         }
       }

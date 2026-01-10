@@ -1,21 +1,21 @@
 ---
-import { Icon } from 'astro-icon/components'
-import Image from '~/components/common/Image.astro'
-import Headline from '~/components/ui/Headline.astro'
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro'
-import type { Brands as Props } from '~/types'
+import { Icon } from 'astro-icon/components';
+import Image from '~/components/common/Image.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import type { Brands as Props } from '~/types';
 
 const {
-  title = '',
-  subtitle = '',
-  tagline = '',
-  icons = [],
-  images = [],
-  id,
-  isDark = false,
-  classes = {},
-  bg = await Astro.slots.render('bg'),
-} = Astro.props
+    title = '',
+    subtitle = '',
+    tagline = '',
+    icons = [],
+    images = [],
+    id,
+    isDark = false,
+    classes = {},
+    bg = await Astro.slots.render('bg'),
+} = Astro.props;
 ---
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>

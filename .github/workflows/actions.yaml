@@ -11,28 +11,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version:
-          - 18
-          - 20
-          - 22
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js v${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Use Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          bun-version: '1.3.5'
+      
+      - name: Cache Bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+            
       - name: Cache Astro Content
         uses: actions/cache@v4
         with:
           path: .astro/cache
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-astro-cache-${{ hashFiles('contents/**', 'src/content/**') }}
+          key: ${{ runner.os }}-bun-astro-cache-${{ hashFiles('contents/**', 'src/content/**') }}
           restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node-version }}-astro-cache-
-      - run: npm ci
-      - run: npm run build
+            ${{ runner.os }}-bun-astro-cache-
+
+      - run: bun install --frozen-lockfile
+      - run: bun run build
         env:
           # Zitadel OIDC Authentication
           PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
@@ -47,23 +50,32 @@ jobs:
           # Sentry Error Tracking
           PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      # - run: npm test
+      # - run: bun test
 
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 22
-        uses: actions/setup-node@v4
+      - name: Use Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: npm
+          bun-version: '1.3.5'
+
+      - name: Cache Bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+            
       - name: Cache Astro Content
         uses: actions/cache@v4
         with:
           path: .astro/cache
-          key: ${{ runner.os }}-node-22-astro-cache-${{ hashFiles('contents/**', 'src/content/**') }}
+          key: ${{ runner.os }}-bun-astro-cache-${{ hashFiles('contents/**', 'src/content/**') }}
           restore-keys: |
-            ${{ runner.os }}-node-22-astro-cache-
-      - run: npm ci
-      - run: npm run check
+            ${{ runner.os }}-bun-astro-cache-
+
+      - run: bun install --frozen-lockfile
+      - run: bun run check

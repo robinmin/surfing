@@ -1,48 +1,97 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
-  "files": {
-    "ignoreUnknown": false
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "lineWidth": 100
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "style": {
-        "useConst": "warn",
-        "noParameterAssign": "warn"
-      }
-    }
-  },
-  "javascript": {
+    "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "ignoreUnknown": false,
+        "includes": ["**", "!node_modules", "!dist", "!.astro", "!originals"]
+    },
     "formatter": {
-      "quoteStyle": "single",
-      "trailingCommas": "es5",
-      "semicolons": "asNeeded",
-      "arrowParentheses": "always"
-    }
-  },
-  "css": {
-    "parser": {
-      "cssModules": true,
-      "tailwindDirectives": true
-    }
-  },
-  "overrides": [
-    {
-      "includes": ["*.astro"],
-      "formatter": {
-        "indentStyle": "space"
-      }
-    }
-  ]
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 100
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "correctness": {
+                "noUnusedVariables": "error",
+                "noUnusedImports": "error",
+                "noUnusedFunctionParameters": "warn"
+            },
+            "style": {
+                "noDefaultExport": "warn",
+                "useConst": "warn",
+                "noParameterAssign": "warn"
+            },
+            "suspicious": {
+                "noUnknownAtRules": "off"
+            }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "trailingCommas": "es5",
+            "arrowParentheses": "always"
+        }
+    },
+    "json": {
+        "formatter": {
+            "trailingCommas": "none"
+        }
+    },
+    "css": {
+        "parser": {
+            "cssModules": true,
+            "tailwindDirectives": true
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["**/*.astro"],
+            "formatter": {
+                "indentStyle": "space"
+            },
+            "linter": {
+                "rules": {
+                    "correctness": {
+                        "noUnusedVariables": "off",
+                        "noUnusedImports": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["**/*.css"],
+            "linter": {
+                "enabled": false
+            }
+        },
+        {
+            "includes": ["**/*.test.ts"],
+            "linter": {
+                "rules": {
+                    "complexity": {
+                        "useArrowFunction": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["astro.config.ts", "tailwind.config.js"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noDefaultExport": "off"
+                    }
+                }
+            }
+        }
+    ]
 }

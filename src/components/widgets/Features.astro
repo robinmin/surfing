@@ -1,23 +1,23 @@
 ---
-import Headline from '~/components/ui/Headline.astro'
-import ItemGrid from '~/components/ui/ItemGrid.astro'
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro'
-import type { Features as Props } from '~/types'
+import Headline from '~/components/ui/Headline.astro';
+import ItemGrid from '~/components/ui/ItemGrid.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import type { Features as Props } from '~/types';
 
 const {
-  title = await Astro.slots.render('title'),
-  subtitle = await Astro.slots.render('subtitle'),
-  tagline = await Astro.slots.render('tagline'),
-  items = [],
-  columns = 2,
+    title = await Astro.slots.render('title'),
+    subtitle = await Astro.slots.render('subtitle'),
+    tagline = await Astro.slots.render('tagline'),
+    items = [],
+    columns = 2,
 
-  defaultIcon,
+    defaultIcon,
 
-  id,
-  isDark = false,
-  classes = {},
-  bg = await Astro.slots.render('bg'),
-} = Astro.props
+    id,
+    isDark = false,
+    classes = {},
+    bg = await Astro.slots.render('bg'),
+} = Astro.props;
 ---
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-5xl ${classes?.container ?? ''}`} bg={bg}>

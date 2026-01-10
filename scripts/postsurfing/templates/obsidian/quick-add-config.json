@@ -1,176 +1,183 @@
 {
-  "name": "PostSurfing Content Templates",
-  "description": "Quick-add configuration for PostSurfing CLI integration",
-  "version": "1.0.0",
-  "templates": [
-    {
-      "name": "📝 New Article",
-      "type": "template",
-      "command": true,
-      "templatePath": "scripts/postsurfing/templates/obsidian/articles.tpl.md",
-      "fileNameFormat": {
-        "enabled": true,
-        "format": "{{VALUE:title}}"
-      },
-      "folder": {
-        "enabled": true,
-        "folders": ["Content/Articles", "Articles", "Blog"],
-        "chooseWhenCreatingNote": false,
-        "createInSameFolderAsActiveFile": false
-      },
-      "appendLink": false,
-      "openFileInNewTab": {
-        "enabled": false,
-        "direction": "vertical",
-        "focus": true
-      },
-      "variables": [
-        {
-          "name": "title",
-          "description": "Article title",
-          "type": "text",
-          "required": true
-        },
-        {
-          "name": "category",
-          "description": "Article category",
-          "type": "select",
-          "options": ["ai", "research", "technical", "tutorial", "analysis", "opinion"],
-          "required": false,
-          "default": "technical"
-        }
-      ]
-    },
-    {
-      "name": "🚀 New Showcase Project",
-      "type": "template",
-      "command": true,
-      "templatePath": "scripts/postsurfing/templates/obsidian/showcase.tpl.md",
-      "fileNameFormat": {
-        "enabled": true,
-        "format": "{{VALUE:title}}"
-      },
-      "folder": {
-        "enabled": true,
-        "folders": ["Content/Showcase", "Showcase", "Projects"],
-        "chooseWhenCreatingNote": false,
-        "createInSameFolderAsActiveFile": false
-      },
-      "appendLink": false,
-      "openFileInNewTab": {
-        "enabled": false,
-        "direction": "vertical",
-        "focus": true
-      },
-      "variables": [
-        {
-          "name": "title",
-          "description": "Project name",
-          "type": "text",
-          "required": true
-        },
-        {
-          "name": "category",
-          "description": "Project category",
-          "type": "select",
-          "options": [
-            "web-development",
-            "mobile-app",
-            "desktop-app",
-            "ai-tool",
-            "library",
-            "api",
-            "game",
-            "design",
-            "data-science"
-          ],
-          "required": false,
-          "default": "web-development"
-        }
-      ]
-    },
-    {
-      "name": "📚 New Document",
-      "type": "template",
-      "command": true,
-      "templatePath": "scripts/postsurfing/templates/obsidian/documents.tpl.md",
-      "fileNameFormat": {
-        "enabled": true,
-        "format": "{{VALUE:title}}"
-      },
-      "folder": {
-        "enabled": true,
-        "folders": ["Content/Documents", "Documents", "Docs"],
-        "chooseWhenCreatingNote": false,
-        "createInSameFolderAsActiveFile": false
-      },
-      "appendLink": false,
-      "openFileInNewTab": {
-        "enabled": false,
-        "direction": "vertical",
-        "focus": true
-      },
-      "variables": [
-        {
-          "name": "title",
-          "description": "Document title",
-          "type": "text",
-          "required": true
-        },
-        {
-          "name": "contentType",
-          "description": "Document type",
-          "type": "select",
-          "options": ["page", "snippet", "template", "legacy"],
-          "required": false,
-          "default": "page"
-        },
-        {
-          "name": "category",
-          "description": "Document category",
-          "type": "select",
-          "options": ["documentation", "legacy", "templates", "examples", "guides", "references"],
-          "required": false,
-          "default": "documentation"
-        }
-      ]
-    }
-  ],
-  "hotkeys": [
-    {
-      "template": "📝 New Article",
-      "hotkey": "Ctrl+Shift+A",
-      "description": "Create new article"
-    },
-    {
-      "template": "🚀 New Showcase Project",
-      "hotkey": "Ctrl+Shift+S",
-      "description": "Create new showcase project"
-    },
-    {
-      "template": "📚 New Document",
-      "hotkey": "Ctrl+Shift+D",
-      "description": "Create new document"
-    }
-  ],
-  "settings": {
-    "announceUpdates": true,
+    "name": "PostSurfing Content Templates",
+    "description": "Quick-add configuration for PostSurfing CLI integration",
     "version": "1.0.0",
-    "disableOnlineFeatures": false
-  },
-  "postSurfingIntegration": {
-    "enabled": true,
-    "cliPath": "scripts/postsurfing/postsurfing.mjs",
-    "commands": {
-      "articles": "postsurfing {{filepath}} --type articles",
-      "showcase": "postsurfing {{filepath}} --type showcase",
-      "documents": "postsurfing {{filepath}} --type documents"
+    "templates": [
+        {
+            "name": "📝 New Article",
+            "type": "template",
+            "command": true,
+            "templatePath": "scripts/postsurfing/templates/obsidian/articles.tpl.md",
+            "fileNameFormat": {
+                "enabled": true,
+                "format": "{{VALUE:title}}"
+            },
+            "folder": {
+                "enabled": true,
+                "folders": ["Content/Articles", "Articles", "Blog"],
+                "chooseWhenCreatingNote": false,
+                "createInSameFolderAsActiveFile": false
+            },
+            "appendLink": false,
+            "openFileInNewTab": {
+                "enabled": false,
+                "direction": "vertical",
+                "focus": true
+            },
+            "variables": [
+                {
+                    "name": "title",
+                    "description": "Article title",
+                    "type": "text",
+                    "required": true
+                },
+                {
+                    "name": "category",
+                    "description": "Article category",
+                    "type": "select",
+                    "options": ["ai", "research", "technical", "tutorial", "analysis", "opinion"],
+                    "required": false,
+                    "default": "technical"
+                }
+            ]
+        },
+        {
+            "name": "🚀 New Showcase Project",
+            "type": "template",
+            "command": true,
+            "templatePath": "scripts/postsurfing/templates/obsidian/showcase.tpl.md",
+            "fileNameFormat": {
+                "enabled": true,
+                "format": "{{VALUE:title}}"
+            },
+            "folder": {
+                "enabled": true,
+                "folders": ["Content/Showcase", "Showcase", "Projects"],
+                "chooseWhenCreatingNote": false,
+                "createInSameFolderAsActiveFile": false
+            },
+            "appendLink": false,
+            "openFileInNewTab": {
+                "enabled": false,
+                "direction": "vertical",
+                "focus": true
+            },
+            "variables": [
+                {
+                    "name": "title",
+                    "description": "Project name",
+                    "type": "text",
+                    "required": true
+                },
+                {
+                    "name": "category",
+                    "description": "Project category",
+                    "type": "select",
+                    "options": [
+                        "web-development",
+                        "mobile-app",
+                        "desktop-app",
+                        "ai-tool",
+                        "library",
+                        "api",
+                        "game",
+                        "design",
+                        "data-science"
+                    ],
+                    "required": false,
+                    "default": "web-development"
+                }
+            ]
+        },
+        {
+            "name": "📚 New Document",
+            "type": "template",
+            "command": true,
+            "templatePath": "scripts/postsurfing/templates/obsidian/documents.tpl.md",
+            "fileNameFormat": {
+                "enabled": true,
+                "format": "{{VALUE:title}}"
+            },
+            "folder": {
+                "enabled": true,
+                "folders": ["Content/Documents", "Documents", "Docs"],
+                "chooseWhenCreatingNote": false,
+                "createInSameFolderAsActiveFile": false
+            },
+            "appendLink": false,
+            "openFileInNewTab": {
+                "enabled": false,
+                "direction": "vertical",
+                "focus": true
+            },
+            "variables": [
+                {
+                    "name": "title",
+                    "description": "Document title",
+                    "type": "text",
+                    "required": true
+                },
+                {
+                    "name": "contentType",
+                    "description": "Document type",
+                    "type": "select",
+                    "options": ["page", "snippet", "template", "legacy"],
+                    "required": false,
+                    "default": "page"
+                },
+                {
+                    "name": "category",
+                    "description": "Document category",
+                    "type": "select",
+                    "options": [
+                        "documentation",
+                        "legacy",
+                        "templates",
+                        "examples",
+                        "guides",
+                        "references"
+                    ],
+                    "required": false,
+                    "default": "documentation"
+                }
+            ]
+        }
+    ],
+    "hotkeys": [
+        {
+            "template": "📝 New Article",
+            "hotkey": "Ctrl+Shift+A",
+            "description": "Create new article"
+        },
+        {
+            "template": "🚀 New Showcase Project",
+            "hotkey": "Ctrl+Shift+S",
+            "description": "Create new showcase project"
+        },
+        {
+            "template": "📚 New Document",
+            "hotkey": "Ctrl+Shift+D",
+            "description": "Create new document"
+        }
+    ],
+    "settings": {
+        "announceUpdates": true,
+        "version": "1.0.0",
+        "disableOnlineFeatures": false
     },
-    "publishingNotes": {
-      "dryRun": "Add --dry-run flag to preview changes",
-      "interactive": "Add --interactive flag for missing field prompts",
-      "noBuild": "Add --no-build flag to skip build validation",
-      "noCommit": "Add --no-commit flag to skip git operations"
+    "postSurfingIntegration": {
+        "enabled": true,
+        "cliPath": "scripts/postsurfing/postsurfing.mjs",
+        "commands": {
+            "articles": "postsurfing {{filepath}} --type articles",
+            "showcase": "postsurfing {{filepath}} --type showcase",
+            "documents": "postsurfing {{filepath}} --type documents"
+        },
+        "publishingNotes": {
+            "dryRun": "Add --dry-run flag to preview changes",
+            "interactive": "Add --interactive flag for missing field prompts",
+            "noBuild": "Add --no-build flag to skip build validation",
+            "noCommit": "Add --no-commit flag to skip git operations"
+        }
     }
-  }
 }

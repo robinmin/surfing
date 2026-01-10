@@ -5,35 +5,35 @@
  * Handles cheatsheet PDF download with subscription gating.
  * Shows download button for subscribers, upgrade prompt for free users.
  */
-import { Icon } from 'astro-icon/components'
-import { getCurrentLanguage, t } from '~/i18n'
+import { Icon } from 'astro-icon/components';
+import { getCurrentLanguage, t } from '~/i18n';
 
 interface Props {
-  /** URL to the PDF file */
-  pdfUrl?: string
-  /** Cheatsheet title for accessibility */
-  title: string
-  /** Size variant */
-  size?: 'sm' | 'md' | 'lg'
-  /** Additional CSS classes */
-  class?: string
+    /** URL to the PDF file */
+    pdfUrl?: string;
+    /** Cheatsheet title for accessibility */
+    title: string;
+    /** Size variant */
+    size?: 'sm' | 'md' | 'lg';
+    /** Additional CSS classes */
+    class?: string;
 }
 
-const { pdfUrl, title, size = 'md', class: className = '' } = Astro.props
+const { pdfUrl, title, size = 'md', class: className = '' } = Astro.props;
 
-const lang = getCurrentLanguage()
+const lang = getCurrentLanguage();
 
 const sizeClasses = {
-  sm: 'text-sm px-3 py-1.5',
-  md: 'text-base px-4 py-2',
-  lg: 'text-lg px-6 py-3',
-}
+    sm: 'text-sm px-3 py-1.5',
+    md: 'text-base px-4 py-2',
+    lg: 'text-lg px-6 py-3',
+};
 
 const iconSizes = {
-  sm: 'w-4 h-4',
-  md: 'w-5 h-5',
-  lg: 'w-6 h-6',
-}
+    sm: 'w-4 h-4',
+    md: 'w-5 h-5',
+    lg: 'w-6 h-6',
+};
 ---
 
 <div class:list={['cheatsheet-download', className]} data-pdf-url={pdfUrl} data-title={title}>

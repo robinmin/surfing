@@ -1,18 +1,18 @@
 {
-  "extends": "astro/tsconfigs/base",
-  "compilerOptions": {
-    "strictNullChecks": true,
-    "allowJs": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["src/*"],
-      "@turnstile/client": ["../turnstile/packages/client/src/index.ts"],
-      "@turnstile/client/*": [
-        "../turnstile/packages/client/src/*/index.ts",
-        "../turnstile/packages/client/src/*"
-      ]
-    }
-  },
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist/"]
+    "extends": "astro/tsconfigs/base",
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "allowJs": true,
+        "baseUrl": ".",
+        "paths": {
+            "~/*": ["src/*"],
+            "@turnstile/client": ["vendor/turnstile/client/index.ts"],
+            "@turnstile/client/*": [
+                "vendor/turnstile/client/*/index.ts",
+                "vendor/turnstile/client/*"
+            ]
+        }
+    },
+    "include": [".astro/types.d.ts", "**/*"],
+    "exclude": ["dist/"]
 }

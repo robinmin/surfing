@@ -1,16 +1,16 @@
 ---
-import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro'
-import Hero from '~/components/widgets/Hero.astro'
-import { getCurrentLanguage, t } from '~/i18n'
-import Layout from '~/layouts/PageLayout.astro'
+import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { getCurrentLanguage, t } from '~/i18n';
+import Layout from '~/layouts/PageLayout.astro';
 
-const lang = getCurrentLanguage()
+const lang = getCurrentLanguage();
 
 const metadata = {
-  title: `Surfing — ${t('site.description', lang)}`,
-  description: t('site.description', lang),
-  ignoreTitleTemplate: true,
-}
+    title: `Surfing — ${t('site.description', lang)}`,
+    description: t('site.description', lang),
+    ignoreTitleTemplate: true,
+};
 ---
 
 <Layout metadata={metadata}>

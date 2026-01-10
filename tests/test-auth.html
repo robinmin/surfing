@@ -12,7 +12,7 @@
 
       function log(message) {
         console.log(message);
-        results.innerHTML += '<p>' + message + '</p>';
+        results.innerHTML += `<p>${message}</p>`;
       }
 
       // Test 1: Check if environment variables are accessible
@@ -27,7 +27,7 @@
           }
         })
         .catch((error) => {
-          log('❌ Error loading Google auth module: ' + error.message);
+          log(`❌ Error loading Google auth module: ${error.message}`);
         });
 
       // Test 2: Check if Google GSI script can be loaded
@@ -36,7 +36,7 @@
       script.src = 'https://accounts.google.com/gsi/client';
       script.onload = () => {
         log('✅ Google GSI script loaded successfully');
-        if (window.google && window.google.accounts) {
+        if (window.google?.accounts) {
           log('✅ Google Accounts API is available');
         } else {
           log('❌ Google Accounts API not available');
@@ -65,7 +65,7 @@
           }
         })
         .catch((error) => {
-          log('❌ Error fetching main page: ' + error.message);
+          log(`❌ Error fetching main page: ${error.message}`);
         });
     </script>
   </body>

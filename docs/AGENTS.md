@@ -273,18 +273,12 @@ graph LR
 
 ### Tooling Configuration
 
-**ESLint (`eslint.config.js`):**
+**Biome (`biome.json`):**
 
-- `eslint-plugin-astro` - Astro-specific rules
-- `@typescript-eslint` - TypeScript support
-- `astro-eslint-parser` - Astro file parsing
-- Zero errors required for production builds
-
-**Prettier (`prettier-plugin-astro`):**
-
-- Astro component formatting
-- Consistent spacing and indentation
-- **Critical:** Never add files to `.prettierignore` to bypass checks
+- **Purpose**: Unified tool for linting and formatting
+- **Rules**: Replaces ESLint and Prettier
+- **Usage**: `bun run check` (type check + biome)
+- **Critical:** Never bypass Biome checks
 
 **TypeScript (`tsconfig.json`):**
 
@@ -313,20 +307,17 @@ graph LR
 
 ```bash
 # Development
-npm run dev              # Start Astro dev server (localhost:4321)
-npm run build            # Production build to dist/
-npm run preview          # Preview production build
+bun run dev              # Start Astro dev server (localhost:4321)
+bun run build            # Production build to dist/
+bun run preview          # Preview production build
 
 # Code Quality (run before commits)
-npm run check            # Astro check + ESLint + Prettier
-npm run check:astro      # Type checking only
-npm run check:eslint     # Linting only
-npm run check:prettier   # Formatting check only
+bun run check            # Astro check + Biome check
+bun run check:astro      # Type checking only
+bun run check:biome      # Linting + Formatting check
 
 # Auto-fix
-npm run fix              # Fix ESLint + Prettier issues
-npm run fix:eslint       # Fix linting issues
-npm run fix:prettier     # Fix formatting issues
+bun run fix              # Fix Biome issues (linting + formatting)
 ```
 
 ## Testing Strategy
@@ -631,9 +622,9 @@ npm run preview                  # Preview production build locally
 
 ```yaml
 # Example GitHub Actions
-- run: npm ci
-- run: npm run check
-- run: npm run build
+- run: bun install --frozen-lockfile
+- run: bun run check
+- run: bun run build
 - deploy: dist/
 ```
 
@@ -680,9 +671,9 @@ npm run dev              # Start dev server
 **Before Committing:**
 
 ```bash
-npm run check            # Verify no errors
-npm run fix              # Auto-fix formatting
-npm run build            # Ensure production build works
+bun run check            # Verify no errors
+bun run fix              # Auto-fix formatting
+bun run build            # Ensure production build works
 ```
 
 **Commit Workflow:**

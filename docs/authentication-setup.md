@@ -185,7 +185,7 @@ Visit `/test-env` to verify all variables are loaded correctly.
 
 ### Test Authentication Flow
 
-1. Start development server: `npm run dev`
+1. Start development server: `bun run dev`
 2. Navigate to a page with authentication components
 3. Verify Google One Tap button appears
 4. Verify Sign In with Apple button appears

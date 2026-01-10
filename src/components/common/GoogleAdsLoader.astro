@@ -1,11 +1,11 @@
 ---
-import { ADS } from 'astrowind:config'
+import { ADS } from 'astrowind:config';
 
-const client = ADS.google?.client
+const client = ADS.google?.client;
 
 // Generate the inline script content at build time
 const scriptContent = client
-  ? `
+    ? `
 (function() {
   if (typeof window === 'undefined') return;
 
@@ -72,7 +72,7 @@ const scriptContent = client
   }
 })();
 `.trim()
-  : ''
+    : '';
 ---
 
 {client && <script is:inline set:html={scriptContent} />}

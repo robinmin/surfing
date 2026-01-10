@@ -1,37 +1,37 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/showcase",
-      "destination": "/showcase/",
-      "permanent": false
-    },
-    {
-      "source": "/articles",
-      "destination": "/articles/",
-      "permanent": false
-    },
-    {
-      "source": "/cheatsheets",
-      "destination": "/cheatsheets/",
-      "permanent": false
-    },
-    {
-      "source": "/documents",
-      "destination": "/documents/",
-      "permanent": false
-    }
-  ],
-  "headers": [
-    {
-      "source": "/_astro/(.*)",
-      "headers": [
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "redirects": [
         {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+            "source": "/showcase",
+            "destination": "/showcase/",
+            "permanent": false
+        },
+        {
+            "source": "/articles",
+            "destination": "/articles/",
+            "permanent": false
+        },
+        {
+            "source": "/cheatsheets",
+            "destination": "/cheatsheets/",
+            "permanent": false
+        },
+        {
+            "source": "/documents",
+            "destination": "/documents/",
+            "permanent": false
         }
-      ]
-    }
-  ]
+    ],
+    "headers": [
+        {
+            "source": "/_astro/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
+        }
+    ]
 }

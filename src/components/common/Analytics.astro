@@ -1,10 +1,11 @@
 ---
-import { ANALYTICS } from 'astrowind:config'
-import loadConfig from '../../../vendor/integration/utils/loadConfig'
+import { ANALYTICS } from 'astrowind:config';
+import { loadConfig } from '../../../vendor/integration/utils/loadConfig';
 
 // Load configuration to check if cookie consent is enabled
-const config = (await loadConfig('./src/config.yaml')) as any
-const isCookieConsentEnabled = config?.cookieConsent?.enabled ?? true
+const config = (await loadConfig('./src/config.yaml')) as Record<string, unknown>;
+const isCookieConsentEnabled =
+    (config?.cookieConsent as Record<string, boolean | undefined>)?.enabled ?? true;
 
 // Prepare Google Analytics scripts as strings to avoid Prettier parsing issues
 const gtagScript = `
@@ -37,7 +38,7 @@ const gtagScript = `
       allow_ad_personalization_signals: false
     });
   };
-`
+`;
 
 const consentScript = `
   // Wait for CookieConsent to be available
@@ -91,7 +92,7 @@ const consentScript = `
       }));
     }
   }
-`
+`;
 
 const clarityScript = `
   (function(c,l,a,r,i,t,y){
@@ -99,13 +100,17 @@ const clarityScript = `
     t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window, document, "clarity", "script", clarity_id);
-`
+`;
 ---
 
 {
   ANALYTICS?.vendors?.googleAnalytics?.id && isCookieConsentEnabled && (
     <Fragment>
-      <script is:inline define:vars={{ gtag_id: ANALYTICS.vendors.googleAnalytics.id }} set:html={gtagScript} />
+      <script
+        is:inline
+        define:vars={{ gtag_id: ANALYTICS.vendors.googleAnalytics.id }}
+        set:html={gtagScript}
+      />
       <script is:inline set:html={consentScript} />
     </Fragment>
   )
@@ -113,6 +118,10 @@ const clarityScript = `
 
 {
   ANALYTICS?.vendors?.microsoftClarity?.id && (
-    <script is:inline define:vars={{ clarity_id: ANALYTICS.vendors.microsoftClarity.id }} set:html={clarityScript} />
+    <script
+      is:inline
+      define:vars={{ clarity_id: ANALYTICS.vendors.microsoftClarity.id }}
+      set:html={clarityScript}
+    />
   )
 }

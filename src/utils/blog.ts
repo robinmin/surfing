@@ -1,329 +1,332 @@
-import type { CollectionEntry } from 'astro:content'
-import { getCollection, render } from 'astro:content'
-import { APP_BLOG } from 'astrowind:config'
-import type { PaginateFunction } from 'astro'
-import type { Post } from '~/types'
-import { filterAndDeduplicateContent } from './language'
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import { APP_BLOG } from 'astrowind:config';
+import type { PaginateFunction } from 'astro';
+import type { Post } from '~/types';
+import { filterAndDeduplicateContent } from './language';
 import {
-  BLOG_BASE,
-  CATEGORY_BASE,
-  cleanSlug,
-  POST_PERMALINK_PATTERN,
-  TAG_BASE,
-  trimSlash,
-} from './permalinks'
+    BLOG_BASE,
+    CATEGORY_BASE,
+    cleanSlug,
+    POST_PERMALINK_PATTERN,
+    TAG_BASE,
+    trimSlash,
+} from './permalinks';
 
 const generatePermalink = async ({
-  id,
-  slug,
-  publishDate,
-  category,
+    id,
+    slug,
+    publishDate,
+    category,
 }: {
-  id: string
-  slug: string
-  publishDate: Date
-  category: string | undefined
+    id: string;
+    slug: string;
+    publishDate: Date;
+    category: string | undefined;
 }) => {
-  const year = String(publishDate.getFullYear()).padStart(4, '0')
-  const month = String(publishDate.getMonth() + 1).padStart(2, '0')
-  const day = String(publishDate.getDate()).padStart(2, '0')
-  const hour = String(publishDate.getHours()).padStart(2, '0')
-  const minute = String(publishDate.getMinutes()).padStart(2, '0')
-  const second = String(publishDate.getSeconds()).padStart(2, '0')
+    const year = String(publishDate.getFullYear()).padStart(4, '0');
+    const month = String(publishDate.getMonth() + 1).padStart(2, '0');
+    const day = String(publishDate.getDate()).padStart(2, '0');
+    const hour = String(publishDate.getHours()).padStart(2, '0');
+    const minute = String(publishDate.getMinutes()).padStart(2, '0');
+    const second = String(publishDate.getSeconds()).padStart(2, '0');
 
-  const permalink = POST_PERMALINK_PATTERN.replace('%slug%', slug)
-    .replace('%id%', id)
-    .replace('%category%', category || '')
-    .replace('%year%', year)
-    .replace('%month%', month)
-    .replace('%day%', day)
-    .replace('%hour%', hour)
-    .replace('%minute%', minute)
-    .replace('%second%', second)
+    const permalink = POST_PERMALINK_PATTERN.replace('%slug%', slug)
+        .replace('%id%', id)
+        .replace('%category%', category || '')
+        .replace('%year%', year)
+        .replace('%month%', month)
+        .replace('%day%', day)
+        .replace('%hour%', hour)
+        .replace('%minute%', minute)
+        .replace('%second%', second);
 
-  return permalink
-    .split('/')
-    .map((el) => trimSlash(el))
-    .filter((el) => !!el)
-    .join('/')
-}
+    return permalink
+        .split('/')
+        .map((el) => trimSlash(el))
+        .filter((el) => !!el)
+        .join('/');
+};
 
 const getNormalizedPost = async (post: CollectionEntry<'articles'>): Promise<Post> => {
-  const { id, data } = post
-  const { Content, remarkPluginFrontmatter } = await render(post)
+    const { id, data } = post;
+    const { Content, remarkPluginFrontmatter } = await render(post);
 
-  const {
-    publishDate: rawPublishDate = new Date(),
-    updateDate: rawUpdateDate,
-    title,
-    excerpt,
-    description,
-    image,
-    tags: rawTags = [],
-    category: rawCategory,
-    author,
-    draft = false,
-    featured = false,
-    metadata = {},
-  } = data
+    const {
+        publishDate: rawPublishDate = new Date(),
+        updateDate: rawUpdateDate,
+        title,
+        excerpt,
+        description,
+        image,
+        tags: rawTags = [],
+        category: rawCategory,
+        author,
+        draft = false,
+        featured = false,
+        metadata = {},
+    } = data;
 
-  const slug = cleanSlug(id) // cleanSlug(rawSlug.split('/').pop());
-  const publishDate = new Date(rawPublishDate)
-  const updateDate = rawUpdateDate ? new Date(rawUpdateDate) : undefined
+    const slug = cleanSlug(id); // cleanSlug(rawSlug.split('/').pop());
+    const publishDate = new Date(rawPublishDate);
+    const updateDate = rawUpdateDate ? new Date(rawUpdateDate) : undefined;
 
-  const category = rawCategory
-    ? {
-        slug: cleanSlug(rawCategory),
-        title: rawCategory,
-      }
-    : undefined
+    const category = rawCategory
+        ? {
+              slug: cleanSlug(rawCategory),
+              title: rawCategory,
+          }
+        : undefined;
 
-  const tags = rawTags.map((tag: string) => ({
-    slug: cleanSlug(tag),
-    title: tag,
-  }))
+    const tags = rawTags.map((tag: string) => ({
+        slug: cleanSlug(tag),
+        title: tag,
+    }));
 
-  return {
-    id: id,
-    slug: slug,
-    permalink: await generatePermalink({ id, slug, publishDate, category: category?.slug }),
+    return {
+        id: id,
+        slug: slug,
+        permalink: await generatePermalink({ id, slug, publishDate, category: category?.slug }),
 
-    publishDate: publishDate,
-    updateDate: updateDate,
+        publishDate: publishDate,
+        updateDate: updateDate,
 
-    title: title,
-    excerpt: excerpt || description,
-    image: image,
+        title: title,
+        excerpt: excerpt || description,
+        image: image,
 
-    category: category,
-    tags: tags,
-    author: author,
+        category: category,
+        tags: tags,
+        author: author,
 
-    draft: draft,
-    featured: featured,
+        draft: draft,
+        featured: featured,
 
-    metadata,
+        metadata,
 
-    Content: Content,
-    // or 'content' in case you consume from API
+        Content: Content,
+        // or 'content' in case you consume from API
 
-    readingTime: remarkPluginFrontmatter?.readingTime,
-  }
-}
+        readingTime: remarkPluginFrontmatter?.readingTime,
+    };
+};
 
 const load = async (options?: { language?: string }): Promise<Array<Post>> => {
-  let posts = await getCollection('articles')
+    let posts = await getCollection('articles');
 
-  // Apply language filtering if specified
-  if (options?.language) {
-    posts = filterAndDeduplicateContent(posts, options.language)
-  }
+    // Apply language filtering if specified
+    if (options?.language) {
+        posts = filterAndDeduplicateContent(posts, options.language);
+    }
 
-  const normalizedPosts = posts.map(async (post) => await getNormalizedPost(post))
+    const normalizedPosts = posts.map(async (post) => await getNormalizedPost(post));
 
-  const results = (await Promise.all(normalizedPosts))
-    .sort((a, b) => b.publishDate.valueOf() - a.publishDate.valueOf())
-    .filter((post) => !post.draft)
+    const results = (await Promise.all(normalizedPosts))
+        .sort((a, b) => b.publishDate.valueOf() - a.publishDate.valueOf())
+        .filter((post) => !post.draft);
 
-  return results
-}
+    return results;
+};
 
-let _posts: Array<Post>
+let _posts: Array<Post>;
 
 /** */
-export const isBlogEnabled = APP_BLOG.isEnabled
-export const isRelatedPostsEnabled = APP_BLOG.isRelatedPostsEnabled
-export const isBlogListRouteEnabled = APP_BLOG.list.isEnabled
-export const isBlogPostRouteEnabled = APP_BLOG.post.isEnabled
-export const isBlogCategoryRouteEnabled = APP_BLOG.category.isEnabled
-export const isBlogTagRouteEnabled = APP_BLOG.tag.isEnabled
+export const isBlogEnabled = APP_BLOG.isEnabled;
+export const isRelatedPostsEnabled = APP_BLOG.isRelatedPostsEnabled;
+export const isBlogListRouteEnabled = APP_BLOG.list.isEnabled;
+export const isBlogPostRouteEnabled = APP_BLOG.post.isEnabled;
+export const isBlogCategoryRouteEnabled = APP_BLOG.category.isEnabled;
+export const isBlogTagRouteEnabled = APP_BLOG.tag.isEnabled;
 
-export const blogListRobots = APP_BLOG.list.robots
-export const blogPostRobots = APP_BLOG.post.robots
-export const blogCategoryRobots = APP_BLOG.category.robots
-export const blogTagRobots = APP_BLOG.tag.robots
+export const blogListRobots = APP_BLOG.list.robots;
+export const blogPostRobots = APP_BLOG.post.robots;
+export const blogCategoryRobots = APP_BLOG.category.robots;
+export const blogTagRobots = APP_BLOG.tag.robots;
 
-export const blogPostsPerPage = APP_BLOG?.postsPerPage
+export const blogPostsPerPage = APP_BLOG?.postsPerPage;
 
 /** */
 export const fetchPosts = async (options?: { language?: string }): Promise<Array<Post>> => {
-  // When language filtering is requested, don't use cache
-  // This ensures each language gets its own filtered results
-  if (options?.language) {
-    return await load(options)
-  }
+    // When language filtering is requested, don't use cache
+    // This ensures each language gets its own filtered results
+    if (options?.language) {
+        return await load(options);
+    }
 
-  // Use cache for non-filtered requests
-  if (!_posts) {
-    _posts = await load()
-  }
+    // Use cache for non-filtered requests
+    if (!_posts) {
+        _posts = await load();
+    }
 
-  return _posts
-}
+    return _posts;
+};
 
 /** */
 export const findPostsBySlugs = async (slugs: Array<string>): Promise<Array<Post>> => {
-  if (!Array.isArray(slugs)) return []
+    if (!Array.isArray(slugs)) return [];
 
-  const posts = await fetchPosts()
+    const posts = await fetchPosts();
 
-  return slugs.reduce((r: Array<Post>, slug: string) => {
-    posts.some((post: Post) => slug === post.slug && r.push(post))
-    return r
-  }, [])
-}
+    return slugs.reduce((r: Array<Post>, slug: string) => {
+        posts.some((post: Post) => slug === post.slug && r.push(post));
+        return r;
+    }, []);
+};
 
 /** */
 export const findPostsByIds = async (ids: Array<string>): Promise<Array<Post>> => {
-  if (!Array.isArray(ids)) return []
+    if (!Array.isArray(ids)) return [];
 
-  const posts = await fetchPosts()
+    const posts = await fetchPosts();
 
-  return ids.reduce((r: Array<Post>, id: string) => {
-    posts.some((post: Post) => id === post.id && r.push(post))
-    return r
-  }, [])
-}
+    return ids.reduce((r: Array<Post>, id: string) => {
+        posts.some((post: Post) => id === post.id && r.push(post));
+        return r;
+    }, []);
+};
 
 /** */
 export const findLatestPosts = async ({
-  count,
-  language,
+    count,
+    language,
 }: {
-  count?: number
-  language?: string
+    count?: number;
+    language?: string;
 }): Promise<Array<Post>> => {
-  const _count = count || 4
-  const posts = await fetchPosts({ language })
+    const _count = count || 4;
+    const posts = await fetchPosts({ language });
 
-  return posts ? posts.slice(0, _count) : []
-}
+    return posts ? posts.slice(0, _count) : [];
+};
 
 /** */
 export const getStaticPathsBlogList = async ({ paginate }: { paginate: PaginateFunction }) => {
-  if (!isBlogEnabled || !isBlogListRouteEnabled) return []
-  return paginate(await fetchPosts(), {
-    params: { blog: BLOG_BASE || undefined },
-    pageSize: blogPostsPerPage,
-  })
-}
+    if (!isBlogEnabled || !isBlogListRouteEnabled) return [];
+    return paginate(await fetchPosts(), {
+        params: { blog: BLOG_BASE || undefined },
+        pageSize: blogPostsPerPage,
+    });
+};
 
 /** */
 export const getStaticPathsBlogPost = async () => {
-  if (!isBlogEnabled || !isBlogPostRouteEnabled) return []
-  return (await fetchPosts()).flatMap((post) => ({
-    params: {
-      blog: post.permalink,
-    },
-    props: { post },
-  }))
-}
+    if (!isBlogEnabled || !isBlogPostRouteEnabled) return [];
+    return (await fetchPosts()).flatMap((post) => ({
+        params: {
+            blog: post.permalink,
+        },
+        props: { post },
+    }));
+};
 
 /** */
 export const getStaticPathsBlogCategory = async ({ paginate }: { paginate: PaginateFunction }) => {
-  if (!isBlogEnabled || !isBlogCategoryRouteEnabled) return []
+    if (!isBlogEnabled || !isBlogCategoryRouteEnabled) return [];
 
-  const posts = await fetchPosts()
-  const categories = {}
-  posts.map((post) => {
-    if (post.category?.slug) {
-      categories[post.category?.slug] = post.category
-    }
-  })
+    const posts = await fetchPosts();
+    const categories: Record<string, { slug: string; title: string }> = {};
+    posts.forEach((post) => {
+        if (post.category?.slug) {
+            categories[post.category.slug] = post.category;
+        }
+    });
 
-  return Array.from(Object.keys(categories)).flatMap((categorySlug) =>
-    paginate(
-      posts.filter((post) => post.category?.slug && categorySlug === post.category?.slug),
-      {
-        params: { category: categorySlug, blog: CATEGORY_BASE || undefined },
-        pageSize: blogPostsPerPage,
-        props: { category: categories[categorySlug] },
-      }
-    )
-  )
-}
+    return Array.from(Object.keys(categories)).flatMap((categorySlug) =>
+        paginate(
+            posts.filter((post) => post.category?.slug && categorySlug === post.category?.slug),
+            {
+                params: { category: categorySlug, blog: CATEGORY_BASE || undefined },
+                pageSize: blogPostsPerPage,
+                props: { category: categories[categorySlug] },
+            }
+        )
+    );
+};
 
 /** */
 export const getStaticPathsBlogTag = async ({ paginate }: { paginate: PaginateFunction }) => {
-  if (!isBlogEnabled || !isBlogTagRouteEnabled) return []
+    if (!isBlogEnabled || !isBlogTagRouteEnabled) return [];
 
-  const posts = await fetchPosts()
-  const tags = {}
-  posts.map((post) => {
-    if (Array.isArray(post.tags)) {
-      post.tags.map((tag) => {
-        tags[tag?.slug] = tag
-      })
-    }
-  })
+    const posts = await fetchPosts();
+    const tags: Record<string, { slug: string; title: string }> = {};
+    posts.forEach((post) => {
+        if (Array.isArray(post.tags)) {
+            post.tags.forEach((tag) => {
+                tags[tag.slug] = tag;
+            });
+        }
+    });
 
-  return Array.from(Object.keys(tags)).flatMap((tagSlug) =>
-    paginate(
-      posts.filter(
-        (post) => Array.isArray(post.tags) && post.tags.find((elem) => elem.slug === tagSlug)
-      ),
-      {
-        params: { tag: tagSlug, blog: TAG_BASE || undefined },
-        pageSize: blogPostsPerPage,
-        props: { tag: tags[tagSlug] },
-      }
-    )
-  )
-}
+    return Array.from(Object.keys(tags)).flatMap((tagSlug) =>
+        paginate(
+            posts.filter(
+                (post) =>
+                    Array.isArray(post.tags) && post.tags.find((elem) => elem.slug === tagSlug)
+            ),
+            {
+                params: { tag: tagSlug, blog: TAG_BASE || undefined },
+                pageSize: blogPostsPerPage,
+                props: { tag: tags[tagSlug] },
+            }
+        )
+    );
+};
 
 /** */
 export async function getRelatedPosts(originalPost: Post, maxResults: number = 4): Promise<Post[]> {
-  const allPosts = await fetchPosts()
-  const originalTagsSet = new Set(originalPost.tags ? originalPost.tags.map((tag) => tag.slug) : [])
+    const allPosts = await fetchPosts();
+    const originalTagsSet = new Set(
+        originalPost.tags ? originalPost.tags.map((tag) => tag.slug) : []
+    );
 
-  const postsWithScores = allPosts.reduce(
-    (acc: { post: Post; score: number }[], iteratedPost: Post) => {
-      if (iteratedPost.slug === originalPost.slug) return acc
+    const postsWithScores = allPosts.reduce(
+        (acc: { post: Post; score: number }[], iteratedPost: Post) => {
+            if (iteratedPost.slug === originalPost.slug) return acc;
 
-      let score = 0
-      if (
-        iteratedPost.category &&
-        originalPost.category &&
-        iteratedPost.category.slug === originalPost.category.slug
-      ) {
-        score += 5
-      }
+            let score = 0;
+            if (
+                iteratedPost.category &&
+                originalPost.category &&
+                iteratedPost.category.slug === originalPost.category.slug
+            ) {
+                score += 5;
+            }
 
-      if (iteratedPost.tags) {
-        iteratedPost.tags.forEach((tag) => {
-          if (originalTagsSet.has(tag.slug)) {
-            score += 1
-          }
-        })
-      }
+            if (iteratedPost.tags) {
+                iteratedPost.tags.forEach((tag) => {
+                    if (originalTagsSet.has(tag.slug)) {
+                        score += 1;
+                    }
+                });
+            }
 
-      acc.push({ post: iteratedPost, score })
-      return acc
-    },
-    []
-  )
+            acc.push({ post: iteratedPost, score });
+            return acc;
+        },
+        []
+    );
 
-  postsWithScores.sort((a, b) => b.score - a.score)
+    postsWithScores.sort((a, b) => b.score - a.score);
 
-  const selectedPosts: Post[] = []
-  let i = 0
-  while (selectedPosts.length < maxResults && i < postsWithScores.length) {
-    selectedPosts.push(postsWithScores[i].post)
-    i++
-  }
+    const selectedPosts: Post[] = [];
+    let i = 0;
+    while (selectedPosts.length < maxResults && i < postsWithScores.length) {
+        selectedPosts.push(postsWithScores[i].post);
+        i++;
+    }
 
-  return selectedPosts
+    return selectedPosts;
 }
 
 /** Get featured posts */
 export const findFeaturedPosts = async ({
-  count,
-  language,
+    count,
+    language,
 }: {
-  count?: number
-  language?: string
+    count?: number;
+    language?: string;
 } = {}): Promise<Array<Post>> => {
-  const posts = await fetchPosts({ language })
-  const featuredPosts = posts.filter((post) => post.featured === true)
-  return count ? featuredPosts.slice(0, count) : featuredPosts
-}
+    const posts = await fetchPosts({ language });
+    const featuredPosts = posts.filter((post) => post.featured === true);
+    return count ? featuredPosts.slice(0, count) : featuredPosts;
+};

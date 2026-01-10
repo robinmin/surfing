@@ -1,7 +1,7 @@
 ---
 name: try to replace tool chains
 description: Replace npm/ESLint/Prettier with Bun/Biome to align with Turnstile project toolchain
-status: WIP
+status: Done
 current_phase: 6
 verify_cmd: npm run fix && npm run check && npm run build
 impl_progress:
@@ -12,7 +12,7 @@ impl_progress:
   phase_5: pending
   phase_6: pending
 created_at: 2026-01-08 23:16:13
-updated_at: 2026-01-08 23:16:13
+updated_at: 2026-01-09 22:14:53
 ---
 
 ## try to replace tool chains

@@ -1,586 +1,655 @@
 export const en = {
-  site: {
-    name: 'Surfing',
-    description: '🏄‍♂️ AI-Powered Content Showcase Platform.',
-  },
-  nav: {
-    home: 'Home',
-    articles: 'Articles',
-    showcase: 'Showcase',
-    documents: 'Documents',
-    cheatsheets: 'Cheatsheets',
-    browse: 'Browse All',
-    about: 'About',
-    content: 'Content',
-    explore: 'Explore',
-  },
-  common: {
-    readMore: 'Read more',
-    loading: 'Loading...',
-    search: 'Search',
-    tags: 'Tags',
-    category: 'Category',
-    author: 'Author',
-    publishDate: 'Published',
-    updateDate: 'Updated',
-    readingTime: 'Reading time',
-    minutes: 'minutes',
-    viewProject: 'View Project',
-    sourceCode: 'Source Code',
-    liveDemo: 'Live Demo',
-    browse: 'Browse All',
-    terms: 'Terms',
-    privacyPolicy: 'Privacy Policy',
-    copyFailed: 'Copy failed',
-    copySuccess: 'Copied!',
-  },
-  pages: {
-    home: {
-      title: 'Welcome to',
-      subtitle: 'AI-Powered Content Showcase Platform',
-      latestContent: 'Latest Content',
-      featuredContent: 'Featured Content',
+    site: {
+        name: 'Surfing',
+        description: '🏄‍♂️ AI-Powered Content Showcase Platform.',
     },
-    about: {
-      title: 'About',
-      description: 'Learn more about Surfing',
-      whatsHere: "What's Here",
-      articlesDesc: 'Technical notes and insights.',
-      showcaseDesc: 'Projects and experiments.',
-      collectedContent: 'Collected Content',
-      collectedContentDesc: 'Useful things I found.',
+    nav: {
+        home: 'Home',
+        articles: 'Articles',
+        showcase: 'Showcase',
+        documents: 'Documents',
+        cheatsheets: 'Cheatsheets',
+        browse: 'Browse All',
+        about: 'About',
+        pricing: 'Pricing',
+        content: 'Content',
+        explore: 'Explore',
     },
-    articles: {
-      title: 'Articles',
-      description: 'Insights, research, and technical content',
-      noArticles: 'No articles found.',
-      heroTitle: 'AI-Powered Articles',
-      heroSubtitle:
-        'Explore AI insights, technical articles, and in-depth content from our community of creators and researchers.',
-      featuredArticles: 'Featured Articles',
-      featuredDesc: 'Hand-picked articles that showcase the best AI insights and technical content',
-      allArticles: 'All Articles',
-      allArticlesDesc: 'Dive deep into AI research, technical insights, and innovative ideas',
-      noArticlesYet: 'No articles yet',
-      checkBackSoon: 'Check back soon for AI insights and technical content from our community!',
-      featured: 'Featured',
-      anonymous: 'Anonymous',
-      minRead: 'min read',
-      noDate: 'No date',
-      noDescription: 'No description available.',
+    common: {
+        readMore: 'Read more',
+        loading: 'Loading...',
+        search: 'Search',
+        tags: 'Tags',
+        category: 'Category',
+        author: 'Author',
+        publishDate: 'Published',
+        updateDate: 'Updated',
+        readingTime: 'Reading time',
+        minutes: 'minutes',
+        viewProject: 'View Project',
+        sourceCode: 'Source Code',
+        liveDemo: 'Live Demo',
+        browse: 'Browse All',
+        terms: 'Terms',
+        privacyPolicy: 'Privacy Policy',
+        copyFailed: 'Copy failed',
+        copySuccess: 'Copied!',
     },
-    browse: {
-      title: 'Browse All Content',
-      description: 'Explore all content types',
-      heroTitle: 'Browse All Content',
-      heroSubtitle:
-        'Discover AI insights, technical articles, project showcases, and creative content from our community.',
-      searchPlaceholder: 'Search content...',
-      allTypes: 'All Types',
-      latestFirst: 'Latest First',
-      oldestFirst: 'Oldest First',
-      titleAZ: 'Title A-Z',
-      titleZA: 'Title Z-A',
-      filterByTags: 'Filter by Tags:',
-      filterByCategory: 'Filter by Category:',
-      noContentFound: 'No content found',
-      adjustFilters: 'Try adjusting your search or filter criteria.',
-      article: 'Article',
-      showcase: 'Showcase',
-      document: 'Document',
-      cheatsheet: 'Cheatsheet',
-      blogPost: 'Blog Post',
-    },
-    documents: {
-      title: 'Documents',
-      description: 'Documentation and guides',
-      noDocuments: 'No documents found.',
-      heroTitle: 'Documents',
-      heroSubtitle:
-        'Browse HTML documents, legacy content, and rich-formatted pieces with preserved styling and functionality.',
-      featuredDocuments: 'Featured Documents',
-      allDocuments: 'All Documents',
-      noDocumentsYet: 'No documents yet',
-      addDocuments: 'Add HTML documents to the',
-      directoryToStart: 'directory to get started.',
-      legacy: 'Legacy',
-      template: 'Template',
-      snippet: 'Snippet',
-      document: 'Document',
-      minRead: 'min read',
-    },
-    cheatsheets: {
-      title: 'Cheatsheets',
-      description: 'AI-Generated Reference Materials',
-      noCheatsheets: 'No cheatsheets found.',
-      heroTitle: 'AI-Generated Cheatsheets',
-      heroSubtitle:
-        'Quick reference guides and comprehensive cheatsheets for developers, created by AI to boost your productivity and accelerate learning.',
-      featuredCheatsheets: 'Featured Cheatsheets',
-      featuredDesc: 'Hand-picked reference materials for essential technologies and frameworks',
-      allCheatsheets: 'All Cheatsheets',
-      allCheatsheetsDesc: 'Browse our complete collection of AI-generated reference materials',
-      noCheatSheetsYet: 'No cheatsheets yet',
-      startCreating: 'Start creating AI-generated cheatsheets using the postsurfing CLI.',
-      generatedBy: 'Generated by',
-      downloadPdf: 'Download PDF',
-      minRead: 'min read',
-      difficulty: {
-        beginner: 'Beginner',
-        intermediate: 'Intermediate',
-        advanced: 'Advanced',
-      },
-      format: {
-        html: 'HTML',
-        markdown: 'Markdown',
-      },
-    },
-    showcase: {
-      title: 'Showcase',
-      description: 'Projects and demos',
-      noProjects: 'No projects found.',
-      heroTitle: 'Project Showcase',
-      heroSubtitle:
-        'Explore amazing projects, tools, and creations from our community of AI creators and developers.',
-      featuredProjects: 'Featured Projects',
-      featuredDesc: 'Highlighted projects that showcase innovation and creativity',
-      allProjects: 'All Projects',
-      allProjectsDesc: 'Discover the full collection of community projects',
-      noShowcasesYet: 'No showcases yet',
-      checkBackSoon: 'Check back soon for amazing projects from our community!',
-      featured: 'Featured',
-      learnMore: 'Learn More',
-      liveDemo: 'Live Demo',
-      details: 'Details',
-      demo: 'Demo',
-      code: 'Code',
-    },
-    pricing: {
-      title: 'Pricing',
-      description: 'Choose the plan that fits your needs',
-      heroTitle: 'Simple, Transparent Pricing',
-      heroSubtitle:
-        'Get access to premium content, cheatsheet downloads, and exclusive features with our subscription plans.',
-      choosePlan: 'Choose Your Plan',
-      choosePlanSubtitle:
-        'Start free and upgrade anytime. All plans include access to our growing library of content.',
-      popular: 'Popular',
-      billing: {
-        monthly: 'Monthly',
-        yearly: 'Yearly',
-        yearlySavings: '(Save 17%)',
-        lifetime: 'Lifetime',
-      },
-      period: {
-        monthly: '/month',
-        yearly: '/year',
-        lifetime: 'one-time',
-      },
-      tiers: {
-        free: {
-          name: 'Free',
-          description: 'Perfect for getting started',
+    pages: {
+        home: {
+            title: 'Welcome to',
+            subtitle: 'AI-Powered Content Showcase Platform',
+            latestContent: 'Latest Content',
+            featuredContent: 'Featured Content',
         },
-        standard: {
-          name: 'Standard',
-          description: 'For regular readers and learners',
+        about: {
+            title: 'About',
+            description: 'Learn more about Surfing',
+            whatsHere: "What's Here",
+            articlesDesc: 'Technical notes and insights.',
+            showcaseDesc: 'Projects and experiments.',
+            collectedContent: 'Collected Content',
+            collectedContentDesc: 'Useful things I found.',
         },
-        premium: {
-          name: 'Premium',
-          description: 'For power users and professionals',
+        articles: {
+            title: 'Articles',
+            description: 'Insights, research, and technical content',
+            noArticles: 'No articles found.',
+            heroTitle: 'AI-Powered Articles',
+            heroSubtitle:
+                'Explore AI insights, technical articles, and in-depth content from our community of creators and researchers.',
+            featuredArticles: 'Featured Articles',
+            featuredDesc:
+                'Hand-picked articles that showcase the best AI insights and technical content',
+            allArticles: 'All Articles',
+            allArticlesDesc: 'Dive deep into AI research, technical insights, and innovative ideas',
+            noArticlesYet: 'No articles yet',
+            checkBackSoon:
+                'Check back soon for AI insights and technical content from our community!',
+            featured: 'Featured',
+            anonymous: 'Anonymous',
+            minRead: 'min read',
+            noDate: 'No date',
+            noDescription: 'No description available.',
         },
-      },
-      features: {
-        publicArticles: 'Access to public articles',
-        cheatsheetViewing: 'View all cheatsheets',
-        premiumArticles: 'Premium articles access',
-        cheatsheetDownloads: 'Download cheatsheets as PDF',
-        priorityAccess: 'Priority access to new content',
-        apiAccess: 'API access',
-        exclusiveContent: 'Exclusive subscriber content',
-      },
-      cta: {
-        getStarted: 'Get Started',
-        subscribe: 'Subscribe',
-        goPremium: 'Go Premium',
-        manageSubscription: 'Manage Subscription',
-      },
-      faq: {
-        title: 'Frequently Asked Questions',
-        q1: 'Can I cancel my subscription anytime?',
-        a1: 'Yes, you can cancel your subscription at any time. Your access will continue until the end of your current billing period.',
-        q2: 'What payment methods do you accept?',
-        a2: 'We accept all major credit cards, debit cards, and various local payment methods through our secure payment processor, Stripe.',
-        q3: 'What happens when my subscription expires?',
-        a3: 'When your subscription expires, your account will automatically revert to the Free tier. You will retain access to all public content but lose access to premium features.',
-      },
+        browse: {
+            title: 'Browse All Content',
+            description: 'Explore all content types',
+            heroTitle: 'Browse All Content',
+            heroSubtitle:
+                'Discover AI insights, technical articles, project showcases, and creative content from our community.',
+            searchPlaceholder: 'Search content...',
+            allTypes: 'All Types',
+            latestFirst: 'Latest First',
+            oldestFirst: 'Oldest First',
+            titleAZ: 'Title A-Z',
+            titleZA: 'Title Z-A',
+            filterByTags: 'Filter by Tags:',
+            filterByCategory: 'Filter by Category:',
+            noContentFound: 'No content found',
+            adjustFilters: 'Try adjusting your search or filter criteria.',
+            article: 'Article',
+            showcase: 'Showcase',
+            document: 'Document',
+            cheatsheet: 'Cheatsheet',
+            blogPost: 'Blog Post',
+        },
+        documents: {
+            title: 'Documents',
+            description: 'Documentation and guides',
+            noDocuments: 'No documents found.',
+            heroTitle: 'Documents',
+            heroSubtitle:
+                'Browse HTML documents, legacy content, and rich-formatted pieces with preserved styling and functionality.',
+            featuredDocuments: 'Featured Documents',
+            allDocuments: 'All Documents',
+            noDocumentsYet: 'No documents yet',
+            addDocuments: 'Add HTML documents to the',
+            directoryToStart: 'directory to get started.',
+            legacy: 'Legacy',
+            template: 'Template',
+            snippet: 'Snippet',
+            document: 'Document',
+            minRead: 'min read',
+        },
+        cheatsheets: {
+            title: 'Cheatsheets',
+            description: 'AI-Generated Reference Materials',
+            noCheatsheets: 'No cheatsheets found.',
+            heroTitle: 'AI-Generated Cheatsheets',
+            heroSubtitle:
+                'Quick reference guides and comprehensive cheatsheets for developers, created by AI to boost your productivity and accelerate learning.',
+            featuredCheatsheets: 'Featured Cheatsheets',
+            featuredDesc:
+                'Hand-picked reference materials for essential technologies and frameworks',
+            allCheatsheets: 'All Cheatsheets',
+            allCheatsheetsDesc:
+                'Browse our complete collection of AI-generated reference materials',
+            noCheatSheetsYet: 'No cheatsheets yet',
+            startCreating: 'Start creating AI-generated cheatsheets using the postsurfing CLI.',
+            generatedBy: 'Generated by',
+            downloadPdf: 'Download PDF',
+            minRead: 'min read',
+            difficulty: {
+                beginner: 'Beginner',
+                intermediate: 'Intermediate',
+                advanced: 'Advanced',
+            },
+            format: {
+                html: 'HTML',
+                markdown: 'Markdown',
+            },
+        },
+        showcase: {
+            title: 'Showcase',
+            description: 'Projects and demos',
+            noProjects: 'No projects found.',
+            heroTitle: 'Project Showcase',
+            heroSubtitle:
+                'Explore amazing projects, tools, and creations from our community of AI creators and developers.',
+            featuredProjects: 'Featured Projects',
+            featuredDesc: 'Highlighted projects that showcase innovation and creativity',
+            allProjects: 'All Projects',
+            allProjectsDesc: 'Discover the full collection of community projects',
+            noShowcasesYet: 'No showcases yet',
+            checkBackSoon: 'Check back soon for amazing projects from our community!',
+            featured: 'Featured',
+            learnMore: 'Learn More',
+            liveDemo: 'Live Demo',
+            details: 'Details',
+            demo: 'Demo',
+            code: 'Code',
+        },
+        pricing: {
+            title: 'Pricing',
+            description: 'Choose the plan that fits your needs',
+            heroTitle: 'Simple, Transparent Pricing',
+            heroSubtitle:
+                'Get access to premium content, cheatsheet downloads, and exclusive features with our subscription plans.',
+            choosePlan: 'Choose Your Plan',
+            choosePlanSubtitle:
+                'Start free and upgrade anytime. All plans include access to our growing library of content.',
+            popular: 'Popular',
+            billing: {
+                monthly: 'Monthly',
+                yearly: 'Yearly',
+                yearlySavings: '(Save 17%)',
+                lifetime: 'Lifetime',
+            },
+            period: {
+                monthly: '/month',
+                yearly: '/year',
+                lifetime: 'one-time',
+            },
+            tiers: {
+                free: {
+                    name: 'Free',
+                    description: 'Perfect for getting started',
+                },
+                standard: {
+                    name: 'Standard',
+                    description: 'For regular readers and learners',
+                },
+                premium: {
+                    name: 'Premium',
+                    description: 'For power users and professionals',
+                },
+            },
+            features: {
+                publicArticles: 'Access to public articles',
+                cheatsheetViewing: 'View all cheatsheets',
+                premiumArticles: 'Premium articles access',
+                cheatsheetDownloads: 'Download cheatsheets as PDF',
+                priorityAccess: 'Priority access to new content',
+                apiAccess: 'API access',
+                exclusiveContent: 'Exclusive subscriber content',
+            },
+            cta: {
+                getStarted: 'Get Started',
+                subscribe: 'Subscribe',
+                goPremium: 'Go Premium',
+                manageSubscription: 'Manage Subscription',
+            },
+            faq: {
+                title: 'Frequently Asked Questions',
+                q1: 'Can I cancel my subscription anytime?',
+                a1: 'Yes, you can cancel your subscription at any time. Your access will continue until the end of your current billing period.',
+                q2: 'What payment methods do you accept?',
+                a2: 'We accept all major credit cards, debit cards, and various local payment methods through our secure payment processor, Stripe.',
+                q3: 'What happens when my subscription expires?',
+                a3: 'When your subscription expires, your account will automatically revert to the Free tier. You will retain access to all public content but lose access to premium features.',
+            },
+        },
     },
-  },
-  subscription: {
-    gate: {
-      articleTitle: 'Premium Article',
-      articleDescription: 'This article is available to Standard and Premium subscribers.',
-      downloadTitle: 'Subscriber Download',
-      downloadDescription:
-        'Download this cheatsheet as PDF with a Standard or Premium subscription.',
-      apiTitle: 'API Access Required',
-      apiDescription: 'API access is available exclusively to Premium subscribers.',
-      exclusiveTitle: 'Exclusive Content',
-      exclusiveDescription: 'This exclusive content is available only to Premium subscribers.',
-      tierRequired: 'Requires {tier} subscription or higher',
+    subscription: {
+        gate: {
+            articleTitle: 'Premium Article',
+            articleDescription: 'This article is available to Standard and Premium subscribers.',
+            downloadTitle: 'Subscriber Download',
+            downloadDescription:
+                'Download this cheatsheet as PDF with a Standard or Premium subscription.',
+            apiTitle: 'API Access Required',
+            apiDescription: 'API access is available exclusively to Premium subscribers.',
+            exclusiveTitle: 'Exclusive Content',
+            exclusiveDescription:
+                'This exclusive content is available only to Premium subscribers.',
+            tierRequired: 'Requires {tier} subscription or higher',
+        },
+        upgradeToDownload: 'Upgrade to Download',
+        pdfNotAvailable: 'PDF not available',
+        currentPlan: 'Current Plan',
+        managePlan: 'Manage Plan',
+        expiresOn: 'Expires on',
+        renewsOn: 'Renews on',
+        cancelledNotice: 'Your subscription will end on {date}',
     },
-    upgradeToDownload: 'Upgrade to Download',
-    pdfNotAvailable: 'PDF not available',
-    currentPlan: 'Current Plan',
-    managePlan: 'Manage Plan',
-    expiresOn: 'Expires on',
-    renewsOn: 'Renews on',
-    cancelledNotice: 'Your subscription will end on {date}',
-  },
-  footer: {
-    sections: {
-      content: 'Content',
-      platform: 'Platform',
-      resources: 'Resources',
-      community: 'Community',
+    footer: {
+        sections: {
+            content: 'Content',
+            platform: 'Platform',
+            resources: 'Resources',
+            community: 'Community',
+        },
+        links: {
+            aiIntegration: 'AI Integration',
+            obsidianSupport: 'Obsidian Support',
+            rssFeeds: 'RSS Feeds',
+            documentation: 'Documentation',
+            contentGuidelines: 'Content Guidelines',
+            apiReference: 'API Reference',
+            status: 'Status',
+            contributors: 'Contributors',
+            github: 'GitHub',
+            support: 'Support',
+            pricing: 'Pricing',
+        },
+        copyright: 'All rights reserved.',
+        poweredBy: 'Powered by',
+        builtWith: 'Built with',
+        tagline: 'Surfing - AI-Powered Content Platform for Creators',
     },
-    links: {
-      aiIntegration: 'AI Integration',
-      obsidianSupport: 'Obsidian Support',
-      rssFeeds: 'RSS Feeds',
-      documentation: 'Documentation',
-      contentGuidelines: 'Content Guidelines',
-      apiReference: 'API Reference',
-      status: 'Status',
-      contributors: 'Contributors',
-      github: 'GitHub',
-      support: 'Support',
+    rss: {
+        title: 'RSS Feed',
+        description: 'Subscribe to our RSS feed for the latest updates',
     },
-    copyright: 'All rights reserved.',
-    poweredBy: 'Powered by',
-    builtWith: 'Built with',
-    tagline: 'Surfing - AI-Powered Content Platform for Creators',
-  },
-  rss: {
-    title: 'RSS Feed',
-    description: 'Subscribe to our RSS feed for the latest updates',
-  },
-  search: {
-    placeholder: 'Search content...',
-    noResults: 'No results found.',
-    resultsFor: 'Results for',
-  },
-  language: {
-    selector: 'Language',
-    current: 'Current language',
-    onlyAvailable: 'Only current language available',
-  },
-  social: {
-    share: 'Share',
-    twitterShare: 'Twitter Share',
-    facebookShare: 'Facebook Share',
-    linkedinShare: 'LinkedIn Share',
-    whatsappShare: 'WhatsApp Share',
-    emailShare: 'Email Share',
-  },
-  blog: {
-    relatedPosts: 'Related Posts',
-    viewAllPosts: 'View All Posts',
-  },
-  navigation: {
-    mainNavigation: 'Main navigation',
-    rssFeed: 'RSS Feed',
-  },
-  contact: {
-    title: 'Contact',
-    tagline: 'Contact',
-    subtitle: "Let's Connect!",
-    dropMessage: 'Drop us a message today!',
-    dropMessageSubtitle:
-      "For quicker answers, explore our FAQs section. You may find the solution you're looking for right there! If not, our support team is delighted to help you.",
-    name: 'Name',
-    email: 'Email',
-    message: 'Message',
-    disclaimer:
-      'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
-    responseTime: 'Our support team typically responds within 24 business hours.',
-    weAreHere: 'We are here to help!',
-    generalSupport: 'General support',
-    generalSupportDesc:
-      "Chat with us for inquiries related to account management, website navigation, payment issues, accessing purchased templates or general questions about the website's functionality.",
-    contactSales: 'Contact sales',
-    contactSalesDesc:
-      'Chat with us for questions about purchases, customization options, licensing for commercial use, inquiries about specific template, etc.',
-    technicalSupport: 'Technical support',
-    technicalSupportDesc:
-      'Chat with us when facing issues like template installation, problems editing difficulties, compatibility issues with software or download errors, or other technical challenges related to using the templates.',
-    phone: 'Phone',
-    emailContact: 'Email',
-    location: 'Location',
-  },
-  auth: {
-    signIn: 'Sign In',
-    signOut: 'Sign Out',
-    signInWith: 'Sign in with',
-    signInWithGoogle: 'Sign in with Google',
-    signInWithApple: 'Sign in with Apple',
-    signInWithGitHub: 'Sign in with GitHub',
-    signInWithMicrosoft: 'Sign in with Microsoft',
-    userMenu: 'User menu',
-    loading: 'Loading...',
-    profile: 'Profile',
-    account: 'Account',
-    settings: 'Settings',
-    oneClickLogin: 'One Click Login',
-    signedInAs: 'Signed in as',
-    welcomeBack: 'Welcome back',
-  },
-}
+    search: {
+        placeholder: 'Search content...',
+        noResults: 'No results found.',
+        resultsFor: 'Results for',
+    },
+    language: {
+        selector: 'Language',
+        current: 'Current language',
+        onlyAvailable: 'Only current language available',
+    },
+    social: {
+        share: 'Share',
+        twitterShare: 'Twitter Share',
+        facebookShare: 'Facebook Share',
+        linkedinShare: 'LinkedIn Share',
+        whatsappShare: 'WhatsApp Share',
+        emailShare: 'Email Share',
+    },
+    blog: {
+        relatedPosts: 'Related Posts',
+        viewAllPosts: 'View All Posts',
+    },
+    navigation: {
+        mainNavigation: 'Main navigation',
+        rssFeed: 'RSS Feed',
+    },
+    contact: {
+        title: 'Contact',
+        tagline: 'Contact',
+        subtitle: "Let's Connect!",
+        dropMessage: 'Drop us a message today!',
+        dropMessageSubtitle:
+            "For quicker answers, explore our FAQs section. You may find the solution you're looking for right there! If not, our support team is delighted to help you.",
+        name: 'Name',
+        email: 'Email',
+        message: 'Message',
+        disclaimer:
+            'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
+        responseTime: 'Our support team typically responds within 24 business hours.',
+        weAreHere: 'We are here to help!',
+        generalSupport: 'General support',
+        generalSupportDesc:
+            "Chat with us for inquiries related to account management, website navigation, payment issues, accessing purchased templates or general questions about the website's functionality.",
+        contactSales: 'Contact sales',
+        contactSalesDesc:
+            'Chat with us for questions about purchases, customization options, licensing for commercial use, inquiries about specific template, etc.',
+        technicalSupport: 'Technical support',
+        technicalSupportDesc:
+            'Chat with us when facing issues like template installation, problems editing difficulties, compatibility issues with software or download errors, or other technical challenges related to using the templates.',
+        phone: 'Phone',
+        emailContact: 'Email',
+        location: 'Location',
+    },
+    auth: {
+        signIn: 'Sign In',
+        signOut: 'Sign Out',
+        signInWith: 'Sign in with',
+        signInWithGoogle: 'Sign in with Google',
+        signInWithApple: 'Sign in with Apple',
+        signInWithGitHub: 'Sign in with GitHub',
+        signInWithMicrosoft: 'Sign in with Microsoft',
+        userMenu: 'User menu',
+        loading: 'Loading...',
+        profile: 'Profile',
+        account: 'Account',
+        settings: 'Settings',
+        oneClickLogin: 'One Click Login',
+        signedInAs: 'Signed in as',
+        welcomeBack: 'Welcome back',
+        membership: 'Membership',
+    },
+};
 
 export type Translation = {
-  site: {
-    name: string
-    description: string
-  }
-  nav: {
-    home: string
-    articles: string
-    showcase: string
-    documents: string
-    cheatsheets: string
-    browse: string
-    about: string
-    content: string
-    explore: string
-  }
-  common: {
-    readMore: string
-    loading: string
-    search: string
-    tags: string
-    category: string
-    author: string
-    publishDate: string
-    updateDate: string
-    readingTime: string
-    minutes: string
-    viewProject: string
-    sourceCode: string
-    liveDemo: string
-    browse: string
-    terms: string
-    privacyPolicy: string
-    copyFailed: string
-    copySuccess: string
-  }
-  pages: {
-    home: {
-      title: string
-      subtitle: string
-      latestContent: string
-      featuredContent: string
-    }
-    articles: {
-      title: string
-      description: string
-      noArticles: string
-      heroTitle: string
-      heroSubtitle: string
-      featuredArticles: string
-      featuredDesc: string
-      allArticles: string
-      allArticlesDesc: string
-      noArticlesYet: string
-      checkBackSoon: string
-      featured: string
-      anonymous: string
-      minRead: string
-      noDate: string
-      noDescription: string
-    }
-    showcase: {
-      title: string
-      description: string
-      noProjects: string
-      heroTitle: string
-      heroSubtitle: string
-      featuredProjects: string
-      featuredDesc: string
-      allProjects: string
-      allProjectsDesc: string
-      noShowcasesYet: string
-      checkBackSoon: string
-      featured: string
-      learnMore: string
-      liveDemo: string
-      details: string
-      demo: string
-      code: string
-    }
-    documents: {
-      title: string
-      description: string
-      noDocuments: string
-      heroTitle: string
-      heroSubtitle: string
-      featuredDocuments: string
-      allDocuments: string
-      noDocumentsYet: string
-      addDocuments: string
-      directoryToStart: string
-      legacy: string
-      template: string
-      snippet: string
-      document: string
-      minRead: string
-    }
-    cheatsheets: {
-      title: string
-      description: string
-      noCheatsheets: string
-      heroTitle: string
-      heroSubtitle: string
-      featuredCheatsheets: string
-      featuredDesc: string
-      allCheatsheets: string
-      allCheatsheetsDesc: string
-      noCheatSheetsYet: string
-      startCreating: string
-      generatedBy: string
-      downloadPdf: string
-      minRead: string
-      difficulty: {
-        beginner: string
-        intermediate: string
-        advanced: string
-      }
-      format: {
-        html: string
-        markdown: string
-      }
-    }
-    browse: {
-      title: string
-      description: string
-      heroTitle: string
-      heroSubtitle: string
-      searchPlaceholder: string
-      allTypes: string
-      latestFirst: string
-      oldestFirst: string
-      titleAZ: string
-      titleZA: string
-      filterByTags: string
-      filterByCategory: string
-      noContentFound: string
-      adjustFilters: string
-      article: string
-      showcase: string
-      document: string
-      cheatsheet: string
-      blogPost: string
-    }
-    about: {
-      title: string
-      description: string
-      whatsHere: string
-      articlesDesc: string
-      showcaseDesc: string
-      collectedContent: string
-      collectedContentDesc: string
-    }
-  }
-  footer: {
-    sections: {
-      content: string
-      platform: string
-      resources: string
-      community: string
-    }
-    links: {
-      aiIntegration: string
-      obsidianSupport: string
-      rssFeeds: string
-      documentation: string
-      contentGuidelines: string
-      apiReference: string
-      status: string
-      contributors: string
-      github: string
-      support: string
-    }
-    copyright: string
-    poweredBy: string
-    builtWith: string
-    tagline: string
-  }
-  rss: {
-    title: string
-    description: string
-  }
-  search: {
-    placeholder: string
-    noResults: string
-    resultsFor: string
-  }
-  language: {
-    selector: string
-    current: string
-    onlyAvailable: string
-  }
-  social: {
-    share: string
-    twitterShare: string
-    facebookShare: string
-    linkedinShare: string
-    whatsappShare: string
-    emailShare: string
-  }
-  blog: {
-    relatedPosts: string
-    viewAllPosts: string
-  }
-  navigation: {
-    mainNavigation: string
-    rssFeed: string
-  }
-  contact: {
-    title: string
-    tagline: string
-    subtitle: string
-    dropMessage: string
-    dropMessageSubtitle: string
-    name: string
-    email: string
-    message: string
-    disclaimer: string
-    responseTime: string
-    weAreHere: string
-    generalSupport: string
-    generalSupportDesc: string
-    contactSales: string
-    contactSalesDesc: string
-    technicalSupport: string
-    technicalSupportDesc: string
-    phone: string
-    emailContact: string
-    location: string
-  }
-  auth: {
-    signIn: string
-    signOut: string
-    signInWith: string
-    signInWithGoogle: string
-    signInWithApple: string
-    signInWithGitHub: string
-    signInWithMicrosoft: string
-    userMenu: string
-    loading: string
-    profile: string
-    account: string
-    settings: string
-    oneClickLogin: string
-    signedInAs: string
-    welcomeBack: string
-  }
-}
+    site: {
+        name: string;
+        description: string;
+    };
+    nav: {
+        home: string;
+        articles: string;
+        showcase: string;
+        documents: string;
+        cheatsheets: string;
+        browse: string;
+        about: string;
+        pricing: string;
+        content: string;
+        explore: string;
+    };
+    common: {
+        readMore: string;
+        loading: string;
+        search: string;
+        tags: string;
+        category: string;
+        author: string;
+        publishDate: string;
+        updateDate: string;
+        readingTime: string;
+        minutes: string;
+        viewProject: string;
+        sourceCode: string;
+        liveDemo: string;
+        browse: string;
+        terms: string;
+        privacyPolicy: string;
+        copyFailed: string;
+        copySuccess: string;
+    };
+    pages: {
+        home: {
+            title: string;
+            subtitle: string;
+            latestContent: string;
+            featuredContent: string;
+        };
+        articles: {
+            title: string;
+            description: string;
+            noArticles: string;
+            heroTitle: string;
+            heroSubtitle: string;
+            featuredArticles: string;
+            featuredDesc: string;
+            allArticles: string;
+            allArticlesDesc: string;
+            noArticlesYet: string;
+            checkBackSoon: string;
+            featured: string;
+            anonymous: string;
+            minRead: string;
+            noDate: string;
+            noDescription: string;
+        };
+        showcase: {
+            title: string;
+            description: string;
+            noProjects: string;
+            heroTitle: string;
+            heroSubtitle: string;
+            featuredProjects: string;
+            featuredDesc: string;
+            allProjects: string;
+            allProjectsDesc: string;
+            noShowcasesYet: string;
+            checkBackSoon: string;
+            featured: string;
+            learnMore: string;
+            liveDemo: string;
+            details: string;
+            demo: string;
+            code: string;
+        };
+        documents: {
+            title: string;
+            description: string;
+            noDocuments: string;
+            heroTitle: string;
+            heroSubtitle: string;
+            featuredDocuments: string;
+            allDocuments: string;
+            noDocumentsYet: string;
+            addDocuments: string;
+            directoryToStart: string;
+            legacy: string;
+            template: string;
+            snippet: string;
+            document: string;
+            minRead: string;
+        };
+        cheatsheets: {
+            title: string;
+            description: string;
+            noCheatsheets: string;
+            heroTitle: string;
+            heroSubtitle: string;
+            featuredCheatsheets: string;
+            featuredDesc: string;
+            allCheatsheets: string;
+            allCheatsheetsDesc: string;
+            noCheatSheetsYet: string;
+            startCreating: string;
+            generatedBy: string;
+            downloadPdf: string;
+            minRead: string;
+            difficulty: {
+                beginner: string;
+                intermediate: string;
+                advanced: string;
+            };
+            format: {
+                html: string;
+                markdown: string;
+            };
+        };
+        browse: {
+            title: string;
+            description: string;
+            heroTitle: string;
+            heroSubtitle: string;
+            searchPlaceholder: string;
+            allTypes: string;
+            latestFirst: string;
+            oldestFirst: string;
+            titleAZ: string;
+            titleZA: string;
+            filterByTags: string;
+            filterByCategory: string;
+            noContentFound: string;
+            adjustFilters: string;
+            article: string;
+            showcase: string;
+            document: string;
+            cheatsheet: string;
+            blogPost: string;
+        };
+        about: {
+            title: string;
+            description: string;
+            whatsHere: string;
+            articlesDesc: string;
+            showcaseDesc: string;
+            collectedContent: string;
+            collectedContentDesc: string;
+        };
+        pricing: {
+            title: string;
+            description: string;
+            heroTitle: string;
+            heroSubtitle: string;
+            choosePlan: string;
+            choosePlanSubtitle: string;
+            popular: string;
+            billing: {
+                monthly: string;
+                yearly: string;
+                yearlySavings: string;
+                lifetime: string;
+            };
+            period: {
+                monthly: string;
+                yearly: string;
+                lifetime: string;
+            };
+            tiers: {
+                free: {
+                    name: string;
+                    description: string;
+                };
+                standard: {
+                    name: string;
+                    description: string;
+                };
+                premium: {
+                    name: string;
+                    description: string;
+                };
+            };
+            features: {
+                publicArticles: string;
+                cheatsheetViewing: string;
+                premiumArticles: string;
+                cheatsheetDownloads: string;
+                priorityAccess: string;
+                apiAccess: string;
+                exclusiveContent: string;
+            };
+            cta: {
+                getStarted: string;
+                subscribe: string;
+                goPremium: string;
+                manageSubscription: string;
+            };
+            faq: {
+                title: string;
+                q1: string;
+                a1: string;
+                q2: string;
+                a2: string;
+                q3: string;
+                a3: string;
+            };
+        };
+    };
+    footer: {
+        sections: {
+            content: string;
+            platform: string;
+            resources: string;
+            community: string;
+        };
+        links: {
+            aiIntegration: string;
+            obsidianSupport: string;
+            rssFeeds: string;
+            documentation: string;
+            contentGuidelines: string;
+            apiReference: string;
+            status: string;
+            contributors: string;
+            github: string;
+            support: string;
+            pricing: string;
+        };
+        copyright: string;
+        poweredBy: string;
+        builtWith: string;
+        tagline: string;
+    };
+    rss: {
+        title: string;
+        description: string;
+    };
+    search: {
+        placeholder: string;
+        noResults: string;
+        resultsFor: string;
+    };
+    language: {
+        selector: string;
+        current: string;
+        onlyAvailable: string;
+    };
+    social: {
+        share: string;
+        twitterShare: string;
+        facebookShare: string;
+        linkedinShare: string;
+        whatsappShare: string;
+        emailShare: string;
+    };
+    blog: {
+        relatedPosts: string;
+        viewAllPosts: string;
+    };
+    navigation: {
+        mainNavigation: string;
+        rssFeed: string;
+    };
+    contact: {
+        title: string;
+        tagline: string;
+        subtitle: string;
+        dropMessage: string;
+        dropMessageSubtitle: string;
+        name: string;
+        email: string;
+        message: string;
+        disclaimer: string;
+        responseTime: string;
+        weAreHere: string;
+        generalSupport: string;
+        generalSupportDesc: string;
+        contactSales: string;
+        contactSalesDesc: string;
+        technicalSupport: string;
+        technicalSupportDesc: string;
+        phone: string;
+        emailContact: string;
+        location: string;
+    };
+    auth: {
+        signIn: string;
+        signOut: string;
+        signInWith: string;
+        signInWithGoogle: string;
+        signInWithApple: string;
+        signInWithGitHub: string;
+        signInWithMicrosoft: string;
+        userMenu: string;
+        loading: string;
+        profile: string;
+        account: string;
+        settings: string;
+        oneClickLogin: string;
+        signedInAs: string;
+        welcomeBack: string;
+        membership: string;
+    };
+};

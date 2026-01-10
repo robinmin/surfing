@@ -12,19 +12,19 @@
  * @returns A random string suitable for use as a nonce
  */
 export const generateNonce = (length: number = 32): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let result = ''
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
 
-  // Use crypto.getRandomValues for cryptographically secure random numbers
-  const randomValues = new Uint8Array(length)
-  crypto.getRandomValues(randomValues)
+    // Use crypto.getRandomValues for cryptographically secure random numbers
+    const randomValues = new Uint8Array(length);
+    crypto.getRandomValues(randomValues);
 
-  for (let i = 0; i < length; i++) {
-    result += chars[randomValues[i] % chars.length]
-  }
+    for (let i = 0; i < length; i++) {
+        result += chars[randomValues[i] % chars.length];
+    }
 
-  return result
-}
+    return result;
+};
 
 /**
  * Hash a string using SHA-256 algorithm
@@ -43,19 +43,19 @@ export const generateNonce = (length: number = 32): string => {
  * ```
  */
 export const sha256 = async (data: string): Promise<string> => {
-  // Encode the input string as a Uint8Array
-  const encoder = new TextEncoder()
-  const dataBuffer = encoder.encode(data)
+    // Encode the input string as a Uint8Array
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(data);
 
-  // Compute the SHA-256 hash
-  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer)
+    // Compute the SHA-256 hash
+    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
 
-  // Convert the ArrayBuffer to a hex string
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+    // Convert the ArrayBuffer to a hex string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 
-  return hashHex
-}
+    return hashHex;
+};
 
 /**
  * Generate a nonce and its SHA-256 hash for Google One Tap authentication
@@ -74,17 +74,17 @@ export const sha256 = async (data: string): Promise<string> => {
  * ```
  */
 export const generateNonceWithHash = async (): Promise<{
-  nonce: string
-  hashedNonce: string
+    nonce: string;
+    hashedNonce: string;
 }> => {
-  const nonce = generateNonce()
-  const hashedNonce = await sha256(nonce)
+    const nonce = generateNonce();
+    const hashedNonce = await sha256(nonce);
 
-  return {
-    nonce,
-    hashedNonce,
-  }
-}
+    return {
+        nonce,
+        hashedNonce,
+    };
+};
 
 /**
  * Verify a nonce from an ID token against a stored nonce
@@ -109,12 +109,12 @@ export const generateNonceWithHash = async (): Promise<{
  * ```
  */
 export const verifyNonce = (tokenNonce: string, storedNonce: string): boolean => {
-  if (!tokenNonce || !storedNonce) {
-    return false
-  }
+    if (!tokenNonce || !storedNonce) {
+        return false;
+    }
 
-  return tokenNonce === storedNonce
-}
+    return tokenNonce === storedNonce;
+};
 
 /**
  * Convert a base64 string to a URL-safe base64 string
@@ -126,8 +126,8 @@ export const verifyNonce = (tokenNonce: string, storedNonce: string): boolean =>
  * @returns A URL-safe base64 string
  */
 export const base64UrlEncode = (base64: string): string => {
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
+    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+};
 
 /**
  * Hash a string using SHA-256 and return a URL-safe base64 encoded result
@@ -145,14 +145,14 @@ export const base64UrlEncode = (base64: string): string => {
  * ```
  */
 export const sha256Base64Url = async (data: string): Promise<string> => {
-  const encoder = new TextEncoder()
-  const dataBuffer = encoder.encode(data)
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(data);
 
-  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
 
-  // Convert ArrayBuffer to base64
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const base64 = btoa(String.fromCharCode(...hashArray))
+    // Convert ArrayBuffer to base64
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const base64 = btoa(String.fromCharCode(...hashArray));
 
-  return base64UrlEncode(base64)
-}
+    return base64UrlEncode(base64);
+};

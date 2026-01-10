@@ -1,10 +1,10 @@
 ---
 export interface Props {
-  urls?: string[]
-  prefetchStrategy?: 'hover' | 'visible' | 'immediate'
+    urls?: string[];
+    prefetchStrategy?: 'hover' | 'visible' | 'immediate';
 }
 
-const { urls = [], prefetchStrategy = 'hover' } = Astro.props
+const { urls = [], prefetchStrategy = 'hover' } = Astro.props;
 ---
 
 <script is:inline define:vars={{ urls, prefetchStrategy }}>

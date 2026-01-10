@@ -1,33 +1,33 @@
 ---
-import { ADS } from 'astrowind:config'
+import { ADS } from 'astrowind:config';
 
 interface Props {
-  client?: string
-  slot?: string
-  layout?: 'display' | 'in-article' | 'fluid'
-  format?: string
-  responsive?: 'true' | 'false'
-  style?: string
+    client?: string;
+    slot?: string;
+    layout?: 'display' | 'in-article' | 'fluid';
+    format?: string;
+    responsive?: 'true' | 'false';
+    style?: string;
 }
 
 const {
-  client: clientProp,
-  slot: slotProp,
-  layout = 'display',
-  format = 'auto',
-  responsive = 'false',
-  style = 'display:block; width:100%; min-height:250px;',
-} = Astro.props
+    client: clientProp,
+    slot: slotProp,
+    layout = 'display',
+    format = 'auto',
+    responsive = 'false',
+    style = 'display:block; width:100%; min-height:250px;',
+} = Astro.props;
 
-const client = clientProp || ADS.google?.client || ''
-const slot = slotProp || ADS.google?.slots?.default || ''
+const client = clientProp || ADS.google?.client || '';
+const slot = slotProp || ADS.google?.slots?.default || '';
 
 if (!client) {
-  throw new Error('GoogleAd component requires a valid `client` id.')
+    throw new Error('GoogleAd component requires a valid `client` id.');
 }
 
 if (!slot) {
-  throw new Error('GoogleAd component requires a valid `slot` id.')
+    throw new Error('GoogleAd component requires a valid `slot` id.');
 }
 ---
 

@@ -1,55 +1,55 @@
 {
-  "name": "Surfing - AI-Powered Content Showcase Platform",
-  "short_name": "Surfing",
-  "description": "🏄‍♂️ AI-Powered Content Showcase Platform",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#8D46E7",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "/favicons/favicon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/favicons/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/favicons/web-app-manifest-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/favicons/web-app-manifest-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "categories": ["education", "news", "productivity"],
-  "shortcuts": [
-    {
-      "name": "Articles",
-      "short_name": "Articles",
-      "description": "Browse all articles",
-      "url": "/articles",
-      "icons": [
+    "name": "Surfing - AI-Powered Content Showcase Platform",
+    "short_name": "Surfing",
+    "description": "🏄‍♂️ AI-Powered Content Showcase Platform",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#8D46E7",
+    "orientation": "portrait-primary",
+    "icons": [
         {
-          "src": "/favicons/favicon-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
+            "src": "/favicons/favicon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/favicons/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/favicons/web-app-manifest-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/favicons/web-app-manifest-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
         }
-      ]
-    }
-  ],
-  "screenshots": [],
-  "related_applications": [],
-  "prefer_related_applications": false
+    ],
+    "categories": ["education", "news", "productivity"],
+    "shortcuts": [
+        {
+            "name": "Articles",
+            "short_name": "Articles",
+            "description": "Browse all articles",
+            "url": "/articles",
+            "icons": [
+                {
+                    "src": "/favicons/favicon-96x96.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ],
+    "screenshots": [],
+    "related_applications": [],
+    "prefer_related_applications": false
 }

@@ -1,22 +1,22 @@
 ---
-import { getCollection } from 'astro:content'
-import Image from '~/components/common/Image.astro'
-import Hero from '~/components/widgets/Hero.astro'
-import { getCurrentLanguage, t } from '~/i18n'
-import Layout from '~/layouts/PageLayout.astro'
+import { getCollection } from 'astro:content';
+import Image from '~/components/common/Image.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { getCurrentLanguage, t } from '~/i18n';
+import Layout from '~/layouts/PageLayout.astro';
 
-const lang = getCurrentLanguage()
+const lang = getCurrentLanguage();
 
-const showcases = await getCollection('showcase', ({ data }) => data.draft !== true)
-const featuredShowcases = showcases.filter((item) => item.data.featured)
+const showcases = await getCollection('showcase', ({ data }) => data.draft !== true);
+const featuredShowcases = showcases.filter((item) => item.data.featured);
 const sortedShowcases = showcases.sort(
-  (a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime()
-)
+    (a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime()
+);
 
 const metadata = {
-  title: t('pages.showcase.title', lang),
-  description: t('pages.showcase.description', lang),
-}
+    title: t('pages.showcase.title', lang),
+    description: t('pages.showcase.description', lang),
+};
 ---
 
 <Layout metadata={metadata}>

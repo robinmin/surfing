@@ -5,62 +5,62 @@
  * Displays a paywall/upgrade prompt when content requires a higher subscription tier.
  * Used to gate premium articles, cheatsheet downloads, and exclusive content.
  */
-import { Icon } from 'astro-icon/components'
-import Button from '~/components/ui/Button.astro'
-import { getCurrentLanguage, t } from '~/i18n'
+import { Icon } from 'astro-icon/components';
+import Button from '~/components/ui/Button.astro';
+import { getCurrentLanguage, t } from '~/i18n';
 
 interface Props {
-  /** Minimum tier required to access this content */
-  requiredTier: 'standard' | 'premium'
-  /** Type of content being gated (for messaging) */
-  contentType?: 'article' | 'download' | 'api' | 'exclusive'
-  /** Optional custom title */
-  title?: string
-  /** Optional custom description */
-  description?: string
-  /** Show a preview/teaser of the content */
-  showPreview?: boolean
+    /** Minimum tier required to access this content */
+    requiredTier: 'standard' | 'premium';
+    /** Type of content being gated (for messaging) */
+    contentType?: 'article' | 'download' | 'api' | 'exclusive';
+    /** Optional custom title */
+    title?: string;
+    /** Optional custom description */
+    description?: string;
+    /** Show a preview/teaser of the content */
+    showPreview?: boolean;
 }
 
 const {
-  requiredTier,
-  contentType = 'article',
-  title,
-  description,
-  showPreview = false,
-} = Astro.props
+    requiredTier,
+    contentType = 'article',
+    title,
+    description,
+    showPreview = false,
+} = Astro.props;
 
-const lang = getCurrentLanguage()
+const lang = getCurrentLanguage();
 
 // Default messages based on content type
 const defaultMessages: Record<string, { title: string; description: string }> = {
-  article: {
-    title: t('subscription.gate.articleTitle', lang),
-    description: t('subscription.gate.articleDescription', lang),
-  },
-  download: {
-    title: t('subscription.gate.downloadTitle', lang),
-    description: t('subscription.gate.downloadDescription', lang),
-  },
-  api: {
-    title: t('subscription.gate.apiTitle', lang),
-    description: t('subscription.gate.apiDescription', lang),
-  },
-  exclusive: {
-    title: t('subscription.gate.exclusiveTitle', lang),
-    description: t('subscription.gate.exclusiveDescription', lang),
-  },
-}
+    article: {
+        title: t('subscription.gate.articleTitle', lang),
+        description: t('subscription.gate.articleDescription', lang),
+    },
+    download: {
+        title: t('subscription.gate.downloadTitle', lang),
+        description: t('subscription.gate.downloadDescription', lang),
+    },
+    api: {
+        title: t('subscription.gate.apiTitle', lang),
+        description: t('subscription.gate.apiDescription', lang),
+    },
+    exclusive: {
+        title: t('subscription.gate.exclusiveTitle', lang),
+        description: t('subscription.gate.exclusiveDescription', lang),
+    },
+};
 
-const displayTitle = title || defaultMessages[contentType]?.title || 'Premium Content'
+const displayTitle = title || defaultMessages[contentType]?.title || 'Premium Content';
 const displayDescription =
-  description || defaultMessages[contentType]?.description || 'Upgrade to access this content.'
+    description || defaultMessages[contentType]?.description || 'Upgrade to access this content.';
 
-const tierName = requiredTier === 'premium' ? 'Premium' : 'Standard'
+const tierName = requiredTier === 'premium' ? 'Premium' : 'Standard';
 const ctaText =
-  requiredTier === 'premium'
-    ? t('pages.pricing.cta.goPremium', lang)
-    : t('pages.pricing.cta.subscribe', lang)
+    requiredTier === 'premium'
+        ? t('pages.pricing.cta.goPremium', lang)
+        : t('pages.pricing.cta.subscribe', lang);
 ---
 
 <div class="premium-gate relative">

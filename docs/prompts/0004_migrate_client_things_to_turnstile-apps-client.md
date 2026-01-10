@@ -1,9 +1,9 @@
 ---
 name: Migrate Client Code to turnstile-apps-client
 description: Migrate Surfing's Stripe/Zitadel/Turnstile client code to shared @turnstile/client package using npm workspaces
-status: WIP
+status: Done
 created_at: 2026-01-08 12:31:33
-updated_at: 2026-01-08 14:30:00
+updated_at: 2026-01-09 22:16:24
 ---
 
 ## Migrate Client Code to turnstile-apps-client

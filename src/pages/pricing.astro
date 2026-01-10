@@ -1,102 +1,106 @@
 ---
-import { Icon } from 'astro-icon/components'
-import Button from '~/components/ui/Button.astro'
-import Headline from '~/components/ui/Headline.astro'
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro'
-import Hero from '~/components/widgets/Hero.astro'
-import { getCurrentLanguage, t } from '~/i18n'
-import Layout from '~/layouts/PageLayout.astro'
+import { Icon } from 'astro-icon/components';
+import Button from '~/components/ui/Button.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { getCurrentLanguage, t } from '~/i18n';
+import Layout from '~/layouts/PageLayout.astro';
 
-const lang = getCurrentLanguage()
+const lang = getCurrentLanguage();
 
 const metadata = {
-  title: t('pages.pricing.title', lang),
-  description: t('pages.pricing.description', lang),
-}
+    title: t('pages.pricing.title', lang),
+    description: t('pages.pricing.description', lang),
+};
 
 // Pricing tier data
 const pricingTiers = [
-  {
-    name: 'free',
-    nameKey: 'pages.pricing.tiers.free.name',
-    descriptionKey: 'pages.pricing.tiers.free.description',
-    price: { monthly: 0, yearly: 0, lifetime: 0 },
-    features: [
-      { key: 'pages.pricing.features.publicArticles', included: true },
-      { key: 'pages.pricing.features.cheatsheetViewing', included: true },
-      { key: 'pages.pricing.features.premiumArticles', included: false },
-      { key: 'pages.pricing.features.cheatsheetDownloads', included: false },
-      { key: 'pages.pricing.features.priorityAccess', included: false },
-      { key: 'pages.pricing.features.apiAccess', included: false },
-      { key: 'pages.pricing.features.exclusiveContent', included: false },
-    ],
-    cta: { textKey: 'pages.pricing.cta.getStarted', href: '/auth/login' },
-    highlighted: false,
-  },
-  {
-    name: 'standard',
-    nameKey: 'pages.pricing.tiers.standard.name',
-    descriptionKey: 'pages.pricing.tiers.standard.description',
-    price: { monthly: 5, yearly: 50, lifetime: 150 },
-    features: [
-      { key: 'pages.pricing.features.publicArticles', included: true },
-      { key: 'pages.pricing.features.cheatsheetViewing', included: true },
-      { key: 'pages.pricing.features.premiumArticles', included: true },
-      { key: 'pages.pricing.features.cheatsheetDownloads', included: true },
-      { key: 'pages.pricing.features.priorityAccess', included: false },
-      { key: 'pages.pricing.features.apiAccess', included: false },
-      { key: 'pages.pricing.features.exclusiveContent', included: false },
-    ],
-    cta: { textKey: 'pages.pricing.cta.subscribe', action: 'checkout' },
-    highlighted: true,
-    ribbonKey: 'pages.pricing.popular',
-  },
-  {
-    name: 'premium',
-    nameKey: 'pages.pricing.tiers.premium.name',
-    descriptionKey: 'pages.pricing.tiers.premium.description',
-    price: { monthly: 15, yearly: 150, lifetime: 400 },
-    features: [
-      { key: 'pages.pricing.features.publicArticles', included: true },
-      { key: 'pages.pricing.features.cheatsheetViewing', included: true },
-      { key: 'pages.pricing.features.premiumArticles', included: true },
-      { key: 'pages.pricing.features.cheatsheetDownloads', included: true },
-      { key: 'pages.pricing.features.priorityAccess', included: true },
-      { key: 'pages.pricing.features.apiAccess', included: true },
-      { key: 'pages.pricing.features.exclusiveContent', included: true },
-    ],
-    cta: { textKey: 'pages.pricing.cta.goPremium', action: 'checkout' },
-    highlighted: false,
-  },
-]
+    {
+        name: 'free',
+        nameKey: 'pages.pricing.tiers.free.name',
+        descriptionKey: 'pages.pricing.tiers.free.description',
+        price: { monthly: 0, yearly: 0, lifetime: 0 },
+        features: [
+            { key: 'pages.pricing.features.publicArticles', included: true },
+            { key: 'pages.pricing.features.cheatsheetViewing', included: true },
+            { key: 'pages.pricing.features.premiumArticles', included: false },
+            { key: 'pages.pricing.features.cheatsheetDownloads', included: false },
+            { key: 'pages.pricing.features.priorityAccess', included: false },
+            { key: 'pages.pricing.features.apiAccess', included: false },
+            { key: 'pages.pricing.features.exclusiveContent', included: false },
+        ],
+        cta: { textKey: 'pages.pricing.cta.getStarted' },
+        highlighted: false,
+    },
+    {
+        name: 'standard',
+        nameKey: 'pages.pricing.tiers.standard.name',
+        descriptionKey: 'pages.pricing.tiers.standard.description',
+        price: { monthly: 5, yearly: 50, lifetime: 150 },
+        features: [
+            { key: 'pages.pricing.features.publicArticles', included: true },
+            { key: 'pages.pricing.features.cheatsheetViewing', included: true },
+            { key: 'pages.pricing.features.premiumArticles', included: true },
+            { key: 'pages.pricing.features.cheatsheetDownloads', included: true },
+            { key: 'pages.pricing.features.priorityAccess', included: false },
+            { key: 'pages.pricing.features.apiAccess', included: false },
+            { key: 'pages.pricing.features.exclusiveContent', included: false },
+        ],
+        cta: { textKey: 'pages.pricing.cta.subscribe', action: 'checkout' },
+        highlighted: true,
+        ribbonKey: 'pages.pricing.popular',
+    },
+    {
+        name: 'premium',
+        nameKey: 'pages.pricing.tiers.premium.name',
+        descriptionKey: 'pages.pricing.tiers.premium.description',
+        price: { monthly: 15, yearly: 150, lifetime: 400 },
+        features: [
+            { key: 'pages.pricing.features.publicArticles', included: true },
+            { key: 'pages.pricing.features.cheatsheetViewing', included: true },
+            { key: 'pages.pricing.features.premiumArticles', included: true },
+            { key: 'pages.pricing.features.cheatsheetDownloads', included: true },
+            { key: 'pages.pricing.features.priorityAccess', included: true },
+            { key: 'pages.pricing.features.apiAccess', included: true },
+            { key: 'pages.pricing.features.exclusiveContent', included: true },
+        ],
+        cta: { textKey: 'pages.pricing.cta.goPremium', action: 'checkout' },
+        highlighted: false,
+    },
+];
 
 // Billing cycle options
 const billingCycles = [
-  { id: 'monthly', labelKey: 'pages.pricing.billing.monthly' },
-  {
-    id: 'yearly',
-    labelKey: 'pages.pricing.billing.yearly',
-    savingsKey: 'pages.pricing.billing.yearlySavings',
-  },
-  { id: 'lifetime', labelKey: 'pages.pricing.billing.lifetime' },
-]
+    { id: 'monthly', labelKey: 'pages.pricing.billing.monthly' },
+    {
+        id: 'yearly',
+        labelKey: 'pages.pricing.billing.yearly',
+        savingsKey: 'pages.pricing.billing.yearlySavings',
+    },
+    { id: 'lifetime', labelKey: 'pages.pricing.billing.lifetime' },
+];
 ---
 
 <Layout metadata={metadata}>
   <Hero>
     <Fragment slot="title">
-      <span data-i18n-key="pages.pricing.heroTitle">{t('pages.pricing.heroTitle', lang)}</span>
+      <span data-i18n-key="pages.pricing.heroTitle"
+        >{t("pages.pricing.heroTitle", lang)}</span
+      >
     </Fragment>
 
     <Fragment slot="subtitle">
-      <span data-i18n-key="pages.pricing.heroSubtitle">{t('pages.pricing.heroSubtitle', lang)}</span>
+      <span data-i18n-key="pages.pricing.heroSubtitle"
+        >{t("pages.pricing.heroSubtitle", lang)}</span
+      >
     </Fragment>
   </Hero>
 
   <WidgetWrapper id="pricing" containerClass="max-w-7xl mx-auto">
     <Headline
-      title={t('pages.pricing.choosePlan', lang)}
-      subtitle={t('pages.pricing.choosePlanSubtitle', lang)}
+      title={t("pages.pricing.choosePlan", lang)}
+      subtitle={t("pages.pricing.choosePlanSubtitle", lang)}
       titleI18n="pages.pricing.choosePlan"
       subtitleI18n="pages.pricing.choosePlanSubtitle"
     />
@@ -114,17 +118,20 @@ const billingCycles = [
               role="tab"
               data-billing-cycle={cycle.id}
               class:list={[
-                'billing-cycle-btn px-4 py-2 text-sm font-medium rounded-md transition-all duration-200',
+                "billing-cycle-btn px-4 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 index === 0
-                  ? 'bg-primary text-white'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white',
+                  ? "bg-primary text-white"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white",
               ]}
-              aria-selected={index === 0 ? 'true' : 'false'}
+              aria-selected={index === 0 ? "true" : "false"}
               data-i18n-key={cycle.labelKey}
             >
               {t(cycle.labelKey, lang)}
               {cycle.savingsKey && (
-                <span class="ml-1 text-xs text-green-500" data-i18n-key={cycle.savingsKey}>
+                <span
+                  class="ml-1 text-xs text-green-500"
+                  data-i18n-key={cycle.savingsKey}
+                >
                   {t(cycle.savingsKey, lang)}
                 </span>
               )}
@@ -136,14 +143,18 @@ const billingCycles = [
 
     <!-- Pricing Cards -->
     <div class="flex items-stretch justify-center">
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+      <div
+        class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
+      >
         {
           pricingTiers.map((tier) => (
             <div class="relative flex w-full max-w-sm flex-col intersect-once motion-safe:md:intersect:animate-fade motion-safe:md:opacity-0 intersect-quarter">
               <div
                 class:list={[
-                  'rounded-lg backdrop-blur border bg-white dark:bg-slate-900 shadow px-6 py-8 flex w-full flex-col justify-between text-center h-full',
-                  tier.highlighted ? 'border-primary ring-2 ring-primary' : 'border-gray-200 dark:border-gray-700',
+                  "rounded-lg backdrop-blur border bg-white dark:bg-slate-900 shadow px-6 py-8 flex w-full flex-col justify-between text-center h-full",
+                  tier.highlighted
+                    ? "border-primary ring-2 ring-primary"
+                    : "border-gray-200 dark:border-gray-700",
                 ]}
               >
                 {tier.highlighted && tier.ribbonKey && (
@@ -185,11 +196,20 @@ const billingCycles = [
                     </div>
                     <span
                       class="text-base leading-6 lowercase text-gray-600 dark:text-slate-400 price-period"
-                      data-period-monthly={t('pages.pricing.period.monthly', lang)}
-                      data-period-yearly={t('pages.pricing.period.yearly', lang)}
-                      data-period-lifetime={t('pages.pricing.period.lifetime', lang)}
+                      data-period-monthly={t(
+                        "pages.pricing.period.monthly",
+                        lang,
+                      )}
+                      data-period-yearly={t(
+                        "pages.pricing.period.yearly",
+                        lang,
+                      )}
+                      data-period-lifetime={t(
+                        "pages.pricing.period.lifetime",
+                        lang,
+                      )}
                     >
-                      {t('pages.pricing.period.monthly', lang)}
+                      {t("pages.pricing.period.monthly", lang)}
                     </span>
                   </div>
 
@@ -198,17 +218,25 @@ const billingCycles = [
                       <li class="mb-1.5 flex items-start space-x-3 leading-7">
                         <div
                           class:list={[
-                            'rounded-full mt-1',
-                            feature.included ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600',
+                            "rounded-full mt-1",
+                            feature.included
+                              ? "bg-primary"
+                              : "bg-gray-300 dark:bg-gray-600",
                           ]}
                         >
                           <Icon
-                            name={feature.included ? 'tabler:check' : 'tabler:x'}
+                            name={
+                              feature.included ? "tabler:check" : "tabler:x"
+                            }
                             class="w-5 h-5 font-bold p-1 text-white"
                           />
                         </div>
                         <span
-                          class:list={[feature.included ? '' : 'text-gray-400 dark:text-gray-500']}
+                          class:list={[
+                            feature.included
+                              ? ""
+                              : "text-gray-400 dark:text-gray-500",
+                          ]}
                           data-i18n-key={feature.key}
                         >
                           {t(feature.key, lang)}
@@ -219,10 +247,10 @@ const billingCycles = [
                 </div>
 
                 <div class="flex justify-center mt-auto">
-                  {tier.cta.href ? (
+                  {"href" in tier.cta && tier.cta.href ? (
                     <Button
-                      variant={tier.highlighted ? 'primary' : 'secondary'}
-                      href={tier.cta.href}
+                      variant={tier.highlighted ? "primary" : "secondary"}
+                      href={tier.cta.href as string}
                       class="w-full"
                       data-i18n-key={tier.cta.textKey}
                     >
@@ -232,10 +260,10 @@ const billingCycles = [
                     <button
                       type="button"
                       class:list={[
-                        'checkout-btn w-full px-6 py-3 rounded-lg font-semibold transition-colors duration-200',
+                        "checkout-btn w-full px-6 py-3 rounded-lg font-semibold transition-colors duration-200",
                         tier.highlighted
-                          ? 'bg-primary text-white hover:bg-primary/90'
-                          : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600',
+                          ? "bg-primary text-white hover:bg-primary/90"
+                          : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600",
                       ]}
                       data-tier={tier.name}
                       data-i18n-key={tier.cta.textKey}
@@ -253,35 +281,68 @@ const billingCycles = [
 
     <!-- FAQ Section -->
     <div class="mt-16 max-w-3xl mx-auto">
-      <h3 class="text-2xl font-bold text-center mb-8" data-i18n-key="pages.pricing.faq.title">
-        {t('pages.pricing.faq.title', lang)}
+      <h3
+        class="text-2xl font-bold text-center mb-8"
+        data-i18n-key="pages.pricing.faq.title"
+      >
+        {t("pages.pricing.faq.title", lang)}
       </h3>
       <div class="space-y-4">
-        <details class="group border border-gray-200 dark:border-gray-700 rounded-lg">
+        <details
+          class="group border border-gray-200 dark:border-gray-700 rounded-lg"
+        >
           <summary class="flex items-center justify-between p-4 cursor-pointer">
-            <span class="font-medium" data-i18n-key="pages.pricing.faq.q1">{t('pages.pricing.faq.q1', lang)}</span>
-            <Icon name="tabler:chevron-down" class="w-5 h-5 transition-transform group-open:rotate-180" />
+            <span class="font-medium" data-i18n-key="pages.pricing.faq.q1"
+              >{t("pages.pricing.faq.q1", lang)}</span
+            >
+            <Icon
+              name="tabler:chevron-down"
+              class="w-5 h-5 transition-transform group-open:rotate-180"
+            />
           </summary>
-          <div class="px-4 pb-4 text-gray-600 dark:text-gray-400" data-i18n-key="pages.pricing.faq.a1">
-            {t('pages.pricing.faq.a1', lang)}
+          <div
+            class="px-4 pb-4 text-gray-600 dark:text-gray-400"
+            data-i18n-key="pages.pricing.faq.a1"
+          >
+            {t("pages.pricing.faq.a1", lang)}
           </div>
         </details>
-        <details class="group border border-gray-200 dark:border-gray-700 rounded-lg">
+        <details
+          class="group border border-gray-200 dark:border-gray-700 rounded-lg"
+        >
           <summary class="flex items-center justify-between p-4 cursor-pointer">
-            <span class="font-medium" data-i18n-key="pages.pricing.faq.q2">{t('pages.pricing.faq.q2', lang)}</span>
-            <Icon name="tabler:chevron-down" class="w-5 h-5 transition-transform group-open:rotate-180" />
+            <span class="font-medium" data-i18n-key="pages.pricing.faq.q2"
+              >{t("pages.pricing.faq.q2", lang)}</span
+            >
+            <Icon
+              name="tabler:chevron-down"
+              class="w-5 h-5 transition-transform group-open:rotate-180"
+            />
           </summary>
-          <div class="px-4 pb-4 text-gray-600 dark:text-gray-400" data-i18n-key="pages.pricing.faq.a2">
-            {t('pages.pricing.faq.a2', lang)}
+          <div
+            class="px-4 pb-4 text-gray-600 dark:text-gray-400"
+            data-i18n-key="pages.pricing.faq.a2"
+          >
+            {t("pages.pricing.faq.a2", lang)}
           </div>
         </details>
-        <details class="group border border-gray-200 dark:border-gray-700 rounded-lg">
+        <details
+          class="group border border-gray-200 dark:border-gray-700 rounded-lg"
+        >
           <summary class="flex items-center justify-between p-4 cursor-pointer">
-            <span class="font-medium" data-i18n-key="pages.pricing.faq.q3">{t('pages.pricing.faq.q3', lang)}</span>
-            <Icon name="tabler:chevron-down" class="w-5 h-5 transition-transform group-open:rotate-180" />
+            <span class="font-medium" data-i18n-key="pages.pricing.faq.q3"
+              >{t("pages.pricing.faq.q3", lang)}</span
+            >
+            <Icon
+              name="tabler:chevron-down"
+              class="w-5 h-5 transition-transform group-open:rotate-180"
+            />
           </summary>
-          <div class="px-4 pb-4 text-gray-600 dark:text-gray-400" data-i18n-key="pages.pricing.faq.a3">
-            {t('pages.pricing.faq.a3', lang)}
+          <div
+            class="px-4 pb-4 text-gray-600 dark:text-gray-400"
+            data-i18n-key="pages.pricing.faq.a3"
+          >
+            {t("pages.pricing.faq.a3", lang)}
           </div>
         </details>
       </div>
@@ -290,31 +351,34 @@ const billingCycles = [
 </Layout>
 
 <script>
-  import { getUser, signInPopup } from '~/lib/turnstile-client';
+  import { getUser, signInPopup } from "~/lib/turnstile-client";
 
   // Billing cycle toggle functionality
-  const billingCycleBtns = document.querySelectorAll('.billing-cycle-btn');
-  const priceAmounts = document.querySelectorAll('.price-amount');
-  const pricePeriods = document.querySelectorAll('.price-period');
+  const billingCycleBtns = document.querySelectorAll(".billing-cycle-btn");
+  const priceAmounts = document.querySelectorAll(".price-amount");
+  const pricePeriods = document.querySelectorAll(".price-period");
 
-  let currentCycle: 'monthly' | 'yearly' | 'lifetime' = 'monthly';
+  let currentCycle: "monthly" | "yearly" | "lifetime" = "monthly";
 
   billingCycleBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const cycle = btn.getAttribute('data-billing-cycle') as 'monthly' | 'yearly' | 'lifetime';
+    btn.addEventListener("click", () => {
+      const cycle = btn.getAttribute("data-billing-cycle") as
+        | "monthly"
+        | "yearly"
+        | "lifetime";
       if (cycle === currentCycle) return;
 
       currentCycle = cycle;
 
       // Update button states
       billingCycleBtns.forEach((b) => {
-        b.classList.remove('bg-primary', 'text-white');
-        b.classList.add('text-gray-600', 'dark:text-gray-400');
-        b.setAttribute('aria-selected', 'false');
+        b.classList.remove("bg-primary", "text-white");
+        b.classList.add("text-gray-600", "dark:text-gray-400");
+        b.setAttribute("aria-selected", "false");
       });
-      btn.classList.add('bg-primary', 'text-white');
-      btn.classList.remove('text-gray-600', 'dark:text-gray-400');
-      btn.setAttribute('aria-selected', 'true');
+      btn.classList.add("bg-primary", "text-white");
+      btn.classList.remove("text-gray-600", "dark:text-gray-400");
+      btn.setAttribute("aria-selected", "true");
 
       // Update prices
       priceAmounts.forEach((el) => {
@@ -335,26 +399,35 @@ const billingCycles = [
   });
 
   // Checkout button functionality
-  const checkoutBtns = document.querySelectorAll('.checkout-btn');
+  const checkoutBtns = document.querySelectorAll(".checkout-btn");
 
   checkoutBtns.forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const tier = btn.getAttribute('data-tier');
+    btn.addEventListener("click", async () => {
+      const tier = btn.getAttribute("data-tier");
       if (!tier) return;
 
       try {
         // Check if user is authenticated
         const user = await getUser();
 
+        if (tier === "free") {
+          if (!user) {
+            await signInPopup();
+            // Refresh page or update UI after login
+            window.location.reload();
+          }
+          return;
+        }
+
         if (!user) {
           // Redirect to login first
           // Store the intended action for after login
           sessionStorage.setItem(
-            'pendingCheckout',
+            "pendingCheckout",
             JSON.stringify({
               tier,
               billingCycle: currentCycle,
-            })
+            }),
           );
 
           // Trigger login popup
@@ -367,45 +440,67 @@ const billingCycles = [
           initiateCheckout(tier, currentCycle);
         }
       } catch (error) {
-        console.error('Checkout error:', error);
+        console.error("Checkout error:", error);
         // Show error message to user
-        alert('Unable to start checkout. Please try again.');
+        alert("Unable to start checkout. Please try again.");
       }
     });
   });
 
   // Check for pending checkout after login
-  document.addEventListener('DOMContentLoaded', async () => {
-    const pendingCheckout = sessionStorage.getItem('pendingCheckout');
+  document.addEventListener("DOMContentLoaded", async () => {
+    updateButtonState();
+    const pendingCheckout = sessionStorage.getItem("pendingCheckout");
     if (pendingCheckout) {
       const user = await getUser();
       if (user) {
         const { tier, billingCycle } = JSON.parse(pendingCheckout);
-        sessionStorage.removeItem('pendingCheckout');
+        sessionStorage.removeItem("pendingCheckout");
         initiateCheckout(tier, billingCycle);
       }
     }
   });
 
+  async function updateButtonState() {
+    const user = await getUser();
+    if (!user) return;
+
+    const buttons = document.querySelectorAll(".checkout-btn");
+    buttons.forEach((btn) => {
+      const tier = btn.getAttribute("data-tier");
+      // For now, just disabling the free button or showing 'Current Plan' logic could be complex without subscription data.
+      // The user asked to "not show this button, or just show a tick icon".
+      // We don't know the USER'S current plan here without fetching it.
+      // For now, assuming if logged in, they are at least "Free".
+      if (tier === "free") {
+        btn.textContent = "Current Plan";
+        btn.setAttribute("disabled", "true");
+        btn.classList.add("opacity-50", "cursor-not-allowed");
+        // Optionally replace with icon
+        // btn.innerHTML = '<span class="w-5 h-5">✓</span>';
+      }
+    });
+  }
+
   async function initiateCheckout(tier: string, billingCycle: string) {
     const turnstileApiUrl = import.meta.env.PUBLIC_TURNSTILE_API_URL;
 
     if (!turnstileApiUrl) {
-      console.warn('Turnstile API not configured. Checkout disabled.');
-      alert('Checkout is not yet available. Please check back soon!');
+      console.warn("Turnstile API not configured. Checkout disabled.");
+      alert("Checkout is not yet available. Please check back soon!");
       return;
     }
 
     try {
       const user = await getUser();
       if (!user) {
-        throw new Error('User not authenticated');
+        throw new Error("User not authenticated");
       }
 
       const response = await fetch(`${turnstileApiUrl}/api/checkout/session`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user.access_token}`,
         },
         body: JSON.stringify({
@@ -415,8 +510,12 @@ const billingCycles = [
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(errorData.message || 'Failed to create checkout session');
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
+        throw new Error(
+          errorData.message || "Failed to create checkout session",
+        );
       }
 
       const { url } = await response.json();
@@ -424,8 +523,11 @@ const billingCycles = [
       // Redirect to Stripe Checkout
       window.location.href = url;
     } catch (error) {
-      console.error('Checkout initiation error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unable to start checkout. Please try again later.';
+      console.error("Checkout initiation error:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Unable to start checkout. Please try again later.";
       alert(errorMessage);
     }
   }

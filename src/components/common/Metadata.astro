@@ -1,100 +1,105 @@
 ---
-import { getRelativeLocaleUrl } from 'astro:i18n'
-import { I18N, METADATA, SITE } from 'astrowind:config'
-import type { Props as AstroSeoProps } from '@astrolib/seo'
-import { AstroSeo } from '@astrolib/seo'
-import merge from 'lodash.merge'
-import type { MetaData } from '~/types'
-import { adaptOpenGraphImages } from '~/utils/images'
-import { getCanonical } from '~/utils/permalinks'
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { I18N, METADATA, SITE } from 'astrowind:config';
+import type { Props as AstroSeoProps } from '@astrolib/seo';
+import { AstroSeo } from '@astrolib/seo';
+import merge from 'lodash.merge';
+import type { MetaData } from '~/types';
+import { adaptOpenGraphImages } from '~/utils/images';
+import { getCanonical } from '~/utils/permalinks';
 
 export interface Props extends MetaData {
-  dontUseTitleTemplate?: boolean
+    dontUseTitleTemplate?: boolean;
 }
 
 const {
-  title,
-  ignoreTitleTemplate = false,
-  canonical = String(getCanonical(String(Astro.url.pathname))),
-  robots = {},
-  description,
-  openGraph = {},
-  twitter = {},
-} = Astro.props
+    title,
+    ignoreTitleTemplate = false,
+    canonical = String(getCanonical(String(Astro.url.pathname))),
+    robots = {},
+    description,
+    openGraph = {},
+    twitter = {},
+} = Astro.props;
 
 // If we have a custom title from markdown metadata, use the format "Surfing -- Custom Title"
 // But only add "Surfing -- " if the title doesn't already start with it (check both dash variations)
 const finalTitle =
-  title && !title.startsWith('Surfing -- ') && !title.startsWith('Surfing — ')
-    ? `Surfing -- ${title}`
-    : title || undefined
+    title && !title.startsWith('Surfing -- ') && !title.startsWith('Surfing — ')
+        ? `Surfing -- ${title}`
+        : title || undefined;
 
 const seoProps: AstroSeoProps = merge(
-  {
-    title: '',
-    titleTemplate: '%s',
-    canonical: canonical,
-    noindex: true,
-    nofollow: true,
-    description: undefined,
-    openGraph: {
-      url: canonical,
-      site_name: SITE?.name,
-      images: [],
-      locale: I18N?.language || 'en',
-      type: 'website',
+    {
+        title: '',
+        titleTemplate: '%s',
+        canonical: canonical,
+        noindex: true,
+        nofollow: true,
+        description: undefined,
+        openGraph: {
+            url: canonical,
+            site_name: SITE?.name,
+            images: [],
+            locale: I18N?.language || 'en',
+            type: 'website',
+        },
+        twitter: {
+            cardType: openGraph?.images?.length ? 'summary_large_image' : 'summary',
+        },
+        extend: {
+            link:
+                I18N?.locales && I18N.defaultLocale
+                    ? [
+                          ...I18N.locales.map((locale: string) => ({
+                              rel: 'alternate',
+                              hreflang: locale,
+                              href: new URL(
+                                  getRelativeLocaleUrl(locale, Astro.url.pathname),
+                                  Astro.site
+                              ).href,
+                          })),
+                          {
+                              rel: 'alternate',
+                              hreflang: 'x-default',
+                              href: new URL(
+                                  getRelativeLocaleUrl(I18N.defaultLocale, Astro.url.pathname),
+                                  Astro.site
+                              ).href,
+                          },
+                      ]
+                    : [],
+        },
     },
-    twitter: {
-      cardType: openGraph?.images?.length ? 'summary_large_image' : 'summary',
+    {
+        title: METADATA?.title?.default,
+        titleTemplate: METADATA?.title?.template,
+        noindex:
+            typeof METADATA?.robots?.index !== 'undefined' ? !METADATA.robots.index : undefined,
+        nofollow:
+            typeof METADATA?.robots?.follow !== 'undefined' ? !METADATA.robots.follow : undefined,
+        description: METADATA?.description,
+        openGraph: METADATA?.openGraph,
+        twitter: METADATA?.twitter,
     },
-    extend: {
-      link:
-        I18N && I18N.locales && I18N.defaultLocale
-          ? [
-              ...I18N.locales.map((locale: string) => ({
-                rel: 'alternate',
-                hreflang: locale,
-                href: new URL(getRelativeLocaleUrl(locale, Astro.url.pathname), Astro.site).href,
-              })),
-              {
-                rel: 'alternate',
-                hreflang: 'x-default',
-                href: new URL(
-                  getRelativeLocaleUrl(I18N.defaultLocale, Astro.url.pathname),
-                  Astro.site
-                ).href,
-              },
-            ]
-          : [],
-    },
-  },
-  {
-    title: METADATA?.title?.default,
-    titleTemplate: METADATA?.title?.template,
-    noindex: typeof METADATA?.robots?.index !== 'undefined' ? !METADATA.robots.index : undefined,
-    nofollow: typeof METADATA?.robots?.follow !== 'undefined' ? !METADATA.robots.follow : undefined,
-    description: METADATA?.description,
-    openGraph: METADATA?.openGraph,
-    twitter: METADATA?.twitter,
-  },
-  {
-    title: finalTitle || title || '',
-    titleTemplate: finalTitle ? '%s' : ignoreTitleTemplate ? '%s' : undefined,
-    canonical: canonical,
-    noindex: typeof robots?.index !== 'undefined' ? !robots.index : undefined,
-    nofollow: typeof robots?.follow !== 'undefined' ? !robots.follow : undefined,
-    description: description,
-    openGraph: {
-      url: canonical,
-      ...openGraph,
-      ...(finalTitle && { title: finalTitle }), // Use finalTitle for OG title if we have it
-    },
-    twitter: {
-      ...twitter,
-      ...(finalTitle && { title: finalTitle }), // Use finalTitle for Twitter title if we have it
-    },
-  }
-)
+    {
+        title: finalTitle || title || '',
+        titleTemplate: finalTitle ? '%s' : ignoreTitleTemplate ? '%s' : undefined,
+        canonical: canonical,
+        noindex: typeof robots?.index !== 'undefined' ? !robots.index : undefined,
+        nofollow: typeof robots?.follow !== 'undefined' ? !robots.follow : undefined,
+        description: description,
+        openGraph: {
+            url: canonical,
+            ...openGraph,
+            ...(finalTitle && { title: finalTitle }), // Use finalTitle for OG title if we have it
+        },
+        twitter: {
+            ...twitter,
+            ...(finalTitle && { title: finalTitle }), // Use finalTitle for Twitter title if we have it
+        },
+    }
+);
 ---
 
 <AstroSeo {...{ ...seoProps, openGraph: await adaptOpenGraphImages(seoProps?.openGraph, Astro.site) }} />

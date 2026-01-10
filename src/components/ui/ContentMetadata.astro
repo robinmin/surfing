@@ -1,23 +1,23 @@
 ---
 export interface Props {
-  readingTime?: number
-  publishDate?: Date
-  updateDate?: Date
-  author?: string
-  tags?: string[]
-  source?: string
-  class?: string
+    readingTime?: number;
+    publishDate?: Date;
+    updateDate?: Date;
+    author?: string;
+    tags?: string[];
+    source?: string;
+    class?: string;
 }
 
 const {
-  readingTime,
-  publishDate,
-  updateDate,
-  author,
-  tags,
-  source,
-  class: className = '',
-} = Astro.props
+    readingTime,
+    publishDate,
+    updateDate,
+    author,
+    tags,
+    source,
+    class: className = '',
+} = Astro.props;
 ---
 
 <div class={`flex flex-wrap items-center gap-4 text-sm text-muted mb-8 ${className}`}>

@@ -4,33 +4,33 @@
  * Main component that combines AvatarButton with LoginPopupMenu or UserMenu
  * Handles authentication state and click interactions
  */
-import { Icon } from 'astro-icon/components'
-import LoginPopupMenu from './LoginPopupMenu.astro'
-import UserMenu from './UserMenu.astro'
+import { Icon } from 'astro-icon/components';
+import LoginPopupMenu from './LoginPopupMenu.astro';
+import UserMenu from './UserMenu.astro';
 
 export interface Props {
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
-  isPrimary?: boolean
+    size?: 'sm' | 'md' | 'lg';
+    className?: string;
+    isPrimary?: boolean;
 }
 
-const { size = 'md', className = '', isPrimary = false } = Astro.props
+const { size = 'md', className = '', isPrimary = false } = Astro.props;
 
 // Generate unique instance ID to prevent duplicate popups
-const instanceId = `auth-avatar-${Math.random().toString(36).substring(2, 11)}`
+const instanceId = `auth-avatar-${Math.random().toString(36).substring(2, 11)}`;
 
 // Size configurations
 const sizeClasses = {
-  sm: 'h-8 w-8',
-  md: 'h-10 w-10',
-  lg: 'h-12 w-12',
-}
+    sm: 'h-8 w-8',
+    md: 'h-10 w-10',
+    lg: 'h-12 w-12',
+};
 
 const iconSizeClasses = {
-  sm: 'h-4 w-4',
-  md: 'h-5 w-5',
-  lg: 'h-6 w-6',
-}
+    sm: 'h-4 w-4',
+    md: 'h-5 w-5',
+    lg: 'h-6 w-6',
+};
 ---
 
 <div class:list={['auth-avatar-container relative', className]} data-instance-id={instanceId}>

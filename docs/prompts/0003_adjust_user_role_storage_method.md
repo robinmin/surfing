@@ -1,9 +1,9 @@
 ---
 name: adjust user role storage method
 description: <prompt description>
-status: Backlog
+status: Done
 created_at: 2026-01-08 08:48:48
-updated_at: 2026-01-08 08:48:48
+updated_at: 2026-01-09 22:15:03
 ---
 
 ## adjust user role storage method

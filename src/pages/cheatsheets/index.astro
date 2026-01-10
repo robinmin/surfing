@@ -1,31 +1,31 @@
 ---
-import { getCollection } from 'astro:content'
-import { Icon } from 'astro-icon/components'
-import Hero from '~/components/widgets/Hero.astro'
-import { getCurrentLanguage, t } from '~/i18n'
-import Layout from '~/layouts/PageLayout.astro'
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import Hero from '~/components/widgets/Hero.astro';
+import { getCurrentLanguage, t } from '~/i18n';
+import Layout from '~/layouts/PageLayout.astro';
 
 function extractLanguageFromId(id: string): string {
-  const match = id.match(/^([a-z]{2})\//)
-  return match ? match[1] : 'en'
+    const match = id.match(/^([a-z]{2})\//);
+    return match ? match[1] : 'en';
 }
 
-const lang = getCurrentLanguage()
+const lang = getCurrentLanguage();
 
 // Get all cheatsheets (NO server-side filtering for static build - client will filter)
-const cheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft)
+const cheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
 
-const featuredCheatsheets = cheatsheets.filter((item) => item.data.featured)
+const featuredCheatsheets = cheatsheets.filter((item) => item.data.featured);
 const sortedCheatsheets = cheatsheets.sort(
-  (a, b) =>
-    new Date(b.data.publishDate || b.data.updateDate || 0).getTime() -
-    new Date(a.data.publishDate || a.data.updateDate || 0).getTime()
-)
+    (a, b) =>
+        new Date(b.data.publishDate || b.data.updateDate || 0).getTime() -
+        new Date(a.data.publishDate || a.data.updateDate || 0).getTime()
+);
 
 const metadata = {
-  title: t('pages.cheatsheets.title', lang),
-  description: t('pages.cheatsheets.description', lang),
-}
+    title: t('pages.cheatsheets.title', lang),
+    description: t('pages.cheatsheets.description', lang),
+};
 ---
 
 <Layout metadata={metadata}>

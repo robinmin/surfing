@@ -64,17 +64,17 @@ Engineered for maximum visibility and discoverability:
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
+- bun
 - Git
 
 ### Setup
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # Start development server
-npm run dev
+bun run dev
 ```
 
 Visit `http://localhost:4321` to see your site!
@@ -225,13 +225,13 @@ Or see our [Content Specification Guide](./docs/content-specification.md) for ma
 
 ```bash
 # Development
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
+bun run dev          # Start development server
+bun run build        # Build for production
+bun run preview      # Preview production build
 
 # Code Quality
-npm run check        # Type checking and linting
-npm run fix          # Auto-fix formatting and lint issues
+bun run check        # Type checking and linting (Astro + Biome)
+bun run fix          # Auto-fix formatting and lint issues
 ```
 
 ## 📚 Documentation
@@ -246,7 +246,7 @@ npm run fix          # Auto-fix formatting and lint issues
 The site builds to a static `dist/` directory compatible with all major hosting platforms:
 
 ```bash
-npm run build  # Creates dist/ directory
+bun run build  # Creates dist/ directory
 ```
 
 **Recommended Platforms:**

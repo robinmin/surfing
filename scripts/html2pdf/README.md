@@ -432,7 +432,7 @@ for file in *.html; do
 done
 
 # Integration with build processes
-npm run build-docs && html2pdf dist/documentation.html docs.pdf --single-page
+bun run build-docs && html2pdf dist/documentation.html docs.pdf --single-page
 ```
 
 ### **🧩 Cheatsheet Processing Pipeline**
