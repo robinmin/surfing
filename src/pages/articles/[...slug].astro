@@ -1,46 +1,46 @@
 ---
-import { getCollection, render } from 'astro:content'
+import { getCollection, render } from 'astro:content';
 
-import MarkdownLayout from '~/layouts/MarkdownLayout.astro'
+import MarkdownLayout from '~/layouts/MarkdownLayout.astro';
 
 export async function getStaticPaths() {
-  const articles = await getCollection('articles', ({ data }) => !data.draft)
+    const articles = await getCollection('articles', ({ data }) => !data.draft);
 
-  return articles.map((article) => ({
-    params: {
-      slug: article.data.slug || article.id,
-    },
-    props: { article },
-  }))
+    return articles.map((article) => ({
+        params: {
+            slug: article.data.slug || article.id,
+        },
+        props: { article },
+    }));
 }
 
-const { article } = Astro.props
-const { Content } = await render(article)
+const { article } = Astro.props;
+const { Content } = await render(article);
 
 // Merge custom metadata with defaults
 const metadata = {
-  title: article.data.metadata?.title || article.data.title,
-  description: article.data.metadata?.description || article.data.description,
-  canonical: new URL(`articles/${article.data.slug || article.id}`, Astro.site).href,
-  robots: {
-    index: true,
-    follow: true,
-    ...article.data.metadata?.robots,
-  },
-  ...article.data.metadata,
-  openGraph: {
-    type: 'article',
-    ...(article.data.image && { images: [{ url: article.data.image }] }),
-    ...article.data.metadata?.openGraph,
-  },
-}
+    title: article.data.metadata?.title || article.data.title,
+    description: article.data.metadata?.description || article.data.description,
+    canonical: new URL(`articles/${article.data.slug || article.id}`, Astro.site).href,
+    robots: {
+        index: true,
+        follow: true,
+        ...article.data.metadata?.robots,
+    },
+    ...article.data.metadata,
+    openGraph: {
+        type: 'article',
+        ...(article.data.image && { images: [{ url: article.data.image }] }),
+        ...article.data.metadata?.openGraph,
+    },
+};
 
 // Language selector configuration for detail pages
 const languageSelectorConfig = {
-  translations: article.data.translations || ['en'],
-  isDetailPage: true,
-  collectionName: 'articles',
-}
+    translations: article.data.translations || ['en'],
+    isDetailPage: true,
+    collectionName: 'articles',
+};
 ---
 
 <MarkdownLayout
