@@ -49,6 +49,19 @@ jobs:
           PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
+      - name: Debug Environment Variables
+        run: |
+          echo "Checking if environment variables are set..."
+          echo "PUBLIC_ZITADEL_AUTHORITY length: ${#PUBLIC_ZITADEL_AUTHORITY}"
+          echo "PUBLIC_ZITADEL_CLIENT_ID length: ${#PUBLIC_ZITADEL_CLIENT_ID}"
+          if [ -z "$PUBLIC_ZITADEL_AUTHORITY" ]; then
+            echo "ERROR: PUBLIC_ZITADEL_AUTHORITY is empty!"
+            exit 1
+          fi
+        env:
+          PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
+          PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
+
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
