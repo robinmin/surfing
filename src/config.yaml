@@ -124,4 +124,4 @@ sentry:
   enabled: true
   debug: false # Set to true to enable Sentry in development mode
   project: '4510129071783936' # Sentry project ID (extracted from DSN)
-  org: '40fintech' # Sentry organization slug (extracted from auth token)
+  org: 'gobing-ai' # Sentry organization slug (extracted from auth token)
