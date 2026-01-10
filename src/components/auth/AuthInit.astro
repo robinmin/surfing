@@ -14,36 +14,49 @@ const config = {
 };
 ---
 
-<!-- Inline script to set global config (can't use imports) -->
+<!-- Inline script to set global config and create initialization promise -->
 <script is:inline define:vars={{ config }}>
   window.__OIDC_CONFIG__ = config;
+  // Create a promise that resolves when OIDC is initialized
+  window.__OIDC_INIT_PROMISE__ = new Promise((resolve) => {
+    window.__OIDC_INIT_RESOLVE__ = resolve;
+  });
 </script>
 
-<!-- Module script to initialize OIDC (can use imports) -->
+<!-- Module script to initialize OIDC -->
 <script>
   import { initOIDC } from "~/lib/turnstile-client";
 
   // Get config from global variable set by inline script
   const config = window.__OIDC_CONFIG__;
 
-  if (config) {
-    initOIDC({
-      authority: config.authority,
-      clientId: config.clientId,
-      redirectUri:
-        config.redirectUri || window.location.origin + "/auth/callback",
-      postLogoutUri: config.postLogoutUri || window.location.origin,
-      orgId: config.orgId,
-      idpHints: {
-        google: config.idpGoogle || "",
-        github: config.idpGithub || "",
-        apple: config.idpApple || "",
-        microsoft: config.idpMicrosoft || "",
-      },
-    });
+  if (config && config.authority && config.clientId) {
+    try {
+      initOIDC({
+        authority: config.authority,
+        clientId: config.clientId,
+        redirectUri:
+          config.redirectUri || window.location.origin + "/auth/callback",
+        postLogoutUri: config.postLogoutUri || window.location.origin,
+        orgId: config.orgId,
+        idpHints: {
+          google: config.idpGoogle || "",
+          github: config.idpGithub || "",
+          apple: config.idpApple || "",
+          microsoft: config.idpMicrosoft || "",
+        },
+      });
 
-    console.log("✅ OIDC Client initialized");
+      console.log("✅ OIDC Client initialized");
+
+      // Resolve the initialization promise
+      if (window.__OIDC_INIT_RESOLVE__) {
+        window.__OIDC_INIT_RESOLVE__();
+      }
+    } catch (error) {
+      console.error("❌ Failed to initialize OIDC:", error);
+    }
   } else {
-    console.error("❌ OIDC config not found");
+    console.error("❌ OIDC config not found or incomplete");
   }
 </script>

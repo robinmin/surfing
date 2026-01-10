@@ -509,6 +509,11 @@ export function initOIDC(config: OIDCConfig): OIDCClient {
  * Sign in using popup (convenience function)
  */
 export async function signInPopup(provider?: OIDCProvider): Promise<User> {
+    // Wait for initialization if the promise exists
+    if (typeof window !== 'undefined' && (window as any).__OIDC_INIT_PROMISE__) {
+        await (window as any).__OIDC_INIT_PROMISE__;
+    }
+
     if (!defaultClient) {
         throw new Error('OIDC client not initialized. Call initOIDC() first.');
     }
