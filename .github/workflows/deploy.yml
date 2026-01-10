@@ -41,6 +41,10 @@ jobs:
           PUBLIC_ZITADEL_IDP_GITHUB: ${{ secrets.PUBLIC_ZITADEL_IDP_GITHUB }}
           PUBLIC_ZITADEL_IDP_APPLE: ${{ secrets.PUBLIC_ZITADEL_IDP_APPLE }}
           PUBLIC_ZITADEL_IDP_MICROSOFT: ${{ secrets.PUBLIC_ZITADEL_IDP_MICROSOFT }}
+          # Turnstile API
+          PUBLIC_TURNSTILE_API_URL: ${{ secrets.PUBLIC_TURNSTILE_API_URL }}
+          PUBLIC_APPLICATION_ID: ${{ secrets.PUBLIC_APPLICATION_ID }}
+          TURNSTILE_BUILD_TOKEN: ${{ secrets.TURNSTILE_BUILD_TOKEN }}
           # Sentry Error Tracking
           PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

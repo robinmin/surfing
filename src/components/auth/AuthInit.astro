@@ -7,6 +7,25 @@
 
   // Initialize OIDC client with environment variables
   // Using import.meta.env directly here ensures Astro replaces them with values
+
+  // Debug: Log environment variables (remove in production)
+  console.log("🔍 Environment variables:", {
+    authority: import.meta.env.PUBLIC_ZITADEL_AUTHORITY,
+    clientId: import.meta.env.PUBLIC_ZITADEL_CLIENT_ID,
+    redirectUri: import.meta.env.PUBLIC_ZITADEL_REDIRECT_URI,
+    postLogoutUri: import.meta.env.PUBLIC_ZITADEL_POST_LOGOUT_URI,
+    orgId: import.meta.env.PUBLIC_ZITADEL_ORG_ID,
+
+    zitadel_client_id: import.meta.env.PUBLIC_ZITADEL_CLIENT_ID,
+    zitadel_idp_google: import.meta.env.PUBLIC_ZITADEL_IDP_GOOGLE,
+    zitadel_idp_github: import.meta.env.PUBLIC_ZITADEL_IDP_GITHUB,
+    zitadel_idp_apple: import.meta.env.PUBLIC_ZITADEL_IDP_APPLE,
+    zitadel_idp_microsoft: import.meta.env.PUBLIC_ZITADEL_IDP_MICROSOFT,
+    turnstile_api_url: import.meta.env.PUBLIC_TURNSTILE_API_URL,
+    application_id: import.meta.env.PUBLIC_APPLICATION_ID,
+    turnstile_build_token: import.meta.env.TURNSTILE_BUILD_TOKEN,
+  });
+
   initOIDC({
     authority: import.meta.env.PUBLIC_ZITADEL_AUTHORITY,
     clientId: import.meta.env.PUBLIC_ZITADEL_CLIENT_ID,
