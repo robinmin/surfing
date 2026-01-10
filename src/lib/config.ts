@@ -155,7 +155,7 @@ export const getSentryConfig = async (): Promise<SentryConfig> => {
             enabled: SENTRY.enabled !== undefined ? SENTRY.enabled : true,
             debug: SENTRY.debug !== undefined ? SENTRY.debug : false,
             project: SENTRY.project || import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
-            org: SENTRY.org || import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
+            org: SENTRY.org || import.meta.env.PUBLIC_SENTRY_ORG || 'gobing-ai',
         };
         return sentryConfigCache;
     } catch (error) {
@@ -164,7 +164,7 @@ export const getSentryConfig = async (): Promise<SentryConfig> => {
             enabled: true,
             debug: false,
             project: import.meta.env.PUBLIC_SENTRY_PROJECT || '4510129071783936',
-            org: import.meta.env.PUBLIC_SENTRY_ORG || '40fintech',
+            org: import.meta.env.PUBLIC_SENTRY_ORG || 'gobing-ai',
         };
         sentryConfigCache = fallback;
         return fallback;
