@@ -34,6 +34,15 @@ jobs:
       - name: Clear dist folder
         run: rm -rf dist
 
+      - name: Debug Environment Variables
+        run: node scripts/debug-env.mjs
+        env:
+          PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
+          PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
+          PUBLIC_ZITADEL_REDIRECT_URI: ${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}
+          PUBLIC_ZITADEL_POST_LOGOUT_URI: ${{ secrets.PUBLIC_ZITADEL_POST_LOGOUT_URI }}
+          PUBLIC_ZITADEL_ORG_ID: ${{ secrets.PUBLIC_ZITADEL_ORG_ID }}
+
       - name: Build
         run: bun install --frozen-lockfile && bun run build
         env:
@@ -54,19 +63,6 @@ jobs:
           # Sentry Error Tracking
           PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
-      - name: Debug Environment Variables
-        run: |
-          echo "Checking if environment variables are set..."
-          echo "PUBLIC_ZITADEL_AUTHORITY length: ${#PUBLIC_ZITADEL_AUTHORITY}"
-          echo "PUBLIC_ZITADEL_CLIENT_ID length: ${#PUBLIC_ZITADEL_CLIENT_ID}"
-          if [ -z "$PUBLIC_ZITADEL_AUTHORITY" ]; then
-            echo "ERROR: PUBLIC_ZITADEL_AUTHORITY is empty!"
-            exit 1
-          fi
-        env:
-          PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
-          PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
