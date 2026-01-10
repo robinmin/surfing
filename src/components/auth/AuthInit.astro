@@ -14,24 +14,36 @@ const config = {
 };
 ---
 
-<script define:vars={{ config }}>
+<!-- Inline script to set global config (can't use imports) -->
+<script is:inline define:vars={{ config }}>
+  window.__OIDC_CONFIG__ = config;
+</script>
+
+<!-- Module script to initialize OIDC (can use imports) -->
+<script>
   import { initOIDC } from "~/lib/turnstile-client";
 
-  // Initialize OIDC client with config passed from server-side
-  initOIDC({
-    authority: config.authority,
-    clientId: config.clientId,
-    redirectUri:
-      config.redirectUri || window.location.origin + "/auth/callback",
-    postLogoutUri: config.postLogoutUri || window.location.origin,
-    orgId: config.orgId,
-    idpHints: {
-      google: config.idpGoogle || "",
-      github: config.idpGithub || "",
-      apple: config.idpApple || "",
-      microsoft: config.idpMicrosoft || "",
-    },
-  });
+  // Get config from global variable set by inline script
+  const config = window.__OIDC_CONFIG__;
 
-  console.log("✅ OIDC Client initialized");
+  if (config) {
+    initOIDC({
+      authority: config.authority,
+      clientId: config.clientId,
+      redirectUri:
+        config.redirectUri || window.location.origin + "/auth/callback",
+      postLogoutUri: config.postLogoutUri || window.location.origin,
+      orgId: config.orgId,
+      idpHints: {
+        google: config.idpGoogle || "",
+        github: config.idpGithub || "",
+        apple: config.idpApple || "",
+        microsoft: config.idpMicrosoft || "",
+      },
+    });
+
+    console.log("✅ OIDC Client initialized");
+  } else {
+    console.error("❌ OIDC config not found");
+  }
 </script>
