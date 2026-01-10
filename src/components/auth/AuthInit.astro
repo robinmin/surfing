@@ -1,27 +1,35 @@
 ---
-
+// Access environment variables in the frontmatter (server-side)
+// Astro replaces import.meta.env at build time here
+const config = {
+  authority: import.meta.env.PUBLIC_ZITADEL_AUTHORITY,
+  clientId: import.meta.env.PUBLIC_ZITADEL_CLIENT_ID,
+  redirectUri: import.meta.env.PUBLIC_ZITADEL_REDIRECT_URI,
+  postLogoutUri: import.meta.env.PUBLIC_ZITADEL_POST_LOGOUT_URI,
+  orgId: import.meta.env.PUBLIC_ZITADEL_ORG_ID,
+  idpGoogle: import.meta.env.PUBLIC_ZITADEL_IDP_GOOGLE,
+  idpGithub: import.meta.env.PUBLIC_ZITADEL_IDP_GITHUB,
+  idpApple: import.meta.env.PUBLIC_ZITADEL_IDP_APPLE,
+  idpMicrosoft: import.meta.env.PUBLIC_ZITADEL_IDP_MICROSOFT,
+};
 ---
 
-<script>
+<script define:vars={{ config }}>
   import { initOIDC } from "~/lib/turnstile-client";
 
-  // Initialize OIDC client with environment variables
-  // Using import.meta.env directly here ensures Astro replaces them with values
-
+  // Initialize OIDC client with config passed from server-side
   initOIDC({
-    authority: import.meta.env.PUBLIC_ZITADEL_AUTHORITY,
-    clientId: import.meta.env.PUBLIC_ZITADEL_CLIENT_ID,
+    authority: config.authority,
+    clientId: config.clientId,
     redirectUri:
-      import.meta.env.PUBLIC_ZITADEL_REDIRECT_URI ||
-      window.location.origin + "/auth/callback",
-    postLogoutUri:
-      import.meta.env.PUBLIC_ZITADEL_POST_LOGOUT_URI || window.location.origin,
-    orgId: import.meta.env.PUBLIC_ZITADEL_ORG_ID,
+      config.redirectUri || window.location.origin + "/auth/callback",
+    postLogoutUri: config.postLogoutUri || window.location.origin,
+    orgId: config.orgId,
     idpHints: {
-      google: import.meta.env.PUBLIC_ZITADEL_IDP_GOOGLE || "",
-      github: import.meta.env.PUBLIC_ZITADEL_IDP_GITHUB || "",
-      apple: import.meta.env.PUBLIC_ZITADEL_IDP_APPLE || "",
-      microsoft: import.meta.env.PUBLIC_ZITADEL_IDP_MICROSOFT || "",
+      google: config.idpGoogle || "",
+      github: config.idpGithub || "",
+      apple: config.idpApple || "",
+      microsoft: config.idpMicrosoft || "",
     },
   });
 
