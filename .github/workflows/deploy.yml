@@ -73,3 +73,4 @@ jobs:
           projectName: surfing
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: 3
