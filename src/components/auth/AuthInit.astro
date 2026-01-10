@@ -1,16 +1,16 @@
 ---
-// Access environment variables from process.env (set by GitHub Actions)
-// Astro's import.meta.env only reads from .env files, not from process.env
+// Access environment variables via import.meta.env (reads from .env file)
+// The .env file is created in GitHub Actions from secrets
 const config = {
-  authority: process.env.PUBLIC_ZITADEL_AUTHORITY,
-  clientId: process.env.PUBLIC_ZITADEL_CLIENT_ID,
-  redirectUri: process.env.PUBLIC_ZITADEL_REDIRECT_URI,
-  postLogoutUri: process.env.PUBLIC_ZITADEL_POST_LOGOUT_URI,
-  orgId: process.env.PUBLIC_ZITADEL_ORG_ID,
-  idpGoogle: process.env.PUBLIC_ZITADEL_IDP_GOOGLE,
-  idpGithub: process.env.PUBLIC_ZITADEL_IDP_GITHUB,
-  idpApple: process.env.PUBLIC_ZITADEL_IDP_APPLE,
-  idpMicrosoft: process.env.PUBLIC_ZITADEL_IDP_MICROSOFT,
+  authority: import.meta.env.PUBLIC_ZITADEL_AUTHORITY,
+  clientId: import.meta.env.PUBLIC_ZITADEL_CLIENT_ID,
+  redirectUri: import.meta.env.PUBLIC_ZITADEL_REDIRECT_URI,
+  postLogoutUri: import.meta.env.PUBLIC_ZITADEL_POST_LOGOUT_URI,
+  orgId: import.meta.env.PUBLIC_ZITADEL_ORG_ID,
+  idpGoogle: import.meta.env.PUBLIC_ZITADEL_IDP_GOOGLE,
+  idpGithub: import.meta.env.PUBLIC_ZITADEL_IDP_GITHUB,
+  idpApple: import.meta.env.PUBLIC_ZITADEL_IDP_APPLE,
+  idpMicrosoft: import.meta.env.PUBLIC_ZITADEL_IDP_MICROSOFT,
 };
 ---
 
