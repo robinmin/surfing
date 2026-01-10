@@ -29,6 +29,9 @@ jobs:
       # Sentry Error Tracking
       PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      PUBLIC_SENTRY_PROJECT: '4510129071783936'
+      PUBLIC_SENTRY_ORG: '40fintech'
+      NODE_ENV: production
 
     steps:
       - uses: actions/checkout@v4
@@ -65,6 +68,9 @@ jobs:
           sed -i 's|^TURNSTILE_BUILD_TOKEN=.*|TURNSTILE_BUILD_TOKEN=${{ secrets.TURNSTILE_BUILD_TOKEN }}|' .env
           sed -i 's|^PUBLIC_SENTRY_DSN=.*|PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN }}|' .env
           sed -i 's|^SENTRY_AUTH_TOKEN=.*|SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}|' .env
+          sed -i 's|^PUBLIC_SENTRY_PROJECT=.*|PUBLIC_SENTRY_PROJECT=${{ secrets.PUBLIC_SENTRY_PROJECT }}|' .env
+          sed -i 's|^PUBLIC_SENTRY_ORG=.*|PUBLIC_SENTRY_ORG=${{ secrets.PUBLIC_SENTRY_ORG }}|' .env
+          sed -i 's|^NODE_ENV=.*|NODE_ENV=${{ secrets.NODE_ENV }}|' .env
 
       - run: bun install --frozen-lockfile
       - run: bun run build
@@ -72,7 +78,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     env:
-      # Use same env as build job
+      # Sync with build job
       PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
       PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
       PUBLIC_ZITADEL_REDIRECT_URI: ${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}
@@ -87,6 +93,8 @@ jobs:
       TURNSTILE_BUILD_TOKEN: ${{ secrets.TURNSTILE_BUILD_TOKEN }}
       PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      PUBLIC_SENTRY_PROJECT: '4510129071783936'
+      PUBLIC_SENTRY_ORG: '40fintech'
 
     steps:
       - uses: actions/checkout@v4
@@ -123,6 +131,9 @@ jobs:
           sed -i "s|^TURNSTILE_BUILD_TOKEN=.*|TURNSTILE_BUILD_TOKEN=${{ env.TURNSTILE_BUILD_TOKEN }}|" .env
           sed -i "s|^PUBLIC_SENTRY_DSN=.*|PUBLIC_SENTRY_DSN=${{ env.PUBLIC_SENTRY_DSN }}|" .env
           sed -i "s|^SENTRY_AUTH_TOKEN=.*|SENTRY_AUTH_TOKEN=${{ env.SENTRY_AUTH_TOKEN }}|" .env
+          sed -i "s|^PUBLIC_SENTRY_PROJECT=.*|PUBLIC_SENTRY_PROJECT=${{ env.PUBLIC_SENTRY_PROJECT }}|" .env
+          sed -i "s|^PUBLIC_SENTRY_ORG=.*|PUBLIC_SENTRY_ORG=${{ env.PUBLIC_SENTRY_ORG }}|" .env
+          sed -i "s|^NODE_ENV=.*|NODE_ENV=${{ env.NODE_ENV }}|" .env
 
       - run: bun install --frozen-lockfile
       - run: bun run check
