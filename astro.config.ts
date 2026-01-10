@@ -54,7 +54,7 @@ const siteDomain = new URL(siteUrl).hostname;
 
 // Set environment variables for client-side config access
 process.env.PUBLIC_SENTRY_PROJECT = config?.sentry?.project || '4510129071783936';
-process.env.PUBLIC_SENTRY_ORG = config?.sentry?.org || '40fintech';
+process.env.PUBLIC_SENTRY_ORG = config?.sentry?.org || 'gobing-ai';
 
 const hasExternalScripts = true; // Enable partytown for analytics
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
