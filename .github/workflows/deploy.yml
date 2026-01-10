@@ -8,9 +8,25 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
+    env:
+      # Zitadel OIDC Authentication
+      PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
+      PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
+      PUBLIC_ZITADEL_REDIRECT_URI: ${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}
+      PUBLIC_ZITADEL_POST_LOGOUT_URI: ${{ secrets.PUBLIC_ZITADEL_POST_LOGOUT_URI }}
+      PUBLIC_ZITADEL_ORG_ID: ${{ secrets.PUBLIC_ZITADEL_ORG_ID }}
+      PUBLIC_ZITADEL_IDP_GOOGLE: ${{ secrets.PUBLIC_ZITADEL_IDP_GOOGLE }}
+      PUBLIC_ZITADEL_IDP_GITHUB: ${{ secrets.PUBLIC_ZITADEL_IDP_GITHUB }}
+      PUBLIC_ZITADEL_IDP_APPLE: ${{ secrets.PUBLIC_ZITADEL_IDP_APPLE }}
+      PUBLIC_ZITADEL_IDP_MICROSOFT: ${{ secrets.PUBLIC_ZITADEL_IDP_MICROSOFT }}
+      # Turnstile API
+      PUBLIC_TURNSTILE_API_URL: ${{ secrets.PUBLIC_TURNSTILE_API_URL }}
+      PUBLIC_APPLICATION_ID: ${{ secrets.PUBLIC_APPLICATION_ID }}
+      TURNSTILE_BUILD_TOKEN: ${{ secrets.TURNSTILE_BUILD_TOKEN }}
+      # Sentry Error Tracking
+      PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,67 +36,43 @@ jobs:
         with:
           bun-version: '1.3.5'
 
-      - name: Cache Bun
+      - name: Cache Bun & Astro Artifacts
         uses: actions/cache@v4
         with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          path: |
+            ~/.bun/install/cache
+            .astro/cache
+          key: ${{ runner.os }}-bun-astro-${{ hashFiles('bun.lockb', 'contents/**', 'src/content/**') }}
           restore-keys: |
+            ${{ runner.os }}-bun-astro-
             ${{ runner.os }}-bun-
 
-      - name: Clear Astro Cache
-        run: rm -rf .astro node_modules/.astro node_modules/.vite
-
-      - name: Clear dist folder
-        run: rm -rf dist
+      - name: Cleanup Build Artifacts
+        run: rm -rf dist .astro node_modules/.astro node_modules/.vite
 
       - name: Create .env file from template
         run: |
           cp .env.example .env
-          sed -i 's|^PUBLIC_ZITADEL_AUTHORITY=.*|PUBLIC_ZITADEL_AUTHORITY=${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_CLIENT_ID=.*|PUBLIC_ZITADEL_CLIENT_ID=${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_REDIRECT_URI=.*|PUBLIC_ZITADEL_REDIRECT_URI=${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_POST_LOGOUT_URI=.*|PUBLIC_ZITADEL_POST_LOGOUT_URI=${{ secrets.PUBLIC_ZITADEL_POST_LOGOUT_URI }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_ORG_ID=.*|PUBLIC_ZITADEL_ORG_ID=${{ secrets.PUBLIC_ZITADEL_ORG_ID }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_IDP_GOOGLE=.*|PUBLIC_ZITADEL_IDP_GOOGLE=${{ secrets.PUBLIC_ZITADEL_IDP_GOOGLE }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_IDP_GITHUB=.*|PUBLIC_ZITADEL_IDP_GITHUB=${{ secrets.PUBLIC_ZITADEL_IDP_GITHUB }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_IDP_APPLE=.*|PUBLIC_ZITADEL_IDP_APPLE=${{ secrets.PUBLIC_ZITADEL_IDP_APPLE }}|' .env
-          sed -i 's|^PUBLIC_ZITADEL_IDP_MICROSOFT=.*|PUBLIC_ZITADEL_IDP_MICROSOFT=${{ secrets.PUBLIC_ZITADEL_IDP_MICROSOFT }}|' .env
-          sed -i 's|^PUBLIC_TURNSTILE_API_URL=.*|PUBLIC_TURNSTILE_API_URL=${{ secrets.PUBLIC_TURNSTILE_API_URL }}|' .env
-          sed -i 's|^PUBLIC_APPLICATION_ID=.*|PUBLIC_APPLICATION_ID=${{ secrets.PUBLIC_APPLICATION_ID }}|' .env
-          sed -i 's|^TURNSTILE_BUILD_TOKEN=.*|TURNSTILE_BUILD_TOKEN=${{ secrets.TURNSTILE_BUILD_TOKEN }}|' .env
-          sed -i 's|^PUBLIC_SENTRY_DSN=.*|PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN }}|' .env
-          sed -i 's|^SENTRY_AUTH_TOKEN=.*|SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_AUTHORITY=.*|PUBLIC_ZITADEL_AUTHORITY=${{ env.PUBLIC_ZITADEL_AUTHORITY }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_CLIENT_ID=.*|PUBLIC_ZITADEL_CLIENT_ID=${{ env.PUBLIC_ZITADEL_CLIENT_ID }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_REDIRECT_URI=.*|PUBLIC_ZITADEL_REDIRECT_URI=${{ env.PUBLIC_ZITADEL_REDIRECT_URI }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_POST_LOGOUT_URI=.*|PUBLIC_ZITADEL_POST_LOGOUT_URI=${{ env.PUBLIC_ZITADEL_POST_LOGOUT_URI }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_ORG_ID=.*|PUBLIC_ZITADEL_ORG_ID=${{ env.PUBLIC_ZITADEL_ORG_ID }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_GOOGLE=.*|PUBLIC_ZITADEL_IDP_GOOGLE=${{ env.PUBLIC_ZITADEL_IDP_GOOGLE }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_GITHUB=.*|PUBLIC_ZITADEL_IDP_GITHUB=${{ env.PUBLIC_ZITADEL_IDP_GITHUB }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_APPLE=.*|PUBLIC_ZITADEL_IDP_APPLE=${{ env.PUBLIC_ZITADEL_IDP_APPLE }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_MICROSOFT=.*|PUBLIC_ZITADEL_IDP_MICROSOFT=${{ env.PUBLIC_ZITADEL_IDP_MICROSOFT }}|' .env
+          sed -i 's|^PUBLIC_TURNSTILE_API_URL=.*|PUBLIC_TURNSTILE_API_URL=${{ env.PUBLIC_TURNSTILE_API_URL }}|' .env
+          sed -i 's|^PUBLIC_APPLICATION_ID=.*|PUBLIC_APPLICATION_ID=${{ env.PUBLIC_APPLICATION_ID }}|' .env
+          sed -i 's|^TURNSTILE_BUILD_TOKEN=.*|TURNSTILE_BUILD_TOKEN=${{ env.TURNSTILE_BUILD_TOKEN }}|' .env
+          sed -i 's|^PUBLIC_SENTRY_DSN=.*|PUBLIC_SENTRY_DSN=${{ env.PUBLIC_SENTRY_DSN }}|' .env
+          sed -i 's|^SENTRY_AUTH_TOKEN=.*|SENTRY_AUTH_TOKEN=${{ env.SENTRY_AUTH_TOKEN }}|' .env
 
-      - name: Debug Environment Variables
-        run: node scripts/debug-env.mjs
-        env:
-          PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
-          PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
-          PUBLIC_ZITADEL_REDIRECT_URI: ${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}
-          PUBLIC_ZITADEL_POST_LOGOUT_URI: ${{ secrets.PUBLIC_ZITADEL_POST_LOGOUT_URI }}
-          PUBLIC_ZITADEL_ORG_ID: ${{ secrets.PUBLIC_ZITADEL_ORG_ID }}
+      # - name: Debug Environment Variables
+      #   run: node scripts/debug-env.mjs
 
       - name: Build
         run: bun install --frozen-lockfile && bun run build
-        env:
-          # Zitadel OIDC Authentication
-          PUBLIC_ZITADEL_AUTHORITY: ${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}
-          PUBLIC_ZITADEL_CLIENT_ID: ${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}
-          PUBLIC_ZITADEL_REDIRECT_URI: ${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}
-          PUBLIC_ZITADEL_POST_LOGOUT_URI: ${{ secrets.PUBLIC_ZITADEL_POST_LOGOUT_URI }}
-          PUBLIC_ZITADEL_ORG_ID: ${{ secrets.PUBLIC_ZITADEL_ORG_ID }}
-          PUBLIC_ZITADEL_IDP_GOOGLE: ${{ secrets.PUBLIC_ZITADEL_IDP_GOOGLE }}
-          PUBLIC_ZITADEL_IDP_GITHUB: ${{ secrets.PUBLIC_ZITADEL_IDP_GITHUB }}
-          PUBLIC_ZITADEL_IDP_APPLE: ${{ secrets.PUBLIC_ZITADEL_IDP_APPLE }}
-          PUBLIC_ZITADEL_IDP_MICROSOFT: ${{ secrets.PUBLIC_ZITADEL_IDP_MICROSOFT }}
-          # Turnstile API
-          PUBLIC_TURNSTILE_API_URL: ${{ secrets.PUBLIC_TURNSTILE_API_URL }}
-          PUBLIC_APPLICATION_ID: ${{ secrets.PUBLIC_APPLICATION_ID }}
-          TURNSTILE_BUILD_TOKEN: ${{ secrets.TURNSTILE_BUILD_TOKEN }}
-          # Sentry Error Tracking
-          PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
