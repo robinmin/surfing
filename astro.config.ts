@@ -273,37 +273,6 @@ export default defineConfig({
     },
 
     vite: {
-        define: {
-            // Explicitly inject PUBLIC_* environment variables for client-side access
-            // This ensures GitHub Actions environment variables are properly passed to Astro
-            'import.meta.env.PUBLIC_ZITADEL_AUTHORITY': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_AUTHORITY
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_CLIENT_ID': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_CLIENT_ID
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_REDIRECT_URI': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_REDIRECT_URI
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_POST_LOGOUT_URI': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_POST_LOGOUT_URI
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_ORG_ID': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_ORG_ID
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_IDP_GOOGLE': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_IDP_GOOGLE
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_IDP_GITHUB': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_IDP_GITHUB
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_IDP_APPLE': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_IDP_APPLE
-            ),
-            'import.meta.env.PUBLIC_ZITADEL_IDP_MICROSOFT': JSON.stringify(
-                process.env.PUBLIC_ZITADEL_IDP_MICROSOFT
-            ),
-        },
         plugins: [
             {
                 name: 'fetch-turnstile-config',
