@@ -31,7 +31,7 @@ jobs:
       PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       PUBLIC_SENTRY_PROJECT: '4510129071783936'
-      PUBLIC_SENTRY_ORG: '40fintech'
+      PUBLIC_SENTRY_ORG: 'gobing-ai'
 
     steps:
       - name: Checkout
