@@ -1,0 +1,28 @@
+---
+
+---
+
+<script>
+  import { initOIDC } from "~/lib/turnstile-client";
+
+  // Initialize OIDC client with environment variables
+  // Using import.meta.env directly here ensures Astro replaces them with values
+  initOIDC({
+    authority: import.meta.env.PUBLIC_ZITADEL_AUTHORITY,
+    clientId: import.meta.env.PUBLIC_ZITADEL_CLIENT_ID,
+    redirectUri:
+      import.meta.env.PUBLIC_ZITADEL_REDIRECT_URI ||
+      window.location.origin + "/auth/callback",
+    postLogoutUri:
+      import.meta.env.PUBLIC_ZITADEL_POST_LOGOUT_URI || window.location.origin,
+    orgId: import.meta.env.PUBLIC_ZITADEL_ORG_ID,
+    idpHints: {
+      google: import.meta.env.PUBLIC_ZITADEL_IDP_GOOGLE || "",
+      github: import.meta.env.PUBLIC_ZITADEL_IDP_GITHUB || "",
+      apple: import.meta.env.PUBLIC_ZITADEL_IDP_APPLE || "",
+      microsoft: import.meta.env.PUBLIC_ZITADEL_IDP_MICROSOFT || "",
+    },
+  });
+
+  console.log("✅ OIDC Client initialized");
+</script>
