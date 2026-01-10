@@ -51,20 +51,20 @@ jobs:
       - name: Create .env file from template
         run: |
           cp .env.example .env
-          sed -i "s|^PUBLIC_ZITADEL_AUTHORITY=.*|PUBLIC_ZITADEL_AUTHORITY=${{ env.PUBLIC_ZITADEL_AUTHORITY }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_CLIENT_ID=.*|PUBLIC_ZITADEL_CLIENT_ID=${{ env.PUBLIC_ZITADEL_CLIENT_ID }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_REDIRECT_URI=.*|PUBLIC_ZITADEL_REDIRECT_URI=${{ env.PUBLIC_ZITADEL_REDIRECT_URI }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_POST_LOGOUT_URI=.*|PUBLIC_ZITADEL_POST_LOGOUT_URI=${{ env.PUBLIC_ZITADEL_POST_LOGOUT_URI }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_ORG_ID=.*|PUBLIC_ZITADEL_ORG_ID=${{ env.PUBLIC_ZITADEL_ORG_ID }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_IDP_GOOGLE=.*|PUBLIC_ZITADEL_IDP_GOOGLE=${{ env.PUBLIC_ZITADEL_IDP_GOOGLE }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_IDP_GITHUB=.*|PUBLIC_ZITADEL_IDP_GITHUB=${{ env.PUBLIC_ZITADEL_IDP_GITHUB }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_IDP_APPLE=.*|PUBLIC_ZITADEL_IDP_APPLE=${{ env.PUBLIC_ZITADEL_IDP_APPLE }}|" .env
-          sed -i "s|^PUBLIC_ZITADEL_IDP_MICROSOFT=.*|PUBLIC_ZITADEL_IDP_MICROSOFT=${{ env.PUBLIC_ZITADEL_IDP_MICROSOFT }}|" .env
-          sed -i "s|^PUBLIC_TURNSTILE_API_URL=.*|PUBLIC_TURNSTILE_API_URL=${{ env.PUBLIC_TURNSTILE_API_URL }}|" .env
-          sed -i "s|^PUBLIC_APPLICATION_ID=.*|PUBLIC_APPLICATION_ID=${{ env.PUBLIC_APPLICATION_ID }}|" .env
-          sed -i "s|^TURNSTILE_BUILD_TOKEN=.*|TURNSTILE_BUILD_TOKEN=${{ env.TURNSTILE_BUILD_TOKEN }}|" .env
-          sed -i "s|^PUBLIC_SENTRY_DSN=.*|PUBLIC_SENTRY_DSN=${{ env.PUBLIC_SENTRY_DSN }}|" .env
-          sed -i "s|^SENTRY_AUTH_TOKEN=.*|SENTRY_AUTH_TOKEN=${{ env.SENTRY_AUTH_TOKEN }}|" .env
+          sed -i 's|^PUBLIC_ZITADEL_AUTHORITY=.*|PUBLIC_ZITADEL_AUTHORITY=${{ secrets.PUBLIC_ZITADEL_AUTHORITY }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_CLIENT_ID=.*|PUBLIC_ZITADEL_CLIENT_ID=${{ secrets.PUBLIC_ZITADEL_CLIENT_ID }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_REDIRECT_URI=.*|PUBLIC_ZITADEL_REDIRECT_URI=${{ secrets.PUBLIC_ZITADEL_REDIRECT_URI }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_POST_LOGOUT_URI=.*|PUBLIC_ZITADEL_POST_LOGOUT_URI=${{ secrets.PUBLIC_ZITADEL_POST_LOGOUT_URI }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_ORG_ID=.*|PUBLIC_ZITADEL_ORG_ID=${{ secrets.PUBLIC_ZITADEL_ORG_ID }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_GOOGLE=.*|PUBLIC_ZITADEL_IDP_GOOGLE=${{ secrets.PUBLIC_ZITADEL_IDP_GOOGLE }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_GITHUB=.*|PUBLIC_ZITADEL_IDP_GITHUB=${{ secrets.PUBLIC_ZITADEL_IDP_GITHUB }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_APPLE=.*|PUBLIC_ZITADEL_IDP_APPLE=${{ secrets.PUBLIC_ZITADEL_IDP_APPLE }}|' .env
+          sed -i 's|^PUBLIC_ZITADEL_IDP_MICROSOFT=.*|PUBLIC_ZITADEL_IDP_MICROSOFT=${{ secrets.PUBLIC_ZITADEL_IDP_MICROSOFT }}|' .env
+          sed -i 's|^PUBLIC_TURNSTILE_API_URL=.*|PUBLIC_TURNSTILE_API_URL=${{ secrets.PUBLIC_TURNSTILE_API_URL }}|' .env
+          sed -i 's|^PUBLIC_APPLICATION_ID=.*|PUBLIC_APPLICATION_ID=${{ secrets.PUBLIC_APPLICATION_ID }}|' .env
+          sed -i 's|^TURNSTILE_BUILD_TOKEN=.*|TURNSTILE_BUILD_TOKEN=${{ secrets.TURNSTILE_BUILD_TOKEN }}|' .env
+          sed -i 's|^PUBLIC_SENTRY_DSN=.*|PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN }}|' .env
+          sed -i 's|^SENTRY_AUTH_TOKEN=.*|SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}|' .env
 
       - run: bun install --frozen-lockfile
       - run: bun run build

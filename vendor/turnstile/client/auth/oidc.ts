@@ -510,7 +510,9 @@ export function initOIDC(config: OIDCConfig): OIDCClient {
  */
 export async function signInPopup(provider?: OIDCProvider): Promise<User> {
     // Wait for initialization if the promise exists
+    // biome-ignore lint/suspicious/noExplicitAny: window cast needed for global OIDC promise
     if (typeof window !== 'undefined' && (window as any).__OIDC_INIT_PROMISE__) {
+        // biome-ignore lint/suspicious/noExplicitAny: window cast needed for global OIDC promise
         await (window as any).__OIDC_INIT_PROMISE__;
     }
 
