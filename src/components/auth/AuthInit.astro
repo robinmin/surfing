@@ -48,15 +48,16 @@ const config = {
       });
 
       console.log("✅ OIDC Client initialized");
-
-      // Resolve the initialization promise
+    } finally {
+      // Always resolve the initialization promise to prevent hanging
       if (window.__OIDC_INIT_RESOLVE__) {
         window.__OIDC_INIT_RESOLVE__();
       }
-    } catch (error) {
-      console.error("❌ Failed to initialize OIDC:", error);
     }
   } else {
     console.error("❌ OIDC config not found or incomplete");
+    if (window.__OIDC_INIT_RESOLVE__) {
+      window.__OIDC_INIT_RESOLVE__();
+    }
   }
 </script>
