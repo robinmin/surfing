@@ -37,13 +37,20 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
   <button
     type="button"
     class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
-    aria-label={t('language.selector')}
+    aria-label={t("language.selector")}
     id="language-selector-button"
   >
-    <span class="w-5 h-5 flex items-center justify-center text-base" id="current-flag">
+    <span
+      class="w-5 h-5 flex items-center justify-center text-base"
+      id="current-flag"
+    >
       {currentLangInfo.flag}
     </span>
-    {availableLanguages.length > 1 && <Icon name="tabler:chevron-down" class="w-3 h-3 ml-1" />}
+    {
+      availableLanguages.length > 1 && (
+        <Icon name="tabler:chevron-down" class="w-3 h-3 ml-1" />
+      )
+    }
   </button>
 
   {
@@ -85,10 +92,10 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
     toContentLang,
     t,
     type SupportedLanguage,
-  } from '~/i18n';
+  } from "~/i18n";
 
   // Global singleton instance tracker
-  const LANGUAGE_SELECTOR_INSTANCE_KEY = '__languageSelectorInstance__';
+  const LANGUAGE_SELECTOR_INSTANCE_KEY = "__languageSelectorInstance__";
 
   class LanguageSelector {
     private button: HTMLElement | null;
@@ -102,26 +109,30 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
     private availableTranslations: string[];
 
     constructor() {
-      this.button = document.getElementById('language-selector-button');
-      this.dropdown = document.getElementById('language-dropdown');
-      this.notification = document.getElementById('language-notification');
-      this.flagElement = document.getElementById('current-flag');
-      this.container = document.querySelector('.language-selector');
+      this.button = document.getElementById("language-selector-button");
+      this.dropdown = document.getElementById("language-dropdown");
+      this.notification = document.getElementById("language-notification");
+      this.flagElement = document.getElementById("current-flag");
+      this.container = document.querySelector(".language-selector");
 
       // Read configuration from data attributes
-      this.isDetailPage = this.container?.dataset.isDetailPage === 'true';
-      this.collectionName = this.container?.dataset.collectionName || '';
-      this.availableTranslations = JSON.parse(this.container?.dataset.availableTranslations || '["en","zh","ja"]');
+      this.isDetailPage = this.container?.dataset.isDetailPage === "true";
+      this.collectionName = this.container?.dataset.collectionName || "";
+      this.availableTranslations = JSON.parse(
+        this.container?.dataset.availableTranslations || '["en","zh","ja"]',
+      );
 
       // Determine current language from URL if on detail page
-      this.currentLanguage = this.isDetailPage ? this.getLanguageFromURL() : getCurrentLanguage();
+      this.currentLanguage = this.isDetailPage
+        ? this.getLanguageFromURL()
+        : getCurrentLanguage();
 
       this.init();
     }
 
     private getLanguageFromURL(): SupportedLanguage {
       const path = window.location.pathname;
-      const pathParts = path.split('/').filter(Boolean);
+      const pathParts = path.split("/").filter(Boolean);
 
       // URL pattern: /articles/cn/slug or /articles/en/slug
       if (pathParts.length >= 2 && this.collectionName) {
@@ -146,7 +157,7 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
 
       // If only one language available, show notification on click
       if (this.availableTranslations.length === 1) {
-        this.button.addEventListener('click', (e) => {
+        this.button.addEventListener("click", (e) => {
           e.stopPropagation();
           this.showNotification();
         });
@@ -157,58 +168,64 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
       if (!this.dropdown) return;
 
       // Toggle dropdown on button click
-      this.button.addEventListener('click', (e) => {
+      this.button.addEventListener("click", (e) => {
         e.stopPropagation();
         this.toggleDropdown();
       });
 
       // Show dropdown on mouse enter
-      this.button.addEventListener('mouseenter', () => {
+      this.button.addEventListener("mouseenter", () => {
         this.openDropdown();
       });
 
       // Hide dropdown on mouse leave (with delay to allow moving to dropdown)
       let hideTimeout: number;
-      this.button.addEventListener('mouseleave', () => {
+      this.button.addEventListener("mouseleave", () => {
         hideTimeout = window.setTimeout(() => {
-          if (!this.dropdown?.matches(':hover')) {
+          if (!this.dropdown?.matches(":hover")) {
             this.closeDropdown();
           }
         }, 100);
       });
 
       // Keep dropdown open when hovering over it
-      this.dropdown?.addEventListener('mouseenter', () => {
+      this.dropdown?.addEventListener("mouseenter", () => {
         if (hideTimeout) {
           clearTimeout(hideTimeout);
         }
       });
 
-      this.dropdown?.addEventListener('mouseleave', () => {
+      this.dropdown?.addEventListener("mouseleave", () => {
         this.closeDropdown();
       });
 
       // Handle language selection
-      this.dropdown.addEventListener('click', (e) => {
+      this.dropdown.addEventListener("click", (e) => {
         const target = e.target as HTMLElement;
-        const languageButton = target.closest('.language-option') as HTMLElement;
+        const languageButton = target.closest(
+          ".language-option",
+        ) as HTMLElement;
 
         if (languageButton) {
-          const newLanguage = languageButton.dataset.language as SupportedLanguage;
+          const newLanguage = languageButton.dataset
+            .language as SupportedLanguage;
           this.changeLanguage(newLanguage);
         }
       });
 
       // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!this.button?.contains(e.target as Node) && !this.dropdown?.contains(e.target as Node)) {
+      document.addEventListener("click", (e) => {
+        if (
+          !this.button?.contains(e.target as Node) &&
+          !this.dropdown?.contains(e.target as Node)
+        ) {
           this.closeDropdown();
         }
       });
 
       // Keyboard navigation
-      this.button.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+      this.button.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           this.toggleDropdown();
         }
@@ -223,30 +240,36 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
 
       // Update button aria-label
       if (this.button) {
-        this.button.setAttribute('aria-label', `Current language: ${langInfo.nativeName}`);
+        this.button.setAttribute(
+          "aria-label",
+          `Current language: ${langInfo.nativeName}`,
+        );
       }
 
       // Update notification text with current language
       if (this.notification) {
-        this.notification.textContent = t('language.onlyAvailable', this.currentLanguage);
+        this.notification.textContent = t(
+          "language.onlyAvailable",
+          this.currentLanguage,
+        );
       }
 
       // Update selected state in dropdown
-      const options = this.dropdown?.querySelectorAll('.language-option');
+      const options = this.dropdown?.querySelectorAll(".language-option");
       options?.forEach((option) => {
         const button = option as HTMLElement;
         const isSelected = button.dataset.language === this.currentLanguage;
 
-        button.classList.toggle('bg-gray-100', isSelected);
-        button.classList.toggle('dark:bg-gray-700', isSelected);
-        button.setAttribute('aria-selected', isSelected.toString());
+        button.classList.toggle("bg-gray-100", isSelected);
+        button.classList.toggle("dark:bg-gray-700", isSelected);
+        button.setAttribute("aria-selected", isSelected.toString());
       });
     }
 
     private toggleDropdown(): void {
       if (!this.dropdown) return;
 
-      const isVisible = !this.dropdown.classList.contains('hidden');
+      const isVisible = !this.dropdown.classList.contains("hidden");
 
       if (isVisible) {
         this.closeDropdown();
@@ -258,26 +281,26 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
     private openDropdown(): void {
       if (!this.dropdown) return;
 
-      this.dropdown.classList.remove('hidden');
-      this.button?.setAttribute('aria-expanded', 'true');
+      this.dropdown.classList.remove("hidden");
+      this.button?.setAttribute("aria-expanded", "true");
     }
 
     private closeDropdown(): void {
       if (!this.dropdown) return;
 
-      this.dropdown.classList.add('hidden');
-      this.button?.setAttribute('aria-expanded', 'false');
+      this.dropdown.classList.add("hidden");
+      this.button?.setAttribute("aria-expanded", "false");
     }
 
     private showNotification(): void {
       if (!this.notification) return;
 
       // Show notification
-      this.notification.classList.remove('hidden');
+      this.notification.classList.remove("hidden");
 
       // Hide after 2 seconds
       setTimeout(() => {
-        this.notification?.classList.add('hidden');
+        this.notification?.classList.add("hidden");
       }, 2000);
     }
 
@@ -293,14 +316,14 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
       // If on detail page, redirect to new URL
       if (this.isDetailPage && this.collectionName) {
         const path = window.location.pathname;
-        const pathParts = path.split('/').filter(Boolean);
+        const pathParts = path.split("/").filter(Boolean);
 
         // URL pattern: /articles/cn/slug -> /articles/en/slug
         if (pathParts.length >= 2) {
           const newContentLang = toContentLang(newLanguage); // Convert 'zh' -> 'cn'
           pathParts[1] = newContentLang; // Replace language code
 
-          const newPath = '/' + pathParts.join('/');
+          const newPath = "/" + pathParts.join("/");
           window.location.href = newPath;
         }
       } else {
@@ -312,25 +335,22 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
     }
   }
 
-  // Initialize with singleton pattern
+  // Initialize
   function initLanguageSelector() {
-    // Check if instance already exists
-    if (!(window as any)[LANGUAGE_SELECTOR_INSTANCE_KEY]) {
-      (window as any)[LANGUAGE_SELECTOR_INSTANCE_KEY] = new LanguageSelector();
-      console.log('[LanguageSelector] Singleton instance created');
-    } else {
-      console.log('[LanguageSelector] Singleton instance already exists, skipping initialization');
-    }
+    // Always create a new instance to bind to the current DOM elements
+    // This is necessary for View Transitions where the DOM is replaced
+    (window as any)[LANGUAGE_SELECTOR_INSTANCE_KEY] = new LanguageSelector();
+    console.log("[LanguageSelector] Instance created/refreshed");
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initLanguageSelector);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLanguageSelector);
   } else {
     initLanguageSelector();
   }
 
   // Re-initialize after Astro page navigation (View Transitions)
-  document.addEventListener('astro:page-load', initLanguageSelector);
+  document.addEventListener("astro:page-load", initLanguageSelector);
 </script>
 
 <style>
@@ -338,11 +358,11 @@ const availableLanguages = Object.entries(LANGUAGES).filter(([code]) =>
     position: relative;
   }
 
-  .language-option[aria-selected='true'] {
+  .language-option[aria-selected="true"] {
     background-color: rgba(59, 130, 246, 0.1);
   }
 
-  .dark .language-option[aria-selected='true'] {
+  .dark .language-option[aria-selected="true"] {
     background-color: rgba(59, 130, 246, 0.2);
   }
 
