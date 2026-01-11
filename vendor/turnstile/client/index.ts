@@ -12,7 +12,7 @@
  * @example
  * ```typescript
  * import { initOIDC, signInPopup, getCurrentSession } from '@turnstile/client';
- * import { getSubscriptionFromRoles } from '@turnstile/client/subscription';
+ * import { getSubscriptionFromRoles } from 'subscription';
  * import { TurnstileCustomerClient } from '@turnstile/client';
  *
  * // Initialize auth
