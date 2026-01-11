@@ -5,7 +5,6 @@
  * Handles authentication state and click interactions
  */
 import { Icon } from 'astro-icon/components';
-import LoginPopupMenu from './LoginPopupMenu.astro';
 import UserMenu from './UserMenu.astro';
 
 export interface Props {
@@ -33,16 +32,20 @@ const iconSizeClasses = {
 };
 ---
 
-<div class:list={['auth-avatar-container relative', className]} data-instance-id={instanceId}>
+<div
+  class:list={["auth-avatar-container relative", className]}
+  data-instance-id={instanceId}
+  data-auth-container
+>
   <!-- Avatar Button - shows grey icon when logged out, user photo when logged in -->
   <button
     type="button"
     class:list={[
-      'avatar-button relative flex items-center justify-center rounded-full',
-      'border-2 shadow-sm hover:shadow-md',
-      'hover:border-blue-400 dark:hover:border-blue-500 hover:scale-105',
-      'transition-all duration-200 ease-in-out',
-      'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+      "avatar-button relative flex items-center justify-center rounded-full",
+      "border-2 shadow-sm hover:shadow-md",
+      "hover:border-blue-400 dark:hover:border-blue-500 hover:scale-105",
+      "transition-all duration-200 ease-in-out",
+      "cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
       sizeClasses[size],
     ]}
     aria-label="User menu"
@@ -52,20 +55,23 @@ const iconSizeClasses = {
     <!-- Logged out state - grey avatar with user icon -->
     <div
       class:list={[
-        'logged-out-avatar absolute inset-0 flex items-center justify-center rounded-full',
-        'bg-gray-200 dark:bg-gray-700',
-        'border-gray-300 dark:border-gray-600',
+        "logged-out-avatar absolute inset-0 flex items-center justify-center rounded-full",
+        "bg-gray-200 dark:bg-gray-700",
+        "border-gray-300 dark:border-gray-600",
       ]}
       data-logged-out
     >
-      <Icon name="tabler:user" class:list={['text-gray-500 dark:text-gray-400', iconSizeClasses[size]]} />
+      <Icon
+        name="tabler:user"
+        class:list={["text-gray-500 dark:text-gray-400", iconSizeClasses[size]]}
+      />
     </div>
 
     <!-- Logged in state - user profile picture -->
     <img
       class:list={[
-        'logged-in-avatar absolute inset-0 rounded-full object-cover hidden',
-        'border-gray-300 dark:border-gray-600',
+        "logged-in-avatar absolute inset-0 rounded-full object-cover hidden",
+        "border-gray-300 dark:border-gray-600",
       ]}
       src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23667eea' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E"
       alt="User avatar"
@@ -73,12 +79,18 @@ const iconSizeClasses = {
     />
   </button>
 
-  {/* Only include popup menus in the primary instance to prevent duplicates */}
+  {/* Only include popup menus and overlay in the primary instance to prevent duplicates */}
   {
     isPrimary ? (
       <>
-        <LoginPopupMenu />
         <UserMenu />
+        <!-- Premium Loading Overlay for Redirect -->
+        <div id="auth-loading-overlay" class="auth-loading-overlay fixed inset-0 z-[100] flex items-center justify-center bg-white/60 dark:bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+          <div class="loading-content flex flex-col items-center gap-4 p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 scale-95 transition-transform duration-300">
+            <div class="h-10 w-10 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+            <p class="text-lg font-medium text-gray-900 dark:text-gray-100 italic">Signing you in...</p>
+          </div>
+        </div>
       </>
     ) : null
   }
@@ -90,24 +102,24 @@ const iconSizeClasses = {
     signInRedirect,
     signOut,
     getCurrentSession,
-    isZitadelConfigured,
     onUserLoaded,
     onUserUnloaded,
     type ZitadelIdProvider,
-  } from '~/lib/turnstile-client';
+  } from "~/lib/turnstile-client";
 
   let isLoggedIn = false;
 
   // Handle avatar click to toggle appropriate menu
   const setupAvatarClick = () => {
-    // Find the primary container that has popup menus
-    const primaryContainer = document
-      .querySelector('.auth-avatar-container [data-popup-menu]')
-      ?.closest('.auth-avatar-container');
-    const allAvatarButtons = document.querySelectorAll('[data-auth-avatar]');
+    // Find the primary container (usually the first one in the DOM)
+    // This container holds the UserMenu and Loading Overlay
+    const primaryContainer = document.querySelector(".auth-avatar-container[data-auth-container]");
+    const allAvatarButtons = document.querySelectorAll("[data-auth-avatar]");
 
     if (!primaryContainer) {
-      console.debug('Primary container not found, skipping click handler setup');
+      console.debug(
+        "Primary container not found, skipping click handler setup",
+      );
       return;
     }
 
@@ -118,84 +130,124 @@ const iconSizeClasses = {
       avatarButton.parentNode?.replaceChild(newAvatarButton, avatarButton);
 
       // Define the click handler function
-      const handleAvatarClick = (e: Event) => {
+      const handleAvatarClick = async (e: Event) => {
         e.stopPropagation();
-        console.debug('Avatar clicked, isLoggedIn:', isLoggedIn);
+        console.debug("Avatar clicked, isLoggedIn:", isLoggedIn);
 
-        // Find popup menus in the primary container
-        const currentLoginMenu = primaryContainer?.querySelector('[data-popup-menu]');
-        const currentUserMenu = primaryContainer?.querySelector('[data-user-menu]');
+        if (isLoggedIn) {
+          // Find popup menus in the primary container
+          const currentUserMenu =
+            primaryContainer?.querySelector("[data-user-menu]");
+          if (currentUserMenu) {
+            currentUserMenu.classList.toggle("show");
+            const currentLoginMenu =
+              primaryContainer?.querySelector("[data-popup-menu]");
+            currentLoginMenu?.classList.remove("show");
+            console.debug("Showing user menu");
+          }
+        } else {
+          console.debug("Redirecting to Zitadel login page");
+          try {
+            // Close any existing menus
+            const currentLoginMenu =
+              primaryContainer?.querySelector("[data-popup-menu]");
+            currentLoginMenu?.classList.remove("show");
 
-        if (isLoggedIn && currentUserMenu) {
-          currentUserMenu.classList.toggle('show');
-          currentLoginMenu?.classList.remove('show');
-          console.debug('Showing user menu');
-        } else if (currentLoginMenu) {
-          currentLoginMenu.classList.toggle('show');
-          currentUserMenu?.classList.remove('show');
-          console.debug('Showing login menu');
+            // Start redirect flow - this fulfills the requirement to let Zitadel handle login methods
+            
+            // Show loading overlay for premium experience
+            const overlay = document.getElementById('auth-loading-overlay');
+            if (overlay) {
+              overlay.classList.remove('opacity-0', 'pointer-events-none');
+              overlay.classList.add('opacity-100');
+              const content = overlay.querySelector('.loading-content');
+              content?.classList.remove('scale-95');
+              content?.classList.add('scale-100');
+            }
+
+            await signInRedirect();
+          } catch (error) {
+            console.error("Login redirect failed:", error);
+            // Hide overlay on error
+            const overlay = document.getElementById('auth-loading-overlay');
+            if (overlay) {
+              overlay.classList.add('opacity-0', 'pointer-events-none');
+              overlay.classList.remove('opacity-100');
+            }
+            alert(
+              `Login failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+            );
+          }
         }
       };
 
       // Add click event listener
-      newAvatarButton.addEventListener('click', handleAvatarClick);
+      newAvatarButton.addEventListener("click", handleAvatarClick);
     });
 
     // Define outside click handler
     const handleOutsideClick = (e: Event) => {
       // Check if click is outside all auth-avatar-container elements
-      const allContainers = document.querySelectorAll('.auth-avatar-container');
+      const allContainers = document.querySelectorAll(".auth-avatar-container");
       const clickedOutsideAllContainers = Array.from(allContainers).every(
-        (container) => !container.contains(e.target as Node)
+        (container) => !container.contains(e.target as Node),
       );
 
       if (clickedOutsideAllContainers) {
         const primaryContainer = document
-          .querySelector('.auth-avatar-container [data-popup-menu]')
-          ?.closest('.auth-avatar-container');
-        const currentLoginMenu = primaryContainer?.querySelector('[data-popup-menu]');
-        const currentUserMenu = primaryContainer?.querySelector('[data-user-menu]');
-        currentLoginMenu?.classList.remove('show');
-        currentUserMenu?.classList.remove('show');
+          .querySelector(".auth-avatar-container [data-popup-menu]")
+          ?.closest(".auth-avatar-container");
+        const currentLoginMenu =
+          primaryContainer?.querySelector("[data-popup-menu]");
+        const currentUserMenu =
+          primaryContainer?.querySelector("[data-user-menu]");
+        currentLoginMenu?.classList.remove("show");
+        currentUserMenu?.classList.remove("show");
       }
     };
 
     // Define escape key handler
     const handleEscapeKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         const primaryContainer = document
-          .querySelector('.auth-avatar-container [data-popup-menu]')
-          ?.closest('.auth-avatar-container');
-        const currentLoginMenu = primaryContainer?.querySelector('[data-popup-menu]');
-        const currentUserMenu = primaryContainer?.querySelector('[data-user-menu]');
-        currentLoginMenu?.classList.remove('show');
-        currentUserMenu?.classList.remove('show');
+          .querySelector(".auth-avatar-container [data-popup-menu]")
+          ?.closest(".auth-avatar-container");
+        const currentLoginMenu =
+          primaryContainer?.querySelector("[data-popup-menu]");
+        const currentUserMenu =
+          primaryContainer?.querySelector("[data-user-menu]");
+        currentLoginMenu?.classList.remove("show");
+        currentUserMenu?.classList.remove("show");
       }
     };
 
     // Remove existing global listeners to prevent duplicates
-    document.removeEventListener('click', handleOutsideClick);
-    document.removeEventListener('keydown', handleEscapeKey);
+    document.removeEventListener("click", handleOutsideClick);
+    document.removeEventListener("keydown", handleEscapeKey);
 
     // Add fresh global event listeners
-    document.addEventListener('click', handleOutsideClick);
-    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener("click", handleOutsideClick);
+    document.addEventListener("keydown", handleEscapeKey);
 
-    console.debug('Avatar click handlers set up successfully');
+    console.debug("Avatar click handlers set up successfully");
   };
 
   // Update UI based on auth state
-  const updateAuthUI = (session: Awaited<ReturnType<typeof getCurrentSession>>) => {
-    const loggedOutAvatar = document.querySelector('[data-logged-out]');
-    const loggedInAvatar = document.querySelector('[data-logged-in]') as HTMLImageElement;
-    const userName = document.querySelector('[data-user-name]');
-    const userEmail = document.querySelector('[data-user-email]');
+  const updateAuthUI = (
+    session: Awaited<ReturnType<typeof getCurrentSession>>,
+  ) => {
+    const loggedOutAvatar = document.querySelector("[data-logged-out]");
+    const loggedInAvatar = document.querySelector(
+      "[data-logged-in]",
+    ) as HTMLImageElement;
+    const userName = document.querySelector("[data-user-name]");
+    const userEmail = document.querySelector("[data-user-email]");
 
     // Update global login state
     const wasLoggedIn = isLoggedIn;
     isLoggedIn = !!session?.user;
 
-    console.debug('Updating auth UI:', {
+    console.debug("Updating auth UI:", {
       wasLoggedIn,
       isLoggedIn,
       hasSession: !!session?.user,
@@ -204,33 +256,35 @@ const iconSizeClasses = {
 
     if (session?.user) {
       // Show user avatar, hide grey avatar
-      loggedOutAvatar?.classList.add('hidden');
-      loggedInAvatar?.classList.remove('hidden');
+      loggedOutAvatar?.classList.add("hidden");
+      loggedInAvatar?.classList.remove("hidden");
 
       // Set user profile picture
       if (loggedInAvatar && session.user.picture) {
         loggedInAvatar.src = session.user.picture;
-        loggedInAvatar.style.background = '';
+        loggedInAvatar.style.background = "";
       } else if (loggedInAvatar) {
-        loggedInAvatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        loggedInAvatar.alt = 'User avatar (logged in)';
+        loggedInAvatar.style.background =
+          "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+        loggedInAvatar.alt = "User avatar (logged in)";
       }
 
       // Update user info in menu
       if (userName) {
-        userName.textContent = session.user.name || session.user.email?.split('@')[0] || 'User';
+        userName.textContent =
+          session.user.name || session.user.email?.split("@")[0] || "User";
       }
       if (userEmail) {
-        userEmail.textContent = session.user.email || '';
+        userEmail.textContent = session.user.email || "";
       }
     } else {
       isLoggedIn = false;
 
       // Show grey avatar, hide user avatar
-      loggedOutAvatar?.classList.remove('hidden');
-      loggedInAvatar?.classList.add('hidden');
+      loggedOutAvatar?.classList.remove("hidden");
+      loggedInAvatar?.classList.add("hidden");
 
-      console.debug('User logged out, hiding user avatar');
+      console.debug("User logged out, hiding user avatar");
     }
 
     // Re-initialize click handlers after UI update
@@ -246,30 +300,37 @@ const iconSizeClasses = {
       console.debug(`Starting ${provider} sign-in via Zitadel`);
 
       // Close the login menu
-      const loginMenu = document.querySelector('[data-popup-menu]');
-      loginMenu?.classList.remove('show');
+      const loginMenu = document.querySelector("[data-popup-menu]");
+      loginMenu?.classList.remove("show");
 
       // Try popup first, fall back to redirect if blocked
       try {
         const user = await signInPopup(provider);
-        console.log('Sign in success:', user.profile.email);
+        console.log("Sign in success:", user.profile.email);
         // Reload page to reflect authenticated state
         window.location.reload();
       } catch (popupError) {
-        console.debug('Popup blocked or failed, trying redirect:', popupError);
+        console.debug("Popup blocked or failed, trying redirect:", popupError);
         // Fall back to redirect flow
         await signInRedirect(provider);
       }
     } catch (error) {
       console.error(`${provider} sign-in error:`, error);
       // Show error to user
-      alert(`Sign-in failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(
+        `Sign-in failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   };
 
   // Handle login option clicks for all providers
   const setupLoginHandlers = () => {
-    const providers: ZitadelIdProvider[] = ['google', 'github', 'apple', 'microsoft'];
+    const providers: ZitadelIdProvider[] = [
+      "google",
+      "github",
+      "apple",
+      "microsoft",
+    ];
 
     providers.forEach((provider) => {
       const button = document.querySelector(`.login-option-${provider}`);
@@ -278,31 +339,37 @@ const iconSizeClasses = {
         const newButton = button.cloneNode(true) as HTMLElement;
         button.parentNode?.replaceChild(newButton, button);
 
-        newButton.addEventListener('click', () => handleProviderLogin(provider));
+        newButton.addEventListener("click", () =>
+          handleProviderLogin(provider),
+        );
       }
     });
   };
 
   // Handle sign out
   const setupSignOutHandler = () => {
-    const signOutButton = document.querySelector('.user-menu-signout') as HTMLButtonElement;
+    const signOutButton = document.querySelector(
+      ".user-menu-signout",
+    ) as HTMLButtonElement;
 
     if (signOutButton) {
       // Clone to remove existing listeners
-      const newSignOutButton = signOutButton.cloneNode(true) as HTMLButtonElement;
+      const newSignOutButton = signOutButton.cloneNode(
+        true,
+      ) as HTMLButtonElement;
       signOutButton.parentNode?.replaceChild(newSignOutButton, signOutButton);
 
-      newSignOutButton.addEventListener('click', async () => {
+      newSignOutButton.addEventListener("click", async () => {
         try {
           newSignOutButton.disabled = true;
           await signOut(true); // Local signout first
-          console.log('Sign out success');
+          console.log("Sign out success");
           sessionStorage.clear();
           setTimeout(() => {
             window.location.reload();
           }, 500);
         } catch (error) {
-          console.error('Sign out error:', error);
+          console.error("Sign out error:", error);
           newSignOutButton.disabled = false;
         }
       });
@@ -312,58 +379,58 @@ const iconSizeClasses = {
   // Check auth state and update UI
   const checkAuthState = async () => {
     try {
-      if (!isZitadelConfigured()) {
-        console.debug('Zitadel not configured, skipping auth check');
-        updateAuthUI(null);
-        return;
-      }
-
+      // getCurrentSession() already waits for initialization promise
       const session = await getCurrentSession();
       updateAuthUI(session);
     } catch {
-      console.debug('No active session');
+      console.debug("No active session");
       updateAuthUI(null);
     }
   };
 
   // Setup auth sync across tabs
   const setupAuthSync = async () => {
-    const { initAuthSync, onAuthSync } = await import('~/lib/turnstile-client');
+    const { initAuthSync, onAuthSync } = await import("~/lib/turnstile-client");
 
+    // initAuthSync() is safe to call anytime as it uses broadcast channel
     initAuthSync();
 
     onAuthSync((event) => {
-      console.debug('Auth sync event received:', event);
-      if (event === 'login' || event === 'logout') {
+      console.debug("Auth sync event received:", event);
+      if (event === "login" || event === "logout") {
         window.location.reload();
       }
     });
 
     // Also subscribe to oidc-client-ts events
-    if (isZitadelConfigured()) {
-      onUserLoaded(() => {
-        console.debug('User loaded event from Zitadel');
-        checkAuthState();
-      });
+    // We don't check isZitadelConfigured() synchronously here because 
+    // it will likely be false during early initialization.
+    // Instead, we just wait for the user events which will be fired
+    // once the client is ready.
+    onUserLoaded(() => {
+      console.debug("User loaded event from Zitadel");
+      checkAuthState();
+    });
 
-      onUserUnloaded(() => {
-        console.debug('User unloaded event from Zitadel');
-        checkAuthState();
-      });
-    }
+    onUserUnloaded(() => {
+      console.debug("User unloaded event from Zitadel");
+      checkAuthState();
+    });
   };
 
   // Update popup menu translations when language changes
   const updatePopupTranslations = async () => {
-    const { getPreferredLanguage, t } = await import('~/i18n');
+    const { getPreferredLanguage, t } = await import("~/i18n");
     const lang = getPreferredLanguage();
 
     // Update login popup menu - provider buttons
-    const providers = ['google', 'github', 'apple', 'microsoft'];
+    const providers = ["google", "github", "apple", "microsoft"];
     providers.forEach((provider) => {
-      const buttonText = document.querySelector(`.login-option-${provider} [data-i18n-key]`);
+      const buttonText = document.querySelector(
+        `.login-option-${provider} [data-i18n-key]`,
+      );
       if (buttonText) {
-        const key = buttonText.getAttribute('data-i18n-key');
+        const key = buttonText.getAttribute("data-i18n-key");
         if (key) {
           buttonText.textContent = t(key, lang);
         }
@@ -371,24 +438,27 @@ const iconSizeClasses = {
     });
 
     // Update user menu
-    const signedInText = document.querySelector('[data-user-menu] .text-xs.text-gray-400');
-    const signOutButtonText = document.querySelector('.user-menu-signout span');
+    const signedInText = document.querySelector(
+      "[data-user-menu] .text-xs.text-gray-400",
+    );
+    const signOutButtonText = document.querySelector(".user-menu-signout span");
 
-    if (signedInText) signedInText.textContent = t('auth.signedInAs', lang);
-    if (signOutButtonText) signOutButtonText.textContent = t('auth.signOut', lang);
+    if (signedInText) signedInText.textContent = t("auth.signedInAs", lang);
+    if (signOutButtonText)
+      signOutButtonText.textContent = t("auth.signOut", lang);
 
-    console.debug('Updated popup translations for language:', lang);
+    console.debug("Updated popup translations for language:", lang);
   };
 
   // Setup language change listener
   const setupLanguageListener = async () => {
-    const { LANGUAGE_STORAGE_KEY } = await import('~/i18n');
+    const { LANGUAGE_STORAGE_KEY } = await import("~/i18n");
 
-    document.addEventListener('language:change', () => {
+    document.addEventListener("language:change", () => {
       setTimeout(async () => await updatePopupTranslations(), 50);
     });
 
-    window.addEventListener('storage', (e) => {
+    window.addEventListener("storage", (e) => {
       if (e.key === LANGUAGE_STORAGE_KEY) {
         setTimeout(async () => await updatePopupTranslations(), 50);
       }
@@ -398,7 +468,7 @@ const iconSizeClasses = {
   // Setup navigation listener
   const setupNavigationListener = () => {
     const handleNavigation = () => {
-      console.debug('Navigation detected, re-checking auth state');
+      console.debug("Navigation detected, re-checking auth state");
       setTimeout(() => {
         checkAuthState();
         setupAvatarClick();
@@ -407,16 +477,16 @@ const iconSizeClasses = {
       }, 100);
     };
 
-    window.addEventListener('popstate', handleNavigation);
-    document.addEventListener('astro:page-load', handleNavigation);
-    document.addEventListener('astro:after-swap', handleNavigation);
+    window.addEventListener("popstate", handleNavigation);
+    document.addEventListener("astro:page-load", handleNavigation);
+    document.addEventListener("astro:after-swap", handleNavigation);
   };
 
   // Listen for auth errors from popup
-  window.addEventListener('message', (event) => {
+  window.addEventListener("message", (event) => {
     if (event.origin !== window.location.origin) return;
-    if (event.data?.type === 'auth_error') {
-      console.error('Auth error from popup:', event.data.error);
+    if (event.data?.type === "auth_error") {
+      console.error("Auth error from popup:", event.data.error);
       alert(`Authentication failed: ${event.data.error}`);
     }
   });
@@ -432,8 +502,8 @@ const iconSizeClasses = {
     setupNavigationListener();
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initialize);
   } else {
     initialize();
   }
