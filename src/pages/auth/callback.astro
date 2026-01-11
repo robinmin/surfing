@@ -1,13 +1,6 @@
 ---
-/**
- * OIDC Callback Handler
- *
- * This page handles the OAuth2/OIDC callback from Zitadel.
- * It works in both popup mode and redirect mode.
- *
- * Popup mode: Processes tokens and closes the popup, returning control to parent window
- * Redirect mode: Processes tokens and redirects to the home page
- */
+import AuthInit from '~/components/auth/AuthInit.astro';
+import '@fontsource-variable/inter';
 ---
 
 <!doctype html>
@@ -17,29 +10,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Authenticating...</title>
     <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
+      :root {
+        --aw-font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+        --aw-color-primary: rgb(0 108 172);
+        --aw-color-primary-light: rgb(59 130 246);
+        --aw-color-bg-page: rgb(255 255 255);
+        --aw-color-bg-card: rgb(255 255 255);
+        --aw-color-text-default: rgb(16 16 16);
+        --aw-color-text-muted: rgb(100 116 139);
+        --aw-color-border: rgb(226 232 240);
+        --aw-color-success: rgb(16 185 129);
+        --aw-color-error: rgb(239 68 68);
+        --aw-color-error-bg: rgb(254 242 242);
+        --aw-color-error-border: rgb(254 202 202);
+      }
+
+      .dark {
+        --aw-color-primary: rgb(255 107 1);
+        --aw-color-primary-light: rgb(251 146 60);
+        --aw-color-bg-page: rgb(3 6 32);
+        --aw-color-bg-card: rgb(15 23 42);
+        --aw-color-text-default: rgb(229 236 246);
+        --aw-color-text-muted: rgb(148 163 184);
+        --aw-color-border: rgb(51 65 85);
+        --aw-color-success: rgb(52 211 153);
+        --aw-color-error: rgb(248 113 113);
+        --aw-color-error-bg: rgb(30 20 20);
+        --aw-color-error-border: rgb(127 29 29);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-family: var(--aw-font-sans);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         min-height: 100vh;
         margin: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        padding: 1rem;
+        background-color: var(--aw-color-bg-page);
+        color: var(--aw-color-text-default);
+        transition:
+          background-color 0.3s,
+          color 0.3s;
       }
 
-      .container {
+      /* Card Container */
+      .card {
+        background-color: var(--aw-color-bg-card);
+        border: 1px solid var(--aw-color-border);
+        border-radius: 1rem;
+        padding: 2.5rem 3rem;
+        max-width: 400px;
+        width: 100%;
         text-align: center;
-        padding: 2rem;
+        box-shadow:
+          0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        transition: all 0.3s ease;
       }
 
+      /* Spinner */
       .spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(255, 255, 255, 0.3);
-        border-top-color: white;
+        width: 48px;
+        height: 48px;
+        border: 3px solid var(--aw-color-border);
+        border-top-color: var(--aw-color-primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin: 0 auto 1.5rem;
@@ -51,155 +93,361 @@
         }
       }
 
-      .message {
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
+      /* Icon States */
+      .icon-container {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
       }
 
-      .submessage {
+      .icon-success {
+        background: linear-gradient(
+          135deg,
+          rgb(16 185 129 / 0.1),
+          rgb(52 211 153 / 0.2)
+        );
+        color: var(--aw-color-success);
+      }
+
+      .icon-error {
+        background: linear-gradient(
+          135deg,
+          rgb(239 68 68 / 0.1),
+          rgb(248 113 113 / 0.2)
+        );
+        color: var(--aw-color-error);
+      }
+
+      .icon-container svg {
+        width: 32px;
+        height: 32px;
+        stroke-width: 2.5;
+      }
+
+      /* Success checkmark animation */
+      .checkmark {
+        animation: scaleIn 0.4s ease-out;
+      }
+
+      @keyframes scaleIn {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Error shake animation */
+      .error-icon {
+        animation: shake 0.5s ease-in-out;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-4px);
+        }
+        40%,
+        80% {
+          transform: translateX(4px);
+        }
+      }
+
+      /* Typography */
+      .heading {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem;
+        color: var(--aw-color-text-default);
+        letter-spacing: -0.02em;
+      }
+
+      .subtext {
         font-size: 0.9rem;
-        opacity: 0.8;
+        color: var(--aw-color-text-muted);
+        margin: 0;
+        line-height: 1.5;
       }
 
-      .error {
-        background: rgba(255, 0, 0, 0.2);
-        border: 1px solid rgba(255, 0, 0, 0.4);
-        border-radius: 8px;
+      /* Error Box */
+      .error-box {
+        background: var(--aw-color-error-bg);
+        border: 1px solid var(--aw-color-error-border);
+        border-radius: 0.75rem;
         padding: 1rem;
-        margin-top: 1rem;
-        max-width: 400px;
+        margin-top: 1.25rem;
+        text-align: left;
       }
 
-      .error-title {
-        font-weight: bold;
-        margin-bottom: 0.5rem;
+      .error-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--aw-color-error);
+        margin: 0 0 0.375rem;
       }
 
-      .retry-button {
-        background: white;
-        color: #764ba2;
+      .error-message {
+        font-size: 0.875rem;
+        color: var(--aw-color-text-default);
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      /* Button */
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background-color: var(--aw-color-primary);
+        color: white;
         border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 6px;
-        font-size: 1rem;
+        padding: 0.75rem 1.75rem;
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 500;
         cursor: pointer;
-        margin-top: 1rem;
-        transition: transform 0.2s;
+        margin-top: 1.5rem;
+        transition: all 0.2s ease;
+        text-decoration: none;
       }
 
-      .retry-button:hover {
-        transform: scale(1.05);
+      .btn-primary:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* State visibility */
+      .state {
+        display: none;
+      }
+
+      .state.active {
+        display: block;
+      }
+
+      /* Responsive */
+      @media (max-width: 480px) {
+        .card {
+          padding: 2rem 1.5rem;
+          border-radius: 0.875rem;
+        }
+      }
+
+      /* Hidden utility */
+      .hidden {
+        display: none !important;
       }
     </style>
+    <script>
+      // Apply dark mode based on system preference or stored preference
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      const storedMode = localStorage.getItem("color-mode");
+      if (storedMode === "dark" || (!storedMode && prefersDark)) {
+        document.documentElement.classList.add("dark");
+      }
+    </script>
   </head>
   <body>
-    <div class="container">
-      <div class="spinner" id="spinner"></div>
-      <div class="message" id="message">Completing sign-in...</div>
-      <div class="submessage" id="submessage">Please wait while we verify your account</div>
-      <div class="error" id="error" style="display: none">
-        <div class="error-title">Authentication Error</div>
-        <div id="error-text"></div>
-        <button class="retry-button" id="retry-button">Try Again</button>
+    <div class="card">
+      <!-- Loading State -->
+      <div class="state active" id="state-loading">
+        <div class="spinner"></div>
+        <h1 class="heading">Completing sign-in...</h1>
+        <p class="subtext">Please wait while we verify your account</p>
+      </div>
+
+      <!-- Success State -->
+      <div class="state" id="state-success">
+        <div class="icon-container icon-success">
+          <svg
+            class="checkmark"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h1 class="heading">Welcome back!</h1>
+        <p class="subtext">Redirecting you now...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="state" id="state-error">
+        <div class="icon-container icon-error">
+          <svg
+            class="error-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <h1 class="heading">Sign-in Failed</h1>
+        <p class="subtext">We couldn't complete your sign-in</p>
+
+        <div class="error-box" id="error-box">
+          <p class="error-label">Error Details</p>
+          <p class="error-message" id="error-message">
+            An unexpected error occurred.
+          </p>
+        </div>
+
+        <button class="btn-primary" id="retry-button">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          Try Again
+        </button>
       </div>
     </div>
 
-    <script>
-      import { handlePopupCallback, handleRedirectCallback } from '~/lib/turnstile-client';
+    <AuthInit />
 
-      const messageEl = document.getElementById('message');
-      const submessageEl = document.getElementById('submessage');
-      const spinnerEl = document.getElementById('spinner');
-      const errorEl = document.getElementById('error');
-      const errorTextEl = document.getElementById('error-text');
-      const retryButton = document.getElementById('retry-button');
+    <script>
+      import {
+        handlePopupCallback,
+        handleRedirectCallback,
+      } from "~/lib/turnstile-client";
+
+      const stateLoading = document.getElementById("state-loading");
+      const stateSuccess = document.getElementById("state-success");
+      const stateError = document.getElementById("state-error");
+      const errorMessage = document.getElementById("error-message");
+      const retryButton = document.getElementById("retry-button");
+
+      const showState = (state: "loading" | "success" | "error") => {
+        stateLoading?.classList.remove("active");
+        stateSuccess?.classList.remove("active");
+        stateError?.classList.remove("active");
+
+        if (state === "loading") stateLoading?.classList.add("active");
+        if (state === "success") stateSuccess?.classList.add("active");
+        if (state === "error") stateError?.classList.add("active");
+      };
 
       const showError = (message: string) => {
-        if (spinnerEl) spinnerEl.style.display = 'none';
-        if (messageEl) messageEl.textContent = 'Sign-in Failed';
-        if (submessageEl) submessageEl.style.display = 'none';
-        if (errorEl) errorEl.style.display = 'block';
-        if (errorTextEl) errorTextEl.textContent = message;
+        if (errorMessage) errorMessage.textContent = message;
+        showState("error");
       };
 
       const showSuccess = () => {
-        if (spinnerEl) spinnerEl.style.display = 'none';
-        if (messageEl) messageEl.textContent = 'Sign-in Successful!';
-        if (submessageEl) submessageEl.textContent = 'Redirecting...';
+        showState("success");
       };
 
-      // Retry button handler
-      retryButton?.addEventListener('click', () => {
-        // If we're in a popup, close it and let parent retry
+      retryButton?.addEventListener("click", () => {
         if (window.opener) {
           window.close();
         } else {
-          // In redirect mode, go back to home
-          window.location.href = '/';
+          window.location.href = "/";
         }
       });
 
-      // Determine if we're in a popup or redirect flow
       const isPopup = window.opener !== null;
 
       const processCallback = async () => {
         try {
           if (isPopup) {
-            // Popup mode: process callback and close
             await handlePopupCallback();
-            // The popup will be closed automatically by oidc-client-ts
-            // If not, close it manually after a short delay
             setTimeout(() => {
-              if (!window.closed) {
-                window.close();
-              }
+              if (!window.closed) window.close();
             }, 1000);
           } else {
-            // Redirect mode: process callback and redirect
             await handleRedirectCallback();
             showSuccess();
-            // Redirect to home page after successful auth
             setTimeout(() => {
-              window.location.href = '/';
+              window.location.href = "/";
             }, 1500);
           }
         } catch (error) {
-          console.error('Auth callback error:', error);
+          console.error("Auth callback error:", error);
+          let errorMsg = "An unexpected error occurred during sign-in.";
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlError = urlParams.get("error");
+          const urlErrorDesc = urlParams.get("error_description");
 
-          let errorMessage = 'An unexpected error occurred during sign-in.';
-
-          if (error instanceof Error) {
-            if (error.message.includes('access_denied')) {
-              errorMessage = 'Access was denied. You may have cancelled the sign-in.';
-            } else if (error.message.includes('invalid_grant')) {
-              errorMessage = 'The authentication session has expired. Please try again.';
-            } else if (error.message.includes('invalid_request')) {
-              errorMessage = 'Invalid authentication request. Please try again.';
-            } else {
-              errorMessage = error.message;
-            }
+          if (
+            urlError === "access_denied" ||
+            urlErrorDesc?.includes("access_denied") ||
+            (error instanceof Error && error.message.includes("access_denied"))
+          ) {
+            errorMsg = "Access was denied. You may have cancelled the sign-in.";
+          } else if (
+            urlError === "invalid_grant" ||
+            (error instanceof Error &&
+              error.message.includes("invalid_grant")) ||
+            (error instanceof Error &&
+              error.message.includes("No state in response"))
+          ) {
+            errorMsg =
+              "The authentication session has expired or is invalid. Please try again.";
+          } else if (
+            urlError === "invalid_request" ||
+            (error instanceof Error &&
+              error.message.includes("invalid_request"))
+          ) {
+            errorMsg = "Invalid authentication request. Please try again.";
+          } else if (error instanceof Error) {
+            errorMsg = error.message;
           }
-
-          showError(errorMessage);
-
-          // In popup mode, notify parent about error
+          showError(errorMsg);
           if (isPopup && window.opener) {
             try {
               window.opener.postMessage(
-                {
-                  type: 'auth_error',
-                  error: errorMessage,
-                },
-                window.location.origin
+                { type: "auth_error", error: errorMsg },
+                window.location.origin,
               );
             } catch {
-              // Parent window might be closed or different origin
+              /* ignore */
             }
           }
         }
       };
 
-      // Start processing immediately
       processCallback();
     </script>
   </body>
