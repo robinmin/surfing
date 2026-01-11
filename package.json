@@ -13,8 +13,7 @@
         "build": "astro build",
         "preview": "astro preview",
         "astro": "astro",
-        "old-check": "bash scripts/sync-turnstile.sh && bun run check:astro && bun run check:biome",
-        "check": "bun run check:astro && bun run check:biome",
+        "check": "bash scripts/sync-turnstile.sh && bun run check:astro && bun run check:biome",
         "check:astro": "astro check",
         "check:biome": "biome check .",
         "fix": "biome check --write ."

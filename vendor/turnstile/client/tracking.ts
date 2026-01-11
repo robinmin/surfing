@@ -1,12 +1,12 @@
 /**
- * tracking
+ * @turnstile/client/tracking
  *
  * Universal analytics tracking abstraction layer.
  * Integrates with Google Analytics, Microsoft Clarity, and Sentry.
  *
  * @example
  * ```typescript
- * import { initTracker, trackEvent } from 'tracking';
+ * import { initTracker, trackEvent } from '@turnstile/client/tracking';
  *
  * // Initialize
  * initTracker({
@@ -21,7 +21,7 @@
  */
 
 import googleAnalyticsPlugin from '@analytics/google-analytics';
-import Analytics, { type AnalyticsPlugin } from 'analytics';
+import Analytics from 'analytics';
 
 // ============================================================================
 // Types
@@ -200,22 +200,14 @@ export function initTracker(config: TrackerConfig): void {
         return;
     }
 
-    const plugins: AnalyticsPlugin[] = [];
+    // biome-ignore lint/suspicious/noExplicitAny: Analytics.js plugins don't have strict types
+    const plugins: any[] = [];
 
     // Add Google Analytics plugin
     if (config.googleAnalyticsId) {
         plugins.push(
             googleAnalyticsPlugin({
                 measurementIds: [config.googleAnalyticsId],
-                // Use standard dataLayer instead of custom ga4DataLayer
-                // This ensures compatibility with Partytown's forward configuration
-                dataLayerName: 'dataLayer',
-                // Enable GA4 DebugView when debug mode is on
-                gtagConfig: config.debug
-                    ? {
-                          debug_mode: true,
-                      }
-                    : undefined,
             })
         );
     }
