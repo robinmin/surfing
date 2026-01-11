@@ -115,7 +115,10 @@ export default defineConfig({
         }),
         ...whenExternalScripts(() =>
             partytown({
-                config: { forward: ['dataLayer.push'] },
+                // Note: dataLayer.push is intentionally NOT forwarded
+                // GA4 runs in the main thread and needs direct access to dataLayer
+                // Forwarding it to Partytown worker would prevent GA4 from seeing events
+                config: { forward: [] },
             })
         ),
         compress({
