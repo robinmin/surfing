@@ -152,3 +152,27 @@ export type {
     RequestOptions,
     TurnstileClientOptions,
 } from '@turnstile/client/types';
+
+// ============================================================================
+// Tracking Module (@turnstile/client/tracking.ts)
+// ============================================================================
+
+export type {
+    PageViewEvent,
+    TrackerConfig,
+    TrackingEvent,
+    UserIdentity,
+} from '@turnstile/client/tracking';
+/**
+ * Analytics Tracking Utilities
+ *
+ * Universal analytics abstraction layer for Google Analytics, Microsoft Clarity,
+ * and Sentry. Provides a single API for tracking events across multiple providers.
+ */
+export {
+    getAnalyticsInstance,
+    identifyUser,
+    initTracker,
+    trackEvent,
+    trackPageView,
+} from '@turnstile/client/tracking';
