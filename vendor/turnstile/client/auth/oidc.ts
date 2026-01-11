@@ -16,6 +16,28 @@
 import type { PopupWindowFeatures, UserManagerSettings } from 'oidc-client-ts';
 import { Log, type User, UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
+/**
+ * Extend Window interface for OIDC global properties
+ */
+interface OIDCWindowConfig {
+    authority: string;
+    clientId: string;
+    redirectUri?: string;
+    postLogoutUri?: string;
+    orgId?: string;
+    idpGoogle?: string;
+    idpGithub?: string;
+    idpApple?: string;
+    idpMicrosoft?: string;
+}
+
+declare global {
+    interface Window {
+        __OIDC_INIT_PROMISE__?: Promise<void>;
+        __OIDC_CONFIG__?: OIDCWindowConfig;
+    }
+}
+
 // Enable debug logging in development
 if (typeof globalThis.process !== 'undefined' && globalThis.process.env?.DEV === 'true') {
     Log.setLogger(console);
@@ -505,30 +527,24 @@ let defaultClient: OIDCClient | null = null;
 async function ensureClient(): Promise<OIDCClient> {
     // If we're in a browser but the init promise isn't even defined yet,
     // wait a tiny bit for the inline script in AuthInit to set it.
-    // biome-ignore lint/suspicious/noExplicitAny: intentional global access
-    if (typeof window !== 'undefined' && !(window as any).__OIDC_INIT_PROMISE__) {
+    if (typeof window !== 'undefined' && !window.__OIDC_INIT_PROMISE__) {
         let retries = 0;
-        // biome-ignore lint/suspicious/noExplicitAny: intentional global access
-        while (!(window as any).__OIDC_INIT_PROMISE__ && retries < 10) {
+        while (!window.__OIDC_INIT_PROMISE__ && retries < 10) {
             await new Promise((resolve) => setTimeout(resolve, 10));
             retries++;
         }
     }
 
     // Wait for initialization promise if it exists
-    // biome-ignore lint/suspicious/noExplicitAny: intentional global access
-    if (typeof window !== 'undefined' && (window as any).__OIDC_INIT_PROMISE__) {
-        // biome-ignore lint/suspicious/noExplicitAny: intentional global access
-        await (window as any).__OIDC_INIT_PROMISE__;
+    if (typeof window !== 'undefined' && window.__OIDC_INIT_PROMISE__) {
+        await window.__OIDC_INIT_PROMISE__;
     }
 
     if (defaultClient) return defaultClient;
 
     // Try auto-initialization from global config found in window
-    // biome-ignore lint/suspicious/noExplicitAny: intentional global access
-    if (typeof window !== 'undefined' && (window as any).__OIDC_CONFIG__) {
-        // biome-ignore lint/suspicious/noExplicitAny: intentional global access
-        const config = (window as any).__OIDC_CONFIG__;
+    if (typeof window !== 'undefined' && window.__OIDC_CONFIG__) {
+        const config = window.__OIDC_CONFIG__;
         if (config.authority && config.clientId) {
             console.debug('Auto-initializing OIDC client from global config');
             return initOIDC({
