@@ -498,6 +498,59 @@ export class OIDCClient {
 let defaultClient: OIDCClient | null = null;
 
 /**
+ * Internal helper to ensure the client is initialized.
+ * If not initialized, it attempts to wait for the global __OIDC_INIT_PROMISE__
+ * or auto-initialize from __OIDC_CONFIG__ if available.
+ */
+async function ensureClient(): Promise<OIDCClient> {
+    // If we're in a browser but the init promise isn't even defined yet,
+    // wait a tiny bit for the inline script in AuthInit to set it.
+    // biome-ignore lint/suspicious/noExplicitAny: intentional global access
+    if (typeof window !== 'undefined' && !(window as any).__OIDC_INIT_PROMISE__) {
+        let retries = 0;
+        // biome-ignore lint/suspicious/noExplicitAny: intentional global access
+        while (!(window as any).__OIDC_INIT_PROMISE__ && retries < 10) {
+            await new Promise((resolve) => setTimeout(resolve, 10));
+            retries++;
+        }
+    }
+
+    // Wait for initialization promise if it exists
+    // biome-ignore lint/suspicious/noExplicitAny: intentional global access
+    if (typeof window !== 'undefined' && (window as any).__OIDC_INIT_PROMISE__) {
+        // biome-ignore lint/suspicious/noExplicitAny: intentional global access
+        await (window as any).__OIDC_INIT_PROMISE__;
+    }
+
+    if (defaultClient) return defaultClient;
+
+    // Try auto-initialization from global config found in window
+    // biome-ignore lint/suspicious/noExplicitAny: intentional global access
+    if (typeof window !== 'undefined' && (window as any).__OIDC_CONFIG__) {
+        // biome-ignore lint/suspicious/noExplicitAny: intentional global access
+        const config = (window as any).__OIDC_CONFIG__;
+        if (config.authority && config.clientId) {
+            console.debug('Auto-initializing OIDC client from global config');
+            return initOIDC({
+                authority: config.authority,
+                clientId: config.clientId,
+                redirectUri: config.redirectUri || `${window.location.origin}/auth/callback`,
+                postLogoutUri: config.postLogoutUri || window.location.origin,
+                orgId: config.orgId,
+                idpHints: {
+                    google: config.idpGoogle || '',
+                    github: config.idpGithub || '',
+                    apple: config.idpApple || '',
+                    microsoft: config.idpMicrosoft || '',
+                },
+            });
+        }
+    }
+
+    throw new Error('OIDC client not initialized. Call initOIDC() first.');
+}
+
+/**
  * Initialize the default OIDC client with configuration
  */
 export function initOIDC(config: OIDCConfig): OIDCClient {
@@ -509,107 +562,83 @@ export function initOIDC(config: OIDCConfig): OIDCClient {
  * Sign in using popup (convenience function)
  */
 export async function signInPopup(provider?: OIDCProvider): Promise<User> {
-    // Wait for initialization if the promise exists
-    // biome-ignore lint/suspicious/noExplicitAny: window cast needed for global OIDC promise
-    if (typeof window !== 'undefined' && (window as any).__OIDC_INIT_PROMISE__) {
-        // biome-ignore lint/suspicious/noExplicitAny: window cast needed for global OIDC promise
-        await (window as any).__OIDC_INIT_PROMISE__;
-    }
-
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.signInPopup(provider);
+    const client = await ensureClient();
+    return client.signInPopup(provider);
 }
 
 /**
  * Sign in using redirect (convenience function)
  */
 export async function signInRedirect(provider?: OIDCProvider): Promise<void> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.signInRedirect(provider);
+    const client = await ensureClient();
+    return client.signInRedirect(provider);
 }
 
 /**
  * Handle popup callback (convenience function)
  */
 export async function handlePopupCallback(): Promise<void> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    await defaultClient.handlePopupCallback();
+    const client = await ensureClient();
+    await client.handlePopupCallback();
 }
 
 /**
  * Handle redirect callback (convenience function)
  */
 export async function handleRedirectCallback(): Promise<void> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    await defaultClient.handleRedirectCallback();
+    const client = await ensureClient();
+    await client.handleRedirectCallback();
 }
 
 /**
  * Sign out (convenience function)
  */
 export async function signOut(localOnly = false): Promise<void> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.signOut(localOnly);
+    const client = await ensureClient();
+    return client.signOut(localOnly);
 }
 
 /**
  * Get current user (convenience function)
  */
 export async function getUser(): Promise<User | null> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.getUser();
+    const client = await ensureClient().catch(() => null);
+    if (!client) return null;
+    return client.getUser();
 }
 
 /**
  * Get current session (convenience function)
  */
 export async function getCurrentSession(): Promise<AuthSession | null> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.getCurrentSession();
+    const client = await ensureClient().catch(() => null);
+    if (!client) return null;
+    return client.getCurrentSession();
 }
 
 /**
  * Check if authenticated (convenience function)
  */
 export async function isAuthenticated(): Promise<boolean> {
-    if (!defaultClient) {
-        return false;
-    }
-    return defaultClient.isAuthenticated();
+    const client = await ensureClient().catch(() => null);
+    if (!client) return false;
+    return client.isAuthenticated();
 }
 
 /**
  * Renew token (convenience function)
  */
 export async function renewToken(): Promise<User | null> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.renewToken();
+    const client = await ensureClient();
+    return client.renewToken();
 }
 
 /**
  * Clear auth state (convenience function)
  */
 export async function clearAuthState(): Promise<void> {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.clearAuthState();
+    const client = await ensureClient();
+    await client.clearAuthState();
 }
 
 /**
@@ -623,20 +652,48 @@ export function isZitadelConfigured(): boolean {
  * Subscribe to user loaded events (convenience function)
  */
 export function onUserLoaded(callback: (user: User) => void): () => void {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.onUserLoaded(callback);
+    let cleanup: (() => void) | undefined;
+    ensureClient()
+        .then((client) => {
+            cleanup = client.onUserLoaded(callback);
+        })
+        .catch((err) => console.error('Failed to subscribe to user loaded', err));
+
+    return () => {
+        if (cleanup) cleanup();
+    };
 }
 
 /**
  * Subscribe to user unloaded events (convenience function)
  */
 export function onUserUnloaded(callback: () => void): () => void {
-    if (!defaultClient) {
-        throw new Error('OIDC client not initialized. Call initOIDC() first.');
-    }
-    return defaultClient.onUserUnloaded(callback);
+    let cleanup: (() => void) | undefined;
+    ensureClient()
+        .then((client) => {
+            cleanup = client.onUserUnloaded(callback);
+        })
+        .catch((err) => console.error('Failed to subscribe to user unloaded', err));
+
+    return () => {
+        if (cleanup) cleanup();
+    };
+}
+
+/**
+ * Subscribe to access token expiring events (fires ~60s before expiry) (convenience function)
+ */
+export function onAccessTokenExpiring(callback: () => void): () => void {
+    let cleanup: (() => void) | undefined;
+    ensureClient()
+        .then((client) => {
+            cleanup = client.onAccessTokenExpiring(callback);
+        })
+        .catch((err) => console.error('Failed to subscribe to access token expiring', err));
+
+    return () => {
+        if (cleanup) cleanup();
+    };
 }
 
 /**
