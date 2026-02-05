@@ -8,8 +8,8 @@ published_at: 2026-02-02
 status: "published"
 word_count: "4500"
 reading_time: "~15 minutes"
-cover_image: "/images/overview-of-macos-process-automation-methods-cover.webp"
-description: "Explore macOS process automation methods including launchd, cron, PM2, supervisord, systemd (via Linux emulation), and Docker for reliable background service management."
+image: "@assets/images/overview-of-macos-process-automation-methods-cover.webp"
+description: "![Cover Image](@assets/images/overview-of-macos-process-automation-methods-cover.webp"
 tags: ["javascript", "typescript", "angular", "python", "ai"]
 readingTime: 13
 wordCount: 2592
@@ -19,10 +19,9 @@ featured: false
 ---
 
 
-
 # Overview of macOS Process Automation Methods
 
-![Cover Image](/images/overview-of-macos-process-automation-methods-cover.webp)
+![Cover Image](@assets/images/overview-of-macos-process-automation-methods-cover.webp
 
 macOS provides multiple approaches to process automation and service management, each suited for different scenarios. From the native launchd system to language-specific process managers like PM2, understanding these tools is essential for running background services, scheduled tasks, and production applications on macOS.
 
