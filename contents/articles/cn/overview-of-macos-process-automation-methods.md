@@ -10,8 +10,8 @@ word_count: "4200"
 reading_time: "约 15 分钟"
 image: "@assets/images/overview-of-macos-process-automation-methods-cover.webp"
 language: "zh-CN"
-translations: ["en", "zh"]
-description: "探索 macOS 进程自动化方法，包括 launchd、cron、PM2、supervisord、systemd（通过 Linux 模拟）和 Docker，以实现可靠的后台服务管理。"
+translations: ["en", "zh", "ja"]
+description: "![封面图片](@assets/images/overview-of-macos-process-automation-methods-cover.webp)"
 tags: ["javascript", "typescript", "angular", "python", "ai"]
 readingTime: 9
 wordCount: 1746
@@ -19,7 +19,6 @@ publishDate: 2026-02-05
 draft: false
 featured: false
 ---
-
 
 
 # macOS 进程自动化方法概览
