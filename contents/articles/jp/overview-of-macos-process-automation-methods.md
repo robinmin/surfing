@@ -9,7 +9,9 @@ status: "published"
 word_count: "4500"
 reading_time: "~15 分"
 image: "@assets/images/overview-of-macos-process-automation-methods-cover.webp"
-description: "![カバー画像](@assets/images/overview-of-macos-process-automation-methods-cover.webp)"
+description: "macOSのプロセス自動化手法について解説します。launchd、cron、PM2、supervisord、systemd（Linuxエミュレーション経由）、Dockerを使用した信頼性の高いバックグラウンドサービス管理などが含まれます。"
+language: "ja-JP"
+translations: ["en", "zh", "ja"]
 tags: ["javascript", "typescript", "angular", "python", "ai"]
 readingTime: 9
 wordCount: 1750
