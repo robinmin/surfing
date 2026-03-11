@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import mdx from '@astrojs/mdx';
@@ -280,29 +281,37 @@ export default defineConfig({
             {
                 name: 'fetch-turnstile-config',
                 async buildStart() {
+                    const cli = process.argv.join(' ');
+                    const isAstroBuild = /\bbuild\b/.test(cli);
+                    const isAstroCheck = /\bcheck\b/.test(cli);
+                    const isExplicitFetch = process.env.FETCH_TURNSTILE_CONFIG === 'true';
+
                     // Skip during type checking or if module runner is closed
                     try {
-                        // Only run in production or if explicitly enabled
-                        if (
-                            process.env.NODE_ENV !== 'production' &&
-                            process.env.FETCH_TURNSTILE_CONFIG !== 'true'
-                        ) {
+                        // Fetch config for real builds by default, or when explicitly enabled.
+                        // Skip for type checks and regular dev unless explicitly requested.
+                        if ((!isAstroBuild && !isExplicitFetch) || isAstroCheck) {
                             console.log(
-                                'ℹ️  Skipping Turnstile config fetch (development mode or FETCH_TURNSTILE_CONFIG not set)'
+                                'ℹ️  Skipping Turnstile config fetch (not a build or explicit fetch)'
                             );
                             return;
                         }
 
-                        console.log('🔄 Fetching Turnstile configuration... (DISABLED)');
-                        // const { execFileSync } = await import('node:child_process');
-                        // execFileSync('node', ['scripts/fetch-turnstile-config.mjs'], {
-                        //     stdio: 'inherit',
-                        //     cwd: process.cwd(),
-                        // });
+                        console.log('🔄 Fetching Turnstile configuration...');
+                        execFileSync(process.execPath, ['scripts/fetch-turnstile-config.mjs'], {
+                            stdio: 'inherit',
+                            cwd: process.cwd(),
+                            env: process.env,
+                        });
                     } catch (error: unknown) {
-                        // Ignore errors during type checking (module runner closed)
+                        // Ignore module-runner shutdown only for non-production checks.
+                        // In production builds we must fail hard so Turnstile config
+                        // cannot be silently skipped.
                         const err = error as Error;
-                        if (err.message?.includes('module runner has been closed')) {
+                        if (
+                            err.message?.includes('module runner has been closed') &&
+                            isAstroCheck
+                        ) {
                             console.log(
                                 'ℹ️  Skipping Turnstile config fetch (module runner closed during type check)'
                             );
