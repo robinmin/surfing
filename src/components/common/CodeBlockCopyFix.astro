@@ -125,7 +125,7 @@
         const copyFailedText =
           typeof (window as any).t === 'function' ? (window as any).t('common.copyFailed') : 'Copy failed';
         errorFeedback.textContent = copyFailedText;
-        button.before(errorFeedback);
+        button.insertAdjacentElement('beforebegin', errorFeedback);
 
         setTimeout(() => {
           errorFeedback.classList.add('show');
@@ -150,7 +150,7 @@
         button.dataset.copied ||
           (typeof (window as any).t === 'function' ? (window as any).t('common.copySuccess') : 'Copied!')
       );
-      button.before(feedback);
+      button.insertAdjacentElement('beforebegin', feedback);
 
       // Trigger reflow to ensure transition works
       void feedback.offsetWidth;
