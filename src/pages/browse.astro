@@ -322,25 +322,23 @@ const metadata = {
   <!-- JavaScript for Interactive Filtering -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const searchInput = document.getElementById(
-        "searchInput",
-      ) as HTMLInputElement;
-      const typeFilter = document.getElementById(
-        "typeFilter",
-      ) as HTMLSelectElement;
-      const sortFilter = document.getElementById(
-        "sortFilter",
-      ) as HTMLSelectElement;
+      const searchInput = document.querySelector<HTMLInputElement>("#searchInput");
+      const typeFilter = document.querySelector<HTMLSelectElement>("#typeFilter");
+      const sortFilter = document.querySelector<HTMLSelectElement>("#sortFilter");
       const tagButtons = document.querySelectorAll(".tag-filter");
       const categoryButtons = document.querySelectorAll(".category-filter");
 
       const selectedTags = new Set();
       const selectedCategories = new Set();
 
+      if (!searchInput || !typeFilter || !sortFilter) {
+        return;
+      }
+
       function filterAndSortContent() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedType = typeFilter.value;
-        const sortOption = sortFilter.value;
+        const searchTerm = searchInput!.value.toLowerCase();
+        const selectedType = typeFilter!.value;
+        const sortOption = sortFilter!.value;
         const cards = Array.from(document.querySelectorAll(".content-card"));
 
         // Filter cards
