@@ -1,5 +1,4 @@
 import { execFileSync } from 'node:child_process';
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import mdx from '@astrojs/mdx';
@@ -44,10 +43,6 @@ interface AppConfig {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const GENERATED_TURNSTILE_CONFIG_PATH = path.resolve(
-    __dirname,
-    './src/lib/turnstile-config/generated.config.ts'
-);
 
 // Load configuration to check if cookie consent is enabled
 const config = (await loadConfig('./src/config.yaml')) as AppConfig;
@@ -287,17 +282,16 @@ export default defineConfig({
                 name: 'fetch-turnstile-config',
                 async buildStart() {
                     const cli = process.argv.join(' ');
-                    const isAstroBuild = /\bbuild\b/.test(cli);
                     const isAstroCheck = /\bcheck\b/.test(cli);
                     const isExplicitFetch = process.env.FETCH_TURNSTILE_CONFIG === 'true';
 
-                    // Skip during type checking or if module runner is closed
+                    // Treat the generated config as a checked-in snapshot by default.
+                    // Refresh it only when explicitly requested so normal builds do not
+                    // depend on Turnstile API availability.
                     try {
-                        // Fetch config for real builds by default, or when explicitly enabled.
-                        // Skip for type checks and regular dev unless explicitly requested.
-                        if ((!isAstroBuild && !isExplicitFetch) || isAstroCheck) {
+                        if (!isExplicitFetch || isAstroCheck) {
                             console.log(
-                                'ℹ️  Skipping Turnstile config fetch (not a build or explicit fetch)'
+                                'ℹ️  Skipping Turnstile config fetch (using checked-in snapshot)'
                             );
                             return;
                         }
@@ -309,9 +303,6 @@ export default defineConfig({
                             env: process.env,
                         });
                     } catch (error: unknown) {
-                        // Ignore module-runner shutdown only for non-production checks.
-                        // In production builds we must fail hard so Turnstile config
-                        // cannot be silently skipped.
                         const err = error as Error;
                         if (
                             err.message?.includes('module runner has been closed') &&
@@ -322,15 +313,9 @@ export default defineConfig({
                             );
                             return;
                         }
-                        if (!isExplicitFetch && fs.existsSync(GENERATED_TURNSTILE_CONFIG_PATH)) {
-                            console.warn(
-                                '⚠️ Falling back to existing Turnstile configuration snapshot'
-                            );
-                            return;
-                        }
                         console.error('❌ Failed to fetch Turnstile config:', error);
                         throw new Error(
-                            'Build failed: Could not fetch application configuration from Turnstile API'
+                            'Could not refresh application configuration from Turnstile API'
                         );
                     }
                 },
