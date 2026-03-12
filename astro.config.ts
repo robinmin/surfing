@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import mdx from '@astrojs/mdx';
@@ -43,6 +44,10 @@ interface AppConfig {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const GENERATED_TURNSTILE_CONFIG_PATH = path.resolve(
+    __dirname,
+    './src/lib/turnstile-config/generated.config.ts'
+);
 
 // Load configuration to check if cookie consent is enabled
 const config = (await loadConfig('./src/config.yaml')) as AppConfig;
@@ -317,6 +322,12 @@ export default defineConfig({
                             );
                             return;
                         }
+                        if (!isExplicitFetch && fs.existsSync(GENERATED_TURNSTILE_CONFIG_PATH)) {
+                            console.warn(
+                                '⚠️ Falling back to existing Turnstile configuration snapshot'
+                            );
+                            return;
+                        }
                         console.error('❌ Failed to fetch Turnstile config:', error);
                         throw new Error(
                             'Build failed: Could not fetch application configuration from Turnstile API'
@@ -330,6 +341,16 @@ export default defineConfig({
                 '~': path.resolve(__dirname, './src'),
                 '@contents': path.resolve(__dirname, './contents'),
                 '@assets': path.resolve(__dirname, './assets'),
+                '@turnstile/client': path.resolve(__dirname, '../turnstile/packages/client/src'),
+                '@turnstile/api-client-core': path.resolve(
+                    __dirname,
+                    '../turnstile/packages/api-client-core/src'
+                ),
+            },
+        },
+        server: {
+            fs: {
+                allow: [path.resolve(__dirname, '../turnstile')],
             },
         },
     },
