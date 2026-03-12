@@ -11,6 +11,7 @@
         "dev": "astro dev",
         "start": "astro dev",
         "build": "bash -lc 'set -a; [ -f .env ] && source .env >/dev/null 2>&1; set +a; astro build'",
+        "turnstile:fetch-config": "bash -lc 'set -a; [ -f .env ] && source .env >/dev/null 2>&1; set +a; FETCH_TURNSTILE_CONFIG=true node scripts/fetch-turnstile-config.mjs'",
         "preview": "astro preview",
         "astro": "astro",
         "check": "bun run check:astro && bun run check:biome",
