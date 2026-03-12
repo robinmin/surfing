@@ -98,13 +98,11 @@ const iconSizeClasses = {
 
 <script>
   import {
-    signInPopup,
     signInRedirect,
     signOut,
     getCurrentSession,
     onUserLoaded,
     onUserUnloaded,
-    type ZitadelIdProvider,
   } from "~/lib/turnstile-client";
 
   let isLoggedIn = false;
@@ -140,19 +138,11 @@ const iconSizeClasses = {
             primaryContainer?.querySelector("[data-user-menu]");
           if (currentUserMenu) {
             currentUserMenu.classList.toggle("show");
-            const currentLoginMenu =
-              primaryContainer?.querySelector("[data-popup-menu]");
-            currentLoginMenu?.classList.remove("show");
             console.debug("Showing user menu");
           }
         } else {
           console.debug("Redirecting to Zitadel login page");
           try {
-            // Close any existing menus
-            const currentLoginMenu =
-              primaryContainer?.querySelector("[data-popup-menu]");
-            currentLoginMenu?.classList.remove("show");
-
             // Start redirect flow - this fulfills the requirement to let Zitadel handle login methods
             
             // Show loading overlay for premium experience
@@ -194,14 +184,11 @@ const iconSizeClasses = {
       );
 
       if (clickedOutsideAllContainers) {
-        const primaryContainer = document
-          .querySelector(".auth-avatar-container [data-popup-menu]")
-          ?.closest(".auth-avatar-container");
-        const currentLoginMenu =
-          primaryContainer?.querySelector("[data-popup-menu]");
+        const primaryContainer = document.querySelector(
+          ".auth-avatar-container[data-auth-container]",
+        );
         const currentUserMenu =
           primaryContainer?.querySelector("[data-user-menu]");
-        currentLoginMenu?.classList.remove("show");
         currentUserMenu?.classList.remove("show");
       }
     };
@@ -209,14 +196,11 @@ const iconSizeClasses = {
     // Define escape key handler
     const handleEscapeKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        const primaryContainer = document
-          .querySelector(".auth-avatar-container [data-popup-menu]")
-          ?.closest(".auth-avatar-container");
-        const currentLoginMenu =
-          primaryContainer?.querySelector("[data-popup-menu]");
+        const primaryContainer = document.querySelector(
+          ".auth-avatar-container[data-auth-container]",
+        );
         const currentUserMenu =
           primaryContainer?.querySelector("[data-user-menu]");
-        currentLoginMenu?.classList.remove("show");
         currentUserMenu?.classList.remove("show");
       }
     };
@@ -292,58 +276,6 @@ const iconSizeClasses = {
       setupAvatarClick();
       await updatePopupTranslations();
     }, 10);
-  };
-
-  // Handle login with a specific provider
-  const handleProviderLogin = async (provider: ZitadelIdProvider) => {
-    try {
-      console.debug(`Starting ${provider} sign-in via Zitadel`);
-
-      // Close the login menu
-      const loginMenu = document.querySelector("[data-popup-menu]");
-      loginMenu?.classList.remove("show");
-
-      // Try popup first, fall back to redirect if blocked
-      try {
-        const user = await signInPopup(provider);
-        console.log("Sign in success:", user.profile.email);
-        // Reload page to reflect authenticated state
-        window.location.reload();
-      } catch (popupError) {
-        console.debug("Popup blocked or failed, trying redirect:", popupError);
-        // Fall back to redirect flow
-        await signInRedirect(provider);
-      }
-    } catch (error) {
-      console.error(`${provider} sign-in error:`, error);
-      // Show error to user
-      alert(
-        `Sign-in failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
-    }
-  };
-
-  // Handle login option clicks for all providers
-  const setupLoginHandlers = () => {
-    const providers: ZitadelIdProvider[] = [
-      "google",
-      "github",
-      "apple",
-      "microsoft",
-    ];
-
-    providers.forEach((provider) => {
-      const button = document.querySelector(`.login-option-${provider}`);
-      if (button) {
-        // Clone to remove existing listeners
-        const newButton = button.cloneNode(true) as HTMLElement;
-        button.parentNode?.replaceChild(newButton, button);
-
-        newButton.addEventListener("click", () =>
-          handleProviderLogin(provider),
-        );
-      }
-    });
   };
 
   // Handle sign out
@@ -423,20 +355,6 @@ const iconSizeClasses = {
     const { getPreferredLanguage, t } = await import("~/i18n");
     const lang = getPreferredLanguage();
 
-    // Update login popup menu - provider buttons
-    const providers = ["google", "github", "apple", "microsoft"];
-    providers.forEach((provider) => {
-      const buttonText = document.querySelector(
-        `.login-option-${provider} [data-i18n-key]`,
-      );
-      if (buttonText) {
-        const key = buttonText.getAttribute("data-i18n-key");
-        if (key) {
-          buttonText.textContent = t(key, lang);
-        }
-      }
-    });
-
     // Update user menu
     const signedInText = document.querySelector(
       "[data-user-menu] .text-xs.text-gray-400",
@@ -472,7 +390,6 @@ const iconSizeClasses = {
       setTimeout(() => {
         checkAuthState();
         setupAvatarClick();
-        setupLoginHandlers();
         setupSignOutHandler();
       }, 100);
     };
@@ -482,19 +399,9 @@ const iconSizeClasses = {
     document.addEventListener("astro:after-swap", handleNavigation);
   };
 
-  // Listen for auth errors from popup
-  window.addEventListener("message", (event) => {
-    if (event.origin !== window.location.origin) return;
-    if (event.data?.type === "auth_error") {
-      console.error("Auth error from popup:", event.data.error);
-      alert(`Authentication failed: ${event.data.error}`);
-    }
-  });
-
   // Initialize on page load
   const initialize = async () => {
     setupAvatarClick();
-    setupLoginHandlers();
     setupSignOutHandler();
     await checkAuthState();
     setupAuthSync();
