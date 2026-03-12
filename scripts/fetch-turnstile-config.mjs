@@ -11,7 +11,11 @@
  * Environment Variables Required:
  * - PUBLIC_TURNSTILE_API_URL: Turnstile API base URL
  * - PUBLIC_APPLICATION_ID: Application ID (e.g., 'surfing')
- * - TURNSTILE_BUILD_TOKEN: Build token for authentication (optional in dev)
+ * - TURNSTILE_BUILD_TOKEN: Build token for authentication (required by default)
+ *
+ * Optional:
+ * - ALLOW_PUBLIC_TURNSTILE_CONFIG_FETCH=true
+ *   Allow unauthenticated config fetch (development-only fallback)
  *
  * @example
  * ```bash
@@ -22,7 +26,8 @@
 const TURNSTILE_API_URL = process.env.PUBLIC_TURNSTILE_API_URL;
 const APPLICATION_ID = process.env.PUBLIC_APPLICATION_ID;
 const BUILD_TOKEN = process.env.TURNSTILE_BUILD_TOKEN;
-const OUTPUT_FILE = 'src/lib/turnstile/generated.config.ts';
+const ALLOW_PUBLIC_FETCH = process.env.ALLOW_PUBLIC_TURNSTILE_CONFIG_FETCH === 'true';
+const OUTPUT_FILE = 'src/lib/turnstile-config/generated.config.ts';
 
 // Validate required environment variables
 if (!TURNSTILE_API_URL) {
@@ -37,6 +42,14 @@ if (!APPLICATION_ID) {
     process.exit(1);
 }
 
+if (!BUILD_TOKEN && !ALLOW_PUBLIC_FETCH) {
+    console.error('❌ Error: TURNSTILE_BUILD_TOKEN environment variable is not set.');
+    console.error(
+        '   Set TURNSTILE_BUILD_TOKEN or explicitly set ALLOW_PUBLIC_TURNSTILE_CONFIG_FETCH=true'
+    );
+    process.exit(1);
+}
+
 async function fetchConfig() {
     const url = `${TURNSTILE_API_URL}/api/config/app/${APPLICATION_ID}`;
     console.log(`🔍 Fetching config from: ${url}`);
@@ -45,7 +58,7 @@ async function fetchConfig() {
         'Content-Type': 'application/json',
     };
 
-    // Add build token if available
+    // Build token is required by default; public fetch allowed only when explicitly enabled
     if (BUILD_TOKEN) {
         headers.Authorization = `Bearer ${BUILD_TOKEN}`;
     }
@@ -90,7 +103,7 @@ async function fetchConfig() {
 // at build time. Changes to the configuration should be made in Turnstile
 // and this script will be run again during the next build.
 
-import type { SubscriptionConfig } from '@turnstile/client';
+import type { SubscriptionConfig } from '~/lib/turnstile-client';
 
 /**
  * Turnstile Application Configuration
