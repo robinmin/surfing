@@ -59,6 +59,20 @@ Engineered for maximum visibility and discoverability:
 - **Performance Optimized**: Features like Partytown for third-party scripts and automatic asset compression ensure a fast user experience.
 - **Cookie Consent Management**: Integrated cookie consent banner for GDPR compliance.
 
+## Turnstile Integration
+
+Surfing uses Turnstile as its subscription and checkout backend.
+
+Current integration model:
+
+- resolves `@turnstile/client` directly from the sibling `../turnstile` repository during local development
+- keeps all Turnstile imports behind `src/lib/turnstile-client.ts`
+- uses `createTurnstileClient(...)` for checkout and billing flows
+- fetches application config at build time into `src/lib/turnstile-config/generated.config.ts`
+- falls back to the checked-in generated config snapshot during local builds if live config fetch is unavailable
+
+This project no longer maintains a copied `vendor/turnstile/client` tree.
+
 ## ⚡ Quick Start
 
 ### Prerequisites
