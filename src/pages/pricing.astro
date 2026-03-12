@@ -363,6 +363,7 @@ const billingCycles = [
 
 <script>
   import {
+    createTurnstileClient,
     getCurrentSession,
     signInRedirect,
     onUserLoaded,
@@ -371,6 +372,7 @@ const billingCycles = [
     trackEvent,
     trackPageView,
   } from "~/lib/turnstile-client";
+  import { TURNSTILE_APP_ID } from "~/lib/turnstile-config/generated.config";
   import {
     PRICING_PAGE_VIEWED,
     PRICING_BILLING_CYCLE_CHANGED,
@@ -544,9 +546,18 @@ const billingCycles = [
           return;
         }
 
-        // Logged in user clicking on a button (that is enabled)
+        // Free tier does not require checkout
+        if (tier === "free") {
+          window.location.href = "/";
+          return;
+        }
+
+        // Logged in user clicking on a paid plan (that is enabled)
         // If enabled, it means it's NOT their current plan.
-        initiateCheckout(tier, currentCycle);
+        initiateCheckout(
+          tier as "standard" | "premium",
+          currentCycle as "monthly" | "yearly" | "lifetime",
+        );
       } catch (error) {
         console.error("Action error:", error);
         alert("Unable to proceed. Please try again.");
@@ -555,7 +566,10 @@ const billingCycles = [
   });
 
   // Checkout Logic
-  async function initiateCheckout(tier: string, billingCycle: string) {
+  async function initiateCheckout(
+    tier: "standard" | "premium",
+    billingCycle: "monthly" | "yearly" | "lifetime",
+  ) {
     const turnstileApiUrl = import.meta.env.PUBLIC_TURNSTILE_API_URL;
     if (!turnstileApiUrl) {
       alert("Checkout is not yet available.");
@@ -571,10 +585,7 @@ const billingCycles = [
         standard: { monthly: 5, yearly: 50, lifetime: 150 },
         premium: { monthly: 15, yearly: 150, lifetime: 400 },
       };
-      const price =
-        priceMap[tier as "standard" | "premium"]?.[
-          billingCycle as "monthly" | "yearly" | "lifetime"
-        ] || 0;
+      const price = priceMap[tier]?.[billingCycle] || 0;
 
       // Track checkout initiation
       trackEvent(PRICING_CHECKOUT_INITIATED, {
@@ -584,20 +595,12 @@ const billingCycles = [
         userId: session.user?.id || "unknown",
       });
 
-      const response = await fetch(`${turnstileApiUrl}/api/checkout/session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        body: JSON.stringify({ tier, billingCycle }),
+      const client = createTurnstileClient({
+        baseUrl: turnstileApiUrl,
+        token: session.accessToken,
+        applicationId: TURNSTILE_APP_ID,
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API Error (${response.status}): ${errorText}`);
-      }
-      const { url } = await response.json();
+      const { url } = await client.checkout.createSession({ tier, billingCycle });
       window.location.href = url;
     } catch (error) {
       console.error("Checkout init error:", error);
@@ -614,7 +617,8 @@ const billingCycles = [
       });
 
       alert(
-        `Unable to start checkout.\n${error instanceof Error ? error.message : String(error)}`,
+        `Unable to start checkout.
+${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
