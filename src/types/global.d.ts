@@ -26,7 +26,7 @@ declare module '@analytics/google-analytics' {
 }
 
 // Global Window type declarations
-// Note: __OIDC_CONFIG__ is declared in vendor/turnstile/client/auth/oidc.ts
+// Note: __OIDC_CONFIG__ is declared in the Turnstile client OIDC module.
 declare global {
     interface Window {
         __OIDC_INIT_PROMISE__?: Promise<void>;
