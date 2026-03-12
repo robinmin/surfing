@@ -1,58 +1,57 @@
 /**
- * Centralized Turnstile Client Re-Export Layer
+ * Centralized Turnstile SDK re-export layer for Surfing.
  *
- * This file is the ONLY file in Surfing that should import directly from
- * '@turnstile/client'. All other Surfing files must import from this file.
- *
- * This separation layer provides:
- * - Single source of truth for all @turnstile/client imports
- * - Easier maintenance when updating @turnstile/client
- * - Clear API boundary between Surfing and Turnstile packages
- * - Ability to add Surfing-specific wrappers or transformations
- *
- * @example
- * // ✅ CORRECT - Import from this centralized file
- * import { getUser, signInPopup } from '~/lib/turnstile-client';
- *
- * // ❌ WRONG - Direct import from @turnstile/client
- * import { getUser } from '@turnstile/client/auth/oidc';
+ * This file is the only place in Surfing that should import directly from
+ * `@turnstile/client`. All application code should import from here so SDK
+ * upgrades stay isolated to a single boundary.
  */
 
-// ============================================================================
-// Authentication Module (@turnstile/client/auth)
-// ============================================================================
-
-/**
- * OIDC Authentication Client
- *
- * Provides Zitadel OIDC authentication with PKCE flow for static sites.
- * Includes popup and redirect-based authentication, token management,
- * and role extraction from JWT tokens.
- */
+export type {
+    AuthSession,
+    AuthSyncEvent,
+    AuthSyncMessage,
+    AuthSyncOptions,
+    OIDCConfig,
+    OIDCProvider,
+    OIDCUserProfile,
+    PublicApplicationConfig,
+    TurnstileClientOptions,
+} from '@turnstile/client';
 export {
-    type AuthSession,
+    cleanupAuthSync,
     clearAuthState,
+    createTurnstileClient,
     getCurrentSession,
+    getHighestTierRole,
+    getSubscriptionFromRoles,
+    getSubscriptionFromSession,
+    getTierDisplayName,
+    getTierFromRoles,
     getUser,
     handlePopupCallback,
     handleRedirectCallback,
+    hasAccess,
+    hasRequiredRole,
+    hasRole,
+    initAuthSync,
     initOIDC,
     isAuthenticated,
-    isZitadelConfigured,
-    // OIDC Client
+    notifyLogin,
+    notifyLogout,
+    notifySessionRefresh,
     OIDCClient,
-    // Types
-    type OIDCConfig,
-    type OIDCProvider,
-    type OIDCUserProfile,
-    onUserLoaded,
-    onUserUnloaded,
+    onAuthSync,
     renewToken,
-    // Convenience functions
     signInPopup,
     signInRedirect,
     signOut,
-    type ZitadelIdProvider,
+    TurnstileClient,
+} from '@turnstile/client';
+export type { ZitadelIdProvider } from '@turnstile/client/auth/oidc';
+export {
+    isZitadelConfigured,
+    onUserLoaded,
+    onUserUnloaded,
 } from '@turnstile/client/auth/oidc';
 export type {
     AuthProvider,
@@ -60,58 +59,10 @@ export type {
     AuthSignInResponse,
     IAuthProvider,
 } from '@turnstile/client/auth/providers';
-/**
- * Auth Provider Interface
- *
- * Generic authentication provider interface for implementing
- * different auth backends (Zitadel, Auth0, etc.).
- */
 export { AuthProviderUtils } from '@turnstile/client/auth/providers';
 
-/**
- * Auth State Synchronization
- *
- * Cross-tab authentication state synchronization using BroadcastChannel.
- * Ensures auth state stays consistent across multiple browser tabs.
- */
-export {
-    type AuthSyncEvent,
-    type AuthSyncMessage,
-    type AuthSyncOptions,
-    cleanupAuthSync,
-    initAuthSync,
-    notifyLogin,
-    notifyLogout,
-    notifySessionRefresh,
-    onAuthSync,
-} from '@turnstile/client/auth/sync';
-
-// ============================================================================
-// Subscription Module (@turnstile/client/subscription)
-// ============================================================================
-
-/**
- * Subscription Access Control
- *
- * Generic role-based access control utilities.
- * Can be used with any app-specific role hierarchy.
- */
-export {
-    getHighestTierRole,
-    getSubscriptionFromRoles,
-    getSubscriptionFromSession,
-    getTierFromRoles,
-    hasAccess,
-    hasRequiredRole,
-    hasRole,
-} from '@turnstile/client/subscription/access';
-
-/**
- * Subscription Types
- *
- * Generic subscription types for building app-specific subscription systems.
- */
 export type {
+    BillingCycle,
     RoleHierarchy,
     RoleToTierMapping,
     SubscriptionConfig,
@@ -120,55 +71,12 @@ export type {
     UserSubscription,
 } from '@turnstile/client/subscription/types';
 
-// ============================================================================
-// Checkout Module (@turnstile/client)
-// ============================================================================
-
-/**
- * Turnstile Checkout Clients
- *
- * API clients for interacting with Turnstile checkout endpoints.
- * - Admin: For admin operations (requires admin API key)
- * - Customer: For customer-facing operations (session, portal)
- */
-export { TurnstileAdminClient } from '@turnstile/client/checkout/admin';
-
-export { TurnstileCustomerClient } from '@turnstile/client/checkout/customer';
-
-// ============================================================================
-// Base Module (@turnstile/client/base + @turnstile/client/types)
-// ============================================================================
-
-/**
- * Base API Client
- *
- * Low-level API client for making authenticated requests to Turnstile API.
- */
-export { BaseApiClient, TurnstileError } from '@turnstile/client/base';
-
-export type {
-    ApiErrorResponse,
-    ApiResponse,
-    RequestOptions,
-    TurnstileClientOptions,
-} from '@turnstile/client/types';
-
-// ============================================================================
-// Tracking Module (@turnstile/client/tracking.ts)
-// ============================================================================
-
 export type {
     PageViewEvent,
     TrackerConfig,
     TrackingEvent,
     UserIdentity,
 } from '@turnstile/client/tracking';
-/**
- * Analytics Tracking Utilities
- *
- * Universal analytics abstraction layer for Google Analytics, Microsoft Clarity,
- * and Sentry. Provides a single API for tracking events across multiple providers.
- */
 export {
     getAnalyticsInstance,
     identifyUser,
