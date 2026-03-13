@@ -5,11 +5,7 @@
         "allowJs": true,
         "baseUrl": ".",
         "paths": {
-            "~/*": ["src/*"],
-            "@turnstile/client": ["../turnstile/packages/client/src/index.ts"],
-            "@turnstile/client/*": ["../turnstile/packages/client/src/*"],
-            "@turnstile/api-client-core": ["../turnstile/packages/api-client-core/src/index.ts"],
-            "@turnstile/api-client-core/*": ["../turnstile/packages/api-client-core/src/*"]
+            "~/*": ["src/*"]
         }
     },
     "include": [".astro/types.d.ts", "**/*"],
