@@ -9,5 +9,5 @@
         }
     },
     "include": [".astro/types.d.ts", "**/*"],
-    "exclude": ["dist/", "vendor/turnstile-api/**"]
+    "exclude": ["dist/", "coverage/", "vendor/turnstile-api/**"]
 }
