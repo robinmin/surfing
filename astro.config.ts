@@ -326,16 +326,6 @@ export default defineConfig({
                 '~': path.resolve(__dirname, './src'),
                 '@contents': path.resolve(__dirname, './contents'),
                 '@assets': path.resolve(__dirname, './assets'),
-                '@turnstile/client': path.resolve(__dirname, '../turnstile/packages/client/src'),
-                '@turnstile/api-client-core': path.resolve(
-                    __dirname,
-                    '../turnstile/packages/api-client-core/src'
-                ),
-            },
-        },
-        server: {
-            fs: {
-                allow: [path.resolve(__dirname, '../turnstile')],
             },
         },
     },
