@@ -2,7 +2,7 @@
  * Surfing Subscription Types
  *
  * Type definitions for Surfing's subscription system.
- * These types are specific to Surfing and not generic enough for @turnstile/client.
+ * These types are specific to Surfing and not generic enough for @gobing-ai/turnstile-client.
  */
 
 /**
