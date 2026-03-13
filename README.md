@@ -65,11 +65,11 @@ Surfing uses Turnstile as its subscription and checkout backend.
 
 Current integration model:
 
-- resolves `@turnstile/client` directly from the sibling `../turnstile` repository during local development
+- consumes the published `@gobing-ai/turnstile-client` package
 - keeps all Turnstile imports behind `src/lib/turnstile-client.ts`
 - uses `createTurnstileClient(...)` for checkout and billing flows
-- fetches application config at build time into `src/lib/turnstile-config/generated.config.ts`
-- falls back to the checked-in generated config snapshot during local builds if live config fetch is unavailable
+- keeps a checked-in Turnstile config snapshot at `src/lib/turnstile-config/generated.config.ts`
+- can refresh that snapshot on demand with `bun run turnstile:fetch-config`
 
 This project no longer maintains a copied `vendor/turnstile/client` tree.
 
