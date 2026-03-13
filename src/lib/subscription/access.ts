@@ -2,7 +2,7 @@
  * Surfing Subscription Access Control
  *
  * Role-based access control functions specific to Surfing.
- * These functions use @turnstile/client utilities internally but provide
+ * These functions use @gobing-ai/turnstile-client utilities internally but provide
  * Surfing-specific type safety and business logic.
  */
 
