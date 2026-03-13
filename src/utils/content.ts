@@ -112,14 +112,17 @@ export function extractContentMetadata(content: string): {
 
     // Generate excerpt from first paragraph
     const paragraphs = content.split('\n\n').filter((p) => p.trim() && !p.trim().startsWith('#'));
-    const excerpt = paragraphs[0]?.slice(0, 160) + (paragraphs[0]?.length > 160 ? '...' : '');
+    const firstParagraph = paragraphs[0];
+    const excerpt = firstParagraph
+        ? firstParagraph.slice(0, 160) + (firstParagraph.length > 160 ? '...' : '')
+        : undefined;
 
     return {
         wordCount,
         readingTime,
         headings,
         links,
-        excerpt: excerpt || undefined,
+        excerpt,
     };
 }
 
