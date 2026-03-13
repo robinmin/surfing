@@ -252,7 +252,7 @@ function extractHtmlLinks(html: string): string[] {
  * Extract language from HTML
  */
 function extractHtmlLanguage(html: string): string {
-    const langMatch = html.match(/<html[^>]+lang=['"]([^'"]*)['"]/i);
+    const langMatch = html.match(/<html[^>]*\slang=['"]([^'"]*)['"]/i);
     if (langMatch) {
         return langMatch[1];
     }
